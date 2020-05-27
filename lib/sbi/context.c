@@ -596,7 +596,7 @@ void ogs_sbi_nf_service_add_version(ogs_sbi_nf_service_t *nf_service,
     }
 }
 
-void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
+void ogs_sbi_nf_service_clear(ogs_sbi_nf_service_t *nf_service)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
     int i;
@@ -604,14 +604,6 @@ void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
     ogs_assert(nf_service);
     nf_instance = nf_service->nf_instance;
     ogs_assert(nf_instance);
-
-    ogs_list_remove(&nf_instance->nf_service_list, nf_service);
-
-    ogs_assert(nf_service->id);
-    ogs_free(nf_service->id);
-
-    ogs_assert(nf_service->name);
-    ogs_free(nf_service->name);
 
     for (i = 0; i < nf_service->num_of_version; i++) {
         if (nf_service->versions[i].in_uri)
@@ -628,6 +620,25 @@ void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
         if (nf_service->addr[i].ipv6)
             ogs_freeaddrinfo(nf_service->addr[i].ipv6);
     }
+}
+
+void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(nf_service);
+    nf_instance = nf_service->nf_instance;
+    ogs_assert(nf_instance);
+
+    ogs_list_remove(&nf_instance->nf_service_list, nf_service);
+
+    ogs_assert(nf_service->id);
+    ogs_free(nf_service->id);
+
+    ogs_assert(nf_service->name);
+    ogs_free(nf_service->name);
+
+    ogs_sbi_nf_service_clear(nf_service);
 
     ogs_pool_free(&nf_service_pool, nf_service);
 }

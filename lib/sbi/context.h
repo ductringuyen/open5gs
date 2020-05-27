@@ -153,6 +153,7 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_add(ogs_sbi_nf_instance_t *nf_instance,
         char *id, char *name, OpenAPI_uri_scheme_e scheme);
 void ogs_sbi_nf_service_add_version(ogs_sbi_nf_service_t *nf_service,
         char *in_uri, char *full, char *expiry);
+void ogs_sbi_nf_service_clear(ogs_sbi_nf_service_t *nf_service);
 void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service);
 void ogs_sbi_nf_service_remove_all(ogs_sbi_nf_instance_t *nf_instance);
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_find(
