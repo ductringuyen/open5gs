@@ -138,6 +138,22 @@ libsbi_openapi_sources = files('''
 	model/trace_data.c
 	model/trace_depth.c
 	model/ue_authentication_ctx.c
+
+    model/auth_event.c
+    model/authentication_info_request.c
+    model/authentication_info_result.c
+    model/authentication_vector.c
+    model/av5_g_he_aka.c
+    model/av_eap_aka_prime.c
+    model/av_eps_aka.c
+    model/av_ims_gba_eap_aka.c
+    model/av_type.c
+    model/hss_auth_type.c
+    model/hss_authentication_info_request.c
+    model/hss_authentication_info_result.c
+    model/hss_authentication_vectors.c
+    model/hss_av_type.c
+
 '''.split())
 
 libsbi_openapi_inc = include_directories('.')
