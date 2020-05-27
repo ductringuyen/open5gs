@@ -179,6 +179,11 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
                     message, "Cannot find client", nf_instance->id);
             return false;
         }
+
+        if (nf_instance->client && nf_instance->client != client) {
+            ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
+            ogs_sbi_client_remove(nf_instance->client);
+        }
         smf_sbi_nf_associate_client(nf_instance, client);
 
     } else if (NotificationData->event ==
@@ -268,6 +273,11 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             if (!client) {
                 ogs_error("Cannot find client [%s]", nf_instance->id);
                 continue;
+            }
+
+            if (nf_instance->client && nf_instance->client != client) {
+                ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
+                ogs_sbi_client_remove(nf_instance->client);
             }
             smf_sbi_nf_associate_client(nf_instance, client);
 
