@@ -825,6 +825,25 @@ void ogs_sbi_nf_service_find_client_all(ogs_sbi_nf_instance_t *nf_instance)
         ogs_sbi_nf_service_find_client(nf_service);
 }
 
+bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(nf_instance);
+
+    client = ogs_sbi_nf_instance_find_client(nf_instance);
+    if (!client) return false;
+
+    if (nf_instance->client && nf_instance->client != client) {
+        ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
+        ogs_sbi_client_remove(nf_instance->client);
+    }
+
+    OGS_SETUP_SBI_CLIENT(nf_instance, client);
+
+    return true;
+}
+
 ogs_sbi_subscription_t *ogs_sbi_subscription_add(void)
 {
     ogs_sbi_subscription_t *subscription = NULL;

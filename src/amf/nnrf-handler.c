@@ -170,7 +170,16 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
         ogs_info("(NRF-notify) NF Profile updated [%s]", nf_instance->id);
 
-        amf_sbi_nf_associate_client(nf_instance);
+        handled = ogs_sbi_nf_associate_client(nf_instance);
+        if (!handled) {
+            ogs_error("Cannot associate NF EndPoint [%s]", nf_instance->id);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    message, "Cannot find NF EndPoint", nf_instance->id);
+            return false;
+        }
+
+        amf_sbi_setup_client_callback(nf_instance);
 
     } else if (NotificationData->event ==
             OpenAPI_notification_event_type_NF_DEREGISTERED) {
@@ -255,7 +264,13 @@ void amf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
                 continue;
             }
 
-            amf_sbi_nf_associate_client(nf_instance);
+            handled = ogs_sbi_nf_associate_client(nf_instance);
+            if (!handled) {
+                ogs_error("Cannot assciate NF EndPoint [%s]", nf_instance->id);
+                continue;
+            }
+
+            amf_sbi_setup_client_callback(nf_instance);
 
             /* TIME : Update validity from NRF */
             if (SearchResult->validity_period) {
