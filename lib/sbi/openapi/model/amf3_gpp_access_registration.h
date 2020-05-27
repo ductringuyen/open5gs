@@ -13,7 +13,6 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 #include "backup_amf_info.h"
-#include "eps_interworking_info.h"
 #include "guami.h"
 #include "ims_vo_ps.h"
 #include "rat_type.h"
@@ -40,7 +39,6 @@ typedef struct OpenAPI_amf3_gpp_access_registration_s {
     struct OpenAPI_rat_type_s *rat_type;
     int urrp_indicator;
     char *amf_ee_subscription_id;
-    struct OpenAPI_eps_interworking_info_s *eps_interworking_info;
     int ue_srvcc_capability;
     char *nid;
     char *registration_time;
@@ -66,7 +64,6 @@ OpenAPI_amf3_gpp_access_registration_t *OpenAPI_amf3_gpp_access_registration_cre
     OpenAPI_rat_type_t *rat_type,
     int urrp_indicator,
     char *amf_ee_subscription_id,
-    OpenAPI_eps_interworking_info_t *eps_interworking_info,
     int ue_srvcc_capability,
     char *nid,
     char *registration_time,

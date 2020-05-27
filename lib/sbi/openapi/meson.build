@@ -383,6 +383,86 @@ libsbi_openapi_sources = files('''
 	model/user_identifier.c
 	model/user_location.c
 
+    model/access_right_status.c
+    model/am_policy_data.c
+    model/application_data_change_notif.c
+    model/application_data_subs.c
+    model/bdt_data.c
+    model/bdt_policy_data.c
+    model/bdt_policy_data_patch.c
+    model/charging_information.c
+    model/configuration_parameters_eutra.c
+    model/configuration_parameters_nr.c
+    model/context_data_set_name.c
+    model/context_data_sets.c
+    model/data_filter.c
+    model/data_ind.c
+    model/dnai_change_type.c
+    model/dnn_route_selection_descriptor.c
+    model/eth_flow_description.c
+    model/flow_direction.c
+    model/flow_info.c
+    model/iptv_config_data.c
+    model/iptv_config_data_patch.c
+    model/limit_id_to_monitoring_key.c
+    model/multicast_access_control.c
+    model/network_area_info_2.c
+    model/notification_item.c
+    model/operator_managed.c
+    model/parameter_over_pc5.c
+    model/parameter_over_uu.c
+    model/pc5_flow_bit_rates.c
+    model/pc5_qo_s_para.c
+    model/pc5_qos_flow_item.c
+    model/pc5_qos_mapping.c
+    model/periodicity.c
+    model/pfd_change_notification.c
+    model/plmn_rat_served.c
+    model/plmn_route_selection_descriptor.c
+    model/policy_data_change_notification.c
+    model/policy_data_subscription.c
+    model/pppp_to_pdb.c
+    model/presence_info.c
+    model/presence_state.c
+    model/privacy_parameter.c
+    model/radio_parameter_not_served.c
+    model/resource_item.c
+    model/service_application_server_address.c
+    model/service_id_to_frequency.c
+    model/service_id_to_layer2_id.c
+    model/service_id_to_pppr.c
+    model/service_parameter_data.c
+    model/service_to_pdu_session.c
+    model/service_to_tx.c
+    model/slrb_configurations.c
+    model/sm_policy_data.c
+    model/sm_policy_data_patch.c
+    model/sm_policy_dnn_data.c
+    model/sm_policy_dnn_data_patch.c
+    model/sm_policy_snssai_data.c
+    model/sm_policy_snssai_data_patch.c
+    model/snssai_route_selection_descriptor.c
+    model/sponsor_connectivity_data.c
+    model/subscribed_event.c
+    model/temporal_validity.c
+    model/time_period.c
+    model/time_window.c
+    model/traffic_influ_data.c
+    model/traffic_influ_data_notif.c
+    model/traffic_influ_data_patch.c
+    model/traffic_influ_sub.c
+    model/transfer_policy.c
+    model/ue_policy_section.c
+    model/ue_policy_set.c
+    model/ue_policy_set_patch.c
+    model/updated_item.c
+    model/usage_mon_data.c
+    model/usage_mon_data_limit.c
+    model/usage_mon_data_scope.c
+    model/usage_mon_level.c
+    model/usage_threshold.c
+    model/v2x_rat_type.c
+
 '''.split())
 
 libsbi_openapi_inc = include_directories('.')

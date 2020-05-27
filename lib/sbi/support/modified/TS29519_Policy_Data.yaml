@@ -1468,7 +1468,9 @@ components:
       properties:
         item:
           $ref: '#/components/schemas/ItemPath'
-        value: {}
+#        value: {}
+        value:
+          type: string
       required:
         - item
         - value

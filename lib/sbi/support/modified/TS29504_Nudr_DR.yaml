@@ -45,12 +45,12 @@ paths:
     $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1%7BservingPlmnId%7D~1provisioned-data~1smf-selection-subscription-data'
   /subscription-data/{ueId}/{servingPlmnId}/provisioned-data/sm-data:
     $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1%7BservingPlmnId%7D~1provisioned-data~1sm-data'
-#  /subscription-data/{ueId}/context-data:
-#    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data'
-#  /subscription-data/{ueId}/context-data/amf-3gpp-access:
-#    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data~1amf-3gpp-access'
-#  /subscription-data/{ueId}/context-data/amf-non-3gpp-access:
-#    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data~1amf-non-3gpp-access'
+  /subscription-data/{ueId}/context-data:
+    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data'
+  /subscription-data/{ueId}/context-data/amf-3gpp-access:
+    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data~1amf-3gpp-access'
+  /subscription-data/{ueId}/context-data/amf-non-3gpp-access:
+    $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data~1amf-non-3gpp-access'
   /subscription-data/{ueId}/context-data/smf-registrations:
     $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1context-data~1smf-registrations'
   /subscription-data/{ueId}/context-data/smf-registrations/{pduSessionId}:
@@ -107,52 +107,52 @@ paths:
     $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1%7BueId%7D~1nidd-authorization-data'
   /subscription-data/group-data/group-identifiers:
     $ref: 'TS29505_Subscription_Data.yaml#/paths/~1subscription-data~1group-data~1group-identifiers'
-#  /policy-data/ues/{ueId}/am-data:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1am-data'
-#  /policy-data/ues/{ueId}/ue-policy-set:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1ue-policy-set'
-#  /policy-data/ues/{ueId}/sm-data:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1sm-data'
-#  /policy-data/ues/{ueId}/sm-data/{usageMonId}:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1sm-data~1%7BusageMonId%7D'
-#  /policy-data/sponsor-connectivity-data/{sponsorId}:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1sponsor-connectivity-data~1%7BsponsorId%7D'
-#  /policy-data/bdt-data:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1bdt-data'
-#  /policy-data/bdt-data/{bdtReferenceId}:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1bdt-data~1%7BbdtReferenceId%7D'
-#  /policy-data/subs-to-notify:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1subs-to-notify'
-#  /policy-data/subs-to-notify/{subsId}:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1subs-to-notify~1%7BsubsId%7D'
-#  /policy-data/ues/{ueId}/operator-specific-data:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1operator-specific-data'
+  /policy-data/ues/{ueId}/am-data:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1am-data'
+  /policy-data/ues/{ueId}/ue-policy-set:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1ue-policy-set'
+  /policy-data/ues/{ueId}/sm-data:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1sm-data'
+  /policy-data/ues/{ueId}/sm-data/{usageMonId}:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1sm-data~1%7BusageMonId%7D'
+  /policy-data/sponsor-connectivity-data/{sponsorId}:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1sponsor-connectivity-data~1%7BsponsorId%7D'
+  /policy-data/bdt-data:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1bdt-data'
+  /policy-data/bdt-data/{bdtReferenceId}:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1bdt-data~1%7BbdtReferenceId%7D'
+  /policy-data/subs-to-notify:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1subs-to-notify'
+  /policy-data/subs-to-notify/{subsId}:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1subs-to-notify~1%7BsubsId%7D'
+  /policy-data/ues/{ueId}/operator-specific-data:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1ues~1%7BueId%7D~1operator-specific-data'
   /application-data/pfds:
     $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1pfds'
   /application-data/pfds/{appId}:
     $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1pfds~1%7BappId%7D'
-#  /application-data/influenceData:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData'
-#  /application-data/influenceData/{influenceId}:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1%7BinfluenceId%7D'
-#  /policy-data/plmns/{plmnId}/ue-policy-set:
-#    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1plmns~1%7BplmnId%7D~1ue-policy-set'
-#  /application-data/bdtPolicyData:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1bdtPolicyData'
-#  /application-data/bdtPolicyData/{bdtPolicyId}:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1bdtPolicyData~1%7BbdtPolicyId%7D'
-#  /application-data/iptvConfigData:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1iptvConfigData'
-#  /application-data/iptvConfigData/{configurationId}:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1iptvConfigData~1%7BconfigurationId%7D'
-#  /application-data/influenceData/subs-to-notify:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1subs-to-notify'
-#  /application-data/influenceData/subs-to-notify/{subscriptionId}:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1subs-to-notify~1%7BsubscriptionId%7D'
-#  /application-data/subs-to-notify:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1subs-to-notify'
-#  /application-data/subs-to-notify/{subsId}:
-#    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1subs-to-notify~1%7BsubsId%7D'
+  /application-data/influenceData:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData'
+  /application-data/influenceData/{influenceId}:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1%7BinfluenceId%7D'
+  /policy-data/plmns/{plmnId}/ue-policy-set:
+    $ref: 'TS29519_Policy_Data.yaml#/paths/~1policy-data~1plmns~1%7BplmnId%7D~1ue-policy-set'
+  /application-data/bdtPolicyData:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1bdtPolicyData'
+  /application-data/bdtPolicyData/{bdtPolicyId}:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1bdtPolicyData~1%7BbdtPolicyId%7D'
+  /application-data/iptvConfigData:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1iptvConfigData'
+  /application-data/iptvConfigData/{configurationId}:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1iptvConfigData~1%7BconfigurationId%7D'
+  /application-data/influenceData/subs-to-notify:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1subs-to-notify'
+  /application-data/influenceData/subs-to-notify/{subscriptionId}:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1influenceData~1subs-to-notify~1%7BsubscriptionId%7D'
+  /application-data/subs-to-notify:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1subs-to-notify'
+  /application-data/subs-to-notify/{subsId}:
+    $ref: 'TS29519_Application_Data.yaml#/paths/~1application-data~1subs-to-notify~1%7BsubsId%7D'
   /exposure-data/{ueId}/access-and-mobility-data:
     $ref: 'TS29519_Exposure_Data.yaml#/paths/~1exposure-data~1%7BueId%7D~1access-and-mobility-data'
   /exposure-data/{ueId}/session-management-data/{pduSessionId}:
