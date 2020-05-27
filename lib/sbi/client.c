@@ -76,8 +76,6 @@ void ogs_sbi_client_init(int num_of_sockinfo_pool, int num_of_connection_pool)
 }
 void ogs_sbi_client_final(void)
 {
-    ogs_sbi_client_remove_all();
-
     ogs_pool_final(&client_pool);
     ogs_pool_final(&sockinfo_pool);
     ogs_pool_final(&connection_pool);
@@ -178,6 +176,11 @@ ogs_sbi_client_t *ogs_sbi_client_find_or_add(char *url)
 void ogs_sbi_client_remove(ogs_sbi_client_t *client)
 {
     ogs_assert(client);
+    ogs_assert(client->reference_count > 0);
+
+    client->reference_count--;
+    if (client->reference_count > 0)
+        return;
 
     ogs_list_remove(&ogs_sbi_self()->client_list, client);
 

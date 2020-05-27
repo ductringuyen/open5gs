@@ -470,6 +470,9 @@ void ogs_sbi_nf_instance_remove(ogs_sbi_nf_instance_t *nf_instance)
 
     ogs_sbi_nf_instance_clear(nf_instance);
 
+    if (nf_instance->client)
+        ogs_sbi_client_remove(nf_instance->client);
+
     ogs_pool_free(&nf_instance_pool, nf_instance);
 }
 
@@ -509,6 +512,7 @@ ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_build_default(
 
     nf_instance->nf_type = nf_type;
     nf_instance->nf_status = OpenAPI_nf_status_REGISTERED;
+    ogs_assert(nf_instance->client != client);
     OGS_SETUP_SBI_CLIENT(nf_instance, client);
 
     hostname = NULL;
@@ -676,6 +680,7 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
         (client->tls.key && client->tls.pem) ?
             OpenAPI_uri_scheme_https : OpenAPI_uri_scheme_http);
     ogs_assert(nf_service);
+    ogs_assert(nf_service->client != client);
     OGS_SETUP_SBI_CLIENT(nf_service, client);
 
     hostname = NULL;
@@ -859,6 +864,9 @@ void ogs_sbi_subscription_remove(ogs_sbi_subscription_t *subscription)
 
     if (subscription->t_validity)
         ogs_timer_delete(subscription->t_validity);
+
+    if (subscription->client)
+        ogs_sbi_client_remove(subscription->client);
 
     ogs_pool_free(&subscription_pool, subscription);
 }

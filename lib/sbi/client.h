@@ -32,6 +32,8 @@ extern "C" {
     do { \
         ogs_assert((__cTX)); \
         ogs_assert((__pCLIENT)); \
+        if ((__cTX)->client != client) \
+            __pCLIENT->reference_count++; \
         (__cTX)->client = __pCLIENT; \
     } while(0)
 typedef struct ogs_sbi_client_s {
@@ -46,11 +48,13 @@ typedef struct ogs_sbi_client_s {
 
     int             (*cb)(ogs_sbi_response_t *response, void *data);
 
-    ogs_timer_t     *t_curl;                /* timer for CURL */
-    ogs_list_t      connection_list;        /* CURL connection list */
+    ogs_timer_t     *t_curl;            /* timer for CURL */
+    ogs_list_t      connection_list;    /* CURL connection list */
 
-    void            *multi;                 /* CURL multi handle */
-    int             still_running;          /* number of running CURL handle */
+    void            *multi;             /* CURL multi handle */
+    int             still_running;      /* number of running CURL handle */
+
+    unsigned int    reference_count;    /* reference count for memory free */
 } ogs_sbi_client_t;
 
 void ogs_sbi_client_init(int num_of_sockinfo_pool, int num_of_connection_pool);

@@ -134,8 +134,6 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
                                     nrf_nf_state_de_registered)) {
                             nrf_nf_fsm_fini(nf_instance);
                             ogs_sbi_nf_instance_remove(nf_instance);
-
-                            /* FIXME : Remove unnecessary Client */
                         } else if (OGS_FSM_CHECK(&nf_instance->sm,
                                     nrf_nf_state_exception)) {
                             ogs_error("State machine exception");
@@ -143,8 +141,6 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
                             nrf_nf_fsm_fini(nf_instance);
                             ogs_sbi_nf_instance_remove(nf_instance);
-
-                            /* FIXME : Remove unnecessary Client */
                         }
                     }
                 END

@@ -167,6 +167,7 @@ bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
     if (!addr) {
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 message, "Invalid URI", subscription->notification_uri);
+        ogs_sbi_subscription_remove(subscription);
         return false;
     }
 
