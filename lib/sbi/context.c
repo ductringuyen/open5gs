@@ -453,7 +453,6 @@ void ogs_sbi_nf_instance_clear(ogs_sbi_nf_instance_t *nf_instance)
             ogs_freeaddrinfo(nf_instance->ipv6[i]);
     }
 
-
     ogs_sbi_nf_service_remove_all(nf_instance);
 }
 
@@ -640,6 +639,9 @@ void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
 
     ogs_sbi_nf_service_clear(nf_service);
 
+    if (nf_service->client)
+        ogs_sbi_client_remove(nf_service->client);
+
     ogs_pool_free(&nf_service_pool, nf_service);
 }
 
@@ -692,10 +694,8 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
         (client->tls.key && client->tls.pem) ?
             OpenAPI_uri_scheme_https : OpenAPI_uri_scheme_http);
     ogs_assert(nf_service);
-#if 0
     ogs_assert(nf_service->client != client);
     OGS_SETUP_SBI_CLIENT(nf_service, client);
-#endif
 
     hostname = NULL;
     ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
@@ -763,7 +763,7 @@ static ogs_sbi_client_t *find_client_by_fqdn(char *fqdn, int port)
     return client;
 }
 
-ogs_sbi_client_t *ogs_sbi_nf_instance_find_client(
+static ogs_sbi_client_t *nf_instance_find_client(
         ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_client_t *client = NULL;
@@ -786,13 +786,10 @@ ogs_sbi_client_t *ogs_sbi_nf_instance_find_client(
         }
     }
 
-    ogs_sbi_nf_service_find_client_all(nf_instance);
-
     return client;
 }
 
-ogs_sbi_client_t *ogs_sbi_nf_service_find_client(
-        ogs_sbi_nf_service_t *nf_service)
+static void nf_service_associate_client(ogs_sbi_nf_service_t *nf_service)
 {
     ogs_sbi_client_t *client = NULL;
     ogs_sockaddr_t *addr = NULL;
@@ -817,24 +814,18 @@ ogs_sbi_client_t *ogs_sbi_nf_service_find_client(
         }
     }
 
-    if (!client) {
-        ogs_sbi_nf_instance_t *nf_instance = NULL;
-        nf_instance = nf_service->nf_instance;
-        ogs_assert(nf_instance);
-        client = nf_instance->client;
-    }
-
-    return client;
+    if (client)
+        OGS_SETUP_SBI_CLIENT(nf_service, client);
 }
 
-void ogs_sbi_nf_service_find_client_all(ogs_sbi_nf_instance_t *nf_instance)
+static void nf_service_associate_client_all(ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_nf_service_t *nf_service = NULL;
 
     ogs_assert(nf_instance);
 
     ogs_list_for_each(&nf_instance->nf_service_list, nf_service)
-        ogs_sbi_nf_service_find_client(nf_service);
+        nf_service_associate_client(nf_service);
 }
 
 bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
@@ -843,7 +834,7 @@ bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
 
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_nf_instance_find_client(nf_instance);
+    client = nf_instance_find_client(nf_instance);
     if (!client) return false;
 
     if (nf_instance->client && nf_instance->client != client) {
@@ -852,6 +843,8 @@ bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
     }
 
     OGS_SETUP_SBI_CLIENT(nf_instance, client);
+
+    nf_service_associate_client_all(nf_instance);
 
     return true;
 }

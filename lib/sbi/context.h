@@ -162,11 +162,6 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
         ogs_sbi_nf_instance_t *nf_instance,
         char *name, ogs_sbi_client_t *client);
 
-ogs_sbi_client_t *ogs_sbi_nf_instance_find_client(
-        ogs_sbi_nf_instance_t *nf_instance);
-ogs_sbi_client_t *ogs_sbi_nf_service_find_client(
-        ogs_sbi_nf_service_t *nf_service);
-void ogs_sbi_nf_service_find_client_all(ogs_sbi_nf_instance_t *nf_instance);
 bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance);
 
 ogs_sbi_subscription_t *ogs_sbi_subscription_add(void);
