@@ -154,6 +154,32 @@ libsbi_openapi_sources = files('''
     model/hss_authentication_vectors.c
     model/hss_av_type.c
 
+    model/amf3_gpp_access_registration.c
+    model/amf3_gpp_access_registration_modification.c
+    model/amf_dereg_info.c
+    model/amf_non3_gpp_access_registration.c
+    model/amf_non3_gpp_access_registration_modification.c
+    model/backup_amf_info.c
+    model/cm_info.c
+    model/cm_info_report.c
+    model/cm_state.c
+    model/deregistration_data.c
+    model/deregistration_reason.c
+    model/eps_interworking_info.c
+    model/eps_iwk_pgw.c
+    model/ims_vo_ps.c
+    model/location_info.c
+    model/network_node_diameter_address.c
+    model/patch_result.c
+    model/pcscf_restoration_notification.c
+    model/pei_update_info.c
+    model/registration_reason.c
+    model/report_item.c
+    model/smf_registration.c
+    model/smf_registration_info.c
+    model/smsf_registration.c
+    model/trigger_request.c
+    model/vgmlc_address.c
 '''.split())
 
 libsbi_openapi_inc = include_directories('.')
