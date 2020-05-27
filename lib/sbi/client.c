@@ -113,66 +113,6 @@ ogs_sbi_client_t *ogs_sbi_client_add(ogs_sockaddr_t *addr)
     return client;
 }
 
-ogs_sbi_client_t *ogs_sbi_client_find_or_add(char *url)
-{
-    int rv;
-
-    ogs_sbi_client_t *client = NULL;
-    struct yuarel yuarel;
-    char *p = ogs_strdup(url);
-    int port;
-
-    ogs_sockaddr_t *addr = NULL;
-
-    rv = yuarel_parse(&yuarel, p);
-    if (rv != OGS_OK) {
-        ogs_free(p);
-        ogs_error("yuarel_parse() failed [%s]", url);
-        return NULL;
-    }
-
-    if (!yuarel.scheme) {
-        ogs_error("No http.scheme found [%s]", url);
-        ogs_free(p);
-        return NULL;
-    }
-
-    if (strcmp(yuarel.scheme, "https") == 0) {
-        port = OGS_SBI_HTTPS_PORT;
-    } else if (strcmp(yuarel.scheme, "http") == 0) {
-        port = OGS_SBI_HTTP_PORT;
-    } else {
-        ogs_error("Invalid http.scheme [%s:%s]", yuarel.scheme, url);
-        ogs_free(p);
-        return NULL;
-    }
-
-    if (!yuarel.host) {
-        ogs_error("No http.host found [%s]", url);
-        ogs_free(p);
-        return NULL;
-    }
-
-    if (yuarel.port) port = yuarel.port;
-
-    rv = ogs_getaddrinfo(&addr, AF_UNSPEC, yuarel.host, port, 0);
-    if (rv != OGS_OK) {
-        ogs_error("ogs_getaddrinfo() failed [%s]", url);
-        ogs_free(p);
-    }
-
-    client = ogs_sbi_client_find(addr);
-    if (!client) {
-        client = ogs_sbi_client_add(addr);
-        ogs_assert(client);
-    }
-
-    ogs_freeaddrinfo(addr);
-    ogs_free(p);
-
-    return client;
-}
-
 void ogs_sbi_client_remove(ogs_sbi_client_t *client)
 {
     ogs_assert(client);

@@ -61,7 +61,6 @@ void ogs_sbi_client_init(int num_of_sockinfo_pool, int num_of_connection_pool);
 void ogs_sbi_client_final(void);
 
 ogs_sbi_client_t *ogs_sbi_client_add(ogs_sockaddr_t *addr);
-ogs_sbi_client_t *ogs_sbi_client_find_or_add(char *uri);
 void ogs_sbi_client_remove(ogs_sbi_client_t *client);
 ogs_sbi_client_t *ogs_sbi_client_find(ogs_sockaddr_t *addr);
 
