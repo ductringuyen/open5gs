@@ -25,9 +25,10 @@ void OpenAPI_inline_response_200_free(OpenAPI_inline_response_200_t *inline_resp
     OpenAPI_lnode_t *node;
     OpenAPI_list_for_each(inline_response_200->_links, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        /*
-           OpenAPI_links_value_schema_free(localKeyValue->value);
-         */
+        ogs_assert_if_reached();
+#if 0
+        OpenAPI_links_value_schema_free(localKeyValue->value);
+#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(inline_response_200->_links);

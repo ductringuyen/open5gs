@@ -12,6 +12,7 @@
 #include "../include/list.h"
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
+#include "auth_result.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,15 +20,15 @@ extern "C" {
 
 typedef struct OpenAPI_rg_auth_ctx_s OpenAPI_rg_auth_ctx_t;
 typedef struct OpenAPI_rg_auth_ctx_s {
-    int auth_ind;
+    OpenAPI_auth_result_e auth_result;
     char *supi;
-    char *supported_features;
+    int auth_ind;
 } OpenAPI_rg_auth_ctx_t;
 
 OpenAPI_rg_auth_ctx_t *OpenAPI_rg_auth_ctx_create(
-    int auth_ind,
+    OpenAPI_auth_result_e auth_result,
     char *supi,
-    char *supported_features
+    int auth_ind
     );
 void OpenAPI_rg_auth_ctx_free(OpenAPI_rg_auth_ctx_t *rg_auth_ctx);
 OpenAPI_rg_auth_ctx_t *OpenAPI_rg_auth_ctx_parseFromJSON(cJSON *rg_auth_ctxJSON);
