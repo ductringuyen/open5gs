@@ -27,10 +27,7 @@ void OpenAPI_cag_data_free(OpenAPI_cag_data_t *cag_data)
     OpenAPI_lnode_t *node;
     OpenAPI_list_for_each(cag_data->cag_infos, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_cag_info_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(cag_data->cag_infos);

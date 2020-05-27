@@ -29,10 +29,7 @@ void OpenAPI_ue_context_in_smf_data_free(OpenAPI_ue_context_in_smf_data_t *ue_co
     OpenAPI_lnode_t *node;
     OpenAPI_list_for_each(ue_context_in_smf_data->pdu_sessions, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_pdu_session_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(ue_context_in_smf_data->pdu_sessions);

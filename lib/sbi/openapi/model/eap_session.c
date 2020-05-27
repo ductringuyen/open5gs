@@ -35,10 +35,7 @@ void OpenAPI_eap_session_free(OpenAPI_eap_session_t *eap_session)
     ogs_free(eap_session->k_seaf);
     OpenAPI_list_for_each(eap_session->_links, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_links_value_schema_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(eap_session->_links);

@@ -30,10 +30,7 @@ void OpenAPI_smf_selection_subscription_data_free(OpenAPI_smf_selection_subscrip
     ogs_free(smf_selection_subscription_data->supported_features);
     OpenAPI_list_for_each(smf_selection_subscription_data->subscribed_snssai_infos, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_snssai_info_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(smf_selection_subscription_data->subscribed_snssai_infos);

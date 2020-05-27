@@ -35,10 +35,7 @@ void OpenAPI_sequence_number_free(OpenAPI_sequence_number_t *sequence_number)
     ogs_free(sequence_number->sqn);
     OpenAPI_list_for_each(sequence_number->last_indexes, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
-        OpenAPI__free(localKeyValue->value);
-#endif
+        ogs_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(sequence_number->last_indexes);

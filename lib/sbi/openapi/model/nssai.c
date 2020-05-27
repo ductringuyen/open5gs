@@ -43,10 +43,7 @@ void OpenAPI_nssai_free(OpenAPI_nssai_t *nssai)
     ogs_free(nssai->provisioning_time);
     OpenAPI_list_for_each(nssai->additional_snssai_data, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_additional_snssai_data_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(nssai->additional_snssai_data);

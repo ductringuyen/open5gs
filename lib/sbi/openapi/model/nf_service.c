@@ -130,10 +130,7 @@ void OpenAPI_nf_service_free(OpenAPI_nf_service_t *nf_service)
     ogs_free(nf_service->vendor_id);
     OpenAPI_list_for_each(nf_service->supported_vendor_specific_features, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
-        OpenAPI__free(localKeyValue->value);
-#endif
+        ogs_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(nf_service->supported_vendor_specific_features);

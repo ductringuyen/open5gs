@@ -25,10 +25,7 @@ void OpenAPI_eps_interworking_info_free(OpenAPI_eps_interworking_info_t *eps_int
     OpenAPI_lnode_t *node;
     OpenAPI_list_for_each(eps_interworking_info->eps_iwk_pgws, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_object_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(eps_interworking_info->eps_iwk_pgws);

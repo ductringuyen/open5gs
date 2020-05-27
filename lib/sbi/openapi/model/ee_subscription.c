@@ -34,10 +34,7 @@ void OpenAPI_ee_subscription_free(OpenAPI_ee_subscription_t *ee_subscription)
     ogs_free(ee_subscription->callback_reference);
     OpenAPI_list_for_each(ee_subscription->monitoring_configurations, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_monitoring_configuration_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(ee_subscription->monitoring_configurations);

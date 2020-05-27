@@ -33,10 +33,7 @@ void OpenAPI_ue_authentication_ctx_free(OpenAPI_ue_authentication_ctx_t *ue_auth
     OpenAPI_av5g_aka_free(ue_authentication_ctx->_5g_auth_data);
     OpenAPI_list_for_each(ue_authentication_ctx->_links, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_links_value_schema_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(ue_authentication_ctx->_links);

@@ -43,29 +43,20 @@ void OpenAPI_shared_data_free(OpenAPI_shared_data_t *shared_data)
     OpenAPI_sms_management_subscription_data_free(shared_data->shared_sms_mng_subs_data);
     OpenAPI_list_for_each(shared_data->shared_dnn_configurations, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_dnn_configuration_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(shared_data->shared_dnn_configurations);
     OpenAPI_trace_data_free(shared_data->shared_trace_data);
     OpenAPI_list_for_each(shared_data->shared_snssai_infos, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_snssai_info_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(shared_data->shared_snssai_infos);
     OpenAPI_list_for_each(shared_data->shared_vn_group_datas, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
-        ogs_assert_if_reached();
-#if 0
         OpenAPI_vn_group_data_free(localKeyValue->value);
-#endif
         ogs_free(localKeyValue);
     }
     OpenAPI_list_free(shared_data->shared_vn_group_datas);
