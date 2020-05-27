@@ -1612,9 +1612,10 @@ components:
         subscribedDnnList:
           type: array
           items:
-            anyOf:
-              - $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
-              - $ref: 'TS29571_CommonData.yaml#/components/schemas/WildcardDnn'
+#            anyOf:
+#              - $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
+#              - $ref: 'TS29571_CommonData.yaml#/components/schemas/WildcardDnn'
+              $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
         serviceGapTime:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/DurationSec'
         traceData:
@@ -1732,9 +1733,10 @@ components:
         - dnn
       properties:
         dnn:
-          anyOf:
-            - $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
-            - $ref: 'TS29571_CommonData.yaml#/components/schemas/WildcardDnn'
+#          anyOf:
+#            - $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
+#            - $ref: 'TS29571_CommonData.yaml#/components/schemas/WildcardDnn'
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
         defaultDnnIndicator:
           $ref: '#/components/schemas/DnnIndicator'
         lboRoamingAllowed:
@@ -2651,8 +2653,8 @@ components:
 # ENUMS:
 
     DataSetName:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - AM
           - SMF_SEL
@@ -2664,79 +2666,79 @@ components:
           - SMS_MNG
           - LCS_PRIVACY
           - LCS_MO
-        - type: string
+          type: string
 
     PduSessionContinuityInd:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - MAINTAIN_PDUSESSION
           - RECONNECT_PDUSESSION
           - RELEASE_PDUSESSION
-        - type: string
+          type: string
 
     LocationPrivacyInd:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - LOCATION_DISALLOWED
           - LOCATION_ALLOWED
-        - type: string
+          type: string
 
     PrivacyCheckRelatedAction:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - LOCATION_NOT_ALLOWED
           - LOCATION_ALLOWED_WITH_NOTIFICATION
           - LOCATION_ALLOWED_WITHOUT_NOTIFICATION
           - LOCATION_ALLOWED_WITHOUT_RESPONSE
           - LOCATION_RESTRICTED_WITHOUT_RESPONSE
-        - type: string
+          type: string
 
     LcsClientClass:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - BROADCAST_SERVICE
           - OM_IN_HPLMN
           - OM_IN_VPLMN
           - ANONYMOUS_LOCATION_SERVICE
           - SPECIFIC_SERVICE
-        - type: string
+          type: string
 
     LcsMoServiceClass:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - BASIC_SELF_LOCATION
           - AUTONOMOUS_SELF_LOCATION
           - TRANSFER_TO_THIRD_PARTY
-        - type: string
+          type: string
 
     OperationMode:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - WB_S1
           - NB_S1
           - WB_N1
           - NB_N1
-        - type: string
+          type: string
 
     SorUpdateIndicator:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - INITIAL_REGISTRATION
           - EMERGENCY_REGISTRATION
-        - type: string
+          type: string
 
     CodeWordInd:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - CODEWORD_CHECK_IN_UE
           - CODEWORD_CHECK_IN_GMLC
-        - type: string
+          type: string
 
