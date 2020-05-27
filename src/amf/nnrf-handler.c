@@ -155,10 +155,15 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
             ogs_assert(nf_instance);
 
             amf_nf_fsm_init(nf_instance);
+
             ogs_info("(NRF-notify) NF registered [%s]", nf_instance->id);
-        } else
+        } else {
+            OGS_FSM_TRAN(&nf_instance->sm, amf_nf_state_registered);
+            ogs_fsm_dispatch(&nf_instance->sm, NULL);
+
             ogs_warn("(NRF-notify) NF [%s] has already been added",
                     NFProfile->nf_instance_id);
+        }
 
         handled = ogs_sbi_nnrf_handle_nf_profile(
                     nf_instance, NFProfile, session, message);
@@ -181,8 +186,9 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
         nf_instance = ogs_sbi_nf_instance_find(NFProfile->nf_instance_id);
         if (nf_instance) {
             ogs_info("(NRF-notify) NF de-registered [%s]", nf_instance->id);
-            amf_nf_fsm_fini(nf_instance);
-            ogs_sbi_nf_instance_remove(nf_instance);
+
+            OGS_FSM_TRAN(&nf_instance->sm, amf_nf_state_de_registered);
+            ogs_fsm_dispatch(&nf_instance->sm, NULL);
 
             /* FIXME : Remove unnecessary Client */
         } else {
@@ -240,10 +246,15 @@ void amf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             ogs_assert(nf_instance);
 
             amf_nf_fsm_init(nf_instance);
+
             ogs_info("(NF-discover) NF registered [%s]", nf_instance->id);
-        } else
+        } else {
+            OGS_FSM_TRAN(&nf_instance->sm, amf_nf_state_registered);
+            ogs_fsm_dispatch(&nf_instance->sm, NULL);
+
             ogs_warn("(NF-discover) NF [%s] has already been added",
                     NFProfile->nf_instance_id);
+        }
 
         if (NF_INSTANCE_IS_OTHERS(nf_instance->id)) {
             handled = ogs_sbi_nnrf_handle_nf_profile(

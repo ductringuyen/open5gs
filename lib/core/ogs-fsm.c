@@ -58,7 +58,9 @@ void ogs_fsm_dispatch(void *sm, void *event)
     fsm_event_t *e = event;
     ogs_fsm_handler_t tmp = s->state;
 
-    (*tmp)(s, e);
+    if (e)
+        (*tmp)(s, e);
+
     if (s->state != tmp) {
         if (e) {
             e->id = OGS_FSM_EXIT_SIG;
