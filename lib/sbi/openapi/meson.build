@@ -310,6 +310,79 @@ libsbi_openapi_sources = files('''
     model/valid_time_period.c
     model/vn_group_data.c
 
+    model/access_and_mobility_data.c
+	model/acs_info_rm.c
+	model/amf_subscription_info.c
+	model/association_type.c
+	model/auth_method.c
+	model/authentication_subscription.c
+	model/authorization_data.c
+	model/battery_indication_rm.c
+	model/cag_ack_data.c
+	model/communication_characteristics.c
+	model/data_change_notify.c
+	model/datalink_reporting_configuration.c
+	model/ddd_traffic_descriptor.c
+	model/dl_data_delivery_status.c
+	model/domain_name_protocol.c
+	model/ec_restriction.c
+	model/ee_profile_data.c
+	model/ee_subscription.c
+	model/eutra_location.c
+	model/event_report_mode.c
+	model/event_type.c
+	model/expected_ue_behaviour.c
+	model/exposure_data_change_notification.c
+	model/exposure_data_subscription.c
+	model/hfc_node_id.c
+	model/identity_data.c
+	model/lcs_privacy.c
+	model/location_accuracy.c
+	model/location_reporting_configuration.c
+	model/model_5_g_vn_group_configuration.c
+	model/model_5_g_vn_group_data.c
+	model/monitoring_configuration.c
+	model/n3ga_location.c
+	model/nr_location.c
+	model/nssai_ack_data.c
+	model/odb_data.c
+	model/operator_specific_data_container.c
+	model/pdu_session_management_data.c
+	model/pdu_session_status.c
+	model/pfd_content.c
+	model/pfd_data_for_app.c
+	model/pfd_data_for_app_ext.c
+	model/pfd_data_for_app_ext_all_of.c
+	model/pp_active_time.c
+	model/pp_data.c
+	model/pp_dl_packet_count_ext.c
+	model/pp_maximum_latency.c
+	model/pp_maximum_response_time.c
+	model/pp_subs_reg_timer.c
+	model/problem_details_2.c
+	model/provisioned_data_sets.c
+	model/reporting_options.c
+	model/rm_info.c
+	model/rm_state.c
+	model/roaming_odb.c
+	model/route_information.c
+	model/route_to_location.c
+	model/scheduled_communication_time_rm.c
+	model/scheduled_communication_type_rm.c
+	model/sequence_number.c
+	model/sign.c
+	model/sms_support.c
+	model/sor_data.c
+	model/sqn_scheme.c
+	model/stationary_indication_rm.c
+	model/subscription_data_subscriptions.c
+	model/traffic_profile_rm.c
+	model/ue_reachability.c
+	model/ue_update_status.c
+	model/upu_data_2.c
+	model/user_identifier.c
+	model/user_location.c
+
 '''.split())
 
 libsbi_openapi_inc = include_directories('.')

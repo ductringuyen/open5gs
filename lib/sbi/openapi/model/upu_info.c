@@ -34,7 +34,7 @@ void OpenAPI_upu_info_free(OpenAPI_upu_info_t *upu_info)
     }
     OpenAPI_lnode_t *node;
     OpenAPI_list_for_each(upu_info->upu_data_list, node) {
-        OpenAPI_upu_data_free(node->data);
+        OpenAPI_upu_data_2_free(node->data);
     }
     OpenAPI_list_free(upu_info->upu_data_list);
     ogs_free(upu_info->upu_mac_iausf);
@@ -66,7 +66,7 @@ cJSON *OpenAPI_upu_info_convertToJSON(OpenAPI_upu_info_t *upu_info)
     OpenAPI_lnode_t *upu_data_list_node;
     if (upu_info->upu_data_list) {
         OpenAPI_list_for_each(upu_info->upu_data_list, upu_data_list_node) {
-            cJSON *itemLocal = OpenAPI_upu_data_convertToJSON(upu_data_list_node->data);
+            cJSON *itemLocal = OpenAPI_upu_data_2_convertToJSON(upu_data_list_node->data);
             if (itemLocal == NULL) {
                 ogs_error("OpenAPI_upu_info_convertToJSON() failed [upu_data_list]");
                 goto end;
@@ -144,7 +144,7 @@ OpenAPI_upu_info_t *OpenAPI_upu_info_parseFromJSON(cJSON *upu_infoJSON)
             ogs_error("OpenAPI_upu_info_parseFromJSON() failed [upu_data_list]");
             goto end;
         }
-        OpenAPI_upu_data_t *upu_data_listItem = OpenAPI_upu_data_parseFromJSON(upu_data_list_local_nonprimitive);
+        OpenAPI_upu_data_2_t *upu_data_listItem = OpenAPI_upu_data_2_parseFromJSON(upu_data_list_local_nonprimitive);
 
         OpenAPI_list_add(upu_data_listList, upu_data_listItem);
     }

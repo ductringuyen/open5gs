@@ -3421,12 +3421,12 @@ components:
         dataTypeDefinition:
           type: string
         value:
-          oneOf:
-            - type: string
-            - type: integer
-            - type: number
-            - type: boolean
-            - type: object
+#          oneOf:
+            type: string
+#            - type: integer
+#            - type: number
+#            - type: boolean
+#            - type: object
         supportedFeatures:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
     AuthMethod:
