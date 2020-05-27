@@ -147,7 +147,6 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
     if (NotificationData->event ==
             OpenAPI_notification_event_type_NF_REGISTERED) {
-        ogs_sbi_client_t *client = NULL;
 
         nf_instance = ogs_sbi_nf_instance_find(NFProfile->nf_instance_id);
         if (!nf_instance) {
@@ -171,20 +170,7 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
         ogs_info("(NRF-notify) NF Profile updated [%s]", nf_instance->id);
 
-        client = ogs_sbi_nf_instance_find_client(nf_instance);
-        if (!client) {
-            ogs_error("Cannot find client [%s]", nf_instance->id);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                    message, "Cannot find client", nf_instance->id);
-            return false;
-        }
-
-        if (nf_instance->client && nf_instance->client != client) {
-            ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
-            ogs_sbi_client_remove(nf_instance->client);
-        }
-        smf_sbi_nf_associate_client(nf_instance, client);
+        smf_sbi_nf_associate_client(nf_instance);
 
     } else if (NotificationData->event ==
             OpenAPI_notification_event_type_NF_DEREGISTERED) {
@@ -239,7 +225,6 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
     OpenAPI_list_for_each(SearchResult->nf_instances, node) {
         OpenAPI_nf_profile_t *NFProfile = NULL;
         ogs_sbi_nf_instance_t *nf_instance = NULL;
-        ogs_sbi_client_t *client = NULL;
 
         if (!node->data) continue;
 
@@ -269,17 +254,7 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
                 continue;
             }
 
-            client = ogs_sbi_nf_instance_find_client(nf_instance);
-            if (!client) {
-                ogs_error("Cannot find client [%s]", nf_instance->id);
-                continue;
-            }
-
-            if (nf_instance->client && nf_instance->client != client) {
-                ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
-                ogs_sbi_client_remove(nf_instance->client);
-            }
-            smf_sbi_nf_associate_client(nf_instance, client);
+            smf_sbi_nf_associate_client(nf_instance);
 
             /* TIME : Update validity from NRF */
             if (SearchResult->validity_period) {

@@ -29,8 +29,7 @@ extern "C" {
 int amf_sbi_open(void);
 void amf_sbi_close(void);
 
-void amf_sbi_nf_associate_client(
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_client_t *client);
+void amf_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance);
 
 void amf_sbi_send_nf_register(ogs_sbi_nf_instance_t *nf_instance);
 void amf_sbi_send_nf_update(ogs_sbi_nf_instance_t *nf_instance);

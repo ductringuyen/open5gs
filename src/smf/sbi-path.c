@@ -88,8 +88,9 @@ int smf_sbi_open(void)
         ogs_sbi_nf_service_add_version(service, (char*)OGS_SBI_API_VERSION,
                 (char*)OGS_SBI_API_FULL_VERSION, NULL);
 
-        smf_sbi_nf_associate_client(nf_instance, client);
         smf_nf_fsm_init(nf_instance);
+
+        client->cb = client_cb;
     }
 
     return OGS_OK;
@@ -100,13 +101,22 @@ void smf_sbi_close(void)
     ogs_sbi_server_stop_all();
 }
 
-void smf_sbi_nf_associate_client(
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_client_t *client)
+void smf_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
 {
+    ogs_sbi_client_t *client = NULL;
+
     ogs_assert(nf_instance);
+
+    client = ogs_sbi_nf_instance_find_client(nf_instance);
     ogs_assert(client);
 
+    if (nf_instance->client && nf_instance->client != client) {
+        ogs_warn("NF EndPoint updated [%s]", nf_instance->id);
+        ogs_sbi_client_remove(nf_instance->client);
+    }
+
     OGS_SETUP_SBI_CLIENT(nf_instance, client);
+
     client->cb = client_cb;
 }
 
