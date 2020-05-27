@@ -39,8 +39,7 @@ void ogs_fsm_init(void *sm, void *event)
     ogs_fsm_t *s = sm;
     fsm_event_t *e = event;
 
-    if (s->init != NULL)
-    {
+    if (s->init != NULL) {
         (*s->init)(s, e);
         if (s->init != s->state) {
             if (e) {
