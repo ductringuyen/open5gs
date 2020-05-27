@@ -198,14 +198,6 @@ void ogs_sbi_client_remove(ogs_sbi_client_t *client)
     ogs_pool_free(&client_pool, client);
 }
 
-void ogs_sbi_client_remove_all(void)
-{
-    ogs_sbi_client_t *client = NULL, *next_client = NULL;
-
-    ogs_list_for_each_safe(&ogs_sbi_self()->client_list, next_client, client)
-        ogs_sbi_client_remove(client);
-}
-
 ogs_sbi_client_t *ogs_sbi_client_find(ogs_sockaddr_t *addr)
 {
     ogs_sbi_client_t *client = NULL;
