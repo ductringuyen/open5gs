@@ -681,7 +681,9 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
             OpenAPI_uri_scheme_https : OpenAPI_uri_scheme_http);
     ogs_assert(nf_service);
     ogs_assert(nf_service->client != client);
+#if 0
     OGS_SETUP_SBI_CLIENT(nf_service, client);
+#endif
 
     hostname = NULL;
     ogs_list_for_each(&ogs_sbi_self()->server_list, server) {

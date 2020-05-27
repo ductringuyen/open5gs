@@ -162,7 +162,8 @@ void smf_sbi_send_nf_status_subscribe(ogs_sbi_client_t *client,
 
     subscription = ogs_sbi_subscription_add();
     ogs_assert(subscription);
-    subscription->client = client;
+
+    OGS_SETUP_SBI_CLIENT(subscription, client);
     subscription->nf_type = nf_type;
     if (nf_instance_id)
         subscription->nf_instance_id = ogs_strdup(nf_instance_id);
