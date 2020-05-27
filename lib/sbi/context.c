@@ -596,13 +596,14 @@ void ogs_sbi_nf_service_add_version(ogs_sbi_nf_service_t *nf_service,
     }
 }
 
-void ogs_sbi_nf_service_remove(ogs_sbi_nf_instance_t *nf_instance,
-        ogs_sbi_nf_service_t *nf_service)
+void ogs_sbi_nf_service_remove(ogs_sbi_nf_service_t *nf_service)
 {
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
     int i;
 
-    ogs_assert(nf_instance);
     ogs_assert(nf_service);
+    nf_instance = nf_service->nf_instance;
+    ogs_assert(nf_instance);
 
     ogs_list_remove(&nf_instance->nf_service_list, nf_service);
 
@@ -639,7 +640,7 @@ void ogs_sbi_nf_service_remove_all(ogs_sbi_nf_instance_t *nf_instance)
 
     ogs_list_for_each_safe(&nf_instance->nf_service_list,
             next_nf_service, nf_service)
-        ogs_sbi_nf_service_remove(nf_instance, nf_service);
+        ogs_sbi_nf_service_remove(nf_service);
 }
 
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_find(
