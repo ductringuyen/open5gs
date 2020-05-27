@@ -1095,8 +1095,8 @@ components:
           type: array
           items:
             $ref: 'TS29571_CommonData.yaml#/components/schemas/BackupAmfInfo'
-#        epsInterworkingInfo:
-#          $ref: '#/components/schemas/EpsInterworkingInfo'
+        epsInterworkingInfo:
+          $ref: '#/components/schemas/EpsInterworkingInfo'
         ueSrvccCapability:
           type: boolean
           nullable: true
