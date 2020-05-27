@@ -182,8 +182,8 @@ bool ogs_sbi_nnrf_handle_nf_profile(ogs_sbi_nf_instance_t *nf_instance,
                         ipv4 = addr;
                     nf_service->addr[nf_service->num_of_addr].
                         ipv6 = addr6;
+                    nf_service->num_of_addr++;
                 }
-                nf_service->num_of_addr++;
             }
         }
     }
