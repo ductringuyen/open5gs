@@ -31,11 +31,10 @@ extern "C" {
 #define OGS_SETUP_SBI_NF_INSTANCE(__cTX, __pNF_INSTANCE) \
     do { \
         ogs_assert((__cTX)); \
-        if ((__pNF_INSTANCE)) { \
-            if ((__cTX)->nf_instance != __pNF_INSTANCE) \
-                __pNF_INSTANCE->reference_count++; \
-            (__cTX)->nf_instance = __pNF_INSTANCE; \
-        } \
+        ogs_assert((__pNF_INSTANCE)); \
+        if ((__cTX)->nf_instance != __pNF_INSTANCE) \
+            __pNF_INSTANCE->reference_count++; \
+        (__cTX)->nf_instance = __pNF_INSTANCE; \
     } while(0)
 typedef struct ogs_sbi_client_s ogs_sbi_client_t;
 typedef struct ogs_sbi_context_s {

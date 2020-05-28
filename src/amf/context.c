@@ -1117,6 +1117,7 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
     /* Associate NF Instance */
     amf_ue_associate_nrf(amf_ue);
     amf_ue_associate_ausf(amf_ue);
+
 #if 0
     /* Clear VLR */
     amf_ue->csmap = NULL;
@@ -1413,25 +1414,31 @@ int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd)
 
 void amf_ue_associate_nrf(amf_ue_t *amf_ue)
 {
-    ogs_sbi_nf_instance_t *self = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
 
     ogs_assert(amf_ue);
 
-    self = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
-    if (!self) {
-        ogs_fatal("Exception handling for conditions without NRF "
-                    "has not yet been implemented.");
-        ogs_assert_if_reached();
+    nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
+    if (nf_instance) {
+        if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered))
+            OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->nrf, nf_instance);
     }
 
-    OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->nrf, self);
 }
 void amf_ue_associate_ausf(amf_ue_t *amf_ue)
 {
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
     ogs_assert(amf_ue);
 
-    OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->ausf,
-        ogs_sbi_nf_instance_find_by_nf_type(OpenAPI_nf_type_AUSF));
+    ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
+        if (nf_instance->nf_type == OpenAPI_nf_type_AUSF) {
+            if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered)) {
+                OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->ausf, nf_instance);
+                return;
+            }
+        }
+    }
 }
 
 int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue)
