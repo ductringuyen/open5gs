@@ -71,19 +71,16 @@ static int client_cb(ogs_sbi_response_t *response, void *data)
 int amf_sbi_open(void)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
-    ogs_sbi_client_t *client = NULL;
 
     ogs_sbi_server_start_all(server_cb);
 
-    ogs_list_for_each(&ogs_sbi_self()->client_list, client) {
+    ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
         ogs_sbi_nf_service_t *service = NULL;
 
-        nf_instance = ogs_sbi_nf_instance_build_default(
-                amf_self()->nf_type, client);
-        ogs_assert(nf_instance);
+        ogs_sbi_nf_instance_build_default(nf_instance, amf_self()->nf_type);
 
         service = ogs_sbi_nf_service_build_default(nf_instance,
-                (char*)OGS_SBI_SERVICE_NAME_SMF_PDUSESSION, client);
+                (char*)OGS_SBI_SERVICE_NAME_SMF_PDUSESSION);
         ogs_assert(service);
         ogs_sbi_nf_service_add_version(service, (char*)OGS_SBI_API_VERSION,
                 (char*)OGS_SBI_API_FULL_VERSION, NULL);

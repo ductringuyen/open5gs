@@ -303,6 +303,7 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                     ogs_yaml_iter_t sbi_array, sbi_iter;
                     ogs_yaml_iter_recurse(&remote_iter, &sbi_array);
                     do {
+                        ogs_sbi_nf_instance_t *nf_instance = NULL;
                         ogs_sbi_client_t *client = NULL;
                         ogs_sockaddr_t *addr = NULL;
                         int family = AF_UNSPEC;
@@ -399,6 +400,12 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                                 ogs_config()->parameter.prefer_ipv4);
                         client = ogs_sbi_client_add(addr);
                         ogs_assert(client);
+
+                        nf_instance = ogs_sbi_nf_instance_add(
+                                ogs_sbi_self()->nf_instance_id);
+                        ogs_assert(nf_instance);
+
+                        OGS_SETUP_SBI_CLIENT(nf_instance, client);
 
                         if (key) client->tls.key = key;
                         if (pem) client->tls.pem = pem;
@@ -505,20 +512,16 @@ ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find(char *id)
     return nf_instance;
 }
 
-ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_build_default(
-        OpenAPI_nf_type_e nf_type, ogs_sbi_client_t *client)
+void ogs_sbi_nf_instance_build_default(
+        ogs_sbi_nf_instance_t *nf_instance, OpenAPI_nf_type_e nf_type)
 {
     ogs_sbi_server_t *server = NULL;
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
     char *hostname = NULL;
 
-    nf_instance = ogs_sbi_nf_instance_add(ogs_sbi_self()->nf_instance_id);
     ogs_assert(nf_instance);
 
     nf_instance->nf_type = nf_type;
     nf_instance->nf_status = OpenAPI_nf_status_REGISTERED;
-    ogs_assert(nf_instance->client != client);
-    OGS_SETUP_SBI_CLIENT(nf_instance, client);
 
     hostname = NULL;
     ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
@@ -549,8 +552,6 @@ ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_build_default(
 
     if (hostname)
         strcpy(nf_instance->fqdn, hostname);
-
-    return nf_instance;
 }
 
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_add(ogs_sbi_nf_instance_t *nf_instance,
@@ -680,10 +681,10 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_find(
 }
 
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
-        ogs_sbi_nf_instance_t *nf_instance,
-        char *name, ogs_sbi_client_t *client)
+        ogs_sbi_nf_instance_t *nf_instance, char *name)
 {
     ogs_sbi_server_t *server = NULL;
+    ogs_sbi_client_t *client = NULL;
     ogs_sbi_nf_service_t *nf_service = NULL;
     ogs_uuid_t uuid;
     char id[OGS_UUID_FORMATTED_LENGTH + 1];
@@ -691,16 +692,17 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
 
     ogs_assert(nf_instance);
     ogs_assert(name);
-    ogs_assert(client);
 
     ogs_uuid_get(&uuid);
     ogs_uuid_format(id, &uuid);
+
+    client = nf_instance->client;
+    ogs_assert(client);
 
     nf_service = ogs_sbi_nf_service_add(nf_instance, id, name,
         (client->tls.key && client->tls.pem) ?
             OpenAPI_uri_scheme_https : OpenAPI_uri_scheme_http);
     ogs_assert(nf_service);
-    ogs_assert(nf_service->client != client);
     OGS_SETUP_SBI_CLIENT(nf_service, client);
 
     hostname = NULL;
