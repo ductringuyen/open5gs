@@ -563,7 +563,6 @@ amf_ue_t *amf_ue_find_by_teid(uint32_t teid);
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message);
 int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd);
 
-void amf_ue_associate_nrf(amf_ue_t *amf_ue);
 void amf_ue_associate_nf_type(amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type);
 
 int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue);

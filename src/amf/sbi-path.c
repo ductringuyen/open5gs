@@ -129,7 +129,7 @@ static ogs_sbi_nf_instance_t *find_nf_instance(
     if (!amf_ue->nf_type[nf_type].nf_instance) {
         ogs_sbi_send_nf_discover(
             amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
-            OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
+            nf_type, OpenAPI_nf_type_AMF, amf_ue);
         return NULL;
     }
 
