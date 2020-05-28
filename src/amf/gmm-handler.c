@@ -98,12 +98,12 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
 
     ogs_debug("    OLD TAI[PLMN_ID:%06x,TAC:%d]",
             ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
-    ogs_debug("    OLD NR_CGI[PLMN_ID:%06x,CELL_ID:0x%lx]",
+    ogs_debug("    OLD NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]",
             ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id), amf_ue->cgi.cell_id);
     ogs_debug("    TAI[PLMN_ID:%06x,TAC:%d]",
             ogs_plmn_id_hexdump(&ran_ue->saved.tai.plmn_id),
             ran_ue->saved.tai.tac.v);
-    ogs_debug("    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%lx]",
+    ogs_debug("    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]",
             ogs_plmn_id_hexdump(&ran_ue->saved.cgi.plmn_id),
             ran_ue->saved.cgi.cell_id);
 

@@ -440,7 +440,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             if (ECM_CONNECTED(amf_ue)) {
                /* Implcit NG release */
                 ogs_debug("Implicit NG release");
-                ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%ld]",
+                ogs_debug("    RAN_UE_NGAP_ID[%u] AMF_UE_NGAP_ID[%llu]",
                       amf_ue->ran_ue->ran_ue_ngap_id,
                       amf_ue->ran_ue->amf_ue_ngap_id);
                 ran_ue_remove(amf_ue->ran_ue);

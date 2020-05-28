@@ -282,6 +282,7 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
             uint8_t region;
             uint16_t set;
             uint8_t pointer;
+            uint32_t m_tmsi;
 
             memset(&nas_guti, 0, sizeof(ogs_nas_5gs_guti_t));
 
@@ -297,8 +298,8 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
             ogs_amf_id_build(&nas_guti.amf_id, region, set, pointer);
 
             /* size must be 4 */
-            ogs_asn_OCTET_STRING_to_uint32(
-                &FiveG_S_TMSI->fiveG_TMSI, &nas_guti.m_tmsi);
+            ogs_asn_OCTET_STRING_to_uint32(&FiveG_S_TMSI->fiveG_TMSI, &m_tmsi);
+            nas_guti.m_tmsi = m_tmsi;
 
             amf_ue = amf_ue_find_by_guti(&nas_guti);
             if (!amf_ue) {
@@ -315,7 +316,7 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
                 if (ECM_CONNECTED(amf_ue)) {
                    /* Implcit NG release */
                     ogs_debug("Implicit NG release");
-                    ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%ld]",
+                    ogs_debug("    RAN_UE_NGAP_ID[%u] AMF_UE_NGAP_ID[%lld]",
                           amf_ue->ran_ue->ran_ue_ngap_id,
                           amf_ue->ran_ue->amf_ue_ngap_id);
                     ran_ue_remove(amf_ue->ran_ue);
@@ -339,8 +340,8 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
         ogs_error("Not implemented UserLocationInformation[%d]",
                 UserLocationInformation->present);
 
-    ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%ld] "
-            "TAC[%d] CellID[0x%lx]",
+    ogs_debug("    RAN_UE_NGAP_ID[%u] AMF_UE_NGAP_ID[%llu] "
+            "TAC[%d] CellID[0x%llx]",
         ran_ue->ran_ue_ngap_id, ran_ue->amf_ue_ngap_id,
         ran_ue->saved.tai.tac.v, ran_ue->saved.cgi.cell_id);
 
