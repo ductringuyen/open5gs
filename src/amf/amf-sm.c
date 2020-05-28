@@ -235,12 +235,23 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
             SWITCH(sbi_message.h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                    amf_nnrf_handle_nf_discover(&sbi_message);
-                } else {
-                    ogs_error("HTTP response error : %d",
-                            sbi_message.res_status);
-                }
+                amf_ue = e->sbi.data;
+                ogs_assert(amf_ue);
+
+                SWITCH(sbi_message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_GET)
+                    if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
+                        amf_nnrf_handle_nf_discover(&sbi_message);
+                        ogs_fatal("discover");
+                    } else {
+                        ogs_fatal("HTTP response error : %d",
+                                sbi_message.res_status);
+                    }
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid HTTP method [%s]", sbi_message.h.method);
+                END
                 break;
 
             DEFAULT

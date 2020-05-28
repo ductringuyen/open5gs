@@ -355,9 +355,18 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
 #if 0
         if (SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
+            ogs_assert_if_reached(); /* TODO */
             amf_gtp_send_delete_all_sessions(amf_ue);
         } else {
-            amf_s6a_send_air(amf_ue, NULL);
+#endif
+            if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
+                ogs_sbi_send_nf_discover(
+                    amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
+                    OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
+            } else {
+                ogs_fatal("send auth");
+            }
+#if 0
         }
 #endif
         OGS_FSM_TRAN(s, &gmm_state_authentication);
@@ -502,15 +511,6 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-
-        /* TODO : timer */
-        if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
-            ogs_sbi_send_nf_discover(
-                amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
-                OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF);
-        } else {
-            ogs_fatal("send auth");
-        }
         break;
     case OGS_FSM_EXIT_SIG:
         break;
@@ -605,7 +605,13 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             }
 
 #if 0
-            amf_s6a_send_air(amf_ue, NULL);
+            if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
+                ogs_sbi_send_nf_discover(
+                    amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
+                    OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
+            } else {
+                ogs_fatal("send auth");
+            }
 #endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
             break;

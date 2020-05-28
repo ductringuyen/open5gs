@@ -35,7 +35,8 @@ void ogs_sbi_send_nf_status_subscribe(ogs_sbi_client_t *client,
 void ogs_sbi_send_nf_status_unsubscribe(ogs_sbi_subscription_t *subscription);
 
 void ogs_sbi_send_nf_discover(ogs_sbi_nf_instance_t *nf_instance,
-        OpenAPI_nf_type_e target_nf_type, OpenAPI_nf_type_e requester_nf_type);
+        OpenAPI_nf_type_e target_nf_type, OpenAPI_nf_type_e requester_nf_type,
+        void *data);
 
 #ifdef __cplusplus
 }
