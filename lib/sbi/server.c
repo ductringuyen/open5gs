@@ -75,7 +75,7 @@ static void session_timer_expired(void *data);
 void ogs_sbi_server_init(int num_of_session_pool)
 {
     ogs_list_init(&ogs_sbi_self()->server_list);
-    ogs_pool_init(&server_pool, ogs_config()->pool.sbi);
+    ogs_pool_init(&server_pool, ogs_config()->max.nf);
 
     ogs_pool_init(&session_pool, num_of_session_pool);
 }

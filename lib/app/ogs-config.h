@@ -76,6 +76,7 @@ typedef struct ogs_config_s {
         int smf;
         int upf;
         int gnb;
+        int nf;
     } max;
 
     struct {
@@ -84,11 +85,13 @@ typedef struct ogs_config_s {
 
         int ue;
         int pfcp;
-        int sbi;
         int sess;
         int bearer;
         int tunnel;
         int pf;
+        int nf_service;
+        int nf_subscription;
+        int sbi_message;
     } pool;
 
     struct {

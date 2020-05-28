@@ -68,7 +68,7 @@ void ogs_sbi_client_init(int num_of_sockinfo_pool, int num_of_connection_pool)
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     ogs_list_init(&ogs_sbi_self()->client_list);
-    ogs_pool_init(&client_pool, ogs_config()->pool.sbi);
+    ogs_pool_init(&client_pool, ogs_config()->max.nf);
 
     ogs_pool_init(&sockinfo_pool, num_of_sockinfo_pool);
     ogs_pool_init(&connection_pool, num_of_connection_pool);

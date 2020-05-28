@@ -44,17 +44,17 @@ void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr)
 
     ogs_log_install_domain(&__ogs_sbi_domain, "sbi", ogs_core()->log.level);
 
-    /* FIXME : number of pool size */
-    ogs_sbi_message_init(32, 32);
-    ogs_sbi_server_init(32);
-    ogs_sbi_client_init(512, 512);
+    ogs_sbi_message_init(
+        ogs_config()->pool.sbi_message, ogs_config()->pool.sbi_message);
+    ogs_sbi_server_init(ogs_config()->max.nf);
+    ogs_sbi_client_init(ogs_config()->max.nf, ogs_config()->max.nf);
 
     ogs_list_init(&self.nf_instance_list);
-    ogs_pool_init(&nf_instance_pool, ogs_config()->pool.sbi);
-    ogs_pool_init(&nf_service_pool, ogs_config()->pool.sbi);
+    ogs_pool_init(&nf_instance_pool, ogs_config()->max.nf);
+    ogs_pool_init(&nf_service_pool, ogs_config()->pool.nf_service);
 
     ogs_list_init(&self.subscription_list);
-    ogs_pool_init(&subscription_pool, ogs_config()->pool.sbi);
+    ogs_pool_init(&subscription_pool, ogs_config()->pool.nf_subscription);
 
     ogs_uuid_get(&self.uuid);
     ogs_uuid_format(self.nf_instance_id, &self.uuid);
