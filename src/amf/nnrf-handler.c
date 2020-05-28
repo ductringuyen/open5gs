@@ -166,7 +166,10 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
         handled = ogs_sbi_nnrf_handle_nf_profile(
                     nf_instance, NFProfile, session, message);
-        if (!handled) return false;
+        if (!handled) {
+            AMF_NF_INSTANCE_CLEAR("NRF-notify", nf_instance);
+            return false;
+        }
 
         ogs_info("(NRF-notify) NF Profile updated [%s]", nf_instance->id);
 
@@ -176,6 +179,7 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     message, "Cannot find NF EndPoint", nf_instance->id);
+            AMF_NF_INSTANCE_CLEAR("NRF-notify", nf_instance);
             return false;
         }
 
@@ -185,12 +189,7 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
             OpenAPI_notification_event_type_NF_DEREGISTERED) {
         nf_instance = ogs_sbi_nf_instance_find(NFProfile->nf_instance_id);
         if (nf_instance) {
-            ogs_info("(NRF-notify) NF de-registered [%s]", nf_instance->id);
-
-            OGS_FSM_TRAN(&nf_instance->sm, amf_nf_state_de_registered);
-            ogs_fsm_dispatch(&nf_instance->sm, NULL);
-
-            /* FIXME : Remove unnecessary Client */
+            AMF_NF_INSTANCE_CLEAR("NRF-notify", nf_instance);
         } else {
             ogs_warn("(NRF-notify) Not found [%s]", NFProfile->nf_instance_id);
             ogs_sbi_server_send_error(session,
@@ -261,12 +260,14 @@ void amf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             if (!handled) {
                 ogs_error("ogs_sbi_nnrf_handle_nf_profile() failed [%s]",
                         nf_instance->id);
+                AMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
                 continue;
             }
 
             handled = ogs_sbi_nf_associate_client(nf_instance);
             if (!handled) {
                 ogs_error("Cannot assciate NF EndPoint [%s]", nf_instance->id);
+                AMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
                 continue;
             }
 

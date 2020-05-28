@@ -28,6 +28,14 @@
 extern "C" {
 #endif
 
+#define OGS_SETUP_SBI_NF_INSTANCE(__cTX, __pNF_INSTANCE) \
+    do { \
+        ogs_assert((__cTX)); \
+        ogs_assert((__pNF_INSTANCE)); \
+        if ((__cTX)->client != client) \
+            __pNF_INSTANCE->reference_count++; \
+        (__cTX)->client = __pNF_INSTANCE; \
+    } while(0)
 typedef struct ogs_sbi_client_s ogs_sbi_client_t;
 typedef struct ogs_sbi_context_s {
     ogs_pollset_t       *pollset;       /* Poll Set for I/O Multiplexing */
@@ -84,7 +92,8 @@ typedef struct ogs_sbi_nf_instance_s {
 
     ogs_list_t nf_service_list;
 
-    void *client; /* only used in CLIENT */
+    void *client;                   /* only used in CLIENT */
+    unsigned int reference_count;   /* reference count for memory free */
 } ogs_sbi_nf_instance_t;
 
 typedef struct ogs_sbi_nf_service_s {

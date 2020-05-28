@@ -131,6 +131,23 @@ typedef struct amf_context_s {
 
     ogs_list_t      smf_list;       /* SMF SBI Client List */
     void            *smf;           /* Iterator for SMF round-robin */
+
+#define AMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
+    do { \
+        ogs_assert(_nFInstance); \
+        if ((_nFInstance)->reference_count == 1) { \
+            ogs_info("(%s) NF removed [%s]", (_cAUSE), (_nFInstance)->id); \
+            amf_nf_fsm_fini((_nFInstance)); \
+        } else { \
+            /* There is an assocation with other context */ \
+            ogs_info("(%s) NF suspended [%s:%d]", \
+                    (_cAUSE), _nFInstance->id, _nFInstance->reference_count); \
+            OGS_FSM_TRAN(&_nFInstance->sm, amf_nf_state_de_registered); \
+            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
+        } \
+        ogs_sbi_nf_instance_remove(_nFInstance); \
+    } while(0)
+
 } amf_context_t;
 
 typedef struct amf_gnb_s {

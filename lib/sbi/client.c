@@ -116,6 +116,8 @@ ogs_sbi_client_t *ogs_sbi_client_add(ogs_sockaddr_t *addr)
 void ogs_sbi_client_remove(ogs_sbi_client_t *client)
 {
     ogs_assert(client);
+
+    /* ogs_sbi_client_t is always created with reference context */
     ogs_assert(client->reference_count > 0);
 
     client->reference_count--;
