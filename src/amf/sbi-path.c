@@ -171,7 +171,11 @@ void amf_sbi_send_authenticate(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
     ogs_assert(client);
 
-    ogs_fatal("client = %p", client);
+    {
+        char buf[128];
+        ogs_fatal("client = %p, %s:%d", client,
+                OGS_ADDR(client->addr, buf), OGS_PORT(client->addr));
+    }
 #if 0
     request = ogs_nnrf_build_nf_register(nf_instance);
     ogs_assert(request);
