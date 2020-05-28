@@ -274,8 +274,8 @@ ogs_pkbuf_t *ngap_build_downlink_nas_transport(
 
     NAS_PDU = &ie->value.choice.NAS_PDU;
 
-    ogs_debug("    RAN_UE_NGAP_ID[%u] AMF_UE_NGAP_ID[%llu]",
-            ran_ue->ran_ue_ngap_id, ran_ue->amf_ue_ngap_id);
+    ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
+            ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
 
     asn_uint642INTEGER(AMF_UE_NGAP_ID, ran_ue->amf_ue_ngap_id);
     *RAN_UE_NGAP_ID = ran_ue->ran_ue_ngap_id;
@@ -2172,7 +2172,7 @@ ogs_pkbuf_t *ngap_build_error_indication(
         AMF_UE_NGAP_ID = &ie->value.choice.AMF_UE_NGAP_ID;
 
         asn_uint642INTEGER(AMF_UE_NGAP_ID, *amf_ue_ngap_id);
-        ogs_debug("    AMF_UE_NGAP_ID[%llu]", *amf_ue_ngap_id);
+        ogs_debug("    AMF_UE_NGAP_ID[%lld]", (long long)*amf_ue_ngap_id);
     }
 
     if (ran_ue_ngap_id) {
