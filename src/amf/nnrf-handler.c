@@ -219,6 +219,8 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
 void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 {
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
     bool handled;
@@ -234,7 +236,6 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 
     OpenAPI_list_for_each(SearchResult->nf_instances, node) {
         OpenAPI_nf_profile_t *NFProfile = NULL;
-        ogs_sbi_nf_instance_t *nf_instance = NULL;
 
         if (!node->data) continue;
 
@@ -275,7 +276,8 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 
             amf_sbi_setup_client_callback(nf_instance);
 
-            if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_instance->nf_type))
+            if (!OGS_SBI_NF_INSTANCE_GET(
+                        amf_ue->nf_types, nf_instance->nf_type))
                 ogs_sbi_nf_types_associate(amf_ue->nf_types,
                         nf_instance->nf_type, amf_nf_state_registered);
 
@@ -295,11 +297,14 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
     }
 
     if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_authentication)) {
-        if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_AUSF)) {
+        nf_instance = OGS_SBI_NF_INSTANCE_GET(
+                amf_ue->nf_types, OpenAPI_nf_type_AUSF);
+        if (!nf_instance) {
             nas_5gs_send_gmm_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         } else {
             ogs_fatal("129038129321");
+            amf_sbi_send_authenticate(amf_ue, NULL);
         }
     } else {
         ogs_fatal("Should implement other case");

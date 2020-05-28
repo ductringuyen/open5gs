@@ -98,7 +98,7 @@ typedef struct ogs_sbi_nf_instance_s {
     unsigned int reference_count;   /* reference count for memory free */
 } ogs_sbi_nf_instance_t;
 
-#define OGS_SBI_HAVE_NF_TYPE(__aRRAY, __nFType) \
+#define OGS_SBI_NF_INSTANCE_GET(__aRRAY, __nFType) \
     ((__aRRAY)[__nFType].nf_instance) 
 typedef struct ogs_sbi_nf_types_s {
     ogs_sbi_nf_instance_t *nf_instance;

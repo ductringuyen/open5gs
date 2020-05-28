@@ -273,7 +273,8 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             smf_sbi_setup_client_callback(nf_instance);
 
 #if 0
-            if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_instance->nf_type))
+            if (!OGS_SBI_NF_INSTANCE_GET(
+                        amf_ue->nf_types, nf_instance->nf_type))
                 ogs_sbi_nf_types_associate(amf_ue->nf_types,
                         nf_instance->nf_type, amf_nf_state_registered);
 #else

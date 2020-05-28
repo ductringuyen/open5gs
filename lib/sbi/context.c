@@ -850,7 +850,7 @@ bool ogs_sbi_nf_types_associate(
         nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
         if (nf_instance) {
             if (OGS_FSM_CHECK(&nf_instance->sm, state)) {
-                if (OGS_SBI_HAVE_NF_TYPE(
+                if (OGS_SBI_NF_INSTANCE_GET(
                             nf_types, OpenAPI_nf_type_NRF)) {
                     ogs_warn("UE %s-EndPoint updated [%s]",
                             OpenAPI_nf_type_ToString(OpenAPI_nf_type_NRF),
@@ -868,7 +868,7 @@ bool ogs_sbi_nf_types_associate(
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
         if (nf_instance->nf_type == nf_type) {
             if (OGS_FSM_CHECK(&nf_instance->sm, state)) {
-                if (OGS_SBI_HAVE_NF_TYPE(nf_types, nf_type)) {
+                if (OGS_SBI_NF_INSTANCE_GET(nf_types, nf_type)) {
                     ogs_warn("%s-EndPoint updated [%s]",
                             OpenAPI_nf_type_ToString(nf_type),
                             nf_instance->id);

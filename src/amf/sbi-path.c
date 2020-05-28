@@ -121,10 +121,10 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     bool nrf = false;
     bool nf = false;
 
-    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_NRF))
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, OpenAPI_nf_type_NRF))
         nrf = ogs_sbi_nf_types_associate(
             amf_ue->nf_types, OpenAPI_nf_type_NRF, amf_nf_state_registered);
-    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_type))
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, nf_type))
         nf = ogs_sbi_nf_types_associate(
             amf_ue->nf_types, nf_type, amf_nf_state_registered);
 
@@ -148,9 +148,9 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     return amf_ue->nf_types[nf_type].nf_instance;
 }
 
-void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
+void amf_sbi_send_authenticate(
+        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
     ogs_assert(amf_ue);
 
 #if 0
@@ -158,16 +158,20 @@ void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
 #endif
     ogs_sbi_client_t *client = NULL;
 
-    nf_instance = find_or_discover_nf_instance(amf_ue, OpenAPI_nf_type_AUSF);
     if (!nf_instance) {
-        ogs_warn("try to discover AUSF");
-        return;
+        nf_instance = find_or_discover_nf_instance(
+                            amf_ue, OpenAPI_nf_type_AUSF);
+        if (!nf_instance) {
+            ogs_warn("try to discover AUSF");
+            return;
+        }
     }
 
     client = ogs_sbi_client_find_by_service_name(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
     ogs_assert(client);
 
+    ogs_fatal("client = %p", client);
 #if 0
     request = ogs_nnrf_build_nf_register(nf_instance);
     ogs_assert(request);
@@ -175,6 +179,7 @@ void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
 #endif
 }
 
-void amf_sbi_send_confirm_authentications(amf_ue_t *amf_ue)
+void amf_sbi_send_confirm_authentications(
+        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
 }
