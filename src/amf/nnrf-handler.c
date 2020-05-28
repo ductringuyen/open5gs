@@ -18,6 +18,7 @@
  */
 
 #include "sbi-path.h"
+#include "nas-path.h"
 #include "nnrf-handler.h"
 
 void amf_nnrf_handle_nf_register(
@@ -274,6 +275,10 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 
             amf_sbi_setup_client_callback(nf_instance);
 
+            if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_instance->nf_type))
+                ogs_sbi_nf_types_associate(amf_ue->nf_types,
+                        nf_instance->nf_type, amf_nf_state_registered);
+
             /* TIME : Update validity from NRF */
             if (SearchResult->validity_period) {
                 nf_instance->time.validity = SearchResult->validity_period;
@@ -287,5 +292,17 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 
             ogs_info("(NF-discover) NF Profile updated [%s]", nf_instance->id);
         }
+    }
+
+    if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_authentication)) {
+        if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_AUSF)) {
+            nas_5gs_send_gmm_reject(
+                    amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        } else {
+            ogs_fatal("129038129321");
+        }
+    } else {
+        ogs_fatal("Should implement other case");
+        ogs_assert_if_reached();
     }
 }
