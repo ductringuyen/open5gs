@@ -77,15 +77,18 @@ extern "C" {
 
 #define OGS_SBI_API_VERSION                         "v1"
 #define OGS_SBI_API_FULL_VERSION                    "1.0.0"
+
 #define OGS_SBI_SERVICE_NAME_NRF_NFM                "nnrf-nfm"
 #define OGS_SBI_SERVICE_NAME_NRF_DISC               "nnrf-disc"
-#define OGS_SBI_SERVICE_NAME_AUSF_AUTH              "nausf-auth"
-#define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
-#define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
-
 #define OGS_SBI_RESOURCE_NAME_NF_INSTANCES          "nf-instances"
 #define OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS         "subscriptions"
 #define OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY      "nf-status-notify"
+
+#define OGS_SBI_SERVICE_NAME_AUSF_AUTH              "nausf-auth"
+#define OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS    "ue-authentications"
+
+#define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
+#define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
 
 #define OGS_SBI_PARAM_NF_TYPE                       "nf-type"
 #define OGS_SBI_PARAM_TARGET_NF_TYPE                "target-nf-type"
