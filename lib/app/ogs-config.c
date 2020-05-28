@@ -266,6 +266,15 @@ int ogs_config_parse()
                 } else if (!strcmp(parameter_key, "no_pcrf")) {
                     self.parameter.no_pcrf =
                         ogs_yaml_iter_bool(&parameter_iter);
+                } else if (!strcmp(parameter_key, "no_upf")) {
+                    self.parameter.no_upf =
+                        ogs_yaml_iter_bool(&parameter_iter);
+                } else if (!strcmp(parameter_key, "no_smf")) {
+                    self.parameter.no_smf =
+                        ogs_yaml_iter_bool(&parameter_iter);
+                } else if (!strcmp(parameter_key, "no_ausf")) {
+                    self.parameter.no_ausf =
+                        ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_ipv4")) {
                     self.parameter.no_ipv4 =
                         ogs_yaml_iter_bool(&parameter_iter);

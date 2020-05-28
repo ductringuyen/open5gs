@@ -51,6 +51,7 @@ typedef struct ogs_config_s {
         int no_amf;
         int no_smf;
         int no_upf;
+        int no_ausf;
         int no_nrf;
 
         /* Network */
