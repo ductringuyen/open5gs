@@ -841,7 +841,51 @@ static void nf_service_associate_client_all(ogs_sbi_nf_instance_t *nf_instance)
         nf_service_associate_client(nf_service);
 }
 
-bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
+bool ogs_sbi_nf_types_associate(
+        ogs_sbi_nf_types_t nf_types, OpenAPI_nf_type_e nf_type, void *state)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    if (nf_type == OpenAPI_nf_type_NRF) {
+        nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
+        if (nf_instance) {
+            if (OGS_FSM_CHECK(&nf_instance->sm, state)) {
+                if (OGS_SBI_HAVE_NF_TYPE(
+                            nf_types, OpenAPI_nf_type_NRF)) {
+                    ogs_warn("UE %s-EndPoint updated [%s]",
+                            OpenAPI_nf_type_ToString(OpenAPI_nf_type_NRF),
+                            nf_instance->id);
+                    ogs_sbi_nf_instance_remove(
+                            nf_types[OpenAPI_nf_type_NRF].nf_instance);
+                }
+                OGS_SETUP_SBI_NF_INSTANCE(
+                        &nf_types[OpenAPI_nf_type_NRF], nf_instance);
+                return true;
+            }
+        }
+    }
+
+    ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
+        if (nf_instance->nf_type == nf_type) {
+            if (OGS_FSM_CHECK(&nf_instance->sm, state)) {
+                if (OGS_SBI_HAVE_NF_TYPE(nf_types, nf_type)) {
+                    ogs_warn("%s-EndPoint updated [%s]",
+                            OpenAPI_nf_type_ToString(nf_type),
+                            nf_instance->id);
+                    ogs_sbi_nf_instance_remove(
+                            nf_types[nf_type].nf_instance);
+                }
+                OGS_SETUP_SBI_NF_INSTANCE(
+                    &nf_types[nf_type], nf_instance);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool ogs_sbi_client_associate(ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_client_t *client = NULL;
 

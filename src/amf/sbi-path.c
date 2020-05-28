@@ -118,20 +118,24 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
         amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
-    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_NRF))
-        amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_NRF);
-    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_AUSF))
-        amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_AUSF);
+    bool nrf = false;
+    bool nf = false;
 
-    if (!amf_ue->nf_types[nf_type].nf_instance &&
-        !amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance) {
+    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_NRF))
+        nrf = ogs_sbi_nf_types_associate(
+            amf_ue->nf_types, OpenAPI_nf_type_NRF, amf_nf_state_registered);
+    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_type))
+        nf = ogs_sbi_nf_types_associate(
+            amf_ue->nf_types, nf_type, amf_nf_state_registered);
+
+    if (nrf == false && nf == false) {
         ogs_error("[No NRF] Cannot discover AUSF");
         nas_5gs_send_gmm_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
 
-    if (!amf_ue->nf_types[nf_type].nf_instance) {
+    if (nf == false) {
         ogs_timer_start(amf_ue->discover_wait.timer,
                 amf_timer_cfg(AMF_TIMER_DISCOVER_WAIT)->duration);
 

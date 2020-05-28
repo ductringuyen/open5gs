@@ -173,7 +173,7 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
         ogs_info("(NRF-notify) NF Profile updated [%s]", nf_instance->id);
 
-        handled = ogs_sbi_nf_associate_client(nf_instance);
+        handled = ogs_sbi_client_associate(nf_instance);
         if (!handled) {
             ogs_error("Cannot associate NF EndPoint [%s]", nf_instance->id);
             ogs_sbi_server_send_error(session,
@@ -265,7 +265,7 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
                 continue;
             }
 
-            handled = ogs_sbi_nf_associate_client(nf_instance);
+            handled = ogs_sbi_client_associate(nf_instance);
             if (!handled) {
                 ogs_error("Cannot assciate NF EndPoint [%s]", nf_instance->id);
                 AMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
