@@ -1202,8 +1202,8 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     amf_pdn_remove_all(amf_ue);
 
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
-        if (amf_ue->nf_type[i].nf_instance)
-            ogs_sbi_nf_instance_remove(amf_ue->nf_type[i].nf_instance);
+        if (amf_ue->nf_types[i].nf_instance)
+            ogs_sbi_nf_instance_remove(amf_ue->nf_types[i].nf_instance);
     }
 
     ogs_pool_free(&amf_ue_pool, amf_ue);
@@ -1423,15 +1423,16 @@ void amf_ue_associate_nf_type(amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
         nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
         if (nf_instance) {
             if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered)) {
-                if (AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_NRF)) {
+                if (OGS_SBI_HAVE_NF_TYPE(
+                            amf_ue->nf_types, OpenAPI_nf_type_NRF)) {
                     ogs_warn("UE %s-EndPoint updated [%s]",
                             OpenAPI_nf_type_ToString(OpenAPI_nf_type_NRF),
                             amf_ue->imsi_bcd);
                     ogs_sbi_nf_instance_remove(
-                            amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance);
+                            amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance);
                 }
                 OGS_SETUP_SBI_NF_INSTANCE(
-                        &amf_ue->nf_type[OpenAPI_nf_type_NRF], nf_instance);
+                        &amf_ue->nf_types[OpenAPI_nf_type_NRF], nf_instance);
                 return;
             }
         }
@@ -1440,15 +1441,15 @@ void amf_ue_associate_nf_type(amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
         if (nf_instance->nf_type == nf_type) {
             if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered)) {
-                if (AMF_UE_HAVE_NF_TYPE(amf_ue, nf_type)) {
+                if (OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, nf_type)) {
                     ogs_warn("UE %s-EndPoint updated [%s]",
                             OpenAPI_nf_type_ToString(nf_type),
                             amf_ue->imsi_bcd);
                     ogs_sbi_nf_instance_remove(
-                            amf_ue->nf_type[nf_type].nf_instance);
+                            amf_ue->nf_types[nf_type].nf_instance);
                 }
                 OGS_SETUP_SBI_NF_INSTANCE(
-                    &amf_ue->nf_type[nf_type], nf_instance);
+                    &amf_ue->nf_types[nf_type], nf_instance);
                 return;
             }
         }

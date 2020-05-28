@@ -30,14 +30,6 @@ extern "C" {
 
 #define OGS_SBI_MAX_NF_TYPE 64
 
-#define OGS_SETUP_SBI_NF_INSTANCE(__cTX, __pNF_INSTANCE) \
-    do { \
-        ogs_assert((__cTX)); \
-        ogs_assert((__pNF_INSTANCE)); \
-        if ((__cTX)->nf_instance != __pNF_INSTANCE) \
-            __pNF_INSTANCE->reference_count++; \
-        (__cTX)->nf_instance = __pNF_INSTANCE; \
-    } while(0)
 typedef struct ogs_sbi_client_s ogs_sbi_client_t;
 typedef struct ogs_sbi_context_s {
     ogs_pollset_t       *pollset;       /* Poll Set for I/O Multiplexing */
@@ -58,6 +50,14 @@ typedef struct ogs_sbi_context_s {
     const char          *content_encoding;
 } ogs_sbi_context_t;
 
+#define OGS_SETUP_SBI_NF_INSTANCE(__cTX, __pNF_INSTANCE) \
+    do { \
+        ogs_assert((__cTX)); \
+        ogs_assert((__pNF_INSTANCE)); \
+        if ((__cTX)->nf_instance != __pNF_INSTANCE) \
+            __pNF_INSTANCE->reference_count++; \
+        (__cTX)->nf_instance = __pNF_INSTANCE; \
+    } while(0)
 typedef struct ogs_sbi_nf_instance_s {
     ogs_lnode_t     lnode;
 
@@ -97,6 +97,12 @@ typedef struct ogs_sbi_nf_instance_s {
     void *client;                   /* only used in CLIENT */
     unsigned int reference_count;   /* reference count for memory free */
 } ogs_sbi_nf_instance_t;
+
+#define OGS_SBI_HAVE_NF_TYPE(__aRRAY, __nFType) \
+    ((__aRRAY)[__nFType].nf_instance) 
+typedef struct ogs_sbi_nf_types_s {
+    ogs_sbi_nf_instance_t *nf_instance;
+} ogs_sbi_nf_types_t[OGS_SBI_MAX_NF_TYPE];
 
 typedef struct ogs_sbi_nf_service_s {
     ogs_lnode_t lnode;

@@ -384,11 +384,8 @@ struct amf_ue_s {
         } \
         ogs_sbi_nf_instance_remove(_nFInstance); \
     } while(0)
-#define AMF_UE_HAVE_NF_TYPE(__aMF, __nFType) \
-    ((__aMF)->nf_type[__nFType].nf_instance) 
-    struct {
-        ogs_sbi_nf_instance_t *nf_instance;
-    } nf_type[OGS_SBI_MAX_NF_TYPE];
+
+    ogs_sbi_nf_types_t nf_types;
 };
 
 #define AMF_HAVE_SMF_S1U_PATH(__sESS) \

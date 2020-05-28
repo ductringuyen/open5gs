@@ -118,30 +118,30 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
         amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
-    if (!AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_NRF))
+    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_NRF))
         amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_NRF);
-    if (!AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_AUSF))
+    if (!OGS_SBI_HAVE_NF_TYPE(amf_ue->nf_types, OpenAPI_nf_type_AUSF))
         amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_AUSF);
 
-    if (!amf_ue->nf_type[nf_type].nf_instance &&
-        !amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance) {
+    if (!amf_ue->nf_types[nf_type].nf_instance &&
+        !amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance) {
         ogs_error("[No NRF] Cannot discover AUSF");
         nas_5gs_send_gmm_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
 
-    if (!amf_ue->nf_type[nf_type].nf_instance) {
+    if (!amf_ue->nf_types[nf_type].nf_instance) {
         ogs_timer_start(amf_ue->discover_wait.timer,
                 amf_timer_cfg(AMF_TIMER_DISCOVER_WAIT)->duration);
 
         ogs_sbi_send_nf_discover(
-            amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
+            amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
             nf_type, OpenAPI_nf_type_AMF, amf_ue);
         return NULL;
     }
 
-    return amf_ue->nf_type[nf_type].nf_instance;
+    return amf_ue->nf_types[nf_type].nf_instance;
 }
 
 void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
