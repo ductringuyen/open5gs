@@ -159,12 +159,12 @@ static int amf_context_validation(void)
                 ogs_config()->file);
         return OGS_ERROR;
     }
+
     if (self.num_of_ciphering_order == 0) {
         ogs_error("no amf.security.ciphering_order in '%s'",
                 ogs_config()->file);
         return OGS_ERROR;
     }
-
 
     return OGS_OK;
 }

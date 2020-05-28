@@ -60,6 +60,9 @@ void pcrf_terminate(void);
 int nrf_initialize(void);
 void nrf_terminate(void);
 
+int ausf_initialize(void);
+void ausf_terminate(void);
+
 int upf_initialize(void);
 void upf_terminate(void);
 

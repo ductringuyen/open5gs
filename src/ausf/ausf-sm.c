@@ -18,47 +18,28 @@
  */
 
 #include "sbi-path.h"
-#include "nas-path.h"
 #include "nnrf-handler.h"
-#include "ngap-path.h"
-#include "nas-security.h"
 
-void amf_state_initial(ogs_fsm_t *s, amf_event_t *e)
+void ausf_state_initial(ogs_fsm_t *s, ausf_event_t *e)
 {
-    amf_sm_debug(e);
+    ausf_sm_debug(e);
 
     ogs_assert(s);
 
-    OGS_FSM_TRAN(s, &amf_state_operational);
+    OGS_FSM_TRAN(s, &ausf_state_operational);
 }
 
-void amf_state_final(ogs_fsm_t *s, amf_event_t *e)
+void ausf_state_final(ogs_fsm_t *s, ausf_event_t *e)
 {
-    amf_sm_debug(e);
+    ausf_sm_debug(e);
 
     ogs_assert(s);
 }
 
-void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
+void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 {
     int rv;
-#if 0
-    ogs_pkbuf_t *recvbuf = NULL;
-#endif
     char buf[OGS_ADDRSTRLEN];
-
-    ogs_sock_t *sock = NULL;
-    ogs_sockaddr_t *addr = NULL;
-    amf_gnb_t *gnb = NULL;
-    uint16_t max_num_of_ostreams = 0;
-
-    ogs_ngap_message_t ngap_message;
-    ogs_pkbuf_t *pkbuf = NULL;
-    int rc;
-
-    ogs_nas_5gs_message_t nas_message;
-    ran_ue_t *ran_ue = NULL;
-    amf_ue_t *amf_ue = NULL;
 
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
@@ -69,31 +50,26 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
     ogs_sbi_response_t *sbi_response = NULL;
     ogs_sbi_message_t sbi_message;
 
-    amf_sm_debug(e);
+    ausf_ue_t *ausf_ue = NULL;
+
+    ausf_sm_debug(e);
 
     ogs_assert(s);
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        rv = amf_sbi_open();
+        rv = ausf_sbi_open();
         if (rv != OGS_OK) {
             ogs_fatal("Can't establish SBI path");
-        }
-
-        rv = ngap_open();
-        if (rv != OGS_OK) {
-            ogs_error("Can't establish NGAP path");
-            break;
         }
 
         break;
 
     case OGS_FSM_EXIT_SIG:
-        ngap_close();
-        amf_sbi_close();
+        ausf_sbi_close();
         break;
 
-    case AMF_EVT_SBI_SERVER:
+    case AUSF_EVT_SBI_SERVER:
         sbi_request = e->sbi.request;
         ogs_assert(sbi_request);
         session = e->sbi.session;
@@ -125,7 +101,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
-                    amf_nnrf_handle_nf_status_notify(
+                    ausf_nnrf_handle_nf_status_notify(
                             server, session, &sbi_message);
                     break;
 
@@ -159,7 +135,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         ogs_sbi_message_free(&sbi_message);
         break;
 
-    case AMF_EVT_SBI_CLIENT:
+    case AUSF_EVT_SBI_CLIENT:
         ogs_assert(e);
 
         sbi_response = e->sbi.response;
@@ -191,7 +167,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 e->sbi.message = &sbi_message;
                 ogs_fsm_dispatch(&nf_instance->sm, e);
 
-                if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_exception)) {
+                if (OGS_FSM_CHECK(&nf_instance->sm, ausf_nf_state_exception)) {
                     ogs_error("State machine exception");
                 }
                 break;
@@ -204,7 +180,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_CREATED ||
                         sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        amf_nnrf_handle_nf_status_subscribe(
+                        ausf_nnrf_handle_nf_status_subscribe(
                                 subscription, &sbi_message);
                     } else {
                         ogs_error("HTTP response error : %d",
@@ -236,15 +212,15 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
             SWITCH(sbi_message.h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                amf_ue = e->sbi.data;
-                ogs_assert(amf_ue);
+                ausf_ue = e->sbi.data;
+                ogs_assert(ausf_ue);
 
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(amf_ue->discover_wait.timer);
+                        ogs_timer_stop(ausf_ue->discover_wait.timer);
 
-                        amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
+                        ausf_nnrf_handle_nf_discover(ausf_ue, &sbi_message);
                         ogs_fatal("discover");
                     } else {
                         ogs_fatal("HTTP response error : %d",
@@ -271,24 +247,24 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         ogs_sbi_response_free(sbi_response);
         break;
 
-    case AMF_EVT_SBI_TIMER:
+    case AUSF_EVT_SBI_TIMER:
         ogs_assert(e);
 
         switch(e->timer_id) {
-        case AMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL:
-        case AMF_TIMER_NF_INSTANCE_HEARTBEAT_INTERVAL:
-        case AMF_TIMER_NF_INSTANCE_HEARTBEAT:
-        case AMF_TIMER_NF_INSTANCE_VALIDITY:
+        case AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL:
+        case AUSF_TIMER_NF_INSTANCE_HEARTBEAT_INTERVAL:
+        case AUSF_TIMER_NF_INSTANCE_HEARTBEAT:
+        case AUSF_TIMER_NF_INSTANCE_VALIDITY:
             nf_instance = e->sbi.data;
             ogs_assert(nf_instance);
             ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
 
             ogs_fsm_dispatch(&nf_instance->sm, e);
-            if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_exception))
+            if (OGS_FSM_CHECK(&nf_instance->sm, ausf_nf_state_exception))
                 ogs_error("State machine exception [%d]", e->timer_id);
             break;
 
-        case AMF_TIMER_SUBSCRIPTION_VALIDITY:
+        case AUSF_TIMER_SUBSCRIPTION_VALIDITY:
             subscription = e->sbi.data;
             ogs_assert(subscription);
 
@@ -296,206 +272,28 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             ogs_sbi_subscription_remove(subscription);
 
             ogs_sbi_send_nf_status_subscribe(subscription->client,
-                    amf_self()->nf_type, subscription->nf_instance_id);
+                    ausf_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case AMF_TIMER_DISCOVER_WAIT:
-            amf_ue = e->sbi.data;
-            ogs_assert(amf_ue);
+        case AUSF_TIMER_DISCOVER_WAIT:
+            ausf_ue = e->sbi.data;
+            ogs_assert(ausf_ue);
 
             ogs_error("Cannot receive NF discover from NRF [%s]",
-                    amf_ue->imsi_bcd);
+                    ausf_ue->imsi_bcd);
+#if 0
             nas_5gs_send_gmm_reject(
-                    amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+                    ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
             break;
         default:
             ogs_error("Unknown timer[%s:%d]",
-                    amf_timer_get_name(e->timer_id), e->timer_id);
+                    ausf_timer_get_name(e->timer_id), e->timer_id);
         }
-        break;
-
-    case AMF_EVT_NGAP_LO_ACCEPT:
-        sock = e->ngap.sock;
-        ogs_assert(sock);
-        addr = e->ngap.addr;
-        ogs_assert(addr);
-
-        ogs_info("gNB-N1 accepted[%s] in master_sm module",
-        OGS_ADDR(addr, buf));
-
-        gnb = amf_gnb_find_by_addr(addr);
-        if (!gnb) {
-            gnb = amf_gnb_add(sock, addr);
-            ogs_assert(gnb);
-        } else {
-            ogs_warn("gNB context duplicated with IP-address [%s]!!!",
-                    OGS_ADDR(addr, buf));
-            ogs_sock_destroy(sock);
-            ogs_warn("N1 Socket Closed");
-        }
-
-        break;
-
-    case AMF_EVT_NGAP_LO_SCTP_COMM_UP:
-        sock = e->ngap.sock;
-        ogs_assert(sock);
-        addr = e->ngap.addr;
-        ogs_assert(addr);
-
-        max_num_of_ostreams = e->ngap.max_num_of_ostreams;
-
-        gnb = amf_gnb_find_by_addr(addr);
-        if (!gnb) {
-            gnb = amf_gnb_add(sock, addr);
-            ogs_assert(gnb);
-        } else {
-            ogs_free(addr);
-        }
-
-        gnb->max_num_of_ostreams =
-                ogs_min(max_num_of_ostreams, gnb->max_num_of_ostreams);
-
-        ogs_debug("gNB-N1 SCTP_COMM_UP[%s] Max Num of Outbound Streams[%d]", 
-            OGS_ADDR(addr, buf), gnb->max_num_of_ostreams);
-
-        break;
-
-    case AMF_EVT_NGAP_LO_CONNREFUSED:
-        sock = e->ngap.sock;
-        ogs_assert(sock);
-        addr = e->ngap.addr;
-        ogs_assert(addr);
-
-        gnb = amf_gnb_find_by_addr(addr);
-        ogs_free(addr);
-
-        if (gnb) {
-            ogs_info("gNB-N1[%s] connection refused!!!", 
-                    OGS_ADDR(addr, buf));
-            amf_gnb_remove(gnb);
-        } else {
-            ogs_warn("gNB-N1[%s] connection refused, Already Removed!",
-                    OGS_ADDR(addr, buf));
-        }
-
-        break;
-    case AMF_EVT_NGAP_MESSAGE:
-        sock = e->ngap.sock;
-        ogs_assert(sock);
-        addr = e->ngap.addr;
-        ogs_assert(addr);
-        pkbuf = e->pkbuf;
-        ogs_assert(pkbuf);
-
-        gnb = amf_gnb_find_by_addr(addr);
-        ogs_free(addr);
-
-        ogs_assert(gnb);
-        ogs_assert(OGS_FSM_STATE(&gnb->sm));
-
-        rc = ogs_ngap_decode(&ngap_message, pkbuf);
-        if (rc == OGS_OK) {
-            e->gnb = gnb;
-            e->ngap.message = &ngap_message;
-            ogs_fsm_dispatch(&gnb->sm, e);
-        } else {
-            ogs_error("Cannot decode NGAP message");
-            ngap_send_error_indication(
-                    gnb, NULL, NULL, NGAP_Cause_PR_protocol, 
-                    NGAP_CauseProtocol_abstract_syntax_error_falsely_constructed_message);
-        }
-
-        ogs_ngap_free(&ngap_message);
-        ogs_pkbuf_free(pkbuf);
-        break;
-
-    case AMF_EVT_NGAP_TIMER:
-        ran_ue = e->ran_ue;
-        ogs_assert(ran_ue);
-        gnb = e->gnb;
-        ogs_assert(gnb);
-        ogs_assert(OGS_FSM_STATE(&gnb->sm));
-
-        ogs_fsm_dispatch(&gnb->sm, e);
-        break;
-
-    case AMF_EVT_5GMM_MESSAGE:
-        ran_ue = e->ran_ue;
-        ogs_assert(ran_ue);
-        pkbuf = e->pkbuf;
-        ogs_assert(pkbuf);
-        if (ogs_nas_5gmm_decode(&nas_message, pkbuf) != OGS_OK) {
-            ogs_error("ogs_nas_5gmm_decode() failed");
-            ogs_pkbuf_free(pkbuf);
-            return;
-        }
-
-        amf_ue = ran_ue->amf_ue;
-        if (!amf_ue) {
-            amf_ue = amf_ue_find_by_message(&nas_message);
-            if (!amf_ue) {
-                amf_ue = amf_ue_add(ran_ue);
-                ogs_assert(amf_ue);
-            } else {
-                /* Here, if the AMF_UE Context is found,
-                 * the integrity check is not performed
-                 * For example, REGISTRATION_REQUEST,
-                 * TRACKING_AREA_UPDATE_REQUEST message
-                 *
-                 * Now, We will check the MAC in the NAS message*/
-                ogs_nas_security_header_type_t h;
-                h.type = e->nas.type;
-                if (h.integrity_protected) {
-                    /* Decryption was performed in NGAP handler.
-                     * So, we disabled 'ciphered'
-                     * not to decrypt NAS message */
-                    h.ciphered = 0;
-                    if (nas_5gs_security_decode(amf_ue, h, pkbuf) != OGS_OK) {
-                        ogs_error("nas_security_decode() failed");
-                        ogs_pkbuf_free(pkbuf);
-                        return;
-                    }
-                }
-            }
-
-            /* If NAS(amf_ue_t) has already been associated with
-             * older NG(ran_ue_t) context */
-            if (ECM_CONNECTED(amf_ue)) {
-               /* Implcit NG release */
-                ogs_debug("Implicit NG release");
-                ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
-                      amf_ue->ran_ue->ran_ue_ngap_id,
-                      (long long)amf_ue->ran_ue->amf_ue_ngap_id);
-                ran_ue_remove(amf_ue->ran_ue);
-            }
-            amf_ue_associate_ran_ue(amf_ue, ran_ue);
-        }
-
-        ogs_assert(amf_ue);
-        ogs_assert(OGS_FSM_STATE(&amf_ue->sm));
-
-        e->amf_ue = amf_ue;
-        e->nas.message = &nas_message;
-
-        ogs_fsm_dispatch(&amf_ue->sm, e);
-#if 0
-        if (OGS_FSM_CHECK(&amf_ue->sm, emm_state_exception)) {
-            mme_send_delete_session_or_amf_ue_context_release(amf_ue);
-        }
-#endif
-
-        ogs_pkbuf_free(pkbuf);
-        break;
-    case AMF_EVT_5GMM_TIMER:
-        amf_ue = e->amf_ue;
-        ogs_assert(amf_ue);
-        ogs_assert(OGS_FSM_STATE(&amf_ue->sm));
-
-        ogs_fsm_dispatch(&amf_ue->sm, e);
         break;
 
     default:
-        ogs_error("No handler for event %s", amf_event_get_name(e));
+        ogs_error("No handler for event %s", ausf_event_get_name(e));
         break;
     }
 }
