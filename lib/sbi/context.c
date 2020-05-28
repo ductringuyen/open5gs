@@ -512,48 +512,6 @@ ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find(char *id)
     return nf_instance;
 }
 
-void ogs_sbi_nf_instance_build_default(
-        ogs_sbi_nf_instance_t *nf_instance, OpenAPI_nf_type_e nf_type)
-{
-    ogs_sbi_server_t *server = NULL;
-    char *hostname = NULL;
-
-    ogs_assert(nf_instance);
-
-    nf_instance->nf_type = nf_type;
-    nf_instance->nf_status = OpenAPI_nf_status_REGISTERED;
-
-    hostname = NULL;
-    ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
-        ogs_assert(server->addr);
-
-        /* First FQDN is selected */
-        if (!hostname) {
-            hostname = ogs_gethostname(server->addr);
-            if (hostname)
-                continue;
-        }
-
-        if (nf_instance->num_of_ipv4 < OGS_SBI_MAX_NUM_OF_IP_ADDRESS) {
-            ogs_sockaddr_t *addr = NULL;
-            ogs_copyaddrinfo(&addr, server->addr);
-            ogs_assert(addr);
-
-            if (addr->ogs_sa_family == AF_INET) {
-                nf_instance->ipv4[nf_instance->num_of_ipv4] = addr;
-                nf_instance->num_of_ipv4++;
-            } else if (addr->ogs_sa_family == AF_INET6) {
-                nf_instance->ipv6[nf_instance->num_of_ipv6] = addr;
-                nf_instance->num_of_ipv6++;
-            } else
-                ogs_assert_if_reached();
-        }
-    }
-
-    if (hostname)
-        strcpy(nf_instance->fqdn, hostname);
-}
-
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_add(ogs_sbi_nf_instance_t *nf_instance,
         char *id, char *name, OpenAPI_uri_scheme_e scheme)
 {
@@ -678,6 +636,48 @@ ogs_sbi_nf_service_t *ogs_sbi_nf_service_find(
     }
 
     return nf_service;
+}
+
+void ogs_sbi_nf_instance_build_default(
+        ogs_sbi_nf_instance_t *nf_instance, OpenAPI_nf_type_e nf_type)
+{
+    ogs_sbi_server_t *server = NULL;
+    char *hostname = NULL;
+
+    ogs_assert(nf_instance);
+
+    nf_instance->nf_type = nf_type;
+    nf_instance->nf_status = OpenAPI_nf_status_REGISTERED;
+
+    hostname = NULL;
+    ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
+        ogs_assert(server->addr);
+
+        /* First FQDN is selected */
+        if (!hostname) {
+            hostname = ogs_gethostname(server->addr);
+            if (hostname)
+                continue;
+        }
+
+        if (nf_instance->num_of_ipv4 < OGS_SBI_MAX_NUM_OF_IP_ADDRESS) {
+            ogs_sockaddr_t *addr = NULL;
+            ogs_copyaddrinfo(&addr, server->addr);
+            ogs_assert(addr);
+
+            if (addr->ogs_sa_family == AF_INET) {
+                nf_instance->ipv4[nf_instance->num_of_ipv4] = addr;
+                nf_instance->num_of_ipv4++;
+            } else if (addr->ogs_sa_family == AF_INET6) {
+                nf_instance->ipv6[nf_instance->num_of_ipv6] = addr;
+                nf_instance->num_of_ipv6++;
+            } else
+                ogs_assert_if_reached();
+        }
+    }
+
+    if (hostname)
+        strcpy(nf_instance->fqdn, hostname);
 }
 
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
@@ -855,6 +855,19 @@ bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
     nf_service_associate_client_all(nf_instance);
 
     return true;
+}
+
+ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find_by_nf_type(
+        OpenAPI_nf_type_e nf_type)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
+        if (nf_instance->nf_type == nf_type)
+            break;
+    }
+
+    return nf_instance;
 }
 
 ogs_sbi_subscription_t *ogs_sbi_subscription_add(void)

@@ -383,8 +383,9 @@ struct amf_ue_s {
         } \
         ogs_sbi_nf_instance_remove(_nFInstance); \
     } while(0)
-    ogs_sbi_nf_instance_t *nrf;
-    ogs_sbi_nf_instance_t *ausf;
+    struct {
+        ogs_sbi_nf_instance_t *nf_instance;
+    } nrf, ausf;
 };
 
 #define AMF_HAVE_SMF_S1U_PATH(__sESS) \
@@ -561,6 +562,9 @@ amf_ue_t *amf_ue_find_by_teid(uint32_t teid);
 
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message);
 int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd);
+
+void amf_ue_associate_nrf(amf_ue_t *amf_ue);
+void amf_ue_associate_ausf(amf_ue_t *amf_ue);
 
 int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue);
 int amf_ue_clear_indirect_tunnel(amf_ue_t *amf_ue);

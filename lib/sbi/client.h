@@ -32,7 +32,7 @@ extern "C" {
     do { \
         ogs_assert((__cTX)); \
         ogs_assert((__pCLIENT)); \
-        if ((__cTX)->client != client) \
+        if ((__cTX)->client != __pCLIENT) \
             __pCLIENT->reference_count++; \
         (__cTX)->client = __pCLIENT; \
     } while(0)
