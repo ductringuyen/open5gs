@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#define OGS_SBI_MAX_NF_TYPE 64
+
 #define OGS_SETUP_SBI_NF_INSTANCE(__cTX, __pNF_INSTANCE) \
     do { \
         ogs_assert((__cTX)); \

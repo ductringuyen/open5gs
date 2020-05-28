@@ -1115,8 +1115,8 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
     amf_ue_new_guti(amf_ue);
 
     /* Associate NF Instance */
-    amf_ue_associate_nrf(amf_ue);
-    amf_ue_associate_ausf(amf_ue);
+    amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_NRF);
+    amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_AUSF);
 
 #if 0
     /* Clear VLR */
@@ -1155,6 +1155,7 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 void amf_ue_remove(amf_ue_t *amf_ue)
 {
     amf_event_t e;
+    int i;
 
     ogs_assert(amf_ue);
 
@@ -1200,10 +1201,10 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     amf_sess_remove_all(amf_ue);
     amf_pdn_remove_all(amf_ue);
 
-    if (amf_ue->nrf.nf_instance)
-        ogs_sbi_nf_instance_remove(amf_ue->nrf.nf_instance);
-    if (amf_ue->ausf.nf_instance)
-        ogs_sbi_nf_instance_remove(amf_ue->ausf.nf_instance);
+    for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
+        if (amf_ue->nf_type[i].nf_instance)
+            ogs_sbi_nf_instance_remove(amf_ue->nf_type[i].nf_instance);
+    }
 
     ogs_pool_free(&amf_ue_pool, amf_ue);
 }
@@ -1412,29 +1413,28 @@ int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd)
     return OGS_OK;
 }
 
-void amf_ue_associate_nrf(amf_ue_t *amf_ue)
+void amf_ue_associate_nf_type(amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
     ogs_assert(amf_ue);
 
-    nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
-    if (nf_instance) {
-        if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered))
-            OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->nrf, nf_instance);
+    if (nf_type == OpenAPI_nf_type_NRF) {
+        nf_instance = ogs_sbi_nf_instance_find(ogs_sbi_self()->nf_instance_id);
+        if (nf_instance) {
+            if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered)) {
+                OGS_SETUP_SBI_NF_INSTANCE(
+                        &amf_ue->nf_type[OpenAPI_nf_type_NRF], nf_instance);
+                return;
+            }
+        }
     }
 
-}
-void amf_ue_associate_ausf(amf_ue_t *amf_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(amf_ue);
-
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
-        if (nf_instance->nf_type == OpenAPI_nf_type_AUSF) {
+        if (nf_instance->nf_type == nf_type) {
             if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_registered)) {
-                OGS_SETUP_SBI_NF_INSTANCE(&amf_ue->ausf, nf_instance);
+                OGS_SETUP_SBI_NF_INSTANCE(
+                    &amf_ue->nf_type[nf_type], nf_instance);
                 return;
             }
         }

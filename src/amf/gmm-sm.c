@@ -359,8 +359,6 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         } else {
             amf_s6a_send_air(amf_ue, NULL);
         }
-#else
-        ogs_fatal("send auth");
 #endif
         OGS_FSM_TRAN(s, &gmm_state_authentication);
         break;
@@ -504,6 +502,15 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
+
+        /* TODO : timer */
+        if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
+            ogs_sbi_send_nf_discover(
+                amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
+                OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF);
+        } else {
+            ogs_fatal("send auth");
+        }
         break;
     case OGS_FSM_EXIT_SIG:
         break;
