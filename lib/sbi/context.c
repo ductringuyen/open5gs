@@ -857,6 +857,26 @@ bool ogs_sbi_nf_associate_client(ogs_sbi_nf_instance_t *nf_instance)
     return true;
 }
 
+ogs_sbi_client_t *ogs_sbi_client_find_by_service_name(
+        ogs_sbi_nf_instance_t *nf_instance, char *name)
+{
+    ogs_sbi_nf_service_t *nf_service = NULL;
+
+    ogs_assert(nf_instance);
+    ogs_assert(name);
+
+    ogs_list_for_each(&nf_instance->nf_service_list, nf_service) {
+        ogs_assert(nf_service->name);
+        if (strcmp(nf_service->name, name) == 0)
+            break;
+    }
+
+    if (nf_service)
+        return nf_service->client;
+    else
+        return nf_instance->client;
+}
+
 ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find_by_nf_type(
         OpenAPI_nf_type_e nf_type)
 {

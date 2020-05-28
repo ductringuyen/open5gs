@@ -55,16 +55,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     ran_ue = amf_ue->ran_ue;
     ogs_assert(ran_ue);
 
-    if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
-        if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance &&
-            !amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance) {
-            ogs_error("[No NRF] Cannot discover AUSF");
-            nas_5gs_send_registration_reject(amf_ue,
-                OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-            return OGS_ERROR;
-        }
-    }
-
     /* Set 5GS Registration Type */
     memcpy(&amf_ue->nas.registration, registration_type,
             sizeof(ogs_nas_5gs_registration_type_t));

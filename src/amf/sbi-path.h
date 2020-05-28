@@ -31,6 +31,9 @@ void amf_sbi_close(void);
 
 void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
 
+void amf_sbi_send_authenticate(amf_ue_t *amf_ue);
+void amf_sbi_send_confirm_authentications(amf_ue_t *amf_ue);
+
 #ifdef __cplusplus
 }
 #endif

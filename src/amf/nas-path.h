@@ -33,6 +33,8 @@ int nas_5gs_send_gmm_to_gsm(
 #endif
 int nas_5gs_send_to_downlink_nas_transport(
         amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf);
+void nas_5gs_send_gmm_reject(
+        amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t gmm_cause);
 
 void nas_5gs_send_registration_accept(amf_ue_t *amf_ue);
 void nas_5gs_send_registration_reject(

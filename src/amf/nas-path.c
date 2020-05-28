@@ -94,6 +94,23 @@ int nas_5gs_send_to_downlink_nas_transport(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
+void nas_5gs_send_gmm_reject(
+        amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t gmm_cause)
+{
+    ogs_assert(amf_ue);
+
+    switch(amf_ue->nas.type) {
+    case OGS_NAS_5GS_REGISTRATION_REQUEST:
+        nas_5gs_send_registration_reject(amf_ue,
+            OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        break;
+    default: 
+        ogs_fatal("Unknown type : %d", amf_ue->nas.type);
+        ogs_assert_if_reached();
+        break;
+    }
+}
+
 #if 0
 void nas_5gs_send_registration_accept(amf_ue_t *amf_ue)
 {

@@ -32,6 +32,7 @@
 #include "sgsap-path.h"
 #include "amf-path.h"
 #endif
+#include "sbi-path.h"
 #include "amf-sm.h"
 
 #undef OGS_LOG_DOMAIN
@@ -353,23 +354,32 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
     switch (amf_ue->nas.type) {
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
+        if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
 #if 0
-        if (SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
-            ogs_assert_if_reached(); /* TODO */
-            amf_gtp_send_delete_all_sessions(amf_ue);
-        } else {
-#endif
-            if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
-                ogs_sbi_send_nf_discover(
-                    amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
-                    OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
+            rv = nas_eps_send_emm_to_esm(amf_ue,
+                    &amf_ue->pdn_connectivity_request);
+            if (rv != OGS_OK) {
+                ogs_error("nas_eps_send_emm_to_esm() failed");
+                nas_eps_send_attach_reject(amf_ue,
+                    EMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED,
+                    ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+                OGS_FSM_TRAN(s, &emm_state_exception);
             } else {
-                ogs_fatal("send auth");
+                OGS_FSM_TRAN(s, &emm_state_initial_context_setup);
             }
-#if 0
-        }
 #endif
-        OGS_FSM_TRAN(s, &gmm_state_authentication);
+        } else {
+#if 0
+            if (SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
+                amf_gtp_send_delete_all_sessions(amf_ue);
+            } else {
+                amf_sbi_send_authenticate(amf_ue);
+            }
+#else
+            amf_sbi_send_authenticate(amf_ue);
+#endif
+            OGS_FSM_TRAN(s, &gmm_state_authentication);
+        }
         break;
 #if 0
     case AMF_EPS_TYPE_TAU_REQUEST:

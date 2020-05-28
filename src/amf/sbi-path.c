@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "context.h"
 #include "sbi-path.h"
+#include "nas-path.h"
 
 static int server_cb(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_request_t *request)
@@ -113,4 +113,56 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
         if (client)
             client->cb = client_cb;
     }
+}
+
+static ogs_sbi_nf_instance_t *find_nf_instance(
+        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
+{
+    if (!amf_ue->nf_type[nf_type].nf_instance &&
+        !amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance) {
+        ogs_error("[No NRF] Cannot discover AUSF");
+        nas_5gs_send_gmm_reject(
+                amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        return NULL;
+    }
+
+    if (!amf_ue->nf_type[nf_type].nf_instance) {
+        ogs_sbi_send_nf_discover(
+            amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
+            OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
+        return NULL;
+    }
+
+    return amf_ue->nf_type[nf_type].nf_instance;
+}
+
+void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+    ogs_assert(amf_ue);
+
+#if 0
+    ogs_sbi_request_t *request = NULL;
+#endif
+    ogs_sbi_client_t *client = NULL;
+
+    nf_instance = find_nf_instance(amf_ue, OpenAPI_nf_type_AUSF);
+    if (!nf_instance) {
+        ogs_warn("try to discover AUSF");
+        return;
+    }
+
+    client = ogs_sbi_client_find_by_service_name(
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
+    ogs_assert(client);
+
+#if 0
+    request = ogs_nnrf_build_nf_register(nf_instance);
+    ogs_assert(request);
+    ogs_sbi_client_send_request(client, request, nf_instance);
+#endif
+}
+
+void amf_sbi_send_confirm_authentications(amf_ue_t *amf_ue)
+{
 }

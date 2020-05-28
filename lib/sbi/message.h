@@ -79,6 +79,7 @@ extern "C" {
 #define OGS_SBI_API_FULL_VERSION                    "1.0.0"
 #define OGS_SBI_SERVICE_NAME_NRF_NFM                "nnrf-nfm"
 #define OGS_SBI_SERVICE_NAME_NRF_DISC               "nnrf-disc"
+#define OGS_SBI_SERVICE_NAME_AUSF_AUTH              "nausf-auth"
 #define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
 #define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
 
