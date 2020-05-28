@@ -1111,50 +1111,10 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
-#if 0
-    amf_ue->amf_s11_teid = ogs_pool_index(&amf_ue_pool, amf_ue);
-    ogs_assert(amf_ue->amf_s11_teid > 0 &&
-            amf_ue->amf_s11_teid <= ogs_config()->pool.ue);
-#endif
-
     /* Create New GUTI */
     amf_ue_new_guti(amf_ue);
 
 #if 0
-    if (amf_self()->smf_selection == SMF_SELECT_RR) {
-        /* Setup SMF with round-robin manner */
-        if (amf_self()->smf == NULL)
-            amf_self()->smf = ogs_list_first(&amf_self()->smf_list);
-
-        ogs_assert(amf_self()->smf);
-        OGS_SETUP_GTP_NODE(amf_ue, amf_self()->smf->gnode);
-
-        amf_self()->smf = ogs_list_next(amf_self()->smf);
-    } else if (amf_self()->smf_selection == SMF_SELECT_TAC) {
-        /* Select SMF by gNB TAC */
-        int i, found = 0;
-
-        amf_self()->smf = ogs_list_first(&amf_self()->smf_list);
-        while (amf_self()->smf && !found) {
-            for (i = 0; i < amf_self()->smf->num_of_tac && !found; i++)
-                found = amf_self()->smf->tac[i] == ran_ue->saved.tai.tac ? 1: 0;
-
-            if (!found)
-                amf_self()->smf = ogs_list_next(amf_self()->smf);
-        }
-
-        if (!found) {
-            ogs_warn("No corresponding SMF found for gNB TAC[%d]",
-                    ran_ue->saved.tai.tac);
-            ogs_warn("Defaulting to first SMF in amf.yaml list");
-            amf_self()->smf = ogs_list_first(&amf_self()->smf_list);
-        }
-
-        ogs_assert(amf_self()->smf);
-        OGS_SETUP_GTP_NODE(amf_ue, amf_self()->smf->gnode);
-    } else
-        ogs_assert_if_reached();
-        
     /* Clear VLR */
     amf_ue->csmap = NULL;
     amf_ue->vlr_ostream_id = 0;

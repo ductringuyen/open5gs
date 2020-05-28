@@ -48,11 +48,6 @@ typedef struct amf_ue_s amf_ue_t;
 typedef uint32_t amf_m_tmsi_t;
 typedef uint32_t amf_p_tmsi_t;
 
-typedef enum {
-    SMF_SELECT_RR = 0,  /* Default SMF Selection Method */
-    SMF_SELECT_TAC,
-} smf_select_e;
-
 typedef struct amf_context_s {
     ogs_queue_t     *queue;         /* Queue for processing UPF control */
     ogs_timer_mgr_t *timer_mgr;     /* Timer Manager */
@@ -104,9 +99,6 @@ typedef struct amf_context_s {
     /* AMF Name */
     const char *amf_name;
 
-    /* SMF Selection */
-    smf_select_e    smf_selection;
-
     /* NGSetupResponse */
     uint8_t         relative_capacity;
 
@@ -128,25 +120,6 @@ typedef struct amf_context_s {
 
     ogs_list_t      ngap_list;      /* AMF NGAP IPv4 Server List */
     ogs_list_t      ngap_list6;     /* AMF NGAP IPv6 Server List */
-
-    ogs_list_t      smf_list;       /* SMF SBI Client List */
-    void            *smf;           /* Iterator for SMF round-robin */
-
-#define AMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
-    do { \
-        ogs_assert(_nFInstance); \
-        if ((_nFInstance)->reference_count == 1) { \
-            ogs_info("(%s) NF removed [%s]", (_cAUSE), (_nFInstance)->id); \
-            amf_nf_fsm_fini((_nFInstance)); \
-        } else { \
-            /* There is an assocation with other context */ \
-            ogs_info("(%s) NF suspended [%s:%d]", \
-                    (_cAUSE), _nFInstance->id, _nFInstance->reference_count); \
-            OGS_FSM_TRAN(&_nFInstance->sm, amf_nf_state_de_registered); \
-            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
-        } \
-        ogs_sbi_nf_instance_remove(_nFInstance); \
-    } while(0)
 
 } amf_context_t;
 
@@ -392,9 +365,26 @@ struct amf_ue_s {
     int             session_context_will_deleted;
 
 #if 0
-    ogs_gtp_node_t  *gnode;
     amf_csmap_t     *csmap;
 #endif
+
+#define AMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
+    do { \
+        ogs_assert(_nFInstance); \
+        if ((_nFInstance)->reference_count == 1) { \
+            ogs_info("(%s) NF removed [%s]", (_cAUSE), (_nFInstance)->id); \
+            amf_nf_fsm_fini((_nFInstance)); \
+        } else { \
+            /* There is an assocation with other context */ \
+            ogs_info("(%s) NF suspended [%s:%d]", \
+                    (_cAUSE), _nFInstance->id, _nFInstance->reference_count); \
+            OGS_FSM_TRAN(&_nFInstance->sm, amf_nf_state_de_registered); \
+            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
+        } \
+        ogs_sbi_nf_instance_remove(_nFInstance); \
+    } while(0)
+    ogs_sbi_nf_instance_t *nrf;
+    ogs_sbi_nf_instance_t *ausf;
 };
 
 #define AMF_HAVE_SMF_S1U_PATH(__sESS) \
