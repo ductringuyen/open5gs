@@ -118,7 +118,7 @@ void smf_nf_state_will_register(ogs_fsm_t *s, smf_event_t *e)
                 smf_timer_cfg(SMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
                     duration);
 
-        smf_sbi_send_nf_register(nf_instance);
+        ogs_sbi_send_nf_register(nf_instance);
         break;
 
     case OGS_FSM_EXIT_SIG:
@@ -171,7 +171,7 @@ void smf_nf_state_will_register(ogs_fsm_t *s, smf_event_t *e)
                 smf_timer_cfg(SMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
                     duration);
 
-            smf_sbi_send_nf_register(nf_instance);
+            ogs_sbi_send_nf_register(nf_instance);
             break;
 
         default:
@@ -215,7 +215,7 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
                             OGS_SBI_HEARTBEAT_RETRYCOUNT));
             }
 
-            smf_sbi_send_nf_status_subscribe(client,
+            ogs_sbi_send_nf_status_subscribe(client,
                     smf_self()->nf_type, nf_instance->id);
         }
 
@@ -230,7 +230,7 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
                 ogs_timer_stop(nf_instance->t_heartbeat);
             }
 
-            smf_sbi_send_nf_de_register(nf_instance);
+            ogs_sbi_send_nf_de_register(nf_instance);
         }
         break;
 
@@ -275,7 +275,7 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
                         ogs_time_from_sec(nf_instance->time.heartbeat));
             }
 
-            smf_sbi_send_nf_update(nf_instance);
+            ogs_sbi_send_nf_update(nf_instance);
             break;
 
         case SMF_TIMER_NF_INSTANCE_HEARTBEAT:
