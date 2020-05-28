@@ -118,6 +118,11 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 static ogs_sbi_nf_instance_t *find_nf_instance(
         amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
+    if (!AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_NRF))
+        amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_NRF);
+    if (!AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_AUSF))
+        amf_ue_associate_nf_type(amf_ue, OpenAPI_nf_type_AUSF);
+
     if (!amf_ue->nf_type[nf_type].nf_instance &&
         !amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance) {
         ogs_error("[No NRF] Cannot discover AUSF");

@@ -206,8 +206,8 @@ struct amf_ue_s {
     } nas;
 
     /* UE identity */
-#define AMF_UE_HAVE_IMSI(__mME) \
-    ((__mME) && ((__mME)->imsi_len))
+#define AMF_UE_HAVE_IMSI(__aMF) \
+    ((__aMF) && ((__aMF)->imsi_len))
     uint8_t         imsi[OGS_MAX_IMSI_LEN];
     int             imsi_len;
     char            imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
@@ -238,17 +238,17 @@ struct amf_ue_s {
         bool s1_mode;
     } gmm_capability;
 
-#define SECURITY_CONTEXT_IS_VALID(__mME) \
-    ((__mME) && \
-    ((__mME)->security_context_available == 1) && \
-     ((__mME)->mac_failed == 0) && \
-     ((__mME)->nas.ksi != OGS_NAS_KSI_NO_KEY_IS_AVAILABLE))
-#define CLEAR_SECURITY_CONTEXT(__mME) \
+#define SECURITY_CONTEXT_IS_VALID(__aMF) \
+    ((__aMF) && \
+    ((__aMF)->security_context_available == 1) && \
+     ((__aMF)->mac_failed == 0) && \
+     ((__aMF)->nas.ksi != OGS_NAS_KSI_NO_KEY_IS_AVAILABLE))
+#define CLEAR_SECURITY_CONTEXT(__aMF) \
     do { \
-        ogs_assert((__mME)); \
-        (__mME)->security_context_available = 0; \
-        (__mME)->mac_failed = 0; \
-        (__mME)->nas.ksi = 0; \
+        ogs_assert((__aMF)); \
+        (__aMF)->security_context_available = 0; \
+        (__aMF)->mac_failed = 0; \
+        (__aMF)->nas.ksi = 0; \
     } while(0)
     int             security_context_available;
     int             mac_failed;
@@ -299,36 +299,36 @@ struct amf_ue_s {
 #define MIN_5GS_BEARER_ID           5
 #define MAX_5GS_BEARER_ID           15
 
-#define CLEAR_5GS_BEARER_ID(__mME) \
+#define CLEAR_5GS_BEARER_ID(__aMF) \
     do { \
-        ogs_assert((__mME)); \
-        (__mME)->ebi = MIN_5GS_BEARER_ID - 1; \
+        ogs_assert((__aMF)); \
+        (__aMF)->ebi = MIN_5GS_BEARER_ID - 1; \
     } while(0)
     uint8_t         ebi; /* 5GS Bearer ID generator */
     ogs_list_t      sess_list;
 
-#define ECM_CONNECTED(__mME) \
-    ((__mME) && ((__mME)->ran_ue != NULL))
-#define ECM_IDLE(__mME) (!ECM_CONNECTED(__mME))
+#define ECM_CONNECTED(__aMF) \
+    ((__aMF) && ((__aMF)->ran_ue != NULL))
+#define ECM_IDLE(__aMF) (!ECM_CONNECTED(__aMF))
     /* S1 UE context */
     ran_ue_t        *ran_ue;
 
-#define CLEAR_AMF_UE_ALL_TIMERS(__mME) \
+#define CLEAR_AMF_UE_ALL_TIMERS(__aMF) \
     do { \
-        CLEAR_AMF_UE_TIMER((__mME)->t3413); \
-        CLEAR_AMF_UE_TIMER((__mME)->t3422); \
-        CLEAR_AMF_UE_TIMER((__mME)->t3450); \
-        CLEAR_AMF_UE_TIMER((__mME)->t3460); \
-        CLEAR_AMF_UE_TIMER((__mME)->t3470); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3413); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3422); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3450); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3460); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3470); \
     } while(0);
-#define CLEAR_AMF_UE_TIMER(__mME_UE_TIMER) \
+#define CLEAR_AMF_UE_TIMER(__aMF_UE_TIMER) \
     do { \
-        ogs_timer_stop((__mME_UE_TIMER).timer); \
-        if ((__mME_UE_TIMER).pkbuf) { \
-            ogs_pkbuf_free((__mME_UE_TIMER).pkbuf); \
-            (__mME_UE_TIMER).pkbuf = NULL; \
+        ogs_timer_stop((__aMF_UE_TIMER).timer); \
+        if ((__aMF_UE_TIMER).pkbuf) { \
+            ogs_pkbuf_free((__aMF_UE_TIMER).pkbuf); \
+            (__aMF_UE_TIMER).pkbuf = NULL; \
         } \
-        (__mME_UE_TIMER).retry_count = 0; \
+        (__aMF_UE_TIMER).retry_count = 0; \
     } while(0);
     struct {
         ogs_pkbuf_t     *pkbuf;
@@ -336,18 +336,18 @@ struct amf_ue_s {
         uint32_t        retry_count;;
     } t3413, t3422, t3450, t3460, t3470;
 
-#define CLEAR_SERVICE_INDICATOR(__mME) \
+#define CLEAR_SERVICE_INDICATOR(__aMF) \
     do { \
-        ogs_assert((__mME)); \
-        (__mME)->service_indicator = 0; \
+        ogs_assert((__aMF)); \
+        (__aMF)->service_indicator = 0; \
     } while(0);
 
-#define CS_CALL_SERVICE_INDICATOR(__mME) \
-    (AMF_P_TMSI_IS_AVAILABLE(__mME) && \
-     ((__mME)->service_indicator) == SGSAP_CS_CALL_SERVICE_INDICATOR)
-#define SMS_SERVICE_INDICATOR(__mME) \
-    (AMF_P_TMSI_IS_AVAILABLE(__mME) && \
-     ((__mME)->service_indicator) == SGSAP_SMS_SERVICE_INDICATOR)
+#define CS_CALL_SERVICE_INDICATOR(__aMF) \
+    (AMF_P_TMSI_IS_AVAILABLE(__aMF) && \
+     ((__aMF)->service_indicator) == SGSAP_CS_CALL_SERVICE_INDICATOR)
+#define SMS_SERVICE_INDICATOR(__aMF) \
+    (AMF_P_TMSI_IS_AVAILABLE(__aMF) && \
+     ((__aMF)->service_indicator) == SGSAP_SMS_SERVICE_INDICATOR)
     uint8_t         service_indicator;
 
     /* UE Radio Capability */
@@ -383,6 +383,8 @@ struct amf_ue_s {
         } \
         ogs_sbi_nf_instance_remove(_nFInstance); \
     } while(0)
+#define AMF_UE_HAVE_NF_TYPE(__aMF, __nFType) \
+    ((__aMF)->nf_type[__nFType].nf_instance) 
     struct {
         ogs_sbi_nf_instance_t *nf_instance;
     } nf_type[OGS_SBI_MAX_NF_TYPE];
@@ -399,17 +401,17 @@ struct amf_ue_s {
         __bEARER->smf_s1u_teid = 0; \
     } while(0)
 
-#define SESSION_CONTEXT_IS_AVAILABLE(__mME) \
-     ((__mME) && ((__mME)->smf_s11_teid))
+#define SESSION_CONTEXT_IS_AVAILABLE(__aMF) \
+     ((__aMF) && ((__aMF)->smf_s11_teid))
 
-#define SESSION_CONTEXT_WILL_DELETED(__mME) \
-     ((__mME) && ((__mME)->session_context_will_deleted))
+#define SESSION_CONTEXT_WILL_DELETED(__aMF) \
+     ((__aMF) && ((__aMF)->session_context_will_deleted))
 
-#define CLEAR_SESSION_CONTEXT(__mME) \
+#define CLEAR_SESSION_CONTEXT(__aMF) \
     do { \
-        ogs_assert((__mME)); \
-        (__mME)->smf_s11_teid = 0; \
-        (__mME)->session_context_will_deleted = 0; \
+        ogs_assert((__aMF)); \
+        (__aMF)->smf_s11_teid = 0; \
+        (__aMF)->session_context_will_deleted = 0; \
     } while(0)
 typedef struct amf_sess_s {
     ogs_lnode_t     lnode;
@@ -427,9 +429,9 @@ typedef struct amf_sess_s {
     /* Related Context */
     amf_ue_t        *amf_ue;
 
-#define AMF_UE_HAVE_APN(__mME) \
-    ((__mME) && (amf_sess_first(__mME)) && \
-    ((amf_sess_first(__mME))->pdn))
+#define AMF_UE_HAVE_APN(__aMF) \
+    ((__aMF) && (amf_sess_first(__aMF)) && \
+    ((amf_sess_first(__aMF))->pdn))
     ogs_pdn_t       *pdn;
 
     /* Save Protocol Configuration Options from UE */
@@ -442,10 +444,10 @@ typedef struct amf_sess_s {
     ogs_tlv_octet_t pgw_pco;
 } amf_sess_t;
 
-#define BEARER_CONTEXT_IS_ACTIVE(__mME)  \
-    (amf_bearer_is_inactive(__mME) == 0)
-#define CLEAR_BEARER_CONTEXT(__mME)   \
-    amf_bearer_set_inactive(__mME)
+#define BEARER_CONTEXT_IS_ACTIVE(__aMF)  \
+    (amf_bearer_is_inactive(__aMF) == 0)
+#define CLEAR_BEARER_CONTEXT(__aMF)   \
+    amf_bearer_set_inactive(__aMF)
 
 #define AMF_HAVE_GNB_S1U_PATH(__bEARER) \
     ((__bEARER) && ((__bEARER)->gnb_s1u_teid))

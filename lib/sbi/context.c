@@ -822,8 +822,13 @@ static void nf_service_associate_client(ogs_sbi_nf_service_t *nf_service)
         }
     }
 
-    if (client)
+    if (client) {
+        if (nf_service->client && nf_service->client != client) {
+            ogs_warn("NF EndPoint updated [%s]", nf_service->id);
+            ogs_sbi_client_remove(nf_service->client);
+        }
         OGS_SETUP_SBI_CLIENT(nf_service, client);
+    }
 }
 
 static void nf_service_associate_client_all(ogs_sbi_nf_instance_t *nf_instance)
