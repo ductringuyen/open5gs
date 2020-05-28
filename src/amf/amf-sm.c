@@ -18,6 +18,7 @@
  */
 
 #include "sbi-path.h"
+#include "nas-path.h"
 #include "nnrf-handler.h"
 #include "ngap-path.h"
 #include "nas-security.h"
@@ -241,7 +242,9 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        amf_nnrf_handle_nf_discover(&sbi_message);
+                        ogs_timer_stop(amf_ue->discover_wait.timer);
+
+                        amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
                         ogs_fatal("discover");
                     } else {
                         ogs_fatal("HTTP response error : %d",
@@ -296,6 +299,15 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                     amf_self()->nf_type, subscription->nf_instance_id);
             break;
 
+        case AMF_TIMER_DISCOVER_WAIT:
+            amf_ue = e->sbi.data;
+            ogs_assert(amf_ue);
+
+            ogs_error("Cannot receive NF discover from NRF [%s]",
+                    amf_ue->imsi_bcd);
+            nas_5gs_send_gmm_reject(
+                    amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+            break;
         default:
             ogs_error("Unknown timer[%s:%d]",
                     amf_timer_get_name(e->timer_id), e->timer_id);

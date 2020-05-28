@@ -115,7 +115,7 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
     }
 }
 
-static ogs_sbi_nf_instance_t *find_nf_instance(
+static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
         amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
     if (!AMF_UE_HAVE_NF_TYPE(amf_ue, OpenAPI_nf_type_NRF))
@@ -132,6 +132,9 @@ static ogs_sbi_nf_instance_t *find_nf_instance(
     }
 
     if (!amf_ue->nf_type[nf_type].nf_instance) {
+        ogs_timer_start(amf_ue->discover_wait.timer,
+                amf_timer_cfg(AMF_TIMER_DISCOVER_WAIT)->duration);
+
         ogs_sbi_send_nf_discover(
             amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
             nf_type, OpenAPI_nf_type_AMF, amf_ue);
@@ -151,7 +154,7 @@ void amf_sbi_send_authenticate(amf_ue_t *amf_ue)
 #endif
     ogs_sbi_client_t *client = NULL;
 
-    nf_instance = find_nf_instance(amf_ue, OpenAPI_nf_type_AUSF);
+    nf_instance = find_or_discover_nf_instance(amf_ue, OpenAPI_nf_type_AUSF);
     if (!nf_instance) {
         ogs_warn("try to discover AUSF");
         return;

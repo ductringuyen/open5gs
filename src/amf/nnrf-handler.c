@@ -216,12 +216,13 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
     return true;
 }
 
-void amf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
+void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 {
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
     bool handled;
 
+    ogs_assert(amf_ue);
     ogs_assert(message);
 
     SearchResult = message->SearchResult;

@@ -35,6 +35,7 @@ typedef enum {
     AMF_TIMER_NF_INSTANCE_HEARTBEAT,
     AMF_TIMER_NF_INSTANCE_VALIDITY,
     AMF_TIMER_SUBSCRIPTION_VALIDITY,
+    AMF_TIMER_DISCOVER_WAIT,
 
     AMF_TIMER_NG_DELAYED_SEND,
 
@@ -67,6 +68,7 @@ void amf_timer_nf_instance_heartbeat_interval(void *data);
 void amf_timer_nf_instance_heartbeat(void *data);
 void amf_timer_nf_instance_validity(void *data);
 void amf_timer_subscription_validity(void *data);
+void amf_timer_discover_wait_expire(void *data);
 
 void amf_timer_ng_delayed_send(void *data);
 
