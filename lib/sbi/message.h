@@ -92,6 +92,7 @@ extern "C" {
 #define OGS_SBI_PARAM_REQUESTER_NF_TYPE             "requester-nf-type"
 #define OGS_SBI_PARAM_LIMIT                         "limit"
 
+#define OGS_SBI_ACCEPT                              "Accept"
 #define OGS_SBI_ACCEPT_ENCODING                     "Accept-Encoding"
 #define OGS_SBI_CONTENT_TYPE                        "Content-Type"
 #define OGS_SBI_CONTENT_JSON_TYPE                   "application/json"
@@ -125,6 +126,7 @@ typedef struct ogs_sbi_message_s {
     ogs_sbi_header_t h;
 
     struct {
+        char *accept;
         char *content_encoding;
         char *content_type;
         bool location;

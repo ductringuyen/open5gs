@@ -213,6 +213,22 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
                     OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
     }
 
+    if (message->http.accept) {
+            ogs_sbi_header_set(request->http.headers,
+                    OGS_SBI_ACCEPT, message->http.accept);
+    } else {
+        SWITCH(message->h.method)
+        CASE(OGS_SBI_HTTP_METHOD_PATCH)
+            ogs_sbi_header_set(request->http.headers,
+                    OGS_SBI_ACCEPT, OGS_SBI_CONTENT_PATCH_TYPE);
+            break;
+        DEFAULT
+            ogs_sbi_header_set(request->http.headers,
+                    OGS_SBI_ACCEPT, OGS_SBI_CONTENT_JSON_TYPE);
+            break;
+        END
+    }
+
     if (message->http.content_encoding)
         ogs_sbi_header_set(request->http.headers,
                 OGS_SBI_ACCEPT_ENCODING, message->http.content_encoding);
@@ -341,6 +357,8 @@ int ogs_sbi_parse_request(
             message->http.content_encoding = ogs_hash_this_val(hi);
         } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE)) {
             message->http.content_type = ogs_hash_this_val(hi);
+        } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_ACCEPT)) {
+            message->http.accept = ogs_hash_this_val(hi);
         }
     }
 

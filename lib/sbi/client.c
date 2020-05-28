@@ -276,11 +276,12 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
 
         curl_easy_setopt(conn->easy, CURLOPT_CUSTOMREQUEST, request->h.method);
         if (request->http.content) {
-            curl_easy_setopt(conn->easy, CURLOPT_HTTPHEADER, conn->header_list);
             curl_easy_setopt(conn->easy, CURLOPT_POSTFIELDS,
                     request->http.content);
         }
     }
+
+    curl_easy_setopt(conn->easy, CURLOPT_HTTPHEADER, conn->header_list);
 
     if (ogs_hash_count(request->http.params)) {
         request->h.url = add_params_to_url(conn->easy,
