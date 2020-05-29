@@ -114,11 +114,15 @@ void ausf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
     }
 }
 
-static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
-        ausf_ue_t *ausf_ue, OpenAPI_nf_type_e nf_type)
+static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(ausf_ue_t *ausf_ue,
+        OpenAPI_nf_type_e nf_type, ogs_sbi_session_t *session)
 {
     bool nrf = false;
     bool nf = false;
+
+    ogs_assert(ausf_ue);
+    ogs_assert(session);
+    ogs_assert(nf_type);
 
     if (!OGS_SBI_NF_INSTANCE_GET(ausf_ue->nf_types, OpenAPI_nf_type_NRF))
         nrf = ogs_sbi_nf_types_associate(
@@ -128,11 +132,12 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             ausf_ue->nf_types, nf_type, ausf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover AUSF", ausf_ue->id);
-#if 0
-        nas_5gs_send_gmm_reject(
-                ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+        ogs_error("[%s] Cannot discover UDM", ausf_ue->id);
+
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                "Cannot discover UDM", ausf_ue->id);
+
         return NULL;
     }
 
@@ -151,8 +156,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     return ausf_ue->nf_types[nf_type].nf_instance;
 }
 
-void ausf_nudm_ueau_send_get(
-        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
+void ausf_nudm_ueau_send_get(ausf_ue_t *ausf_ue,
+        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_session_t *session)
 {
     ogs_assert(ausf_ue);
 
@@ -163,7 +168,7 @@ void ausf_nudm_ueau_send_get(
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
-                            ausf_ue, OpenAPI_nf_type_UDM);
+                            ausf_ue, OpenAPI_nf_type_UDM, session);
 
     if (!nf_instance) return;
 
