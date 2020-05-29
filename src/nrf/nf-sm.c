@@ -191,7 +191,7 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
                     OGS_SBI_HEARTBEAT_RETRYCOUNT);
         }
 
-        nrf_sbi_send_nf_status_notify_all(
+        nrf_nnrf_nfm_send_nf_status_notify_all(
                 OpenAPI_notification_event_type_NF_REGISTERED, nf_instance);
         break;
 
@@ -201,7 +201,7 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
             ogs_timer_stop(nf_instance->t_heartbeat);
         }
 
-        nrf_sbi_send_nf_status_notify_all(
+        nrf_nnrf_nfm_send_nf_status_notify_all(
                 OpenAPI_notification_event_type_NF_DEREGISTERED, nf_instance);
         break;
 
