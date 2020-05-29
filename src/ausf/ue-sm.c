@@ -90,11 +90,9 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
     ausf_sm_debug(e);
 
-    ausf_ue = e->sbi.data;
-    ogs_assert(ausf_ue);
-
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
+        ogs_fatal("entry");
 #if 0
         ogs_timer_start(nf_instance->t_registration_interval,
                 ausf_timer_cfg(AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
@@ -105,9 +103,17 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
         break;
 
     case OGS_FSM_EXIT_SIG:
+        ogs_fatal("exit");
 #if 0
         ogs_timer_stop(nf_instance->t_registration_interval);
 #endif
+        break;
+
+    case AUSF_EVT_SBI_SERVER:
+        ausf_ue = e->ausf_ue;
+        ogs_assert(ausf_ue);
+
+        ogs_fatal("asdklfjaklsdfjaklsdfasdf");
         break;
 
     case AUSF_EVT_SBI_CLIENT:

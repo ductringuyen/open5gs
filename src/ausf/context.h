@@ -105,6 +105,7 @@ void ausf_ue_remove_all(void);
 ausf_ue_t *ausf_ue_find(char *id);
 
 ausf_ue_t *ausf_ue_find_by_message(ogs_sbi_message_t *message);
+ausf_ue_t *ausf_ue_add_by_message(ogs_sbi_message_t *message);
 
 #ifdef __cplusplus
 }

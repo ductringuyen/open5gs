@@ -122,11 +122,9 @@ ausf_ue_t *ausf_ue_add(char *id)
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
 
-    /* Add All Timers */
     ausf_ue->sbi_message_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_message_wait_expire, ausf_ue);
 
-    /* Create FSM */
     ausf_ue_fsm_init(ausf_ue);
 
     ogs_list_add(&self.ausf_ue_list, ausf_ue);
@@ -146,8 +144,8 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
 
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
+    ogs_free(ausf_ue->id);
     
-    /* Delete All Timers */
     CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
     ogs_timer_delete(ausf_ue->sbi_message_wait.timer);
 
@@ -174,6 +172,13 @@ ausf_ue_t *ausf_ue_find(char *id)
 }
 
 ausf_ue_t *ausf_ue_find_by_message(ogs_sbi_message_t *message)
+{
+    ausf_ue_t *ausf_ue = NULL;
+
+    return ausf_ue;
+}
+
+ausf_ue_t *ausf_ue_add_by_message(ogs_sbi_message_t *message)
 {
     ausf_ue_t *ausf_ue = NULL;
 
