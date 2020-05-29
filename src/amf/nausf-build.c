@@ -42,13 +42,15 @@ ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue->id);
     AuthenticationInfo->supi_or_suci = amf_ue->id;
-    AuthenticationInfo->serving_network_name = (char*)"abcasdf";
+    AuthenticationInfo->serving_network_name =
+        ogs_plmn_id_string(&amf_ue->tai.plmn_id);
 
     message.AuthenticationInfo = AuthenticationInfo;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
 
+    ogs_free(AuthenticationInfo->serving_network_name);
     ogs_free(AuthenticationInfo);
 
     return request;
