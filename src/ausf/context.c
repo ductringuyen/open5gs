@@ -113,7 +113,6 @@ int ausf_context_parse_config(void)
 ausf_ue_t *ausf_ue_add(char *id)
 {
     ausf_ue_t *ausf_ue = NULL;
-    ausf_event_t e;
 
     ogs_pool_alloc(&ausf_ue_pool, &ausf_ue);
     ogs_assert(ausf_ue);
@@ -128,12 +127,7 @@ ausf_ue_t *ausf_ue_add(char *id)
             self.timer_mgr, ausf_timer_sbi_message_wait_expire, ausf_ue);
 
     /* Create FSM */
-#if 0
-    e.ausf_ue = ausf_ue;
-    e.id = 0;
-    ogs_fsm_create(&ausf_ue->sm, gmm_state_initial, gmm_state_final);
-    ogs_fsm_init(&ausf_ue->sm, &e);
-#endif
+    ausf_ue_fsm_init(ausf_ue);
 
     ogs_list_add(&self.ausf_ue_list, ausf_ue);
 
@@ -142,18 +136,13 @@ ausf_ue_t *ausf_ue_add(char *id)
 
 void ausf_ue_remove(ausf_ue_t *ausf_ue)
 {
-    ausf_event_t e;
     int i;
 
     ogs_assert(ausf_ue);
 
     ogs_list_remove(&self.ausf_ue_list, ausf_ue);
 
-#if 0
-    e.ausf_ue = ausf_ue;
-    ogs_fsm_fini(&ausf_ue->sm, &e);
-    ogs_fsm_delete(&ausf_ue->sm);
-#endif
+    ausf_ue_fsm_fini(ausf_ue);
 
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);

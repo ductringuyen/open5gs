@@ -40,6 +40,15 @@ void ausf_nf_state_registered(ogs_fsm_t *s, ausf_event_t *e);
 void ausf_nf_state_de_registered(ogs_fsm_t *s, ausf_event_t *e);
 void ausf_nf_state_exception(ogs_fsm_t *s, ausf_event_t *e);
 
+void ausf_ue_fsm_init(ausf_ue_t *ausf_ue);
+void ausf_ue_fsm_fini(ausf_ue_t *ausf_ue);
+
+void ausf_ue_state_initial(ogs_fsm_t *s, ausf_event_t *e);
+void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e);
+void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e);
+void ausf_ue_state_authenticated(ogs_fsm_t *s, ausf_event_t *e);
+void ausf_ue_state_exception(ogs_fsm_t *s, ausf_event_t *e);
+
 #define ausf_sm_debug(__pe) \
     ogs_debug("%s(): %s", __func__, ausf_event_get_name(__pe))
 

@@ -24,6 +24,7 @@ libausf_sources = files('''
     nnrf-build.c
     sbi-path.c
     nf-sm.c
+    ue-sm.c
 
     ausf-sm.c
 

@@ -1126,7 +1126,7 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
     /* Add All Timers */
     amf_ue->sbi_message_wait.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_sbi_message_wait_expire, amf_ue);
-    amf_ue->t3413.pkbuf = NULL;
+
     amf_ue->t3413.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_t3413_expire, amf_ue);
     amf_ue->t3413.pkbuf = NULL;

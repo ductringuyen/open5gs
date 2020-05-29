@@ -123,6 +123,73 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+
+
+
+
+#if 0
+            ausf_ue = ausf_ue_find_by_message(message);
+            if (!ausf_ue)
+
+            SWITCH(message.h.method)
+            CASE(OGS_SBI_HTTP_METHOD_POST)
+                ausf_ue = ausf_ue_find_by_message(message.h.resource.id);
+                break;
+            CASE(OGS_SBI_HTTP_METHOD_PUT)
+                ausf_ue = ausf_ue_find(message.h.resource.id);
+                break;
+
+            DEFAULT
+                ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &sbi_message,
+                        "Invalid API name", sbi_message.h.resource.name);
+            END
+
+
+
+            ausf_ue = ausf_ue_find_by_message(message.h.resource.id);
+            if (!ausf_ue) {
+                SWITCH(message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_PUT)
+                    ausf_ue = ausf_ue_add(
+                            message.h.resource.id);
+                    ogs_assert(ausf_ue);
+                    nrf_nf_fsm_init(ausf_ue);
+                    break;
+                DEFAULT
+                    ogs_error("Not found [%s]", message.h.resource.id);
+                    ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                        &message, "Not found", message.h.resource.id);
+                END
+            }
+
+            if (ausf_ue) {
+                e->ausf_ue = ausf_ue;
+                ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
+
+                e->sbi.message = &message;
+                ogs_fsm_dispatch(&ausf_ue->sm, e);
+                if (OGS_FSM_CHECK(&ausf_ue->sm,
+                            nrf_nf_state_de_registered)) {
+                    nrf_nf_fsm_fini(ausf_ue);
+                    ausf_ue_remove(ausf_ue);
+                } else if (OGS_FSM_CHECK(&ausf_ue->sm,
+                            nrf_nf_state_exception)) {
+                    ogs_error("State machine exception");
+                    ogs_sbi_message_free(&message);
+
+                    nrf_nf_fsm_fini(ausf_ue);
+                    ausf_ue_remove(ausf_ue);
+                }
+            }
+
+#endif
+
+            break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
             ogs_sbi_server_send_error(session,
