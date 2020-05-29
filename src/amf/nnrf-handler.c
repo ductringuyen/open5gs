@@ -302,7 +302,7 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
             nas_5gs_send_gmm_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         } else {
-            amf_sbi_send_authenticate(amf_ue, nf_instance);
+            amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
         }
     } else {
         ogs_fatal("Should implement other case");

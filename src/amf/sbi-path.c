@@ -149,7 +149,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     return amf_ue->nf_types[nf_type].nf_instance;
 }
 
-void amf_sbi_send_authenticate(
+void amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_assert(amf_ue);
@@ -178,7 +178,7 @@ void amf_sbi_send_authenticate(
     ogs_sbi_client_send_request(client, request, nf_instance);
 }
 
-void amf_sbi_send_confirm_authentications(
+void amf_nausf_auth_send_confirm_authentications(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
 }
