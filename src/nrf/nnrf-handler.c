@@ -30,6 +30,7 @@ bool nrf_nnrf_handle_nf_register(
     OpenAPI_nf_profile_t *NFProfile = NULL;
 
     ogs_assert(nf_instance);
+    ogs_assert(server);
     ogs_assert(session);
     ogs_assert(message);
 

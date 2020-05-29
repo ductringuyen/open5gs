@@ -157,8 +157,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
                 ogs_error("State machine exception");
                 ogs_sbi_message_free(&message);
-
-                ausf_ue_fsm_fini(ausf_ue);
                 ausf_ue_remove(ausf_ue);
             }
 

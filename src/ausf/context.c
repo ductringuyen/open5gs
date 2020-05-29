@@ -145,6 +145,9 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
     ogs_free(ausf_ue->id);
+
+    if (ausf_ue->serving_network_name)
+        ogs_free(ausf_ue->serving_network_name);
     
     CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
     ogs_timer_delete(ausf_ue->sbi_message_wait.timer);

@@ -21,6 +21,7 @@
 
 #include "sbi-path.h"
 #include "nnrf-handler.h"
+#include "nausf-handler.h"
 
 void ausf_ue_fsm_init(ausf_ue_t *asuf_ue)
 {
@@ -53,7 +54,7 @@ void ausf_ue_state_initial(ogs_fsm_t *s, ausf_event_t *e)
 
     ausf_sm_debug(e);
 
-    ausf_ue = e->sbi.data;
+    ausf_ue = e->ausf_ue;
     ogs_assert(ausf_ue);
 
     ausf_ue->sbi_message_wait.timer = ogs_timer_add(ausf_self()->timer_mgr,
@@ -71,7 +72,7 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
     ausf_sm_debug(e);
 
-    ausf_ue = e->sbi.data;
+    ausf_ue = e->ausf_ue;
     ogs_assert(ausf_ue);
 
     CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
@@ -80,7 +81,9 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
 void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 {
+#if 0
     bool handled;
+#endif
     ausf_ue_t *ausf_ue = NULL;
 
     ogs_sbi_server_t *server = NULL;
@@ -112,7 +115,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            ausf_nnrf_handle_authenticate(ausf_ue, message);
+            ausf_nausf_handle_authenticate(ausf_ue, server, session, message);
             break;
         CASE(OGS_SBI_HTTP_METHOD_PUT)
             ogs_fatal("PUT");
@@ -134,14 +137,16 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 void ausf_ue_state_authenticated(ogs_fsm_t *s, ausf_event_t *e)
 {
     ausf_ue_t *ausf_ue = NULL;
+#if 0
     ogs_sbi_client_t *client = NULL;
     ogs_sbi_message_t *message = NULL;
+#endif
     ogs_assert(s);
     ogs_assert(e);
 
     ausf_sm_debug(e);
 
-    ausf_ue = e->sbi.data;
+    ausf_ue = e->ausf_ue;
     ogs_assert(ausf_ue);
 
     switch (e->id) {
@@ -165,16 +170,14 @@ void ausf_ue_state_authenticated(ogs_fsm_t *s, ausf_event_t *e)
 
 void ausf_ue_state_exception(ogs_fsm_t *s, ausf_event_t *e)
 {
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-    ogs_sbi_client_t *client = NULL;
-    ogs_sockaddr_t *addr = NULL;
+    ausf_ue_t *ausf_ue = NULL;
     ogs_assert(s);
     ogs_assert(e);
 
     ausf_sm_debug(e);
 
-    nf_instance = e->sbi.data;
-    ogs_assert(nf_instance);
+    ausf_ue = e->ausf_ue;
+    ogs_assert(ausf_ue);
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:

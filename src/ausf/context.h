@@ -54,6 +54,7 @@ struct ausf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     char *id;
+    char *serving_network_name;
 
 #define CLEAR_AUSF_UE_ALL_TIMERS(__aUSF) \
     do { \
