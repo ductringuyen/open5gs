@@ -68,8 +68,8 @@ void ogs_sbi_server_start_all(int (*cb)(
 void ogs_sbi_server_stop(ogs_sbi_server_t *server);
 void ogs_sbi_server_stop_all(void);
 
-void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
-        ogs_sbi_response_t *response, uint32_t status);
+void ogs_sbi_server_send_response(
+        ogs_sbi_session_t *session, ogs_sbi_response_t *response);
 void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
         int status, ogs_sbi_message_t *message,
         const char *title, const char *detail);

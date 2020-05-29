@@ -54,9 +54,9 @@ bool nrf_nnrf_handle_nf_register(
     } else
         ogs_assert_if_reached();
 
-    response = ogs_sbi_build_response(message);
+    response = ogs_sbi_build_response(message, status);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response, status);
+    ogs_sbi_server_send_response(session, response);
 
     return true;
 }
@@ -96,10 +96,10 @@ bool nrf_nnrf_handle_nf_update(
             }
         }
 
-        response = ogs_sbi_build_response(message);
+        response = ogs_sbi_build_response(
+                message, OGS_SBI_HTTP_STATUS_NO_CONTENT);
         ogs_assert(response);
-        ogs_sbi_server_send_response(session, response,
-                OGS_SBI_HTTP_STATUS_NO_CONTENT);
+        ogs_sbi_server_send_response(session, response);
         break;
 
     DEFAULT
@@ -204,9 +204,9 @@ bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
     message->http.location = true;
     status = OGS_SBI_HTTP_STATUS_CREATED;
 
-    response = ogs_sbi_build_response(message);
+    response = ogs_sbi_build_response(message, status);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response, status);
+    ogs_sbi_server_send_response(session, response);
 
     return true;
 }
@@ -223,10 +223,10 @@ bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
         ogs_sbi_response_t *response = NULL;
         ogs_sbi_subscription_remove(subscription);
 
-        response = ogs_sbi_build_response(message);
+        response = ogs_sbi_build_response(
+                message, OGS_SBI_HTTP_STATUS_NO_CONTENT);
         ogs_assert(response);
-        ogs_sbi_server_send_response(session, response,
-            OGS_SBI_HTTP_STATUS_NO_CONTENT);
+        ogs_sbi_server_send_response(session, response);
     } else {
         ogs_error("Not found [%s]", message->h.resource.id);
         ogs_sbi_server_send_error(session,
@@ -283,9 +283,9 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
     sendmsg.links = links;
     sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
 
-    response = ogs_sbi_build_response(&sendmsg);
+    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response, OGS_SBI_HTTP_STATUS_OK);
+    ogs_sbi_server_send_response(session, response);
 
     OpenAPI_list_for_each(links->items, node) {
         if (!node->data) continue;
@@ -326,9 +326,9 @@ bool nrf_nnrf_handle_nf_profile_retrieval(ogs_sbi_server_t *server,
     memset(&sendmsg, 0, sizeof(sendmsg));
     sendmsg.NFProfile = NFProfile;
 
-    response = ogs_sbi_build_response(&sendmsg);
+    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response, OGS_SBI_HTTP_STATUS_OK);
+    ogs_sbi_server_send_response(session, response);
 
     ogs_sbi_nnrf_free_nf_profile(NFProfile);
 
@@ -398,9 +398,9 @@ bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
     sendmsg.http.cache_control =
         ogs_msprintf("max-age=%d", SearchResult->validity_period);
 
-    response = ogs_sbi_build_response(&sendmsg);
+    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response, OGS_SBI_HTTP_STATUS_OK);
+    ogs_sbi_server_send_response(session, response);
 
     OpenAPI_list_for_each(SearchResult->nf_instances, node) {
         OpenAPI_nf_profile_t *NFProfile = NULL;

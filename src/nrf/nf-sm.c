@@ -235,10 +235,10 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
                     break;
 
                 CASE(OGS_SBI_HTTP_METHOD_DELETE)
-                    response = ogs_sbi_build_response(message);
+                    response = ogs_sbi_build_response(
+                            message, OGS_SBI_HTTP_STATUS_NO_CONTENT);
                     ogs_assert(response);
-                    ogs_sbi_server_send_response(session, response,
-                        OGS_SBI_HTTP_STATUS_NO_CONTENT);
+                    ogs_sbi_server_send_response(session, response);
                     OGS_FSM_TRAN(s, nrf_nf_state_de_registered);
                     break;
 

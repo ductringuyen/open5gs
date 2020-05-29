@@ -209,10 +209,9 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
         return false;
     }
 
-    response = ogs_sbi_build_response(message);
+    response = ogs_sbi_build_response(message, OGS_SBI_HTTP_STATUS_NO_CONTENT);
     ogs_assert(response);
-    ogs_sbi_server_send_response(session, response,
-            OGS_SBI_HTTP_STATUS_NO_CONTENT);
+    ogs_sbi_server_send_response(session, response);
 
     return true;
 }

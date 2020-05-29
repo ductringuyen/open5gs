@@ -327,8 +327,8 @@ void ogs_sbi_server_stop_all(void)
         ogs_sbi_server_stop(server);
 }
 
-void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
-        ogs_sbi_response_t *response, uint32_t status)
+void ogs_sbi_server_send_response(
+        ogs_sbi_session_t *session, ogs_sbi_response_t *response)
 {
     int ret;
 
@@ -342,7 +342,6 @@ void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(response);
-    ogs_assert(status);
 
     ogs_assert(session);
     connection = session->connection;
@@ -387,7 +386,7 @@ void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
                     OGS_POLLOUT, mhd_socket, run, mhd_daemon);
     ogs_assert(request->poll);
 
-    ret = MHD_queue_response(connection, status, mhd_response);
+    ret = MHD_queue_response(connection, response->status, mhd_response);
     ogs_assert(ret == MHD_YES);
     MHD_destroy_response(mhd_response);
 }
@@ -406,10 +405,10 @@ void ogs_sbi_server_send_problem(
     message.http.content_type = (char*)"application/problem+json";
     message.ProblemDetails = problem;
 
-    response = ogs_sbi_build_response(&message);
+    response = ogs_sbi_build_response(&message, problem->status);
     ogs_assert(response);
 
-    ogs_sbi_server_send_response(session, response, problem->status);
+    ogs_sbi_server_send_response(session, response);
 }
 
 void ogs_sbi_server_send_error(ogs_sbi_session_t *session,

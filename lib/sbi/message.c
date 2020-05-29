@@ -218,7 +218,6 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
                 message->http.accept);
     } else {
         SWITCH(message->h.method)
-        CASE(OGS_SBI_HTTP_METHOD_PATCH)
         CASE(OGS_SBI_HTTP_METHOD_DELETE)
             ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
                 OGS_SBI_CONTENT_PROBLEM_TYPE);
@@ -237,7 +236,8 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     return request;
 }
 
-ogs_sbi_response_t *ogs_sbi_build_response(ogs_sbi_message_t *message)
+ogs_sbi_response_t *ogs_sbi_build_response(
+        ogs_sbi_message_t *message, int status)
 {
     ogs_sbi_response_t *response = NULL;
 
@@ -246,15 +246,19 @@ ogs_sbi_response_t *ogs_sbi_build_response(ogs_sbi_message_t *message)
     response = ogs_sbi_response_new();
     ogs_assert(response);
 
+    response->status = status;
+
     /* HTTP Message */
-    response->http.content = build_content(message);
-    if (response->http.content) {
-        if (message->http.content_type)
-            ogs_sbi_header_set(response->http.headers,
-                    OGS_SBI_CONTENT_TYPE, message->http.content_type);
-        else
-            ogs_sbi_header_set(response->http.headers,
-                    OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
+    if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
+        response->http.content = build_content(message);
+        if (response->http.content) {
+            if (message->http.content_type)
+                ogs_sbi_header_set(response->http.headers,
+                        OGS_SBI_CONTENT_TYPE, message->http.content_type);
+            else
+                ogs_sbi_header_set(response->http.headers,
+                        OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
+        }
     }
 
     if (message->http.location == true)

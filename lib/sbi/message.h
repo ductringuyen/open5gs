@@ -169,7 +169,8 @@ int ogs_sbi_parse_request(
 
 ogs_sbi_response_t *ogs_sbi_response_new(void);
 void ogs_sbi_response_free(ogs_sbi_response_t *response);
-ogs_sbi_response_t *ogs_sbi_build_response(ogs_sbi_message_t *message);
+ogs_sbi_response_t *ogs_sbi_build_response(
+        ogs_sbi_message_t *message, int status);
 int ogs_sbi_parse_response(
         ogs_sbi_message_t *message, ogs_sbi_response_t *response);
 
