@@ -66,6 +66,7 @@ void amf_context_init(void)
     self.amf_ue_ngap_id_hash = ogs_hash_make();
     self.imsi_ue_hash = ogs_hash_make();
     self.guti_ue_hash = ogs_hash_make();
+    self.amf_ue_id_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -88,6 +89,8 @@ void amf_context_final(void)
     ogs_hash_destroy(self.imsi_ue_hash);
     ogs_assert(self.guti_ue_hash);
     ogs_hash_destroy(self.guti_ue_hash);
+    ogs_assert(self.amf_ue_id_hash);
+    ogs_hash_destroy(self.amf_ue_id_hash);
 
     ogs_pool_final(&self.m_tmsi);
     ogs_pool_final(&amf_bearer_pool);
@@ -1172,6 +1175,10 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     }
     if (amf_ue->imsi_len != 0)
         ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, NULL);
+    if (amf_ue->id) {
+        ogs_hash_set(self.amf_ue_id_hash, amf_ue->id, strlen(amf_ue->id), NULL);
+        ogs_free(amf_ue->id);
+    }
     
 #if 0
     /* Clear the saved PDN Connectivity Request */
@@ -1249,6 +1256,13 @@ amf_ue_t *amf_ue_find_by_teid(uint32_t teid)
     return ogs_pool_find(&amf_ue_pool, teid);
 }
 
+amf_ue_t *amf_ue_find_by_id(char *id)
+{
+    ogs_assert(id);
+
+    return (amf_ue_t *)ogs_hash_get(self.amf_ue_id_hash, id, strlen(id));
+}
+
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
 {
     amf_ue_t *amf_ue = NULL;
@@ -1282,7 +1296,6 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
             ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
             ue_id = ogs_nas_5gs_ue_id_from_mobile_identity(mobile_identity);
             amf_ue = amf_ue_find_by_imsi_bcd(imsi_bcd);
-            ogs_fatal("%s", ue_id);
             if (amf_ue) {
                 ogs_trace("known UE by IMSI[%s]", imsi_bcd);
             } else {
@@ -1389,10 +1402,16 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
     return amf_ue;
 }
 
-int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd)
+int amf_ue_set_id(amf_ue_t *amf_ue,
+        ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
+    char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
     amf_ue_t *old_amf_ue = NULL;
-    ogs_assert(amf_ue && imsi_bcd);
+
+    ogs_assert(amf_ue);
+    ogs_assert(mobile_identity);
+
+    ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
 
     ogs_cpystrn(amf_ue->imsi_bcd, imsi_bcd, OGS_MAX_IMSI_BCD_LEN+1);
     ogs_bcd_to_buffer(amf_ue->imsi_bcd, amf_ue->imsi, &amf_ue->imsi_len);
@@ -1411,6 +1430,10 @@ int amf_ue_set_imsi(amf_ue_t *amf_ue, char *imsi_bcd)
     }
 
     ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, amf_ue);
+
+    amf_ue->id = ogs_nas_5gs_ue_id_from_mobile_identity(mobile_identity);
+    ogs_assert(amf_ue->id);
+    ogs_hash_set(self.amf_ue_id_hash, amf_ue->id, strlen(amf_ue->id), amf_ue);
 
     amf_ue->guti_present = 1;
 

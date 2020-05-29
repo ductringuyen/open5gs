@@ -40,7 +40,8 @@ ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
     AuthenticationInfo = ogs_calloc(1, sizeof(*AuthenticationInfo));
     ogs_assert(AuthenticationInfo);
 
-    AuthenticationInfo->supi_or_suci = (char*)"123123123";
+    ogs_assert(amf_ue->id);
+    AuthenticationInfo->supi_or_suci = amf_ue->id;
     AuthenticationInfo->serving_network_name = (char*)"abcasdf";
 
     message.AuthenticationInfo = AuthenticationInfo;

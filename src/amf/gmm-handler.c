@@ -40,8 +40,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     ogs_nas_5gs_mobile_identity_guti_t *mobile_identity_guti = NULL;
     ogs_nas_5gs_guti_t nas_guti;
 
-    char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
-
     ogs_assert(registration_request);
     registration_type = &registration_request->registration_type;
     ogs_assert(registration_type);
@@ -162,10 +160,9 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
 
     switch (mobile_identity_header->type) {
     case OGS_NAS_5GS_MOBILE_IDENTITY_SUCI:
-        ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
-        amf_ue_set_imsi(amf_ue, imsi_bcd);
+        amf_ue_set_id(amf_ue, mobile_identity);
 
-        ogs_debug("    IMSI[%s]", imsi_bcd);
+        ogs_debug("[%s]    UE_ID", amf_ue->id);
         break;
     case OGS_NAS_5GS_MOBILE_IDENTITY_GUTI:
         mobile_identity_guti =
@@ -178,10 +175,9 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
                 &mobile_identity_guti->amf_id, sizeof(ogs_amf_id_t));
         nas_guti.m_tmsi = be32toh(mobile_identity_guti->m_tmsi);
 
-        ogs_debug("    5G-S_GUTI[AMF_ID:0x%x,M_TMSI:0x%x] IMSI[%s]",
-            ogs_amf_id_hexdump(&nas_guti.amf_id), nas_guti.m_tmsi,
-                AMF_UE_HAVE_IMSI(amf_ue) 
-                    ? amf_ue->imsi_bcd : "Unknown IMSI");
+        ogs_debug("[%s]    5G-S_GUTI[AMF_ID:0x%x,M_TMSI:0x%x]",
+            AMF_UE_HAVE_ID(amf_ue) ? amf_ue->id : "Unknown ID",
+            ogs_amf_id_hexdump(&nas_guti.amf_id), nas_guti.m_tmsi);
         break;
     default:
         ogs_error("Unknown SUCI type [%d]", mobile_identity_header->type);
