@@ -120,8 +120,8 @@ ausf_ue_t *ausf_ue_add(void)
     memset(ausf_ue, 0, sizeof *ausf_ue);
 
     /* Add All Timers */
-    ausf_ue->discover_wait.timer = ogs_timer_add(
-            self.timer_mgr, ausf_timer_discover_wait_expire, ausf_ue);
+    ausf_ue->sbi_message_wait.timer = ogs_timer_add(
+            self.timer_mgr, ausf_timer_sbi_message_wait_expire, ausf_ue);
 
     /* Create FSM */
 #if 0
@@ -156,7 +156,7 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     
     /* Delete All Timers */
     CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
-    ogs_timer_delete(ausf_ue->discover_wait.timer);
+    ogs_timer_delete(ausf_ue->sbi_message_wait.timer);
 
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (ausf_ue->nf_types[i].nf_instance)

@@ -218,7 +218,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(ausf_ue->discover_wait.timer);
+                        ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
 
                         ausf_nnrf_handle_nf_discover(ausf_ue, &sbi_message);
                         ogs_fatal("discover");
@@ -268,19 +268,18 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             subscription = e->sbi.data;
             ogs_assert(subscription);
 
-            ogs_info("Subscription validity expired [%s]", subscription->id);
+            ogs_info("[%s] Subscription validity expired", subscription->id);
             ogs_sbi_subscription_remove(subscription);
 
             ogs_sbi_send_nf_status_subscribe(subscription->client,
                     ausf_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case AUSF_TIMER_DISCOVER_WAIT:
+        case AUSF_TIMER_SBI_MESSAGE_WAIT:
             ausf_ue = e->sbi.data;
             ogs_assert(ausf_ue);
 
-            ogs_error("Cannot receive NF discover from NRF [%s]",
-                    ausf_ue->imsi_bcd);
+            ogs_error("[%s] Cannot receive SBI message", ausf_ue->imsi_bcd);
 #if 0
             nas_5gs_send_gmm_reject(
                     ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);

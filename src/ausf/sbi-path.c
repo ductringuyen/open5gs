@@ -137,8 +137,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     }
 
     if (nf == false) {
-        ogs_timer_start(ausf_ue->discover_wait.timer,
-                ausf_timer_cfg(AUSF_TIMER_DISCOVER_WAIT)->duration);
+        ogs_timer_start(ausf_ue->sbi_message_wait.timer,
+                ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
 
         ogs_sbi_send_nf_discover(
             ausf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
