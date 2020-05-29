@@ -35,6 +35,7 @@
 #include "model/subscription_data.h"
 #include "model/notification_data.h"
 #include "model/search_result.h"
+#include "model/authentication_info.h"
 
 #include "custom/links.h"
 

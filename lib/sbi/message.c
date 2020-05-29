@@ -57,6 +57,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
         OpenAPI_notification_data_free(message->NotificationData);
     if (message->SearchResult)
         OpenAPI_search_result_free(message->SearchResult);
+    if (message->AuthenticationInfo)
+        OpenAPI_authentication_info_free(message->AuthenticationInfo);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -306,6 +308,10 @@ static char *build_content(ogs_sbi_message_t *message)
         ogs_assert(item);
     } else if (message->links) {
         item = ogs_sbi_links_convertToJSON(message->links);
+        ogs_assert(item);
+    } else if (message->AuthenticationInfo) {
+        item = OpenAPI_authentication_info_convertToJSON(
+                message->AuthenticationInfo);
         ogs_assert(item);
     }
 
@@ -572,6 +578,25 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                             message->h.resource.name);
                 END
                 break;
+
+            CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+                SWITCH(message->h.resource.name)
+                CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
+                    message->AuthenticationInfo =
+                        OpenAPI_authentication_info_parseFromJSON(item);
+                    if (!message->AuthenticationInfo) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                    break;
+
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.name);
+                END
+                break;
+
 
             DEFAULT
                 rv = OGS_ERROR;

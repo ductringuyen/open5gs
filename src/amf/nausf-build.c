@@ -24,6 +24,8 @@ ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
 
+    OpenAPI_authentication_info_t *AuthenticationInfo = NULL;
+
     ogs_assert(amf_ue);
 
     memset(&message, 0, sizeof(message));
@@ -35,8 +37,18 @@ ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
     message.http.accept = (char *)(OGS_SBI_CONTENT_3GPPHAL_TYPE ","
                                     OGS_SBI_CONTENT_PROBLEM_TYPE);
 
+    AuthenticationInfo = ogs_calloc(1, sizeof(*AuthenticationInfo));
+    ogs_assert(AuthenticationInfo);
+
+    AuthenticationInfo->supi_or_suci = (char*)"123123123";
+    AuthenticationInfo->serving_network_name = (char*)"abcasdf";
+
+    message.AuthenticationInfo = AuthenticationInfo;
+
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
+
+    ogs_free(AuthenticationInfo);
 
     return request;
 }
