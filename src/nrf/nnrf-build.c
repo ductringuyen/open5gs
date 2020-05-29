@@ -41,6 +41,8 @@ ogs_sbi_request_t *nrf_nnrf_build_nf_status_notify(
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
     message.h.url = subscription->notification_uri;
 
+    message.http.accept = (char *)OGS_SBI_CONTENT_PROBLEM_TYPE;
+
     NotificationData = ogs_calloc(1, sizeof(*NotificationData));
     ogs_assert(NotificationData);
 
