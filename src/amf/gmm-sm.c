@@ -376,7 +376,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 amf_sbi_send_authenticate(amf_ue);
             }
 #else
-            amf_nausf_auth_send_authenticate(amf_ue, NULL);
+            amf_nausf_auth_discover_and_send_authenticate(amf_ue);
 #endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
         }

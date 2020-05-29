@@ -154,16 +154,11 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 void amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    ogs_assert(amf_ue);
-
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_client_t *client = NULL;
 
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            amf_ue, OpenAPI_nf_type_AUSF);
-
-    if (!nf_instance) return;
+    ogs_assert(amf_ue);
+    ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
@@ -175,6 +170,21 @@ void amf_nausf_auth_send_authenticate(
     request = amf_nausf_build_authenticate(amf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
+}
+
+void amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(amf_ue);
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(
+                            amf_ue, OpenAPI_nf_type_AUSF);
+
+    if (!nf_instance) return;
+
+    amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
 }
 
 void amf_nausf_auth_send_confirm_authentications(

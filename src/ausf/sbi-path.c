@@ -156,21 +156,16 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(ausf_ue_t *ausf_ue,
     return ausf_ue->nf_types[nf_type].nf_instance;
 }
 
-void ausf_nudm_ueau_send_get(ausf_ue_t *ausf_ue,
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_session_t *session)
+void ausf_nudm_ueau_send_get(
+        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    ogs_assert(ausf_ue);
-
 #if 0
     ogs_sbi_request_t *request = NULL;
 #endif
     ogs_sbi_client_t *client = NULL;
 
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            ausf_ue, OpenAPI_nf_type_UDM, session);
-
-    if (!nf_instance) return;
+    ogs_assert(ausf_ue);
+    ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
@@ -183,4 +178,20 @@ void ausf_nudm_ueau_send_get(ausf_ue_t *ausf_ue,
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
 #endif
+}
+
+void ausf_nudm_ueau_discover_and_send_get(
+        ausf_ue_t *ausf_ue, ogs_sbi_session_t *session)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(ausf_ue);
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(
+                            ausf_ue, OpenAPI_nf_type_UDM, session);
+
+    if (!nf_instance) return;
+
+    ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
 }

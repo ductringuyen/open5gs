@@ -33,6 +33,7 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
 
 void amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
+void amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue);
 void amf_nausf_auth_send_confirm_authentications(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
 

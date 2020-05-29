@@ -31,8 +31,10 @@ void ausf_sbi_close(void);
 
 void ausf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
 
-void ausf_nudm_ueau_send_get(ausf_ue_t *ausf_ue,
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_session_t *session);
+void ausf_nudm_ueau_send_get(
+        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance);
+void ausf_nudm_ueau_discover_and_send_get(
+        ausf_ue_t *ausf_ue, ogs_sbi_session_t *session);
 
 #ifdef __cplusplus
 }
