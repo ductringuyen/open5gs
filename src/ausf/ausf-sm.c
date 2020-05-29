@@ -309,7 +309,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ogs_info("[%s] Subscription validity expired", subscription->id);
             ogs_sbi_subscription_remove(subscription);
 
-            ogs_sbi_send_nf_status_subscribe(subscription->client,
+            ogs_nnrf_nfm_send_nf_status_subscribe(subscription->client,
                     ausf_self()->nf_type, subscription->nf_instance_id);
             break;
 
