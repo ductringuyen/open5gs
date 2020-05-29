@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef AUSF_NNRF_HANDLER_H
-#define AUSF_NNRF_HANDLER_H
+#ifndef AUSF_NAUSF_HANDLER_H
+#define AUSF_NAUSF_HANDLER_H
 
 #include "context.h"
 
@@ -26,18 +26,11 @@
 extern "C" {
 #endif
 
-void ausf_nnrf_handle_nf_register(
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_message_t *message);
-void ausf_nnrf_handle_nf_status_subscribe(
-        ogs_sbi_subscription_t *subscription, ogs_sbi_message_t *message);
-
-bool ausf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
-        ogs_sbi_session_t *session, ogs_sbi_message_t *message);
-
-void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue, ogs_sbi_message_t *message);
+bool ausf_nausf_handle_authenticate(
+        ausf_ue_t *ausf_ue, ogs_sbi_message_t *message);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* AUSF_NNRF_HANDLER_H */
+#endif /* AUSF_NAUSF_HANDLER_H */

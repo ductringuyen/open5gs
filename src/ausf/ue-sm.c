@@ -27,7 +27,7 @@ void ausf_ue_fsm_init(ausf_ue_t *asuf_ue)
     ausf_event_t e;
 
     ogs_assert(asuf_ue);
-    e.sbi.data = asuf_ue;
+    e.ausf_ue = asuf_ue;
 
     ogs_fsm_create(&asuf_ue->sm, ausf_ue_state_initial, ausf_ue_state_final);
     ogs_fsm_init(&asuf_ue->sm, &e);
@@ -38,7 +38,7 @@ void ausf_ue_fsm_fini(ausf_ue_t *asuf_ue)
     ausf_event_t e;
 
     ogs_assert(asuf_ue);
-    e.sbi.data = asuf_ue;
+    e.ausf_ue = asuf_ue;
 
     ogs_fsm_fini(&asuf_ue->sm, &e);
     ogs_fsm_delete(&asuf_ue->sm);
@@ -80,99 +80,49 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
 void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 {
+    bool handled;
     ausf_ue_t *ausf_ue = NULL;
-    ogs_sbi_client_t *client = NULL;
+
+    ogs_sbi_server_t *server = NULL;
+    ogs_sbi_session_t *session = NULL;
     ogs_sbi_message_t *message = NULL;
-    ogs_sockaddr_t *addr = NULL;
 
     ogs_assert(s);
     ogs_assert(e);
 
     ausf_sm_debug(e);
 
+    ausf_ue = e->ausf_ue;
+    ogs_assert(ausf_ue);
+
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        ogs_fatal("entry");
-#if 0
-        ogs_timer_start(nf_instance->t_registration_interval,
-                ausf_timer_cfg(AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
-                    duration);
-
-        ogs_sbi_send_nf_register(nf_instance);
-#endif
         break;
 
     case OGS_FSM_EXIT_SIG:
-        ogs_fatal("exit");
-#if 0
-        ogs_timer_stop(nf_instance->t_registration_interval);
-#endif
         break;
 
     case AUSF_EVT_SBI_SERVER:
-        ausf_ue = e->ausf_ue;
-        ogs_assert(ausf_ue);
-
-        ogs_fatal("asdklfjaklsdfjaklsdfasdf");
-        break;
-
-    case AUSF_EVT_SBI_CLIENT:
-#if 0
         message = e->sbi.message;
         ogs_assert(message);
+        session = e->sbi.session;
+        ogs_assert(session);
+        server = e->sbi.server;
+        ogs_assert(server);
 
-        SWITCH(message->h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
-
-            SWITCH(message->h.resource.name)
-            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-
-                if (message->res_status == OGS_SBI_HTTP_STATUS_OK ||
-                    message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
-                    ausf_nnrf_handle_nf_register(nf_instance, message);
-                    OGS_FSM_TRAN(s, &ausf_ue_state_registered);
-                } else {
-                    ogs_error("HTTP Response Status Code [%d]",
-                            message->res_status);
-                    OGS_FSM_TRAN(s, &ausf_ue_state_exception);
-                }
-                break;
-
-            DEFAULT
-                ogs_error("Invalid resource name [%s]",
-                        message->h.resource.name);
-            END
+        SWITCH(message->h.method)
+        CASE(OGS_SBI_HTTP_METHOD_POST)
+            ausf_nnrf_handle_authenticate(ausf_ue, message);
             break;
-
+        CASE(OGS_SBI_HTTP_METHOD_PUT)
+            ogs_fatal("PUT");
+            break;
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.service.name);
+            ogs_error("Invalid HTTP method [%s]", message->h.method);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                    "Invalid HTTP method", message->h.method);
         END
-#endif
-        break;
-
-    case AUSF_EVT_SBI_TIMER:
-#if 0
-        switch(e->timer_id) {
-        case AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL:
-            client = nf_instance->client;
-            ogs_assert(client);
-            addr = client->addr;
-            ogs_assert(addr);
-
-            ogs_warn("Retry to registration with NRF [%s]", nf_instance->id);
-
-            ogs_timer_start(nf_instance->t_registration_interval,
-                ausf_timer_cfg(AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
-                    duration);
-
-            ogs_sbi_send_nf_register(nf_instance);
-            break;
-
-        default:
-            ogs_error("Unknown timer[%s:%d]",
-                    ausf_timer_get_name(e->timer_id), e->timer_id);
-        }
-#endif
         break;
 
     default:
