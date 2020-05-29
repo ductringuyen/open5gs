@@ -259,7 +259,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                         ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
 
                         ausf_nnrf_handle_nf_discover(ausf_ue, &message);
-                        ogs_fatal("discover");
                     } else {
                         ogs_fatal("HTTP response error : %d",
                                 message.res_status);

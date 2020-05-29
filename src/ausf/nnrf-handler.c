@@ -294,19 +294,19 @@ void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue, ogs_sbi_message_t *message
         }
     }
 
-#if 0
-    if (OGS_FSM_CHECK(&ausf_ue->sm, gmm_state_authentication)) {
+    if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_will_authenticate)) {
         nf_instance = OGS_SBI_NF_INSTANCE_GET(
-                ausf_ue->nf_types, OpenAPI_nf_type_AUSF);
+                ausf_ue->nf_types, OpenAPI_nf_type_UDM);
         if (!nf_instance) {
+#if 0
             nas_5gs_send_gmm_reject(
                     ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
         } else {
-            ausf_sbi_send_authenticate(ausf_ue, nf_instance);
+            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
         }
     } else {
         ogs_fatal("Should implement other case");
         ogs_assert_if_reached();
     }
-#endif
 }

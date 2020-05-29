@@ -58,5 +58,7 @@ bool ausf_nausf_handle_authenticate(
     ausf_ue->serving_network_name = ogs_strdup(serving_network_name);
     ogs_assert(ausf_ue->serving_network_name);
 
+    ausf_nudm_ueau_discover_and_send_get(ausf_ue, session);
+
     return true;
 }
