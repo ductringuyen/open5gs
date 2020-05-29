@@ -50,3 +50,43 @@ void ogs_nas_5gs_imsi_to_bcd(
             mobile_identity->length - 8, tmp);
     p = ogs_slprintf(p, last, "%s", tmp);
 }
+
+char *ogs_nas_5gs_ue_id_from_mobile_identity(
+        ogs_nas_5gs_mobile_identity_t *mobile_identity)
+{
+    ogs_nas_5gs_mobile_identity_imsi_t *mobile_identity_imsi = NULL;
+    ogs_plmn_id_t plmn_id;
+    char tmp[OGS_MAX_IMSI_BCD_LEN+1];
+    char *ue_id = NULL;
+
+    ogs_assert(mobile_identity);
+
+    mobile_identity_imsi =
+        (ogs_nas_5gs_mobile_identity_imsi_t *)mobile_identity->buffer;
+    ogs_assert(mobile_identity_imsi);
+
+    ue_id = ogs_strdup("suci-0-");
+    ogs_assert(ue_id);
+
+    ogs_nas_to_plmn_id(&plmn_id, &mobile_identity_imsi->nas_plmn_id);
+    if (ogs_plmn_id_mnc_len(&plmn_id) == 2) {
+        ue_id = ogs_mstrcatf(ue_id, "%03d-%02d-",
+                ogs_plmn_id_mcc(&plmn_id), ogs_plmn_id_mnc(&plmn_id));
+        ogs_assert(ue_id);
+    } else {
+        ue_id = ogs_mstrcatf(ue_id, "%03d-%03d-",
+                ogs_plmn_id_mcc(&plmn_id), ogs_plmn_id_mnc(&plmn_id));
+        ogs_assert(ue_id);
+    }
+
+    ogs_assert(mobile_identity->length > 8);
+    ogs_buffer_to_bcd(mobile_identity_imsi->scheme_output,
+            mobile_identity->length - 8, tmp);
+
+    ue_id = ogs_mstrcatf(ue_id, "0-%d-%d-%s",
+            mobile_identity_imsi->protection_scheme_id,
+            mobile_identity_imsi->home_network_pki_value,
+            tmp);
+
+    return ue_id;
+}

@@ -1263,6 +1263,7 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
     ogs_nas_5gs_guti_t nas_guti;
 
     char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
+    char *ue_id = NULL;
 
     ogs_assert(message);
 
@@ -1279,12 +1280,15 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
         switch (mobile_identity_header->type) {
         case OGS_NAS_5GS_MOBILE_IDENTITY_SUCI:
             ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
+            ue_id = ogs_nas_5gs_ue_id_from_mobile_identity(mobile_identity);
             amf_ue = amf_ue_find_by_imsi_bcd(imsi_bcd);
+            ogs_fatal("%s", ue_id);
             if (amf_ue) {
                 ogs_trace("known UE by IMSI[%s]", imsi_bcd);
             } else {
                 ogs_trace("Unknown UE by IMSI[%s]", imsi_bcd);
             }
+            ogs_free(ue_id);
             break;
         case OGS_NAS_5GS_MOBILE_IDENTITY_GUTI:
             mobile_identity_guti =

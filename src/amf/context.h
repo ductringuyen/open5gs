@@ -206,6 +206,8 @@ struct amf_ue_s {
     } nas;
 
     /* UE identity */
+    char            *ue_id; /* TS33.501 : SUCI */
+
 #define AMF_UE_HAVE_IMSI(__aMF) \
     ((__aMF) && ((__aMF)->imsi_len))
     uint8_t         imsi[OGS_MAX_IMSI_LEN];
