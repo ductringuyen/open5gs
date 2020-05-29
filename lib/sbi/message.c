@@ -214,17 +214,18 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     if (message->http.accept) {
-            ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_ACCEPT, message->http.accept);
+        ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
+                message->http.accept);
     } else {
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_PATCH)
-            ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_ACCEPT, OGS_SBI_CONTENT_PATCH_TYPE);
+        CASE(OGS_SBI_HTTP_METHOD_DELETE)
+            ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
+                OGS_SBI_CONTENT_PROBLEM_TYPE);
             break;
         DEFAULT
-            ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_ACCEPT, OGS_SBI_CONTENT_JSON_TYPE);
+            ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
+                OGS_SBI_CONTENT_JSON_TYPE "," OGS_SBI_CONTENT_PROBLEM_TYPE);
             break;
         END
     }
