@@ -45,7 +45,7 @@ typedef struct ausf_context_s {
     OpenAPI_nf_type_e   nf_type;
 
     ogs_list_t      ausf_ue_list;
-    ogs_hash_t      *imsi_ue_hash;          /* hash table (IMSI : AMF_UE) */
+    ogs_hash_t      *ue_id_hash;
 
 } ausf_context_t;
 
@@ -53,11 +53,7 @@ struct ausf_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
-#define AUSF_UE_HAVE_IMSI(__aUSF) \
-    ((__aUSF) && ((__aUSF)->imsi_len))
-    uint8_t         imsi[OGS_MAX_IMSI_LEN];
-    int             imsi_len;
-    char            imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
+    char *id;
 
 #define CLEAR_AUSF_UE_ALL_TIMERS(__aUSF) \
     do { \
@@ -103,15 +99,12 @@ ausf_context_t *ausf_self(void);
 
 int ausf_context_parse_config(void);
 
-ausf_ue_t *ausf_ue_add(void);
+ausf_ue_t *ausf_ue_add(char *id);
 void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
-
-ausf_ue_t *ausf_ue_find_by_imsi(uint8_t *imsi, int imsi_len);
-ausf_ue_t *ausf_ue_find_by_imsi_bcd(char *imsi_bcd);
+ausf_ue_t *ausf_ue_find(char *id);
 
 ausf_ue_t *ausf_ue_find_by_message(ogs_sbi_message_t *message);
-int ausf_ue_set_imsi(ausf_ue_t *ausf_ue, char *imsi_bcd);
 
 #ifdef __cplusplus
 }

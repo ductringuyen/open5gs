@@ -39,7 +39,6 @@ void ausf_state_final(ogs_fsm_t *s, ausf_event_t *e)
 void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 {
     int rv;
-    char buf[OGS_ADDRSTRLEN];
 
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
@@ -279,7 +278,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ausf_ue = e->sbi.data;
             ogs_assert(ausf_ue);
 
-            ogs_error("[%s] Cannot receive SBI message", ausf_ue->imsi_bcd);
+            ogs_error("[%s] Cannot receive SBI message", ausf_ue->id);
 #if 0
             nas_5gs_send_gmm_reject(
                     ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
