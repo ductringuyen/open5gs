@@ -20,7 +20,6 @@
 #ifndef AMF_NNRF_HANDLER_H
 #define AMF_NNRF_HANDLER_H
 
-#include "ogs-sbi.h"
 #include "context.h"
 
 #ifdef __cplusplus

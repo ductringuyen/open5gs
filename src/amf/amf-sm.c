@@ -245,7 +245,6 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                         ogs_timer_stop(amf_ue->discover_wait.timer);
 
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
-                        ogs_fatal("discover");
                     } else {
                         ogs_fatal("HTTP response error : %d",
                                 sbi_message.res_status);

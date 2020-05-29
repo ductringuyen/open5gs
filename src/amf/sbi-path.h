@@ -20,7 +20,7 @@
 #ifndef AMF_SBI_PATH_H
 #define AMF_SBI_PATH_H
 
-#include "nnrf-build.h"
+#include "nausf-build.h"
 
 #ifdef __cplusplus
 extern "C" {

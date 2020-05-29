@@ -17,10 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "nnrf-build.h"
+#include "nausf-build.h"
 
-ogs_sbi_request_t *amf_nnrf_build_auth_request(
-        ogs_sbi_nf_instance_t *nf_instance)
+ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
 {
-    return NULL;
+    ogs_sbi_message_t message;
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(amf_ue);
+
+    memset(&message, 0, sizeof(message));
+    message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
+    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH;
+    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.resource.name = (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
+
+    message.http.accept = (char *)(OGS_SBI_CONTENT_3GPPHAL_TYPE ","
+                                    OGS_SBI_CONTENT_PROBLEM_TYPE);
+
+    request = ogs_sbi_build_request(&message);
+    ogs_assert(request);
+
+    return request;
 }

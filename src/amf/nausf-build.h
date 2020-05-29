@@ -17,21 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef AMF_NNRF_BUILD_H
-#define AMF_NNRF_BUILD_H
+#ifndef AMF_NAUSF_BUILD_H
+#define AMF_NAUSF_BUILD_H
 
-#include "ogs-sbi.h"
 #include "context.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-ogs_sbi_request_t *amf_nnrf_build_auth_request(
-        ogs_sbi_nf_instance_t *nf_instance);
+ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* AMF_NNRF_BUILD_H */
+#endif /* AMF_NAUSF_BUILD_H */

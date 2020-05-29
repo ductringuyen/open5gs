@@ -19,6 +19,7 @@
 
 #include "sbi-path.h"
 #include "nas-path.h"
+#include "nausf-build.h"
 
 static int server_cb(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_request_t *request)
@@ -153,9 +154,7 @@ void amf_sbi_send_authenticate(
 {
     ogs_assert(amf_ue);
 
-#if 0
     ogs_sbi_request_t *request = NULL;
-#endif
     ogs_sbi_client_t *client = NULL;
 
     if (!nf_instance) {
@@ -171,16 +170,9 @@ void amf_sbi_send_authenticate(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
     ogs_assert(client);
 
-    {
-        char buf[128];
-        ogs_fatal("client = %p, %s:%d", client,
-                OGS_ADDR(client->addr, buf), OGS_PORT(client->addr));
-    }
-#if 0
-    request = ogs_nnrf_build_nf_register(nf_instance);
+    request = amf_nausf_build_authenticate(amf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
-#endif
 }
 
 void amf_sbi_send_confirm_authentications(
