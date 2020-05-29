@@ -130,19 +130,21 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             amf_ue->nf_types, nf_type, amf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[No NRF] Cannot discover AUSF");
+        ogs_error("[%s] Cannot discover AUSF", amf_ue->id);
         nas_5gs_send_gmm_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
 
     if (nf == false) {
+        ogs_warn("[%s] Try to discover AUSF", amf_ue->id);
         ogs_timer_start(amf_ue->sbi_message_wait.timer,
                 amf_timer_cfg(AMF_TIMER_SBI_MESSAGE_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
             amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
             nf_type, OpenAPI_nf_type_AMF, amf_ue);
+
         return NULL;
     }
 
@@ -157,14 +159,11 @@ void amf_nausf_auth_send_authenticate(
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_client_t *client = NULL;
 
-    if (!nf_instance) {
+    if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
                             amf_ue, OpenAPI_nf_type_AUSF);
-        if (!nf_instance) {
-            ogs_warn("try to discover AUSF");
-            return;
-        }
-    }
+
+    if (!nf_instance) return;
 
     client = ogs_sbi_client_find_by_service_name(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);

@@ -114,44 +114,68 @@ void ausf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
     }
 }
 
-void ausf_sbi_send_authenticate(
+static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
+        ausf_ue_t *ausf_ue, OpenAPI_nf_type_e nf_type)
+{
+    bool nrf = false;
+    bool nf = false;
+
+    if (!OGS_SBI_NF_INSTANCE_GET(ausf_ue->nf_types, OpenAPI_nf_type_NRF))
+        nrf = ogs_sbi_nf_types_associate(
+            ausf_ue->nf_types, OpenAPI_nf_type_NRF, ausf_nf_state_registered);
+    if (!OGS_SBI_NF_INSTANCE_GET(ausf_ue->nf_types, nf_type))
+        nf = ogs_sbi_nf_types_associate(
+            ausf_ue->nf_types, nf_type, ausf_nf_state_registered);
+
+    if (nrf == false && nf == false) {
+        ogs_error("[%s] Cannot discover AUSF", ausf_ue->id);
+#if 0
+        nas_5gs_send_gmm_reject(
+                ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
+        return NULL;
+    }
+
+    if (nf == false) {
+        ogs_warn("[%s] Try to discover AUSF", ausf_ue->id);
+        ogs_timer_start(ausf_ue->sbi_message_wait.timer,
+                ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
+
+        ogs_nnrf_disc_send_nf_discover(
+            ausf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
+            nf_type, OpenAPI_nf_type_AUSF, ausf_ue);
+
+        return NULL;
+    }
+
+    return ausf_ue->nf_types[nf_type].nf_instance;
+}
+
+void ausf_nudm_ueau_send_get(
         ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_assert(ausf_ue);
 
 #if 0
-#if 0
     ogs_sbi_request_t *request = NULL;
 #endif
     ogs_sbi_client_t *client = NULL;
 
-    if (!nf_instance) {
+    if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
-                            ausf_ue, OpenAPI_nf_type_AUSF);
-        if (!nf_instance) {
-            ogs_warn("try to discover AUSF");
-            return;
-        }
-    }
+                            ausf_ue, OpenAPI_nf_type_UDM);
+
+    if (!nf_instance) return;
 
     client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
     ogs_assert(client);
 
-    {
-        char buf[128];
-        ogs_fatal("client = %p, %s:%d", client,
-                OGS_ADDR(client->addr, buf), OGS_PORT(client->addr));
-    }
+    ogs_timer_start(ausf_ue->sbi_message_wait.timer,
+            ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
 #if 0
     request = ogs_nnrf_build_nf_register(nf_instance);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
 #endif
-#endif
-}
-
-void ausf_sbi_send_confirm_authentications(
-        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
-{
 }
