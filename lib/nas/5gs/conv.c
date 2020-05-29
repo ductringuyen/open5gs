@@ -57,6 +57,7 @@ char *ogs_nas_5gs_ue_id_from_mobile_identity(
     ogs_nas_5gs_mobile_identity_imsi_t *mobile_identity_imsi = NULL;
     ogs_plmn_id_t plmn_id;
     char tmp[OGS_MAX_IMSI_BCD_LEN+1];
+    char routing_indicator[5];
     char *ue_id = NULL;
 
     ogs_assert(mobile_identity);
@@ -79,11 +80,29 @@ char *ogs_nas_5gs_ue_id_from_mobile_identity(
         ogs_assert(ue_id);
     }
 
+    memset(routing_indicator, 0, sizeof(routing_indicator));
+    if (mobile_identity_imsi->routing_indicator1 != 0xf) {
+        routing_indicator[0] =
+            mobile_identity_imsi->routing_indicator1 + '0';
+        if (mobile_identity_imsi->routing_indicator2 != 0xf) {
+            routing_indicator[1] =
+                mobile_identity_imsi->routing_indicator2 + '0';
+            if (mobile_identity_imsi->routing_indicator3 != 0xf) {
+                routing_indicator[2] =
+                    mobile_identity_imsi->routing_indicator3 + '0';
+                if (mobile_identity_imsi->routing_indicator4 != 0xf)
+                    routing_indicator[3] =
+                        mobile_identity_imsi->routing_indicator4 + '0';
+            }
+        }
+    }
+
     ogs_assert(mobile_identity->length > 8);
     ogs_buffer_to_bcd(mobile_identity_imsi->scheme_output,
             mobile_identity->length - 8, tmp);
 
-    ue_id = ogs_mstrcatf(ue_id, "0-%d-%d-%s",
+    ue_id = ogs_mstrcatf(ue_id, "%s-%d-%d-%s",
+            routing_indicator,
             mobile_identity_imsi->protection_scheme_id,
             mobile_identity_imsi->home_network_pki_value,
             tmp);
