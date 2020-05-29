@@ -28,7 +28,7 @@ void ogs_sbi_send_nf_register(ogs_sbi_nf_instance_t *nf_instance)
     client = nf_instance->client;
     ogs_assert(client);
 
-    request = ogs_nnrf_build_nf_register(nf_instance);
+    request = ogs_nnrf_nfm_build_register(nf_instance);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
 }
@@ -42,7 +42,7 @@ void ogs_sbi_send_nf_update(ogs_sbi_nf_instance_t *nf_instance)
     client = nf_instance->client;
     ogs_assert(client);
 
-    request = ogs_nnrf_build_nf_update(nf_instance);
+    request = ogs_nnrf_nfm_build_update(nf_instance);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
 }
@@ -56,7 +56,7 @@ void ogs_sbi_send_nf_de_register(ogs_sbi_nf_instance_t *nf_instance)
     client = nf_instance->client;
     ogs_assert(client);
 
-    request = ogs_nnrf_build_nf_de_register(nf_instance);
+    request = ogs_nnrf_nfm_build_de_register(nf_instance);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
 }
@@ -77,7 +77,7 @@ void ogs_sbi_send_nf_status_subscribe(ogs_sbi_client_t *client,
     if (nf_instance_id)
         subscription->nf_instance_id = ogs_strdup(nf_instance_id);
 
-    request = ogs_nnrf_build_nf_status_subscribe(subscription);
+    request = ogs_nnrf_nfm_build_status_subscribe(subscription);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, subscription);
 }
@@ -91,7 +91,7 @@ void ogs_sbi_send_nf_status_unsubscribe(ogs_sbi_subscription_t *subscription)
     client = subscription->client;
     ogs_assert(client);
 
-    request = ogs_nnrf_build_nf_status_unsubscribe(subscription);
+    request = ogs_nnrf_nfm_build_status_unsubscribe(subscription);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, subscription);
 }
@@ -107,7 +107,7 @@ void ogs_sbi_send_nf_discover(ogs_sbi_nf_instance_t *nf_instance,
     client = nf_instance->client;
     ogs_assert(client);
 
-    request = ogs_nnrf_build_nf_discover(target_nf_type, requester_nf_type);
+    request = ogs_nnrf_disc_build_discover(target_nf_type, requester_nf_type);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, data);
 }

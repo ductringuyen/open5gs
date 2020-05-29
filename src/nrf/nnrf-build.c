@@ -49,7 +49,7 @@ ogs_sbi_request_t *nrf_nnrf_build_nf_status_notify(
     NotificationData->event = event;
     NotificationData->nf_instance_uri = message.h.url;
 
-    NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
+    NFProfile = ogs_nnrf_nfm_build_nf_profile(nf_instance);
     ogs_assert(NFProfile);
 
     NotificationData->nf_profile = NFProfile;

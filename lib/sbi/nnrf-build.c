@@ -19,7 +19,7 @@
 
 #include "nnrf-build.h"
 
-OpenAPI_nf_profile_t *ogs_sbi_nnrf_build_nf_profile(
+OpenAPI_nf_profile_t *ogs_nnrf_nfm_build_nf_profile(
         ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_nf_service_t *nf_service = NULL;
@@ -213,7 +213,7 @@ void ogs_sbi_nnrf_free_nf_profile(OpenAPI_nf_profile_t *NFProfile)
     ogs_free(NFProfile);
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_register(
+ogs_sbi_request_t *ogs_nnrf_nfm_build_register(
         ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_message_t message;
@@ -235,7 +235,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_register(
 
     message.http.content_encoding = (char*)ogs_sbi_self()->content_encoding;
 
-    NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
+    NFProfile = ogs_nnrf_nfm_build_nf_profile(nf_instance);
     ogs_assert(NFProfile);
 
     NFProfile->heart_beat_timer = nf_instance->time.heartbeat;
@@ -250,7 +250,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_register(
     return request;
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_update(ogs_sbi_nf_instance_t *nf_instance)
+ogs_sbi_request_t *ogs_nnrf_nfm_build_update(ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -288,7 +288,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_update(ogs_sbi_nf_instance_t *nf_instance)
     return request;
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_de_register(
+ogs_sbi_request_t *ogs_nnrf_nfm_build_de_register(
         ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_message_t message;
@@ -309,7 +309,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_de_register(
     return request;
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_status_subscribe(
+ogs_sbi_request_t *ogs_nnrf_nfm_build_status_subscribe(
         ogs_sbi_subscription_t *subscription)
 {
     ogs_sbi_message_t message;
@@ -352,7 +352,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_status_subscribe(
     return request;
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_status_unsubscribe(
+ogs_sbi_request_t *ogs_nnrf_nfm_build_status_unsubscribe(
         ogs_sbi_subscription_t *subscription)
 {
     ogs_sbi_message_t message;
@@ -373,7 +373,7 @@ ogs_sbi_request_t *ogs_nnrf_build_nf_status_unsubscribe(
     return request;
 }
 
-ogs_sbi_request_t *ogs_nnrf_build_nf_discover(
+ogs_sbi_request_t *ogs_nnrf_disc_build_discover(
         OpenAPI_nf_type_e target_nf_type, OpenAPI_nf_type_e requester_nf_type)
 {
     ogs_sbi_message_t message;

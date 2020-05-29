@@ -321,7 +321,7 @@ bool nrf_nnrf_handle_nf_profile_retrieval(ogs_sbi_server_t *server,
         return false;
     }
 
-    NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
+    NFProfile = ogs_nnrf_nfm_build_nf_profile(nf_instance);
     ogs_assert(NFProfile);
 
     memset(&sendmsg, 0, sizeof(sendmsg));
@@ -383,7 +383,7 @@ bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
 
         if (!recvmsg->param.limit ||
              (recvmsg->param.limit && i < recvmsg->param.limit)) {
-            NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
+            NFProfile = ogs_nnrf_nfm_build_nf_profile(nf_instance);
             ogs_assert(NFProfile);
 
             OpenAPI_list_add(SearchResult->nf_instances, NFProfile);
