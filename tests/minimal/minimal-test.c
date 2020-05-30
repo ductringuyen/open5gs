@@ -67,7 +67,7 @@ static void test1_func(abts_case *tc, void *data)
     const char *json =
       "{"
         "\"_id\" : { \"$oid\" : \"597223158b8861d7605378c6\" }, "
-        "\"imsi\" : \"001010123456819\", "
+        "\"imsi\" : \"2089300007487\", "
         "\"pdn\" : ["
           "{"
             "\"apn\" : \"internet\", "
