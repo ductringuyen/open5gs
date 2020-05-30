@@ -316,6 +316,7 @@ ogs_sbi_request_t *ogs_nnrf_nfm_build_status_subscribe(
         ogs_sbi_subscription_t *subscription)
 {
     ogs_sbi_message_t message;
+    ogs_sbi_header_t header;
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_server_t *server = NULL;
 
@@ -337,9 +338,13 @@ ogs_sbi_request_t *ogs_nnrf_nfm_build_status_subscribe(
     server = ogs_list_first(&ogs_sbi_self()->server_list);
     ogs_assert(server);
 
-    SubscriptionData->nf_status_notification_uri = ogs_sbi_server_uri(server,
-                OGS_SBI_SERVICE_NAME_NRF_NFM, OGS_SBI_API_VERSION,
-                OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY, NULL);
+    memset(&header, 0, sizeof(header));
+    header.service.name = (char *)OGS_SBI_SERVICE_NAME_NRF_NFM;
+    header.api.version = (char *)OGS_SBI_API_VERSION;
+    header.resource.component[0] =
+            (char *)OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY;
+    SubscriptionData->nf_status_notification_uri =
+                        ogs_sbi_server_uri(server, &header);
     ogs_assert(SubscriptionData->nf_status_notification_uri);
 
 	SubscriptionData->req_nf_type = subscription->nf_type;

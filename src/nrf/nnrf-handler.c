@@ -258,9 +258,7 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
     links->items = OpenAPI_list_create();
     ogs_assert(links->items);
 
-    links->self = ogs_sbi_server_uri(server,
-            recvmsg->h.service.name, recvmsg->h.api.version,
-            recvmsg->h.resource.component[0], NULL);
+    links->self = ogs_sbi_server_uri(server, &recvmsg->h);
 
     i = 0;
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {

@@ -69,16 +69,18 @@ static char *ogs_uridup(bool https, ogs_sockaddr_t *addr,
     return ogs_strdup(url);
 }
 
-char *ogs_sbi_server_uri(ogs_sbi_server_t *server,
-    const char *service_name, const char *api_version,
-    const char *resource_name, const char *resource_id)
+char *ogs_sbi_server_uri(ogs_sbi_server_t *server, ogs_sbi_header_t *h)
 {
     bool https = false;
+
+    ogs_assert(server);
+    ogs_assert(h);
+
     if (server->tls.key && server->tls.pem)
         https = true;
 
-    return ogs_uridup(https, server->addr, service_name, api_version,
-            resource_name, resource_id);
+    return ogs_uridup(https, server->addr, h->service.name, h->api.version,
+            h->resource.component[0], h->resource.component[1]);
 }
 
 char *ogs_sbi_client_uri(ogs_sbi_client_t *client,
