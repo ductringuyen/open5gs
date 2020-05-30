@@ -128,7 +128,10 @@ typedef struct ogs_sbi_header_s {
     struct {
         char *name;
         char *id;
+#define OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT 8
+        char *component[OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT];
     } resource;
+
 } ogs_sbi_header_t;
 
 typedef struct ogs_sbi_message_s {

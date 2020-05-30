@@ -121,6 +121,7 @@ void ogs_sbi_response_free(ogs_sbi_response_t *response)
 
 static void sbi_header_free(ogs_sbi_header_t *h)
 {
+    int i;
     ogs_assert(h);
 
     if (h->method) ogs_free(h->method);
@@ -128,6 +129,10 @@ static void sbi_header_free(ogs_sbi_header_t *h)
     if (h->api.version) ogs_free(h->api.version);
     if (h->resource.name) ogs_free(h->resource.name);
     if (h->resource.id) ogs_free(h->resource.id);
+
+    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+                        h->resource.component[i]; i++)
+        ogs_free(h->resource.component[i]);
 }
 
 static void http_message_free(http_message_t *http)
@@ -170,6 +175,8 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     if (message->h.url) {
         request->h.url = ogs_strdup(message->h.url);
     } else {
+        int i;
+
         ogs_assert(message->h.service.name);
         request->h.service.name = ogs_strdup(message->h.service.name);
         ogs_assert(message->h.api.version);
@@ -178,6 +185,11 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
         request->h.resource.name = ogs_strdup(message->h.resource.name);
         if (message->h.resource.id)
             request->h.resource.id = ogs_strdup(message->h.resource.id);
+
+        for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+                            message->h.resource.component[i]; i++)
+            request->h.resource.component[i] = ogs_strdup(
+                    message->h.resource.component[i]);
     }
 
     /* URL Param */
@@ -461,6 +473,7 @@ static int parse_sbi_header(
     }
     message->h.api.version = header->api.version;
 
+#if 0
     header->resource.name = ogs_sbi_parse_url(NULL, "/", &saveptr);
     if (!header->resource.name) {
         ogs_error("ogs_sbi_parse_url() failed");
@@ -471,6 +484,24 @@ static int parse_sbi_header(
 
     header->resource.id = ogs_sbi_parse_url(NULL, "/", &saveptr);
     message->h.resource.id = header->resource.id;
+#else
+    {
+        char *component = NULL;
+        int i = 0;
+        while (i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL) {
+            ogs_fatal("component = %s", component);
+            if (i == 0) {
+                header->resource.name = component;
+                message->h.resource.name = component;
+            }
+            header->resource.component[i] = component;
+            message->h.resource.component[i] = component;
+            i++;
+        }
+    }
+
+#endif
 
     ogs_free(url);
 
