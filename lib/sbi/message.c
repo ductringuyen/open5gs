@@ -537,7 +537,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
             }
         } else {
             SWITCH(message->h.service.name)
-            CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+            CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -574,7 +574,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 END
                 break;
 
-            CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+            CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                     message->SearchResult =
@@ -592,7 +592,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 END
                 break;
 
-            CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+            CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
                     message->AuthenticationInfo =

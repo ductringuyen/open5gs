@@ -95,7 +95,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         }
 
         SWITCH(message.h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
@@ -125,7 +125,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             END
             break;
 
-        CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+        CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
             SWITCH(message.h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (message.AuthenticationInfo)
@@ -196,7 +196,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         }
 
         SWITCH(message.h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -250,7 +250,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             END
             break;
 
-        CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 session = e->sbi.data;

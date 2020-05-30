@@ -80,7 +80,7 @@ int smf_sbi_open(void)
         ogs_sbi_nf_instance_build_default(nf_instance, smf_self()->nf_type);
 
         service = ogs_sbi_nf_service_build_default(nf_instance,
-                (char*)OGS_SBI_SERVICE_NAME_SMF_PDUSESSION);
+                (char*)OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION);
         ogs_assert(service);
         ogs_sbi_nf_service_add_version(service, (char*)OGS_SBI_API_VERSION,
                 (char*)OGS_SBI_API_FULL_VERSION, NULL);

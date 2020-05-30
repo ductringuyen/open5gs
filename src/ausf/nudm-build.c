@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
  *
  * This file is part of Open5GS.
  *
@@ -17,42 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "nausf-build.h"
+#include "nudm-build.h"
 
-ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
+ogs_sbi_request_t *ausf_nudm_ueau_build_get(ausf_ue_t *ausf_ue)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
 
-    OpenAPI_authentication_info_t *AuthenticationInfo = NULL;
+    OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
 
-    ogs_assert(amf_ue);
+    ogs_assert(ausf_ue);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
-    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH;
+    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
     message.h.api.version = (char *)OGS_SBI_API_VERSION;
-    message.h.resource.component[0] =
-        (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
+    message.h.resource.component[0] = ausf_ue->id;
+    message.h.resource.component[1] =
+        (char *)OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION;
+    message.h.resource.component[2] =
+        (char *)OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA;
 
-    message.http.accept = (char *)(OGS_SBI_CONTENT_3GPPHAL_TYPE ","
-                                    OGS_SBI_CONTENT_PROBLEM_TYPE);
+    AuthenticationInfoRequest =
+        ogs_calloc(1, sizeof(*AuthenticationInfoRequest));
+    ogs_assert(AuthenticationInfoRequest);
 
-    AuthenticationInfo = ogs_calloc(1, sizeof(*AuthenticationInfo));
-    ogs_assert(AuthenticationInfo);
+    AuthenticationInfoRequest->serving_network_name =
+        ausf_ue->serving_network_name;
+    AuthenticationInfoRequest->ausf_instance_id =
+        ogs_sbi_self()->nf_instance_id;
 
-    ogs_assert(amf_ue->id);
-    AuthenticationInfo->supi_or_suci = amf_ue->id;
-    AuthenticationInfo->serving_network_name =
-        ogs_plmn_id_string(&amf_ue->tai.plmn_id);
-
-    message.AuthenticationInfo = AuthenticationInfo;
+    message.AuthenticationInfoRequest = AuthenticationInfoRequest;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
 
-    ogs_free(AuthenticationInfo->serving_network_name);
-    ogs_free(AuthenticationInfo);
+    ogs_free(AuthenticationInfoRequest);
 
     return request;
 }

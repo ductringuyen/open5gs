@@ -119,7 +119,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         }
 
         SWITCH(sbi_message.h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
@@ -181,7 +181,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         }
 
         SWITCH(sbi_message.h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -234,7 +234,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             END
             break;
 
-        CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
             SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 amf_ue = e->sbi.data;
@@ -263,7 +263,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             END
             break;
 
-        CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+        CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
             SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
                 amf_ue = e->sbi.data;

@@ -90,7 +90,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         }
 
         SWITCH(message.h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -180,7 +180,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             END
             break;
 
-        CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
 
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)

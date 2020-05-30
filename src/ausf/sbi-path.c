@@ -79,7 +79,7 @@ int ausf_sbi_open(void)
         ogs_sbi_nf_instance_build_default(nf_instance, ausf_self()->nf_type);
 
         service = ogs_sbi_nf_service_build_default(nf_instance,
-                (char*)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
+                (char*)OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
         ogs_assert(service);
         ogs_sbi_nf_service_add_version(service, (char*)OGS_SBI_API_VERSION,
                 (char*)OGS_SBI_API_FULL_VERSION, NULL);

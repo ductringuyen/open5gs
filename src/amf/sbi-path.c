@@ -81,7 +81,7 @@ int amf_sbi_open(void)
         ogs_sbi_nf_instance_build_default(nf_instance, amf_self()->nf_type);
 
         service = ogs_sbi_nf_service_build_default(nf_instance,
-                (char*)OGS_SBI_SERVICE_NAME_SMF_PDUSESSION);
+                (char*)OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION);
         ogs_assert(service);
         ogs_sbi_nf_service_add_version(service, (char*)OGS_SBI_API_VERSION,
                 (char*)OGS_SBI_API_FULL_VERSION, NULL);
@@ -161,7 +161,7 @@ void amf_nausf_auth_send_authenticate(
     ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH);
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
     ogs_assert(client);
 
     ogs_timer_start(amf_ue->sbi_message_wait.timer,

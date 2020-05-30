@@ -130,7 +130,7 @@ void udm_nf_state_will_register(ogs_fsm_t *s, udm_event_t *e)
         ogs_assert(message);
 
         SWITCH(message->h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -240,7 +240,7 @@ void udm_nf_state_registered(ogs_fsm_t *s, udm_event_t *e)
         ogs_assert(message);
 
         SWITCH(message->h.service.name)
-        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
             SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
