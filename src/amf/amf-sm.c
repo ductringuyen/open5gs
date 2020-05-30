@@ -279,10 +279,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                     } else {
                         ogs_error("HTTP response error : %d",
                                 sbi_message.res_status);
-#if 0
                         nas_5gs_send_gmm_reject(amf_ue,
                                 OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
                     }
                     break;
 

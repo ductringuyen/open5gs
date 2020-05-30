@@ -53,111 +53,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     ran_ue = amf_ue->ran_ue;
     ogs_assert(ran_ue);
 
-    /* Set 5GS Registration Type */
-    memcpy(&amf_ue->nas.registration, registration_type,
-            sizeof(ogs_nas_5gs_registration_type_t));
-    amf_ue->nas.type = OGS_NAS_5GS_REGISTRATION_REQUEST;
-    amf_ue->nas.ksi = registration_type->type;
-    ogs_debug("    OGS_NAS_5GS TYPE[%d] KSI[%d] REGISTRATION[0x%x]",
-            amf_ue->nas.type, amf_ue->nas.ksi, amf_ue->nas.data);
-    /*
-     * REGISTRATION_REQUEST
-     *   Clear EBI generator
-     *   Clear Timer and Message
-     *
-     * TAU_REQUEST
-     *   Clear Timer and Message
-     *
-     * SERVICE_REQUEST
-     *   Clear Timer and Message
-     *
-     * EXTENDED_SERVICE_REQUEST
-     *   Clear Timer and Message
-     */
-    CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
-
-    CLEAR_5GS_BEARER_ID(amf_ue);
-    CLEAR_SERVICE_INDICATOR(amf_ue);
-    if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
-        amf_kdf_gnb(amf_ue->kasme, amf_ue->ul_count.i32, amf_ue->kgnb);
-        amf_kdf_nh(amf_ue->kasme, amf_ue->kgnb, amf_ue->nh);
-        amf_ue->nhcc = 1;
-    }
-
-    ogs_debug("    OLD TAI[PLMN_ID:%06x,TAC:%d]",
-            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
-    ogs_debug("    OLD NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]",
-            ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),
-            (long long)amf_ue->cgi.cell_id);
-    ogs_debug("    TAI[PLMN_ID:%06x,TAC:%d]",
-            ogs_plmn_id_hexdump(&ran_ue->saved.tai.plmn_id),
-            ran_ue->saved.tai.tac.v);
-    ogs_debug("    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]",
-            ogs_plmn_id_hexdump(&ran_ue->saved.cgi.plmn_id),
-            (long long)ran_ue->saved.cgi.cell_id);
-
-    /* Copy TAI and ECGI from ran_ue */
-    memcpy(&amf_ue->tai, &ran_ue->saved.tai, sizeof(ogs_5gs_tai_t));
-    memcpy(&amf_ue->cgi, &ran_ue->saved.cgi, sizeof(ogs_nr_cgi_t));
-
-    /* Check TAI */
-    served_tai_index = amf_find_served_tai(&amf_ue->tai);
-    if (served_tai_index < 0) {
-        /* Send Registration Reject */
-        ogs_warn("Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]",
-            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
-        nas_5gs_send_registration_reject(amf_ue,
-            OGS_5GMM_CAUSE_TRACKING_AREA_NOT_ALLOWED);
-        return OGS_ERROR;
-    }
-    ogs_debug("    SERVED_TAI_INDEX[%d]", served_tai_index);
-
-    /* Store UE specific information */
-    if (registration_request->presencemask &
-        OGS_NAS_5GS_REGISTRATION_REQUEST_LAST_VISITED_REGISTERED_TAI_PRESENT) {
-        ogs_nas_5gs_tai_t *last_visited_registered_tai = 
-            &registration_request->last_visited_registered_tai;
-
-        ogs_nas_to_plmn_id(&amf_ue->last_visited_plmn_id,
-            &last_visited_registered_tai->nas_plmn_id);
-        ogs_debug("    Visited_PLMN_ID:%06x",
-                ogs_plmn_id_hexdump(&amf_ue->last_visited_plmn_id));
-    }
-
-    if (registration_request->presencemask &
-            OGS_NAS_5GS_REGISTRATION_REQUEST_5GMM_CAPABILITY_PRESENT) {
-        ogs_nas_5gmm_capability_t *gmm_capability =
-            &registration_request->gmm_capability;
-
-        amf_ue->gmm_capability.lte_positioning_protocol_capability
-            = gmm_capability->lte_positioning_protocol_capability;
-        amf_ue->gmm_capability.ho_attach = gmm_capability->ho_attach;
-        amf_ue->gmm_capability.s1_mode = gmm_capability->s1_mode;
-            
-        ogs_debug("    5GMM Capability:[LPP:%d, HO_ATTACH:%d, S1_MODE:%d]",
-            amf_ue->gmm_capability.lte_positioning_protocol_capability,
-            amf_ue->gmm_capability.ho_attach,
-            amf_ue->gmm_capability.s1_mode);
-    }
-
-    if (registration_request->presencemask &
-            OGS_NAS_5GS_REGISTRATION_REQUEST_UE_SECURITY_CAPABILITY_PRESENT) {
-        memcpy(&amf_ue->ue_security_capability, 
-                &registration_request->ue_security_capability,
-                sizeof(registration_request->ue_security_capability));
-    }
-
-    if (amf_selected_int_algorithm(amf_ue) ==
-            OGS_NAS_SECURITY_ALGORITHMS_NIA0) {
-        ogs_warn("NEA0 can be used in Encrypt[0x%x], "
-            "but Integrity[0x%x] cannot be bypassed with NIA0",
-            amf_selected_enc_algorithm(amf_ue), 
-            amf_selected_int_algorithm(amf_ue));
-        nas_5gs_send_registration_reject(amf_ue,
-            OGS_5GMM_CAUSE_UE_SECURITY_CAPABILITIES_MISMATCH);
-        return OGS_ERROR;
-    }
-
     switch (mobile_identity_header->type) {
     case OGS_NAS_5GS_MOBILE_IDENTITY_SUCI:
         amf_ue_set_id(amf_ue, mobile_identity);
@@ -182,6 +77,113 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     default:
         ogs_error("Unknown SUCI type [%d]", mobile_identity_header->type);
         break;
+    }
+
+
+    /* Set 5GS Registration Type */
+    memcpy(&amf_ue->nas.registration, registration_type,
+            sizeof(ogs_nas_5gs_registration_type_t));
+    amf_ue->nas.type = OGS_NAS_5GS_REGISTRATION_REQUEST;
+    amf_ue->nas.ksi = registration_type->type;
+    ogs_debug("[%s]    OGS_NAS_5GS TYPE[%d] KSI[%d] REGISTRATION[0x%x]",
+            amf_ue->id, amf_ue->nas.type, amf_ue->nas.ksi, amf_ue->nas.data);
+    /*
+     * REGISTRATION_REQUEST
+     *   Clear EBI generator
+     *   Clear Timer and Message
+     *
+     * TAU_REQUEST
+     *   Clear Timer and Message
+     *
+     * SERVICE_REQUEST
+     *   Clear Timer and Message
+     *
+     * EXTENDED_SERVICE_REQUEST
+     *   Clear Timer and Message
+     */
+    CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
+
+    CLEAR_5GS_BEARER_ID(amf_ue);
+    CLEAR_SERVICE_INDICATOR(amf_ue);
+    if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
+        amf_kdf_gnb(amf_ue->kasme, amf_ue->ul_count.i32, amf_ue->kgnb);
+        amf_kdf_nh(amf_ue->kasme, amf_ue->kgnb, amf_ue->nh);
+        amf_ue->nhcc = 1;
+    }
+
+    ogs_debug("[%s]    OLD TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->id,
+            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
+    ogs_debug("[%s]    OLD NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->id,
+            ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),
+            (long long)amf_ue->cgi.cell_id);
+    ogs_debug("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->id,
+            ogs_plmn_id_hexdump(&ran_ue->saved.tai.plmn_id),
+            ran_ue->saved.tai.tac.v);
+    ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->id,
+            ogs_plmn_id_hexdump(&ran_ue->saved.cgi.plmn_id),
+            (long long)ran_ue->saved.cgi.cell_id);
+
+    /* Copy TAI and ECGI from ran_ue */
+    memcpy(&amf_ue->tai, &ran_ue->saved.tai, sizeof(ogs_5gs_tai_t));
+    memcpy(&amf_ue->cgi, &ran_ue->saved.cgi, sizeof(ogs_nr_cgi_t));
+
+    /* Check TAI */
+    served_tai_index = amf_find_served_tai(&amf_ue->tai);
+    if (served_tai_index < 0) {
+        /* Send Registration Reject */
+        ogs_warn("[%s] Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->id,
+            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
+        nas_5gs_send_registration_reject(amf_ue,
+            OGS_5GMM_CAUSE_TRACKING_AREA_NOT_ALLOWED);
+        return OGS_ERROR;
+    }
+    ogs_debug("[%s]    SERVED_TAI_INDEX[%d]", amf_ue->id, served_tai_index);
+
+    /* Store UE specific information */
+    if (registration_request->presencemask &
+        OGS_NAS_5GS_REGISTRATION_REQUEST_LAST_VISITED_REGISTERED_TAI_PRESENT) {
+        ogs_nas_5gs_tai_t *last_visited_registered_tai = 
+            &registration_request->last_visited_registered_tai;
+
+        ogs_nas_to_plmn_id(&amf_ue->last_visited_plmn_id,
+            &last_visited_registered_tai->nas_plmn_id);
+        ogs_debug("[%s]    Visited_PLMN_ID:%06x", amf_ue->id,
+                ogs_plmn_id_hexdump(&amf_ue->last_visited_plmn_id));
+    }
+
+    if (registration_request->presencemask &
+            OGS_NAS_5GS_REGISTRATION_REQUEST_5GMM_CAPABILITY_PRESENT) {
+        ogs_nas_5gmm_capability_t *gmm_capability =
+            &registration_request->gmm_capability;
+
+        amf_ue->gmm_capability.lte_positioning_protocol_capability
+            = gmm_capability->lte_positioning_protocol_capability;
+        amf_ue->gmm_capability.ho_attach = gmm_capability->ho_attach;
+        amf_ue->gmm_capability.s1_mode = gmm_capability->s1_mode;
+            
+        ogs_debug("[%s]    5GMM Capability:[LPP:%d, HO_ATTACH:%d, S1_MODE:%d]",
+            amf_ue->id,
+            amf_ue->gmm_capability.lte_positioning_protocol_capability,
+            amf_ue->gmm_capability.ho_attach,
+            amf_ue->gmm_capability.s1_mode);
+    }
+
+    if (registration_request->presencemask &
+            OGS_NAS_5GS_REGISTRATION_REQUEST_UE_SECURITY_CAPABILITY_PRESENT) {
+        memcpy(&amf_ue->ue_security_capability, 
+                &registration_request->ue_security_capability,
+                sizeof(registration_request->ue_security_capability));
+    }
+
+    if (amf_selected_int_algorithm(amf_ue) ==
+            OGS_NAS_SECURITY_ALGORITHMS_NIA0) {
+        ogs_warn("[%s] NEA0 can be used in Encrypt[0x%x], "
+            "but Integrity[0x%x] cannot be bypassed with NIA0", amf_ue->id,
+            amf_selected_enc_algorithm(amf_ue), 
+            amf_selected_int_algorithm(amf_ue));
+        nas_5gs_send_registration_reject(amf_ue,
+            OGS_5GMM_CAUSE_UE_SECURITY_CAPABILITIES_MISMATCH);
+        return OGS_ERROR;
     }
 
     return OGS_OK;

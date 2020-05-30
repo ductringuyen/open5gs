@@ -169,7 +169,7 @@ void amf_nausf_auth_send_authenticate(
 
     request = amf_nausf_build_authenticate(amf_ue);
     ogs_assert(request);
-    ogs_sbi_client_send_request(client, request, nf_instance);
+    ogs_sbi_client_send_request(client, request, amf_ue);
 }
 
 void amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue)
