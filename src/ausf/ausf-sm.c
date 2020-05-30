@@ -261,8 +261,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
 
-                        ausf_nnrf_handle_nf_discover(
-                                ausf_ue, session, &message);
+                        ausf_nnrf_handle_nf_discover(session, &message);
                     } else {
                         ogs_error("HTTP response error : %d",
                                 message.res_status);
