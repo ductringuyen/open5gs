@@ -83,16 +83,18 @@ char *ogs_sbi_server_uri(ogs_sbi_server_t *server, ogs_sbi_header_t *h)
             h->resource.component[0], h->resource.component[1]);
 }
 
-char *ogs_sbi_client_uri(ogs_sbi_client_t *client,
-    const char *service_name, const char *api_version,
-    const char *resource_name, const char *resource_id)
+char *ogs_sbi_client_uri(ogs_sbi_client_t *client, ogs_sbi_header_t *h)
 {
     bool https = false;
+
+    ogs_assert(client);
+    ogs_assert(h);
+
     if (client->tls.key && client->tls.pem)
         https = true;
 
-    return ogs_uridup(https, client->addr, service_name, api_version,
-            resource_name, resource_id);
+    return ogs_uridup(https, client->addr, h->service.name, h->api.version,
+            h->resource.component[0], h->resource.component[1]);
 }
 
 /**
