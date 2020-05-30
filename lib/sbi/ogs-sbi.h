@@ -36,6 +36,7 @@
 #include "model/notification_data.h"
 #include "model/search_result.h"
 #include "model/authentication_info.h"
+#include "model/authentication_info_request.h"
 
 #include "custom/links.h"
 

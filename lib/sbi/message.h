@@ -160,6 +160,7 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_notification_data_t *NotificationData;
     OpenAPI_search_result_t *SearchResult;
     OpenAPI_authentication_info_t *AuthenticationInfo;
+    OpenAPI_authentication_info_request_t *AuthenticationInfoRequest;
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;
