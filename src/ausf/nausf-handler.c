@@ -21,22 +21,19 @@
 #include "nnrf-handler.h"
 #include "nausf-handler.h"
 
-bool ausf_nausf_handle_authenticate(
-        ausf_ue_t *ausf_ue, ogs_sbi_server_t *server,
+bool ausf_nausf_handle_authenticate(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
-#if 0
-    int status;
-    bool handled;
-    ogs_sbi_response_t *response = NULL;
-#endif
-
     OpenAPI_authentication_info_t *AuthenticationInfo = NULL;
     char *serving_network_name = NULL;
 
-    ogs_assert(ausf_ue);
-    ogs_assert(server);
+    ausf_ue_t *ausf_ue = NULL;
+
     ogs_assert(session);
+    ausf_ue = ogs_sbi_session_get_data(session);
+    ogs_assert(ausf_ue);
+
+    ogs_assert(server);
     ogs_assert(recvmsg);
 
     AuthenticationInfo = recvmsg->AuthenticationInfo;
@@ -58,7 +55,7 @@ bool ausf_nausf_handle_authenticate(
     ausf_ue->serving_network_name = ogs_strdup(serving_network_name);
     ogs_assert(ausf_ue->serving_network_name);
 
-    ausf_nudm_ueau_discover_and_send_get(ausf_ue, session);
+    ausf_nudm_ueau_discover_and_send_get(session);
 
     return true;
 }

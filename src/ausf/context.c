@@ -110,20 +110,25 @@ int ausf_context_parse_config(void)
     return OGS_OK;
 }
 
-ausf_ue_t *ausf_ue_add(char *id)
+ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
 {
     ausf_ue_t *ausf_ue = NULL;
+
+    ogs_assert(session);
+    ogs_assert(id);
 
     ogs_pool_alloc(&ausf_ue_pool, &ausf_ue);
     ogs_assert(ausf_ue);
     memset(ausf_ue, 0, sizeof *ausf_ue);
+
+    ogs_sbi_session_set_data(session, ausf_ue);
 
     ausf_ue->id = ogs_strdup(id);
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
 
     ausf_ue->sbi_message_wait.timer = ogs_timer_add(
-            self.timer_mgr, ausf_timer_sbi_message_wait_expire, ausf_ue);
+            self.timer_mgr, ausf_timer_sbi_message_wait_expire, session);
 
     ausf_ue_fsm_init(ausf_ue);
 

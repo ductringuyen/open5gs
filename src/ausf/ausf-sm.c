@@ -145,13 +145,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             ausf_ue = ausf_ue_find(ue_id);
             if (!ausf_ue) {
-                ausf_ue = ausf_ue_add(ue_id);
+                ausf_ue = ausf_ue_add(session, ue_id);
                 ogs_assert(ausf_ue);
             }
 
-            e->ausf_ue = ausf_ue;
+            ogs_assert(ausf_ue);
             ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
 
+            e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
@@ -250,7 +251,9 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
             SWITCH(message.h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                ausf_ue = e->sbi.data;
+                session = e->sbi.data;
+                ogs_assert(session);
+                ausf_ue = ogs_sbi_session_get_data(session);
                 ogs_assert(ausf_ue);
 
                 SWITCH(message.h.method)
@@ -258,9 +261,10 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
 
-                        ausf_nnrf_handle_nf_discover(ausf_ue, &message);
+                        ausf_nnrf_handle_nf_discover(
+                                ausf_ue, session, &message);
                     } else {
-                        ogs_fatal("HTTP response error : %d",
+                        ogs_error("HTTP response error : %d",
                                 message.res_status);
                     }
                     break;
@@ -313,14 +317,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             break;
 
         case AUSF_TIMER_SBI_MESSAGE_WAIT:
-            ausf_ue = e->sbi.data;
-            ogs_assert(ausf_ue);
+            session = e->sbi.data;
+            ogs_assert(session);
+            ausf_ue = ogs_sbi_session_get_data(session);
 
             ogs_error("[%s] Cannot receive SBI message", ausf_ue->id);
-#if 0
-            nas_5gs_send_gmm_reject(
-                    ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                    "Cannot receive SBI message", ausf_ue->id);
             break;
         default:
             ogs_error("Unknown timer[%s:%d]",

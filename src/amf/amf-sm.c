@@ -246,8 +246,43 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
                     } else {
-                        ogs_fatal("HTTP response error : %d",
+                        ogs_error("HTTP response error : %d",
                                 sbi_message.res_status);
+                    }
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid HTTP method [%s]", sbi_message.h.method);
+                END
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        sbi_message.h.resource.name);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
+            SWITCH(sbi_message.h.resource.name)
+            CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
+                amf_ue = e->sbi.data;
+                ogs_assert(amf_ue);
+
+                SWITCH(sbi_message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_POST)
+                    if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
+                        ogs_timer_stop(amf_ue->sbi_message_wait.timer);
+
+#if 0
+                        amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
+#endif
+                    } else {
+                        ogs_error("HTTP response error : %d",
+                                sbi_message.res_status);
+#if 0
+                        nas_5gs_send_gmm_reject(amf_ue,
+                                OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
                     }
                     break;
 

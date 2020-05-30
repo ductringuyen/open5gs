@@ -45,6 +45,8 @@ typedef struct ogs_sbi_session_s {
      * terminates the program.
      */
     ogs_timer_t             *timer;
+
+    void *data;
 } ogs_sbi_session_t;
 
 static OGS_POOL(server_pool, ogs_sbi_server_t);
@@ -621,4 +623,19 @@ static void notify_completed(
         ogs_pollset_remove(poll);
 
     ogs_sbi_request_free(request);
+}
+
+void ogs_sbi_session_set_data(ogs_sbi_session_t *session, void *data)
+{
+    ogs_assert(session);
+    ogs_assert(data);
+
+    session->data = data;
+}
+
+void *ogs_sbi_session_get_data(ogs_sbi_session_t *session)
+{
+    ogs_assert(session);
+
+    return session->data;
 }

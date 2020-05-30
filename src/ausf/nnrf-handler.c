@@ -215,7 +215,8 @@ bool ausf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
     return true;
 }
 
-void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue, ogs_sbi_message_t *message)
+void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue,
+        ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
@@ -224,6 +225,7 @@ void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue, ogs_sbi_message_t *message
     bool handled;
 
     ogs_assert(ausf_ue);
+    ogs_assert(session);
     ogs_assert(message);
 
     SearchResult = message->SearchResult;
@@ -298,10 +300,9 @@ void ausf_nnrf_handle_nf_discover(ausf_ue_t *ausf_ue, ogs_sbi_message_t *message
         nf_instance = OGS_SBI_NF_INSTANCE_GET(
                 ausf_ue->nf_types, OpenAPI_nf_type_UDM);
         if (!nf_instance) {
-#if 0
-            nas_5gs_send_gmm_reject(
-                    ausf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                    "Cannot receive SBI message", ausf_ue->id);
         } else {
             ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
         }
