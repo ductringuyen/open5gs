@@ -144,7 +144,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover AUSF", ausf_ue->id);
+        ogs_warn("[%s] Try to discover UDM", ausf_ue->id);
         ogs_timer_start(ausf_ue->sbi_message_wait.timer,
                 ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
 
