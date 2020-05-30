@@ -79,10 +79,12 @@ void smf_nnrf_handle_nf_status_subscribe(
             duration = diff - (int)VALIDITY_MARGIN;
 
             if (duration < (int)VALIDITY_MINIMUM) {
-                ogs_warn("Validation period [%d seconds, %s] is too small",
+                ogs_warn("[%s] Validation period [%d seconds, %s] is too small",
+                        subscription->id,
                         (int)diff, SubscriptionData->validity_time);
                 duration = VALIDITY_MINIMUM;
-                ogs_warn("Forced to %d seconds", VALIDITY_MINIMUM);
+                ogs_warn("[%s] Forced to %d seconds",
+                        subscription->id, VALIDITY_MINIMUM);
             }
 
             subscription->t_validity = ogs_timer_add(smf_self()->timer_mgr,
@@ -155,12 +157,12 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
 
             smf_nf_fsm_init(nf_instance);
 
-            ogs_info("(NRF-notify) NF registered [%s]", nf_instance->id);
+            ogs_info("[%s] (NRF-notify) NF registered", nf_instance->id);
         } else {
             OGS_FSM_TRAN(&nf_instance->sm, smf_nf_state_registered);
             ogs_fsm_dispatch(&nf_instance->sm, NULL);
 
-            ogs_warn("(NRF-notify) NF [%s] has already been added",
+            ogs_warn("[%s] (NRF-notify) NF has already been added",
                     NFProfile->nf_instance_id);
         }
 
@@ -171,11 +173,11 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
             return false;
         }
 
-        ogs_info("(NRF-notify) NF Profile updated [%s]", nf_instance->id);
+        ogs_info("[%s] (NRF-notify) NF Profile updated", nf_instance->id);
 
         handled = ogs_sbi_client_associate(nf_instance);
         if (!handled) {
-            ogs_error("Cannot associate NF EndPoint [%s]", nf_instance->id);
+            ogs_error("[%s] Cannot associate NF EndPoint", nf_instance->id);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     message, "Cannot find NF EndPoint", nf_instance->id);
@@ -191,7 +193,7 @@ bool smf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
         if (nf_instance) {
             SMF_NF_INSTANCE_CLEAR("NRF-notify", nf_instance);
         } else {
-            ogs_warn("(NRF-notify) Not found [%s]", NFProfile->nf_instance_id);
+            ogs_warn("[%s] (NRF-notify) Not found", NFProfile->nf_instance_id);
             ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
                 message, "Not found", message->h.resource.id);
@@ -243,12 +245,12 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             ogs_assert(nf_instance);
 
             smf_nf_fsm_init(nf_instance);
-            ogs_info("(NF-discover) NF registered [%s]", nf_instance->id);
+            ogs_info("[%s] (NF-discover) NF registered", nf_instance->id);
         } else {
             OGS_FSM_TRAN(&nf_instance->sm, smf_nf_state_registered);
             ogs_fsm_dispatch(&nf_instance->sm, NULL);
 
-            ogs_warn("(NF-discover) NF [%s] has already been added",
+            ogs_warn("[%s] (NF-discover) NF has already been added",
                     NFProfile->nf_instance_id);
         }
 
@@ -256,7 +258,7 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             handled = ogs_sbi_nnrf_handle_nf_profile(
                         nf_instance, NFProfile, NULL, NULL);
             if (!handled) {
-                ogs_error("ogs_sbi_nnrf_handle_nf_profile() failed [%s]",
+                ogs_error("[%s] ogs_sbi_nnrf_handle_nf_profile() failed",
                         nf_instance->id);
                 SMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
                 continue;
@@ -264,7 +266,7 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
 
             handled = ogs_sbi_client_associate(nf_instance);
             if (!handled) {
-                ogs_error("Cannot assciate NF EndPoint [%s]", nf_instance->id);
+                ogs_error("[%s] Cannot assciate NF EndPoint", nf_instance->id);
                 SMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
                 continue;
             }
@@ -290,9 +292,10 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
                         ogs_time_from_sec(nf_instance->time.validity));
 
             } else
-                ogs_warn("NF Instance validity-time should not 0");
+                ogs_warn("[%s] NF Instance validity-time should not 0",
+                        nf_instance->id);
 
-            ogs_info("(NF-discover) NF Profile updated [%s]", nf_instance->id);
+            ogs_info("[%s] (NF-discover) NF Profile updated", nf_instance->id);
         }
     }
 }

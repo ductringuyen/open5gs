@@ -79,12 +79,12 @@ struct ausf_ue_s {
     do { \
         ogs_assert(_nFInstance); \
         if ((_nFInstance)->reference_count == 1) { \
-            ogs_info("(%s) NF removed [%s]", (_cAUSE), (_nFInstance)->id); \
+            ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
             ausf_nf_fsm_fini((_nFInstance)); \
         } else { \
             /* There is an assocation with other context */ \
-            ogs_info("(%s) NF suspended [%s:%d]", \
-                    (_cAUSE), _nFInstance->id, _nFInstance->reference_count); \
+            ogs_info("[%s:%d] (%s) NF suspended", \
+                    _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
             OGS_FSM_TRAN(&_nFInstance->sm, ausf_nf_state_de_registered); \
             ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
         } \

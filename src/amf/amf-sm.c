@@ -192,7 +192,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 ogs_fsm_dispatch(&nf_instance->sm, e);
 
                 if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_exception)) {
-                    ogs_error("State machine exception");
+                    ogs_error("[%s] State machine exception", nf_instance->id);
                 }
                 break;
 
@@ -207,8 +207,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                         amf_nnrf_handle_nf_status_subscribe(
                                 subscription, &sbi_message);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                sbi_message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                subscription->id, sbi_message.res_status);
                     }
                     break;
 
@@ -217,8 +217,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                             OGS_SBI_HTTP_STATUS_NO_CONTENT) {
                         ogs_sbi_subscription_remove(subscription);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                sbi_message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                subscription->id, sbi_message.res_status);
                     }
                     break;
 
@@ -246,8 +246,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                sbi_message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                amf_ue->id, sbi_message.res_status);
                     }
                     break;
 
@@ -277,15 +277,16 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
 #endif
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                sbi_message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                amf_ue->id, sbi_message.res_status);
                         nas_5gs_send_gmm_reject(amf_ue,
                                 OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
                     }
                     break;
 
                 DEFAULT
-                    ogs_error("Invalid HTTP method [%s]", sbi_message.h.method);
+                    ogs_error("[%s] Invalid HTTP method [%s]",
+                            amf_ue->id,  sbi_message.h.method);
                 END
                 break;
 
@@ -317,7 +318,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
             ogs_fsm_dispatch(&nf_instance->sm, e);
             if (OGS_FSM_CHECK(&nf_instance->sm, amf_nf_state_exception))
-                ogs_error("State machine exception [%d]", e->timer_id);
+                ogs_error("[%s] State machine exception [%d]",
+                        nf_instance->id, e->timer_id);
             break;
 
         case AMF_TIMER_SUBSCRIPTION_VALIDITY:
@@ -482,7 +484,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                      * not to decrypt NAS message */
                     h.ciphered = 0;
                     if (nas_5gs_security_decode(amf_ue, h, pkbuf) != OGS_OK) {
-                        ogs_error("nas_security_decode() failed");
+                        ogs_error("[%s] nas_security_decode() failed",
+                                amf_ue->id);
                         ogs_pkbuf_free(pkbuf);
                         return;
                     }
@@ -493,10 +496,10 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
              * older NG(ran_ue_t) context */
             if (ECM_CONNECTED(amf_ue)) {
                /* Implcit NG release */
-                ogs_debug("Implicit NG release");
-                ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
-                      amf_ue->ran_ue->ran_ue_ngap_id,
-                      (long long)amf_ue->ran_ue->amf_ue_ngap_id);
+                ogs_debug("[%s] Implicit NG release", amf_ue->id);
+                ogs_debug("[%s]    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
+                        amf_ue->id, amf_ue->ran_ue->ran_ue_ngap_id,
+                        (long long)amf_ue->ran_ue->amf_ue_ngap_id);
                 ran_ue_remove(amf_ue->ran_ue);
             }
             amf_ue_associate_ran_ue(amf_ue, ran_ue);

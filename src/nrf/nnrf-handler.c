@@ -104,8 +104,8 @@ bool nrf_nnrf_handle_nf_update(
         break;
 
     DEFAULT
-        ogs_error("Invalid HTTP method [%s]",
-                message->h.method);
+        ogs_error("[%s] Invalid HTTP method [%s]",
+                nf_instance->id, message->h.method);
         ogs_assert_if_reached();
     END
 
@@ -154,7 +154,7 @@ bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
             ogs_strdup(SubscriptionData->req_nf_instance_id);
 
     if (SubscriptionData->subscription_id) {
-        ogs_warn("NF should not send SubscriptionID[%s]",
+        ogs_warn("[%s] NF should not send SubscriptionID",
                 SubscriptionData->subscription_id);
         ogs_free(SubscriptionData->subscription_id);
     }

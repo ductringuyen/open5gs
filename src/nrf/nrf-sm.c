@@ -136,7 +136,8 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
                             ogs_sbi_nf_instance_remove(nf_instance);
                         } else if (OGS_FSM_CHECK(&nf_instance->sm,
                                     nrf_nf_state_exception)) {
-                            ogs_error("State machine exception");
+                            ogs_error("[%s] State machine exception",
+                                    nf_instance->id);
                             ogs_sbi_message_free(&message);
 
                             nrf_nf_fsm_fini(nf_instance);
@@ -223,7 +224,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             nf_instance = e->nf_instance;
             ogs_assert(nf_instance);
 
-            ogs_warn("No heartbeat [%s]", nf_instance->id);
+            ogs_warn("[%s] No heartbeat", nf_instance->id);
             nf_instance->nf_status = OpenAPI_nf_status_SUSPENDED;
 
             nrf_nf_fsm_fini(nf_instance);
@@ -236,7 +237,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             subscription = e->subscription;
             ogs_assert(subscription);
 
-            ogs_info("Subscription validity expired [%s]", subscription->id);
+            ogs_info("[%s] Subscription validity expired", subscription->id);
             ogs_sbi_subscription_remove(subscription);
             break;
 

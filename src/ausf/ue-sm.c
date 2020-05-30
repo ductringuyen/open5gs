@@ -121,7 +121,8 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
             ogs_fatal("PUT");
             break;
         DEFAULT
-            ogs_error("Invalid HTTP method [%s]", message->h.method);
+            ogs_error("[%s] Invalid HTTP method [%s]",
+                    ausf_ue->id, message->h.method);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
                     "Invalid HTTP method", message->h.method);
@@ -129,7 +130,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
         break;
 
     default:
-        ogs_error("Unknown event %s", ausf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", ausf_ue->id, ausf_event_get_name(e));
         break;
     }
 }
@@ -163,7 +164,7 @@ void ausf_ue_state_authenticated(ogs_fsm_t *s, ausf_event_t *e)
         break;
 
     default:
-        ogs_error("Unknown event %s", ausf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", ausf_ue->id, ausf_event_get_name(e));
         break;
     }
 }
@@ -187,7 +188,7 @@ void ausf_ue_state_exception(ogs_fsm_t *s, ausf_event_t *e)
         break;
 
     default:
-        ogs_error("Unknown event %s", ausf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", ausf_ue->id, ausf_event_get_name(e));
         break;
     }
 }

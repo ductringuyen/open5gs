@@ -156,7 +156,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
-                ogs_error("State machine exception");
+                ogs_error("[%s] State machine exception", ausf_ue->id);
                 ogs_sbi_message_free(&message);
                 ausf_ue_remove(ausf_ue);
             }
@@ -207,7 +207,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                 ogs_fsm_dispatch(&nf_instance->sm, e);
 
                 if (OGS_FSM_CHECK(&nf_instance->sm, ausf_nf_state_exception)) {
-                    ogs_error("State machine exception");
+                    ogs_error("[%s] State machine exception", nf_instance->id);
                 }
                 break;
 
@@ -222,8 +222,8 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                         ausf_nnrf_handle_nf_status_subscribe(
                                 subscription, &message);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                subscription->id, message.res_status);
                     }
                     break;
 
@@ -232,13 +232,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                             OGS_SBI_HTTP_STATUS_NO_CONTENT) {
                         ogs_sbi_subscription_remove(subscription);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                subscription->id, message.res_status);
                     }
                     break;
 
                 DEFAULT
-                    ogs_error("Invalid HTTP method [%s]", message.h.method);
+                    ogs_error("[%s] Invalid HTTP method [%s]",
+                            subscription->id, message.h.method);
                 END
                 break;
             
@@ -263,13 +264,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
                         ausf_nnrf_handle_nf_discover(session, &message);
                     } else {
-                        ogs_error("HTTP response error : %d",
-                                message.res_status);
+                        ogs_error("[%s] HTTP response error [%d]",
+                                ausf_ue->id, message.res_status);
                     }
                     break;
 
                 DEFAULT
-                    ogs_error("Invalid HTTP method [%s]", message.h.method);
+                    ogs_error("[%s] Invalid HTTP method [%s]",
+                            ausf_ue->id, message.h.method);
                 END
                 break;
 
@@ -301,7 +303,8 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             ogs_fsm_dispatch(&nf_instance->sm, e);
             if (OGS_FSM_CHECK(&nf_instance->sm, ausf_nf_state_exception))
-                ogs_error("State machine exception [%d]", e->timer_id);
+                ogs_error("[%s] State machine exception [%d]",
+                        nf_instance->id, e->timer_id);
             break;
 
         case AUSF_TIMER_SUBSCRIPTION_VALIDITY:

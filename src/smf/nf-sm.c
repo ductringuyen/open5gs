@@ -140,20 +140,21 @@ void smf_nf_state_will_register(ogs_fsm_t *s, smf_event_t *e)
                     smf_nnrf_handle_nf_register(nf_instance, message);
                     OGS_FSM_TRAN(s, &smf_nf_state_registered);
                 } else {
-                    ogs_error("HTTP Response Status Code [%d]",
-                            message->res_status);
+                    ogs_error("[%s] HTTP Response Status Code [%d]",
+                            nf_instance->id, message->res_status);
                     OGS_FSM_TRAN(s, &smf_nf_state_exception);
                 }
                 break;
 
             DEFAULT
-                ogs_error("Invalid resource name [%s]",
-                        message->h.resource.name);
+                ogs_error("[%s] Invalid resource name [%s]",
+                        nf_instance->id, message->h.resource.name);
             END
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.service.name);
+            ogs_error("[%s] Invalid API name [%s]",
+                    nf_instance->id, message->h.service.name);
         END
         break;
 
@@ -165,7 +166,7 @@ void smf_nf_state_will_register(ogs_fsm_t *s, smf_event_t *e)
             addr = client->addr;
             ogs_assert(addr);
 
-            ogs_warn("Retry to registration with NRF [%s]", nf_instance->id);
+            ogs_warn("[%s] Retry to registration with NRF", nf_instance->id);
 
             ogs_timer_start(nf_instance->t_registration_interval,
                 smf_timer_cfg(SMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL)->
@@ -175,13 +176,14 @@ void smf_nf_state_will_register(ogs_fsm_t *s, smf_event_t *e)
             break;
 
         default:
-            ogs_error("Unknown timer[%s:%d]",
+            ogs_error("[%s] Unknown timer[%s:%d]", nf_instance->id,
                     smf_timer_get_name(e->timer_id), e->timer_id);
         }
         break;
 
     default:
-        ogs_error("Unknown event %s", smf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s",
+                nf_instance->id, smf_event_get_name(e));
         break;
     }
 }
@@ -202,7 +204,7 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
         if (NF_INSTANCE_IS_SELF(nf_instance->id)) {
-            ogs_info("NF registered [%s]", nf_instance->id);
+            ogs_info("[%s] NF registered", nf_instance->id);
 
             client = nf_instance->client;
             ogs_assert(client);
@@ -223,7 +225,7 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
 
     case OGS_FSM_EXIT_SIG:
         if (NF_INSTANCE_IS_SELF(nf_instance->id)) {
-            ogs_info("NF de-registered [%s]", nf_instance->id);
+            ogs_info("[%s] NF de-registered", nf_instance->id);
 
             if (nf_instance->time.heartbeat) {
                 ogs_timer_stop(nf_instance->t_heartbeat_interval);
@@ -251,19 +253,21 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
                                 ogs_time_from_sec(nf_instance->time.heartbeat *
                                     OGS_SBI_HEARTBEAT_RETRYCOUNT));
                 } else {
-                    ogs_error("HTTP response error : %d", message->res_status);
+                    ogs_error("[%s] HTTP response error [%d]",
+                            nf_instance->id, message->res_status);
                 }
 
                 break;
 
             DEFAULT
-                ogs_error("Invalid resource name [%s]",
-                        message->h.resource.name);
+                ogs_error("[%s] Invalid resource name [%s]",
+                        nf_instance->id, message->h.resource.name);
             END
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.service.name);
+            ogs_error("[%s] Invalid API name [%s]",
+                    nf_instance->id, message->h.service.name);
         END
         break;
 
@@ -284,20 +288,21 @@ void smf_nf_state_registered(ogs_fsm_t *s, smf_event_t *e)
 
         case SMF_TIMER_NF_INSTANCE_VALIDITY:
             if (NF_INSTANCE_IS_OTHERS(nf_instance->id)) {
-                ogs_info("NF expired [%s]", nf_instance->id);
+                ogs_info("[%s] NF expired", nf_instance->id);
                 OGS_FSM_TRAN(s, &smf_nf_state_de_registered);
             }
             break;
 
         default:
-            ogs_error("Unknown timer[%s:%d]",
+            ogs_error("[%s] Unknown timer[%s:%d]", nf_instance->id,
                     smf_timer_get_name(e->timer_id), e->timer_id);
             break;
         }
         break;
 
     default:
-        ogs_error("Unknown event %s", smf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s",
+                nf_instance->id, smf_event_get_name(e));
         break;
     }
 }
@@ -316,7 +321,7 @@ void smf_nf_state_de_registered(ogs_fsm_t *s, smf_event_t *e)
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
         if (NF_INSTANCE_IS_SELF(nf_instance->id)) {
-            ogs_info("NF de-registered [%s]", nf_instance->id);
+            ogs_info("[%s] NF de-registered", nf_instance->id);
         }
         break;
 
@@ -324,7 +329,8 @@ void smf_nf_state_de_registered(ogs_fsm_t *s, smf_event_t *e)
         break;
 
     default:
-        ogs_error("Unknown event %s", smf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s",
+                nf_instance->id, smf_event_get_name(e));
         break;
     }
 }
@@ -365,20 +371,21 @@ void smf_nf_state_exception(ogs_fsm_t *s, smf_event_t *e)
             addr = client->addr;
             ogs_assert(addr);
 
-            ogs_warn("Retry to registration with NRF [%s]", nf_instance->id);
+            ogs_warn("[%s] Retry to registration with NRF", nf_instance->id);
 
             OGS_FSM_TRAN(s, &smf_nf_state_will_register);
             break;
 
         default:
-            ogs_error("Unknown timer[%s:%d]",
+            ogs_error("[%s] Unknown timer[%s:%d]", nf_instance->id,
                     smf_timer_get_name(e->timer_id), e->timer_id);
             break;
         }
         break;
 
     default:
-        ogs_error("Unknown event %s", smf_event_get_name(e));
+        ogs_error("[%s] Unknown event %s",
+                nf_instance->id, smf_event_get_name(e));
         break;
     }
 }
