@@ -303,7 +303,7 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
                 amf_ue->nf_types, OpenAPI_nf_type_AUSF);
         if (!nf_instance) {
             ogs_error("[%s] (NF discover) No AUSF", amf_ue->id);
-            nas_5gs_send_gmm_reject(
+            nas_5gs_send_nas_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         } else {
             amf_nausf_auth_send_authenticate(amf_ue, nf_instance);

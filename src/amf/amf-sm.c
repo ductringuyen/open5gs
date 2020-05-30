@@ -278,7 +278,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                                 amf_ue->id, sbi_message.res_status);
-                        nas_5gs_send_gmm_reject(amf_ue,
+                        nas_5gs_send_nas_reject(amf_ue,
                                 OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
                     }
                     break;
@@ -337,7 +337,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             ogs_assert(amf_ue);
 
             ogs_error("[%s] Cannot receive SBI message", amf_ue->id);
-            nas_5gs_send_gmm_reject(
+            nas_5gs_send_nas_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
             break;
         default:

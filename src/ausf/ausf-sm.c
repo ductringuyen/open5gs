@@ -304,6 +304,9 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                         } else {
                             ogs_error("[%s] HTTP response error [%d]",
                                     ausf_ue->id, message.res_status);
+                            ogs_sbi_server_send_error(session,
+                                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE,
+                                    NULL, "HTTP response error", ausf_ue->id);
                         }
                         break;
 
@@ -365,6 +368,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             session = e->sbi.data;
             ogs_assert(session);
             ausf_ue = ogs_sbi_session_get_data(session);
+            ogs_assert(ausf_ue);
 
             ogs_error("[%s] Cannot receive SBI message", ausf_ue->id);
             ogs_sbi_server_send_error(session,

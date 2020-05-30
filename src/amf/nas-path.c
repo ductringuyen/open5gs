@@ -94,7 +94,7 @@ int nas_5gs_send_to_downlink_nas_transport(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
-void nas_5gs_send_gmm_reject(
+void nas_5gs_send_nas_reject(
         amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t gmm_cause)
 {
     ogs_assert(amf_ue);

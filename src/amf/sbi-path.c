@@ -131,7 +131,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
     if (nrf == false && nf == false) {
         ogs_error("[%s] Cannot discover AUSF", amf_ue->id);
-        nas_5gs_send_gmm_reject(
+        nas_5gs_send_nas_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
