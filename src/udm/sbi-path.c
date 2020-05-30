@@ -134,17 +134,17 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             udm_ue->nf_types, nf_type, udm_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover UDM", udm_ue->id);
+        ogs_error("[%s] Cannot discover UDR", udm_ue->id);
 
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "Cannot discover UDM", udm_ue->id);
+                "Cannot discover UDR", udm_ue->id);
 
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover UDM", udm_ue->id);
+        ogs_warn("[%s] Try to discover UDR", udm_ue->id);
         ogs_timer_start(udm_ue->sbi_message_wait.timer,
                 udm_timer_cfg(UDM_TIMER_SBI_MESSAGE_WAIT)->duration);
 
@@ -170,7 +170,7 @@ void udm_nudm_ueau_send_get(
     ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
     ogs_assert(client);
 
     ogs_timer_start(udm_ue->sbi_message_wait.timer,
@@ -193,7 +193,7 @@ void udm_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
-                            session, OpenAPI_nf_type_UDM);
+                            session, OpenAPI_nf_type_UDR);
 
     if (!nf_instance) return;
 

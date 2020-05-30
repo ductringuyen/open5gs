@@ -24,8 +24,9 @@
 bool udm_nudm_handle_authenticate(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
-    OpenAPI_authentication_info_t *AuthenticationInfo = NULL;
+    OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
     char *serving_network_name = NULL;
+    char *ausf_instance_id = NULL;
 
     udm_ue_t *udm_ue = NULL;
 
@@ -36,24 +37,34 @@ bool udm_nudm_handle_authenticate(ogs_sbi_server_t *server,
     ogs_assert(server);
     ogs_assert(recvmsg);
 
-    AuthenticationInfo = recvmsg->AuthenticationInfo;
-    if (!AuthenticationInfo) {
-        ogs_error("No AuthenticationInfo");
+    AuthenticationInfoRequest = recvmsg->AuthenticationInfoRequest;
+    if (!AuthenticationInfoRequest) {
+        ogs_error("No AuthenticationInfoRequest");
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfo", NULL);
+                recvmsg, "No AuthenticationInfoRequest", NULL);
         return false;
     }
 
-    serving_network_name = AuthenticationInfo->serving_network_name;
-    if (!AuthenticationInfo) {
-        ogs_error("No AuthenticationInfo");
+    serving_network_name = AuthenticationInfoRequest->serving_network_name;
+    if (!AuthenticationInfoRequest) {
+        ogs_error("No servingNetworkName");
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfo", NULL);
+                recvmsg, "No servingNetworkName", NULL);
+        return false;
+    }
+
+    ausf_instance_id = AuthenticationInfoRequest->ausf_instance_id;
+    if (!AuthenticationInfoRequest) {
+        ogs_error("No ausfInstanceId");
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No ausfInstanceId", NULL);
         return false;
     }
 
     udm_ue->serving_network_name = ogs_strdup(serving_network_name);
     ogs_assert(udm_ue->serving_network_name);
+    udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
+    ogs_assert(udm_ue->ausf_instance_id);
 
     udm_nudm_ueau_discover_and_send_get(session);
 

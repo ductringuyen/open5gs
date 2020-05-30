@@ -23,26 +23,26 @@
 #include "nnrf-handler.h"
 #include "nausf-handler.h"
 
-void ausf_ue_fsm_init(ausf_ue_t *asuf_ue)
+void ausf_ue_fsm_init(ausf_ue_t *ausf_ue)
 {
     ausf_event_t e;
 
-    ogs_assert(asuf_ue);
-    e.ausf_ue = asuf_ue;
+    ogs_assert(ausf_ue);
+    e.ausf_ue = ausf_ue;
 
-    ogs_fsm_create(&asuf_ue->sm, ausf_ue_state_initial, ausf_ue_state_final);
-    ogs_fsm_init(&asuf_ue->sm, &e);
+    ogs_fsm_create(&ausf_ue->sm, ausf_ue_state_initial, ausf_ue_state_final);
+    ogs_fsm_init(&ausf_ue->sm, &e);
 }
 
-void ausf_ue_fsm_fini(ausf_ue_t *asuf_ue)
+void ausf_ue_fsm_fini(ausf_ue_t *ausf_ue)
 {
     ausf_event_t e;
 
-    ogs_assert(asuf_ue);
-    e.ausf_ue = asuf_ue;
+    ogs_assert(ausf_ue);
+    e.ausf_ue = ausf_ue;
 
-    ogs_fsm_fini(&asuf_ue->sm, &e);
-    ogs_fsm_delete(&asuf_ue->sm);
+    ogs_fsm_fini(&ausf_ue->sm, &e);
+    ogs_fsm_delete(&ausf_ue->sm);
 }
 
 void ausf_ue_state_initial(ogs_fsm_t *s, ausf_event_t *e)

@@ -46,9 +46,9 @@ bool ausf_nausf_handle_authenticate(ogs_sbi_server_t *server,
 
     serving_network_name = AuthenticationInfo->serving_network_name;
     if (!AuthenticationInfo) {
-        ogs_error("No AuthenticationInfo");
+        ogs_error("No servingNetworkName");
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfo", NULL);
+                recvmsg, "No servingNetworkName", NULL);
         return false;
     }
 

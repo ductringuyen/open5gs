@@ -50,9 +50,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
     ogs_sbi_message_t message;
 
     udm_ue_t *udm_ue = NULL;
-#if 0
     char *ue_id = NULL;
-#endif
 
     udm_sm_debug(e);
 
@@ -122,23 +120,13 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                         message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
-                        "Unknown resource name", message.h.resource.component[0]);
+                        "Unknown resource name",
+                        message.h.resource.component[0]);
             END
             break;
 
-#if 0
-        CASE(OGS_SBI_SERVICE_NAME_UDM_AUTH)
-            SWITCH(message.h.method)
-            CASE(OGS_SBI_HTTP_METHOD_POST)
-                if (message.AuthenticationInfo)
-                    ue_id = message.AuthenticationInfo->supi_or_suci;
-                break;
-            CASE(OGS_SBI_HTTP_METHOD_PUT)
-                ue_id = message.h.resource.component[1];
-                break;
-            DEFAULT
-            END
-
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            ue_id = message.h.resource.component[0];
             if (!ue_id) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
@@ -165,7 +153,6 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             }
 
             break;
-#endif
 
         DEFAULT
             ogs_error("Invalid API name [%s]", message.h.service.name);

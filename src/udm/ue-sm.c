@@ -23,26 +23,26 @@
 #include "nnrf-handler.h"
 #include "nudm-handler.h"
 
-void udm_ue_fsm_init(udm_ue_t *asuf_ue)
+void udm_ue_fsm_init(udm_ue_t *udm_ue)
 {
     udm_event_t e;
 
-    ogs_assert(asuf_ue);
-    e.udm_ue = asuf_ue;
+    ogs_assert(udm_ue);
+    e.udm_ue = udm_ue;
 
-    ogs_fsm_create(&asuf_ue->sm, udm_ue_state_initial, udm_ue_state_final);
-    ogs_fsm_init(&asuf_ue->sm, &e);
+    ogs_fsm_create(&udm_ue->sm, udm_ue_state_initial, udm_ue_state_final);
+    ogs_fsm_init(&udm_ue->sm, &e);
 }
 
-void udm_ue_fsm_fini(udm_ue_t *asuf_ue)
+void udm_ue_fsm_fini(udm_ue_t *udm_ue)
 {
     udm_event_t e;
 
-    ogs_assert(asuf_ue);
-    e.udm_ue = asuf_ue;
+    ogs_assert(udm_ue);
+    e.udm_ue = udm_ue;
 
-    ogs_fsm_fini(&asuf_ue->sm, &e);
-    ogs_fsm_delete(&asuf_ue->sm);
+    ogs_fsm_fini(&udm_ue->sm, &e);
+    ogs_fsm_delete(&udm_ue->sm);
 }
 
 void udm_ue_state_initial(ogs_fsm_t *s, udm_event_t *e)

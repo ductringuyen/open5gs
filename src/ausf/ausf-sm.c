@@ -282,6 +282,48 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            SWITCH(message.h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                SWITCH(message.h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
+                    session = e->sbi.data;
+                    ogs_assert(session);
+                    ausf_ue = ogs_sbi_session_get_data(session);
+                    ogs_assert(ausf_ue);
+
+                    SWITCH(message.h.method)
+                    CASE(OGS_SBI_HTTP_METHOD_POST)
+                        if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
+                            ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
+
+                            ogs_fatal("TODO");
+#if 0
+                            ausf_nnrf_handle_nf_discover(ausf_ue, &message);
+#endif
+                        } else {
+                            ogs_error("[%s] HTTP response error [%d]",
+                                    ausf_ue->id, message.res_status);
+                        }
+                        break;
+
+                    DEFAULT
+                        ogs_error("[%s] Invalid HTTP method [%s]",
+                                ausf_ue->id, message.h.method);
+                    END
+                    break;
+                DEFAULT
+                    ogs_error("Invalid resource name [%s]",
+                            message.h.resource.component[0]);
+                END
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        message.h.resource.component[0]);
+            END
+            break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", message.h.service.name);
         END

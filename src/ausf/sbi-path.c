@@ -159,11 +159,14 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 }
 
 void ausf_nudm_ueau_send_get(
-        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
+        ogs_sbi_session_t *session, ogs_sbi_nf_instance_t *nf_instance)
 {
+    ausf_ue_t *ausf_ue = NULL;
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_client_t *client = NULL;
 
+    ogs_assert(session);
+    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
     ogs_assert(nf_instance);
 
@@ -176,7 +179,7 @@ void ausf_nudm_ueau_send_get(
 
     request = ausf_nudm_ueau_build_get(ausf_ue);
     ogs_assert(request);
-    ogs_sbi_client_send_request(client, request, nf_instance);
+    ogs_sbi_client_send_request(client, request, session);
 }
 
 void ausf_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
@@ -194,5 +197,5 @@ void ausf_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
 
     if (!nf_instance) return;
 
-    ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
+    ausf_nudm_ueau_send_get(session, nf_instance);
 }

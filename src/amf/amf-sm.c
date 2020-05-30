@@ -274,9 +274,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(amf_ue->sbi_message_wait.timer);
 
-#if 0
-                        amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
-#endif
+                        ogs_fatal("TODO");
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                                 amf_ue->id, sbi_message.res_status);
@@ -287,7 +285,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
                 DEFAULT
                     ogs_error("[%s] Invalid HTTP method [%s]",
-                            amf_ue->id,  sbi_message.h.method);
+                            amf_ue->id, sbi_message.h.method);
                 END
                 break;
 

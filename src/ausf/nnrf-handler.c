@@ -310,7 +310,7 @@ void ausf_nnrf_handle_nf_discover(
                     OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                     "(NF discover) No UDM", ausf_ue->id);
         } else {
-            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
+            ausf_nudm_ueau_send_get(session, nf_instance);
         }
     } else {
         ogs_fatal("Should implement other case");
