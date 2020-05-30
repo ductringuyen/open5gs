@@ -41,9 +41,9 @@ logger:
 #          key: ausf.key
 #          pem: ausf.pem
 #
-#  o SBI Server(https://127.0.0.4:443, http://[::1]:80)
+#  o SBI Server(https://127.0.0.5:443, http://[::1]:80)
 #    sbi:
-#      - addr: 127.0.0.4
+#      - addr: 127.0.0.5
 #        tls:
 #          key: ausf.key
 #          pem: ausf.pem
@@ -53,9 +53,9 @@ logger:
 #    sbi:
 #      name: ausf.open5gs.org
 #
-#  o SBI Server(http://127.0.0.4:7777)
+#  o SBI Server(http://127.0.0.5:7777)
 #    sbi:
-#      - addr: 127.0.0.4
+#      - addr: 127.0.0.5
 #        port: 7777
 #
 #  o SBI Server(http://<eth0 IP address>:80)
@@ -64,7 +64,7 @@ logger:
 #
 ausf:
     sbi:
-      - addr: 127.0.0.4
+      - addr: 127.0.0.5
         port: 7777
 
 #

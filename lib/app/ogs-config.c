@@ -275,6 +275,12 @@ int ogs_config_parse()
                 } else if (!strcmp(parameter_key, "no_ausf")) {
                     self.parameter.no_ausf =
                         ogs_yaml_iter_bool(&parameter_iter);
+                } else if (!strcmp(parameter_key, "no_udm")) {
+                    self.parameter.no_udm =
+                        ogs_yaml_iter_bool(&parameter_iter);
+                } else if (!strcmp(parameter_key, "no_udr")) {
+                    self.parameter.no_udr =
+                        ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_ipv4")) {
                     self.parameter.no_ipv4 =
                         ogs_yaml_iter_bool(&parameter_iter);
