@@ -90,8 +90,8 @@ extern "C" {
 #define OGS_SBI_SERVICE_NAME_NUDM_SDM               "nudm-sdm"
 #define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"
 #define OGS_SBI_SERVICE_NAME_NUDM_UEAU              "nudm-ueau"
-#define OGS_SBI_RESOURCE_PATH_GENERATE_AUTH_DATA    \
-    "security-information/generate-auth-data"
+#define OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION  "security-information"
+#define OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA    "generate-auth-data"
 
 #define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
 #define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
