@@ -180,17 +180,3 @@ udm_ue_t *udm_ue_find(char *id)
     ogs_assert(id);
     return (udm_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
 }
-
-udm_ue_t *udm_ue_find_by_message(ogs_sbi_message_t *message)
-{
-    udm_ue_t *udm_ue = NULL;
-
-    return udm_ue;
-}
-
-udm_ue_t *udm_ue_add_by_message(ogs_sbi_message_t *message)
-{
-    udm_ue_t *udm_ue = NULL;
-
-    return udm_ue;
-}

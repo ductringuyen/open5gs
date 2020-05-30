@@ -28,6 +28,7 @@ subdir('pgw')
 subdir('pcrf')
 
 subdir('nrf')
+subdir('udr')
 subdir('udm')
 subdir('ausf')
 subdir('upf')

@@ -17,8 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "context.h"
-
 #include "sbi-path.h"
 #include "nnrf-handler.h"
 #include "nudm-handler.h"

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-libudm_sources = files('''
+libudr_sources = files('''
     context.c
     event.c
     timer.c
@@ -23,37 +23,36 @@ libudm_sources = files('''
     nnrf-handler.c
     nf-sm.c
 
-    nudm-handler.c
+    nudr-handler.c
     nudr-build.c
-    ue-sm.c
 
     sbi-path.c
-    udm-sm.c
+    udr-sm.c
 
     init.c
 '''.split())
 
-libudm = static_library('udm',
-    sources : libudm_sources,
+libudr = static_library('udr',
+    sources : libudr_sources,
     link_with : libipfw,
     dependencies : [libapp_dep,
                     libsbi_dep],
     install : false)
 
-libudm_dep = declare_dependency(
-    link_with : libudm,
+libudr_dep = declare_dependency(
+    link_with : libudr,
     dependencies : [libapp_dep,
                     libsbi_dep])
 
-udm_sources = files('''
+udr_sources = files('''
     app.c
     ../main.c
 '''.split())
 
-executable('open5gs-udmd',
-    sources : udm_sources,
-    c_args : '-DDEFAULT_CONFIG_FILENAME="@0@/udm.yaml"'.format(open5gs_sysconfdir),
+executable('open5gs-udrd',
+    sources : udr_sources,
+    c_args : '-DDEFAULT_CONFIG_FILENAME="@0@/udr.yaml"'.format(open5gs_sysconfdir),
     include_directories : srcinc,
-    dependencies : libudm_dep,
+    dependencies : libudr_dep,
     install_rpath : libdir,
     install : true)
