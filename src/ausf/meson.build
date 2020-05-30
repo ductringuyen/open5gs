@@ -21,7 +21,6 @@ libausf_sources = files('''
     timer.c
 
     nnrf-handler.c
-    nnrf-build.c
     nf-sm.c
 
     nausf-handler.c

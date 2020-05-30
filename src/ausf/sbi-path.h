@@ -20,7 +20,7 @@
 #ifndef AUSF_SBI_PATH_H
 #define AUSF_SBI_PATH_H
 
-#include "nnrf-build.h"
+#include "context.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -50,7 +50,9 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
     ogs_sbi_message_t message;
 
     udm_ue_t *udm_ue = NULL;
+#if 0
     char *ue_id = NULL;
+#endif
 
     udm_sm_debug(e);
 

@@ -21,7 +21,6 @@ libudm_sources = files('''
     timer.c
 
     nnrf-handler.c
-    nnrf-build.c
     nf-sm.c
 
     nudm-handler.c
