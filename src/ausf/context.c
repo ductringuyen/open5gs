@@ -178,17 +178,3 @@ ausf_ue_t *ausf_ue_find(char *id)
     ogs_assert(id);
     return (ausf_ue_t *)ogs_hash_get(self.ue_id_hash, id, strlen(id));
 }
-
-ausf_ue_t *ausf_ue_find_by_message(ogs_sbi_message_t *message)
-{
-    ausf_ue_t *ausf_ue = NULL;
-
-    return ausf_ue;
-}
-
-ausf_ue_t *ausf_ue_add_by_message(ogs_sbi_message_t *message)
-{
-    ausf_ue_t *ausf_ue = NULL;
-
-    return ausf_ue;
-}

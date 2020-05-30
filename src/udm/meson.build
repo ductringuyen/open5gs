@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-libausf_sources = files('''
+libudm_sources = files('''
     context.c
     event.c
     timer.c
@@ -24,17 +24,17 @@ libausf_sources = files('''
     nnrf-build.c
     nf-sm.c
 
-    nausf-handler.c
+    nudm-handler.c
     ue-sm.c
 
     sbi-path.c
-    ausf-sm.c
+    udm-sm.c
 
     init.c
 '''.split())
 
-libausf = static_library('ausf',
-    sources : libausf_sources,
+libudm = static_library('udm',
+    sources : libudm_sources,
     link_with : libipfw,
     dependencies : [libapp_dep,
                     libsctp_dep,
@@ -43,23 +43,23 @@ libausf = static_library('ausf',
                     libsbi_dep],
     install : false)
 
-libausf_dep = declare_dependency(
-    link_with : libausf,
+libudm_dep = declare_dependency(
+    link_with : libudm,
     dependencies : [libapp_dep,
                     libsctp_dep,
                     libngap_dep,
                     libnas_5gs_dep,
                     libsbi_dep])
 
-ausf_sources = files('''
+udm_sources = files('''
     app.c
     ../main.c
 '''.split())
 
-executable('open5gs-ausfd',
-    sources : ausf_sources,
-    c_args : '-DDEFAULT_CONFIG_FILENAME="@0@/ausf.yaml"'.format(open5gs_sysconfdir),
+executable('open5gs-udmd',
+    sources : udm_sources,
+    c_args : '-DDEFAULT_CONFIG_FILENAME="@0@/udm.yaml"'.format(open5gs_sysconfdir),
     include_directories : srcinc,
-    dependencies : libausf_dep,
+    dependencies : libudm_dep,
     install_rpath : libdir,
     install : true)

@@ -27,6 +27,7 @@ open5gs_conf = '''
     pcrf.yaml
 
     nrf.yaml
+    udm.yaml
     ausf.yaml
     upf.yaml
     smf.yaml

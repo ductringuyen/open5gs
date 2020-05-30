@@ -17,13 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef AUSF_CONTEXT_H
-#define AUSF_CONTEXT_H
+#ifndef UDM_CONTEXT_H
+#define UDM_CONTEXT_H
 
 #include "ogs-app.h"
 #include "ogs-sbi.h"
 
-#include "ausf-sm.h"
+#include "udm-sm.h"
 #include "timer.h"
 
 #ifdef __cplusplus
@@ -32,35 +32,35 @@ extern "C" {
 
 #define MAX_NUM_OF_SERVED_GUAMI     8
 
-extern int __ausf_log_domain;
+extern int __udm_log_domain;
 
 #undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ausf_log_domain
+#define OGS_LOG_DOMAIN __udm_log_domain
 
-typedef struct ausf_context_s {
+typedef struct udm_context_s {
     ogs_queue_t     *queue;         /* Queue for processing UPF control */
     ogs_timer_mgr_t *timer_mgr;     /* Timer Manager */
     ogs_pollset_t   *pollset;       /* Poll Set for I/O Multiplexing */
 
     OpenAPI_nf_type_e   nf_type;
 
-    ogs_list_t      ausf_ue_list;
+    ogs_list_t      udm_ue_list;
     ogs_hash_t      *ue_id_hash;
 
-} ausf_context_t;
+} udm_context_t;
 
-struct ausf_ue_s {
+struct udm_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
     char *id;
     char *serving_network_name;
 
-#define CLEAR_AUSF_UE_ALL_TIMERS(__aUSF) \
+#define CLEAR_UDM_UE_ALL_TIMERS(__aUSF) \
     do { \
-        CLEAR_AUSF_UE_TIMER((__aUSF)->sbi_message_wait); \
+        CLEAR_UDM_UE_TIMER((__aUSF)->sbi_message_wait); \
     } while(0);
-#define CLEAR_AUSF_UE_TIMER(__aUSF_UE_TIMER) \
+#define CLEAR_UDM_UE_TIMER(__aUSF_UE_TIMER) \
     do { \
         ogs_timer_stop((__aUSF_UE_TIMER).timer); \
         if ((__aUSF_UE_TIMER).pkbuf) { \
@@ -75,17 +75,17 @@ struct ausf_ue_s {
         uint32_t        retry_count;;
     } sbi_message_wait;
 
-#define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
+#define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \
         ogs_assert(_nFInstance); \
         if ((_nFInstance)->reference_count == 1) { \
             ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
-            ausf_nf_fsm_fini((_nFInstance)); \
+            udm_nf_fsm_fini((_nFInstance)); \
         } else { \
             /* There is an assocation with other context */ \
             ogs_info("[%s:%d] (%s) NF suspended", \
                     _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
-            OGS_FSM_TRAN(&_nFInstance->sm, ausf_nf_state_de_registered); \
+            OGS_FSM_TRAN(&_nFInstance->sm, udm_nf_state_de_registered); \
             ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
         } \
         ogs_sbi_nf_instance_remove(_nFInstance); \
@@ -94,19 +94,22 @@ struct ausf_ue_s {
     ogs_sbi_nf_types_t nf_types;
 };
 
-void ausf_context_init(void);
-void ausf_context_final(void);
-ausf_context_t *ausf_self(void);
+void udm_context_init(void);
+void udm_context_final(void);
+udm_context_t *udm_self(void);
 
-int ausf_context_parse_config(void);
+int udm_context_parse_config(void);
 
-ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id);
-void ausf_ue_remove(ausf_ue_t *ausf_ue);
-void ausf_ue_remove_all(void);
-ausf_ue_t *ausf_ue_find(char *id);
+udm_ue_t *udm_ue_add(ogs_sbi_session_t *session, char *id);
+void udm_ue_remove(udm_ue_t *udm_ue);
+void udm_ue_remove_all(void);
+udm_ue_t *udm_ue_find(char *id);
+
+udm_ue_t *udm_ue_find_by_message(ogs_sbi_message_t *message);
+udm_ue_t *udm_ue_add_by_message(ogs_sbi_message_t *message);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* AUSF_CONTEXT_H */
+#endif /* UDM_CONTEXT_H */
