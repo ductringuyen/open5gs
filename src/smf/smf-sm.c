@@ -278,7 +278,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         SWITCH(sbi_message.h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-            SWITCH(sbi_message.h.resource.name)
+            SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
@@ -298,10 +298,11 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        sbi_message.h.resource.name);
+                        sbi_message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &sbi_message,
-                        "Unknown resource name", sbi_message.h.resource.name);
+                        "Unknown resource name",
+                        sbi_message.h.resource.component[0]);
             END
             break;
 
@@ -309,7 +310,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &sbi_message,
-                    "Invalid API name", sbi_message.h.resource.name);
+                    "Invalid API name", sbi_message.h.resource.component[0]);
         END
 
         /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */
@@ -339,7 +340,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         SWITCH(sbi_message.h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-            SWITCH(sbi_message.h.resource.name)
+            SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 nf_instance = e->sbi.data;
                 ogs_assert(nf_instance);
@@ -386,12 +387,12 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        sbi_message.h.resource.name);
+                        sbi_message.h.resource.component[0]);
             END
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
-            SWITCH(sbi_message.h.resource.name)
+            SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                     smf_nnrf_handle_nf_discover(&sbi_message);
@@ -403,7 +404,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        sbi_message.h.resource.name);
+                        sbi_message.h.resource.component[0]);
             END
             break;
 

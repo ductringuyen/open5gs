@@ -444,7 +444,8 @@ void ogs_sbi_client_send_request(
     if (request->h.url == NULL) {
         request->h.url = ogs_sbi_client_uri(client,
                 request->h.service.name, request->h.api.version,
-                request->h.resource.name, request->h.resource.id);
+                request->h.resource.component[0],
+                request->h.resource.component[1]);
     }
 
     conn = connection_add(client, request, data);

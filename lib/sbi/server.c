@@ -426,11 +426,13 @@ void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
     if (message) {
         problem.type = ogs_msprintf("/%s/%s",
                 message->h.service.name, message->h.api.version);
-        if (message->h.resource.id)
+        if (message->h.resource.component[1])
             problem.instance = ogs_msprintf("/%s/%s",
-                    message->h.resource.name, message->h.resource.id);
+                    message->h.resource.component[0],
+                    message->h.resource.component[1]);
         else
-            problem.instance = ogs_msprintf("/%s", message->h.resource.name);
+            problem.instance =
+                    ogs_msprintf("/%s", message->h.resource.component[0]);
     }
     problem.status = status;
     problem.title = (char*)title;

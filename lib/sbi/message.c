@@ -127,8 +127,6 @@ static void sbi_header_free(ogs_sbi_header_t *h)
     if (h->method) ogs_free(h->method);
     if (h->service.name) ogs_free(h->service.name);
     if (h->api.version) ogs_free(h->api.version);
-    if (h->resource.name) ogs_free(h->resource.name);
-    if (h->resource.id) ogs_free(h->resource.id);
 
     for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
                         h->resource.component[i]; i++)
@@ -181,11 +179,8 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
         request->h.service.name = ogs_strdup(message->h.service.name);
         ogs_assert(message->h.api.version);
         request->h.api.version = ogs_strdup(message->h.api.version);
-        ogs_assert(message->h.resource.name);
-        request->h.resource.name = ogs_strdup(message->h.resource.name);
-        if (message->h.resource.id)
-            request->h.resource.id = ogs_strdup(message->h.resource.id);
 
+        ogs_assert(message->h.resource.component[0]);
         for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
                             message->h.resource.component[i]; i++)
             request->h.resource.component[i] = ogs_strdup(
@@ -432,6 +427,9 @@ static int parse_sbi_header(
     char *saveptr = NULL;
     char *url = NULL, *p = NULL;;
 
+    char *component = NULL;
+    int i = 0;
+
     ogs_assert(message);
     ogs_assert(header);
 
@@ -473,35 +471,12 @@ static int parse_sbi_header(
     }
     message->h.api.version = header->api.version;
 
-#if 0
-    header->resource.name = ogs_sbi_parse_url(NULL, "/", &saveptr);
-    if (!header->resource.name) {
-        ogs_error("ogs_sbi_parse_url() failed");
-        ogs_free(url);
-        return OGS_ERROR;
+    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL;
+         i++) {
+        header->resource.component[i] = component;
+        message->h.resource.component[i] = component;
     }
-    message->h.resource.name = header->resource.name;
-
-    header->resource.id = ogs_sbi_parse_url(NULL, "/", &saveptr);
-    message->h.resource.id = header->resource.id;
-#else
-    {
-        char *component = NULL;
-        int i = 0;
-        while (i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
-            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL) {
-            ogs_fatal("component = %s", component);
-            if (i == 0) {
-                header->resource.name = component;
-                message->h.resource.name = component;
-            }
-            header->resource.component[i] = component;
-            message->h.resource.component[i] = component;
-            i++;
-        }
-    }
-
-#endif
 
     ogs_free(url);
 
@@ -557,7 +532,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
             SWITCH(message->h.service.name)
             CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-                SWITCH(message->h.resource.name)
+                SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                     message->NFProfile =
                         OpenAPI_nf_profile_parseFromJSON(item);
@@ -588,12 +563,12 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 DEFAULT
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
-                            message->h.resource.name);
+                            message->h.resource.component[0]);
                 END
                 break;
 
             CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
-                SWITCH(message->h.resource.name)
+                SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                     message->SearchResult =
                         OpenAPI_search_result_parseFromJSON(item);
@@ -606,12 +581,12 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 DEFAULT
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
-                            message->h.resource.name);
+                            message->h.resource.component[0]);
                 END
                 break;
 
             CASE(OGS_SBI_SERVICE_NAME_AUSF_AUTH)
-                SWITCH(message->h.resource.name)
+                SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
                     message->AuthenticationInfo =
                         OpenAPI_authentication_info_parseFromJSON(item);
@@ -624,7 +599,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 DEFAULT
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
-                            message->h.resource.name);
+                            message->h.resource.component[0]);
                 END
                 break;
 

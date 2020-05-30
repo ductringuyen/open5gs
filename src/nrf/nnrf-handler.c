@@ -219,7 +219,7 @@ bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
     ogs_assert(session);
     ogs_assert(message);
 
-    subscription = ogs_sbi_subscription_find(message->h.resource.id);
+    subscription = ogs_sbi_subscription_find(message->h.resource.component[1]);
     if (subscription) {
         ogs_sbi_response_t *response = NULL;
         ogs_sbi_subscription_remove(subscription);
@@ -229,10 +229,10 @@ bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
         ogs_assert(response);
         ogs_sbi_server_send_response(session, response);
     } else {
-        ogs_error("Not found [%s]", message->h.resource.id);
+        ogs_error("Not found [%s]", message->h.resource.component[1]);
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                message, "Not found", message->h.resource.id);
+                message, "Not found", message->h.resource.component[1]);
     }
 
     return true;
@@ -260,7 +260,7 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
 
     links->self = ogs_sbi_server_uri(server,
             recvmsg->h.service.name, recvmsg->h.api.version,
-            recvmsg->h.resource.name, NULL);
+            recvmsg->h.resource.component[0], NULL);
 
     i = 0;
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
@@ -311,13 +311,13 @@ bool nrf_nnrf_handle_nf_profile_retrieval(ogs_sbi_server_t *server,
     ogs_assert(session);
     ogs_assert(recvmsg);
 
-    ogs_assert(recvmsg->h.resource.id);
-    nf_instance = ogs_sbi_nf_instance_find(recvmsg->h.resource.id);
+    ogs_assert(recvmsg->h.resource.component[1]);
+    nf_instance = ogs_sbi_nf_instance_find(recvmsg->h.resource.component[1]);
     if (!nf_instance) {
-        ogs_error("Not found [%s]", recvmsg->h.resource.id);
+        ogs_error("Not found [%s]", recvmsg->h.resource.component[1]);
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                recvmsg, "Not found", recvmsg->h.resource.id);
+                recvmsg, "Not found", recvmsg->h.resource.component[1]);
         return false;
     }
 

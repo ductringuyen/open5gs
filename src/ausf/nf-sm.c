@@ -132,7 +132,7 @@ void ausf_nf_state_will_register(ogs_fsm_t *s, ausf_event_t *e)
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-            SWITCH(message->h.resource.name)
+            SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
 
                 if (message->res_status == OGS_SBI_HTTP_STATUS_OK ||
@@ -148,7 +148,7 @@ void ausf_nf_state_will_register(ogs_fsm_t *s, ausf_event_t *e)
 
             DEFAULT
                 ogs_error("[%s] Invalid resource name [%s]",
-                        nf_instance->id, message->h.resource.name);
+                        nf_instance->id, message->h.resource.component[0]);
             END
             break;
 
@@ -242,7 +242,7 @@ void ausf_nf_state_registered(ogs_fsm_t *s, ausf_event_t *e)
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-            SWITCH(message->h.resource.name)
+            SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
 
                 if (message->res_status == OGS_SBI_HTTP_STATUS_NO_CONTENT ||
@@ -260,7 +260,7 @@ void ausf_nf_state_registered(ogs_fsm_t *s, ausf_event_t *e)
 
             DEFAULT
                 ogs_error("[%s] Invalid resource name [%s]",
-                        nf_instance->id, message->h.resource.name);
+                        nf_instance->id, message->h.resource.component[0]);
             END
             break;
 

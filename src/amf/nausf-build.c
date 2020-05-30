@@ -32,7 +32,8 @@ ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_AUSF_AUTH;
     message.h.api.version = (char *)OGS_SBI_API_VERSION;
-    message.h.resource.name = (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
+    message.h.resource.component[0] =
+        (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
 
     message.http.accept = (char *)(OGS_SBI_CONTENT_3GPPHAL_TYPE ","
                                     OGS_SBI_CONTENT_PROBLEM_TYPE);

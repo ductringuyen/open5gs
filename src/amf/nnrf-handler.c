@@ -197,7 +197,7 @@ bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
             ogs_warn("[%s] (NRF-notify) Not found", NFProfile->nf_instance_id);
             ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                message, "Not found", message->h.resource.id);
+                message, "Not found", message->h.resource.component[1]);
             return false;
         }
     } else {

@@ -92,11 +92,11 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         SWITCH(message.h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
-            SWITCH(message.h.resource.name)
+            SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
-                    if (message.h.resource.id) {
+                    if (message.h.resource.component[1]) {
                         nrf_nnrf_handle_nf_profile_retrieval(
                                 server, session, &message);
                     } else {
@@ -107,20 +107,22 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
                 DEFAULT
                     nf_instance = ogs_sbi_nf_instance_find(
-                            message.h.resource.id);
+                            message.h.resource.component[1]);
                     if (!nf_instance) {
                         SWITCH(message.h.method)
                         CASE(OGS_SBI_HTTP_METHOD_PUT)
                             nf_instance = ogs_sbi_nf_instance_add(
-                                    message.h.resource.id);
+                                    message.h.resource.component[1]);
                             ogs_assert(nf_instance);
                             nrf_nf_fsm_init(nf_instance);
                             break;
                         DEFAULT
-                            ogs_error("Not found [%s]", message.h.resource.id);
+                            ogs_error("Not found [%s]",
+                                    message.h.resource.component[1]);
                             ogs_sbi_server_send_error(session,
                                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                                &message, "Not found", message.h.resource.id);
+                                &message, "Not found",
+                                message.h.resource.component[1]);
                         END
                     }
 
@@ -170,16 +172,17 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        message.h.resource.name);
+                        message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
-                        "Unknown resource name", message.h.resource.name);
+                        "Unknown resource name",
+                        message.h.resource.component[0]);
             END
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
 
-            SWITCH(message.h.resource.name)
+            SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
 
                 SWITCH(message.h.method)
@@ -200,10 +203,11 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        message.h.resource.name);
+                        message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
-                        "Unknown resource name", message.h.resource.name);
+                        "Unknown resource name",
+                        message.h.resource.component[0]);
             END
             break;
 
@@ -211,7 +215,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             ogs_error("Invalid API name [%s]", message.h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
-                    "Invalid API name", message.h.resource.name);
+                    "Invalid API name", message.h.resource.component[0]);
         END
 
         /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */
