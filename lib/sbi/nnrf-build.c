@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "nnrf-build.h"
+#include "ogs-sbi.h"
 
 OpenAPI_nf_profile_t *ogs_nnrf_nfm_build_nf_profile(
         ogs_sbi_nf_instance_t *nf_instance)

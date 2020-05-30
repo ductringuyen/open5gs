@@ -161,9 +161,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 void ausf_nudm_ueau_send_get(
         ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-#if 0
     ogs_sbi_request_t *request = NULL;
-#endif
     ogs_sbi_client_t *client = NULL;
 
     ogs_assert(ausf_ue);
@@ -175,11 +173,10 @@ void ausf_nudm_ueau_send_get(
 
     ogs_timer_start(ausf_ue->sbi_message_wait.timer,
             ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
-#if 0
-    request = ogs_nnrf_build_nf_register(nf_instance);
+
+    request = ausf_nudm_ueau_build_get(ausf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, nf_instance);
-#endif
 }
 
 void ausf_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)

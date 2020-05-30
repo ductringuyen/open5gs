@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "nnrf-handler.h"
+#include "ogs-sbi.h"
 
 bool ogs_sbi_nnrf_handle_nf_profile(ogs_sbi_nf_instance_t *nf_instance,
         OpenAPI_nf_profile_t *NFProfile,

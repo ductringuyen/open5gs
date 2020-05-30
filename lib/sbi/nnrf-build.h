@@ -20,9 +20,6 @@
 #ifndef OGS_NNRF_BUILD_H
 #define OGS_NNRF_BUILD_H
 
-#include "ogs-sbi.h"
-#include "context.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
