@@ -50,7 +50,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
     ogs_sbi_message_t message;
 
     udm_ue_t *udm_ue = NULL;
-    char *ue_id = NULL;
+    char *ueid = NULL;
 
     udm_sm_debug(e);
 
@@ -126,17 +126,17 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-            ue_id = message.h.resource.component[0];
-            if (!ue_id) {
+            ueid = message.h.resource.component[0];
+            if (!ueid) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_NOT_FOUND,
                     &message, "Not found", message.h.method);
             }
 
-            udm_ue = udm_ue_find(ue_id);
+            udm_ue = udm_ue_find(ueid);
             if (!udm_ue) {
-                udm_ue = udm_ue_add(session, ue_id);
+                udm_ue = udm_ue_add(session, ueid);
                 ogs_assert(udm_ue);
             }
 

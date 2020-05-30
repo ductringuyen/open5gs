@@ -45,7 +45,7 @@ typedef struct udm_context_s {
     OpenAPI_nf_type_e   nf_type;
 
     ogs_list_t      udm_ue_list;
-    ogs_hash_t      *ue_id_hash;
+    ogs_hash_t      *ueid_hash;
 
 } udm_context_t;
 

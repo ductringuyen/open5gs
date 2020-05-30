@@ -113,7 +113,7 @@ typedef struct amf_context_s {
     ogs_hash_t      *amf_ue_ngap_id_hash;   /* hash table for AMF-UE-NGAP-ID */
     ogs_hash_t      *imsi_ue_hash;          /* hash table (IMSI : AMF_UE) */
     ogs_hash_t      *guti_ue_hash;          /* hash table (GUTI : AMF_UE) */
-    ogs_hash_t      *amf_ue_id_hash; /* hash table (UE_ID) */
+    ogs_hash_t      *amf_ueid_hash; /* hash table (UE_ID) */
 
     OGS_POOL(m_tmsi, amf_m_tmsi_t); /* M-TMSI Pool */
 

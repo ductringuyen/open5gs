@@ -40,7 +40,7 @@ void ausf_context_init(void)
     ogs_pool_init(&ausf_ue_pool, ogs_config()->pool.ue);
 
     ogs_list_init(&self.ausf_ue_list);
-    self.ue_id_hash = ogs_hash_make();
+    self.ueid_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -51,8 +51,8 @@ void ausf_context_final(void)
 
     ausf_ue_remove_all();
 
-    ogs_assert(self.ue_id_hash);
-    ogs_hash_destroy(self.ue_id_hash);
+    ogs_assert(self.ueid_hash);
+    ogs_hash_destroy(self.ueid_hash);
 
     context_initialized = 0;
 }
@@ -125,7 +125,7 @@ ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
 
     ausf_ue->id = ogs_strdup(id);
     ogs_assert(ausf_ue->id);
-    ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
+    ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
 
     ausf_ue->sbi_message_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_message_wait_expire, session);
@@ -148,7 +148,7 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ausf_ue_fsm_fini(ausf_ue);
 
     ogs_assert(ausf_ue->id);
-    ogs_hash_set(self.ue_id_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
+    ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
     ogs_free(ausf_ue->id);
 
     if (ausf_ue->serving_network_name)
@@ -176,5 +176,5 @@ void ausf_ue_remove_all()
 ausf_ue_t *ausf_ue_find(char *id)
 {
     ogs_assert(id);
-    return (ausf_ue_t *)ogs_hash_get(self.ue_id_hash, id, strlen(id));
+    return (ausf_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
 }

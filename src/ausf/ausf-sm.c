@@ -50,7 +50,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
     ogs_sbi_message_t message;
 
     ausf_ue_t *ausf_ue = NULL;
-    char *ue_id = NULL;
+    char *ueid = NULL;
 
     ausf_sm_debug(e);
 
@@ -129,24 +129,24 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             SWITCH(message.h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (message.AuthenticationInfo)
-                    ue_id = message.AuthenticationInfo->supi_or_suci;
+                    ueid = message.AuthenticationInfo->supi_or_suci;
                 break;
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                ue_id = message.h.resource.component[1];
+                ueid = message.h.resource.component[1];
                 break;
             DEFAULT
             END
 
-            if (!ue_id) {
+            if (!ueid) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_NOT_FOUND,
                     &message, "Not found", message.h.method);
             }
 
-            ausf_ue = ausf_ue_find(ue_id);
+            ausf_ue = ausf_ue_find(ueid);
             if (!ausf_ue) {
-                ausf_ue = ausf_ue_add(session, ue_id);
+                ausf_ue = ausf_ue_add(session, ueid);
                 ogs_assert(ausf_ue);
             }
 
