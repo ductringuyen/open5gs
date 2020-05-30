@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
  *
  * This file is part of Open5GS.
  *
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UDM_SBI_PATH_H
-#define UDM_SBI_PATH_H
+#ifndef UDM_NUDR_BUILD_H
+#define UDM_NUDR_BUILD_H
 
 #include "context.h"
 
@@ -26,19 +26,10 @@
 extern "C" {
 #endif
 
-#include "nudr-build.h"
-
-int udm_sbi_open(void);
-void udm_sbi_close(void);
-
-void udm_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
-
-void udm_nudr_dr_send_query(
-        ogs_sbi_session_t *session, ogs_sbi_nf_instance_t *nf_instance);
-void udm_nudr_dr_discover_and_send_query(ogs_sbi_session_t *session);
+ogs_sbi_request_t *udm_nudr_dr_build_query(udm_ue_t *udm_ue);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UDM_SBI_PATH_H */
+#endif /* UDM_NUDR_BUILD_H */

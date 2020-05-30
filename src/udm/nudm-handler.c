@@ -66,7 +66,7 @@ bool udm_nudm_handle_authenticate(ogs_sbi_server_t *server,
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
     ogs_assert(udm_ue->ausf_instance_id);
 
-    udm_nudm_ueau_discover_and_send_get(session);
+    udm_nudr_dr_discover_and_send_query(session);
 
     return true;
 }

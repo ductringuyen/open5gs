@@ -94,6 +94,10 @@ extern "C" {
 #define OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA    "generate-auth-data"
 
 #define OGS_SBI_SERVICE_NAME_NUDR_DR                "nudr-dr"
+#define OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA     "subscription-data"
+#define OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA   "authentication-data"
+#define OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION \
+                                            "authentication-subscription"
 
 #define OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION        "nsmf-pdusession"
 #define OGS_SBI_SERVICE_NAME_NSMF_EVENT_EXPOSURE    "nsmf-event-exposure"

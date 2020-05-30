@@ -317,13 +317,13 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     break;
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
-                            message.h.resource.component[0]);
+                            message.h.resource.component[2]);
                 END
                 break;
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
-                        message.h.resource.component[0]);
+                        message.h.resource.component[1]);
             END
             break;
 

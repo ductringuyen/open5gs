@@ -158,14 +158,16 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     return udm_ue->nf_types[nf_type].nf_instance;
 }
 
-void udm_nudm_ueau_send_get(
-        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
+void udm_nudr_dr_send_query(
+        ogs_sbi_session_t *session, ogs_sbi_nf_instance_t *nf_instance)
 {
-#if 0
+    udm_ue_t *udm_ue = NULL;
+
     ogs_sbi_request_t *request = NULL;
-#endif
     ogs_sbi_client_t *client = NULL;
 
+    ogs_assert(session);
+    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
     ogs_assert(nf_instance);
 
@@ -175,14 +177,13 @@ void udm_nudm_ueau_send_get(
 
     ogs_timer_start(udm_ue->sbi_message_wait.timer,
             udm_timer_cfg(UDM_TIMER_SBI_MESSAGE_WAIT)->duration);
-#if 0
-    request = ogs_nnrf_build_nf_register(nf_instance);
+
+    request = udm_nudr_dr_build_query(udm_ue);
     ogs_assert(request);
-    ogs_sbi_client_send_request(client, request, nf_instance);
-#endif
+    ogs_sbi_client_send_request(client, request, session);
 }
 
-void udm_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
+void udm_nudr_dr_discover_and_send_query(ogs_sbi_session_t *session)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
     udm_ue_t *udm_ue = NULL;
@@ -197,5 +198,5 @@ void udm_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
 
     if (!nf_instance) return;
 
-    udm_nudm_ueau_send_get(udm_ue, nf_instance);
+    udm_nudr_dr_send_query(session, nf_instance);
 }
