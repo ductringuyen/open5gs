@@ -19,6 +19,7 @@
 
 #include "sbi-path.h"
 #include "nnrf-handler.h"
+#include "nudr-handler.h"
 
 void udr_state_initial(ogs_fsm_t *s, udr_event_t *e)
 {
@@ -42,7 +43,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
 
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
-    ogs_sbi_request_t *sbi_request = NULL;
+    ogs_sbi_request_t *request = NULL;
 
     ogs_sbi_nf_instance_t *nf_instance = NULL;
     ogs_sbi_subscription_t *subscription = NULL;
@@ -69,14 +70,14 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
         break;
 
     case UDR_EVT_SBI_SERVER:
-        sbi_request = e->sbi.request;
-        ogs_assert(sbi_request);
+        request = e->sbi.request;
+        ogs_assert(request);
         session = e->sbi.session;
         ogs_assert(session);
         server = e->sbi.server;
         ogs_assert(server);
 
-        rv = ogs_sbi_parse_request(&message, sbi_request);
+        rv = ogs_sbi_parse_request(&message, request);
         if (rv != OGS_OK) {
             /* 'message' buffer is released in ogs_sbi_parse_request() */
             ogs_error("cannot parse HTTP message");
@@ -131,8 +132,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                 CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
                     SWITCH(message.h.resource.component[3])
                     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
-
-                        ogs_fatal("asdlkfjskadlfasdf");
+                        udr_nudr_dr_handle_query(server, session, &message);
                         break;
 
                     DEFAULT
@@ -164,36 +164,6 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                         "Unknown resource name",
                         message.h.resource.component[0]);
             END
-            break;
-
-#if 0
-            ueid = message.h.resource.component[0];
-            if (!ueid) {
-                ogs_error("Not found [%s]", message.h.method);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                    &message, "Not found", message.h.method);
-            }
-
-            udr_ue = udr_ue_find(ueid);
-            if (!udr_ue) {
-                udr_ue = udr_ue_add(session, ueid);
-                ogs_assert(udr_ue);
-            }
-
-            ogs_assert(udr_ue);
-            ogs_assert(OGS_FSM_STATE(&udr_ue->sm));
-
-            e->udr_ue = udr_ue;
-            e->sbi.message = &message;
-            ogs_fsm_dispatch(&udr_ue->sm, e);
-            if (OGS_FSM_CHECK(&udr_ue->sm, udr_ue_state_exception)) {
-                ogs_error("[%s] State machine exception", udr_ue->id);
-                ogs_sbi_message_free(&message);
-                udr_ue_remove(udr_ue);
-            }
-#endif
-
             break;
 
         DEFAULT

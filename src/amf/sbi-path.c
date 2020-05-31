@@ -167,7 +167,7 @@ void amf_nausf_auth_send_authenticate(
     ogs_timer_start(amf_ue->sbi_message_wait.timer,
             amf_timer_cfg(AMF_TIMER_SBI_MESSAGE_WAIT)->duration);
 
-    request = amf_nausf_build_authenticate(amf_ue);
+    request = amf_nausf_auth_build_authenticate(amf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, amf_ue);
 }

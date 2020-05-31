@@ -21,9 +21,11 @@
 #include "nnrf-handler.h"
 #include "nudr-handler.h"
 
-bool udr_nudr_handle_authenticate(ogs_sbi_server_t *server,
+bool udr_nudr_dr_handle_query(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
+    ogs_fatal("asdlfkjasdfasf");
+#if 0
     OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
     char *serving_network_name = NULL;
     char *ausf_instance_id = NULL;
@@ -65,6 +67,7 @@ bool udr_nudr_handle_authenticate(ogs_sbi_server_t *server,
     ogs_assert(udr_ue->serving_network_name);
     udr_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
     ogs_assert(udr_ue->ausf_instance_id);
+#endif
 
     return true;
 }

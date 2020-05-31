@@ -19,7 +19,7 @@
 
 #include "nausf-build.h"
 
-ogs_sbi_request_t *amf_nausf_build_authenticate(amf_ue_t *amf_ue)
+ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;

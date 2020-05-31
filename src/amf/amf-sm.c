@@ -42,9 +42,6 @@ void amf_state_final(ogs_fsm_t *s, amf_event_t *e)
 void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
-#if 0
-    ogs_pkbuf_t *recvbuf = NULL;
-#endif
     char buf[OGS_ADDRSTRLEN];
 
     ogs_sock_t *sock = NULL;

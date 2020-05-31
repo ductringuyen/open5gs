@@ -42,7 +42,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
-    ogs_sbi_request_t *sbi_request = NULL;
+    ogs_sbi_request_t *request = NULL;
 
     ogs_sbi_nf_instance_t *nf_instance = NULL;
     ogs_sbi_subscription_t *subscription = NULL;
@@ -70,14 +70,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         break;
 
     case AUSF_EVT_SBI_SERVER:
-        sbi_request = e->sbi.request;
-        ogs_assert(sbi_request);
+        request = e->sbi.request;
+        ogs_assert(request);
         session = e->sbi.session;
         ogs_assert(session);
         server = e->sbi.server;
         ogs_assert(server);
 
-        rv = ogs_sbi_parse_request(&message, sbi_request);
+        rv = ogs_sbi_parse_request(&message, request);
         if (rv != OGS_OK) {
             /* 'message' buffer is released in ogs_sbi_parse_request() */
             ogs_error("cannot parse HTTP message");

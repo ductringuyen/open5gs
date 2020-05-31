@@ -110,7 +110,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            udm_nudm_handle_authenticate(server, session, message);
+            udm_nudm_ueau_handle_get(server, session, message);
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",

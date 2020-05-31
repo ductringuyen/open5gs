@@ -110,10 +110,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            ausf_nausf_handle_authenticate(server, session, message);
-            break;
-        CASE(OGS_SBI_HTTP_METHOD_PUT)
-            ogs_fatal("PUT");
+            ausf_nausf_auth_handle_authenticate(server, session, message);
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
