@@ -24,8 +24,7 @@
 bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
-    int status, rv;
-    bool handled;
+    int rv;
 
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
@@ -35,11 +34,9 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     const char *ue_id = NULL;
 
     char k[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
-    bool use_opc;
     char opc[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
     char op[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
     char amf[OGS_KEYSTRLEN(OGS_DBI_AMF_LEN)];
-    char rand[OGS_KEYSTRLEN(OGS_RAND_LEN)];
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
 
@@ -72,7 +69,6 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
-
             rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
             if (rv != OGS_OK) {
                 ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
@@ -86,8 +82,21 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
                 OpenAPI_auth_method_5G_AKA;
 
             ogs_hex_to_ascii(auth_info.k, sizeof(auth_info.k), k, sizeof(k));
-            ogs_fatal("k = %s", k);
+            AuthenticationSubscription.enc_permanent_key = k;
 
+            ogs_hex_to_ascii(auth_info.amf, sizeof(auth_info.amf),
+                    amf, sizeof(amf));
+            AuthenticationSubscription.authentication_management_field = amf;
+
+            if (auth_info.use_opc) {
+                ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
+                        opc, sizeof(opc));
+                AuthenticationSubscription.enc_opc_key = opc;
+            } else {
+                ogs_hex_to_ascii(auth_info.op, sizeof(auth_info.op),
+                        op, sizeof(op));
+                ogs_fatal("op = %s", op);
+            }
             break;
 
         DEFAULT
