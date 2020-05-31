@@ -24,10 +24,19 @@
 bool udr_nudr_dr_handle_query(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
+    ogs_dbi_auth_info_t auth_info;
+    int rv;
+
     ogs_assert(session);
     ogs_assert(server);
     ogs_assert(recvmsg);
 
+    rv = ogs_dbi_auth_info((char *)"2089300007487", &auth_info);
+    if (rv != OGS_OK) {
+        ogs_fatal("Cannot find IMSI in DB : %s", "asdfkljsdf");
+        return false;
+    }
+    ogs_fatal("asdflkjasdf");
 
     return true;
 }

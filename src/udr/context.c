@@ -34,6 +34,7 @@ void udr_context_init(void)
     /* Initialize UDR context */
     memset(&self, 0, sizeof(udr_context_t));
 
+    ogs_log_install_domain(&__ogs_dbi_domain, "dbi", ogs_core()->log.level);
     ogs_log_install_domain(&__udr_log_domain, "udr", ogs_core()->log.level);
 
     /* Allocate TWICE the pool to check if maximum number of gNBs is reached */
