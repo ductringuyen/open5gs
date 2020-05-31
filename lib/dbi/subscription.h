@@ -71,12 +71,14 @@ typedef struct ogs_dbi_auth_info_s {
     uint64_t      sqn;
 } ogs_dbi_auth_info_t;
 
-int ogs_dbi_auth_info(char *imsi_bcd, ogs_dbi_auth_info_t *auth_info);
-int ogs_dbi_update_rand_and_sqn(char *imsi_bcd, uint8_t *rand, uint64_t sqn);
-int ogs_dbi_increment_sqn(char *imsi_bcd);
+int ogs_dbi_auth_info(const char *id_type, const char *ue_id,
+        ogs_dbi_auth_info_t *auth_info);
+int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
+        uint8_t *rand, uint64_t sqn);
+int ogs_dbi_increment_sqn(const char *id_type, const char *ue_id);
 
-int ogs_dbi_subscription_data(
-    char *imsi_bcd, ogs_dbi_subscription_data_t *subscription_data);
+int ogs_dbi_subscription_data(const char *id_type, const char *ue_id,
+        ogs_dbi_subscription_data_t *subscription_data);
 
 #ifdef __cplusplus
 }

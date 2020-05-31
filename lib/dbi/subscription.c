@@ -19,7 +19,8 @@
 
 #include "ogs-dbi.h"
 
-int ogs_dbi_auth_info(char *imsi_bcd, ogs_dbi_auth_info_t *auth_info)
+int ogs_dbi_auth_info(const char *id_type, const char *ue_id,
+        ogs_dbi_auth_info_t *auth_info)
 {
     int rv = OGS_OK;
     mongoc_cursor_t *cursor = NULL;
@@ -32,10 +33,11 @@ int ogs_dbi_auth_info(char *imsi_bcd, ogs_dbi_auth_info_t *auth_info)
     char *utf8 = NULL;
     uint32_t length = 0;
 
-    ogs_assert(imsi_bcd);
+    ogs_assert(id_type);
+    ogs_assert(ue_id);
     ogs_assert(auth_info);
 
-    query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
+    query = BCON_NEW(id_type, BCON_UTF8(ue_id));
 #if MONGOC_MAJOR_VERSION >= 1 && MONGOC_MINOR_VERSION >= 5
     cursor = mongoc_collection_find_with_opts(
             ogs_mongoc()->collection.subscriber, query, NULL, NULL);
@@ -45,7 +47,7 @@ int ogs_dbi_auth_info(char *imsi_bcd, ogs_dbi_auth_info_t *auth_info)
 #endif
 
     if (!mongoc_cursor_next(cursor, &document)) {
-        ogs_warn("Cannot find IMSI in DB : %s", imsi_bcd);
+        ogs_warn("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
 
         rv = OGS_ERROR;
         goto out;
@@ -98,7 +100,8 @@ out:
     return rv;
 }
 
-int ogs_dbi_update_rand_and_sqn(char *imsi_bcd, uint8_t *rand, uint64_t sqn)
+int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
+        uint8_t *rand, uint64_t sqn)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -106,11 +109,13 @@ int ogs_dbi_update_rand_and_sqn(char *imsi_bcd, uint8_t *rand, uint64_t sqn)
     bson_error_t error;
     char printable_rand[128];
 
+    ogs_assert(id_type);
+    ogs_assert(ue_id);
     ogs_assert(rand);
     ogs_hex_to_ascii(rand,
             OGS_RAND_LEN, printable_rand, sizeof(printable_rand));
 
-    query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
+    query = BCON_NEW(id_type, BCON_UTF8(ue_id));
     update = BCON_NEW("$set",
             "{",
                 "security.rand", printable_rand,
@@ -130,7 +135,7 @@ int ogs_dbi_update_rand_and_sqn(char *imsi_bcd, uint8_t *rand, uint64_t sqn)
     return rv;
 }
 
-int ogs_dbi_increment_sqn(char *imsi_bcd)
+int ogs_dbi_increment_sqn(const char *id_type, const char *ue_id)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -138,7 +143,10 @@ int ogs_dbi_increment_sqn(char *imsi_bcd)
     bson_error_t error;
     uint64_t max_sqn = OGS_DBI_MAX_SQN;
 
-    query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
+    ogs_assert(id_type);
+    ogs_assert(ue_id);
+
+    query = BCON_NEW(id_type, BCON_UTF8(ue_id));
     update = BCON_NEW("$inc",
             "{",
                 "security.sqn", BCON_INT64(32),
@@ -171,8 +179,8 @@ out:
     return rv;
 }
 
-int ogs_dbi_subscription_data(
-    char *imsi_bcd, ogs_dbi_subscription_data_t *subscription_data)
+int ogs_dbi_subscription_data(const char *id_type, const char *ue_id,
+        ogs_dbi_subscription_data_t *subscription_data)
 {
     int rv = OGS_OK;
     mongoc_cursor_t *cursor = NULL;
@@ -184,10 +192,11 @@ int ogs_dbi_subscription_data(
     const char *utf8 = NULL;
     uint32_t length = 0;
 
-    ogs_assert(imsi_bcd);
+    ogs_assert(id_type);
+    ogs_assert(ue_id);
     ogs_assert(subscription_data);
 
-    query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
+    query = BCON_NEW(id_type, BCON_UTF8(ue_id));
 #if MONGOC_MAJOR_VERSION >= 1 && MONGOC_MINOR_VERSION >= 5
     cursor = mongoc_collection_find_with_opts(
             ogs_mongoc()->collection.subscriber, query, NULL, NULL);
@@ -197,7 +206,7 @@ int ogs_dbi_subscription_data(
 #endif
 
     if (!mongoc_cursor_next(cursor, &document)) {
-        ogs_error("Cannot find IMSI in DB : %s", imsi_bcd);
+        ogs_error("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
 
         rv = OGS_ERROR;
         goto out;
