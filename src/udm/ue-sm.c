@@ -79,9 +79,6 @@ void udm_ue_state_final(ogs_fsm_t *s, udm_event_t *e)
 
 void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
 {
-#if 0
-    bool handled;
-#endif
     udm_ue_t *udm_ue = NULL;
 
     ogs_sbi_server_t *server = NULL;
@@ -115,9 +112,6 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_HTTP_METHOD_POST)
             udm_nudm_handle_authenticate(server, session, message);
             break;
-        CASE(OGS_SBI_HTTP_METHOD_PUT)
-            ogs_fatal("PUT");
-            break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
                     udm_ue->id, message->h.method);
@@ -136,10 +130,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
 void udm_ue_state_authenticated(ogs_fsm_t *s, udm_event_t *e)
 {
     udm_ue_t *udm_ue = NULL;
-#if 0
-    ogs_sbi_client_t *client = NULL;
-    ogs_sbi_message_t *message = NULL;
-#endif
+
     ogs_assert(s);
     ogs_assert(e);
 

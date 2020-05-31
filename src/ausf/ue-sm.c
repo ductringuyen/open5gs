@@ -79,9 +79,6 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
 void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 {
-#if 0
-    bool handled;
-#endif
     ausf_ue_t *ausf_ue = NULL;
 
     ogs_sbi_server_t *server = NULL;
@@ -136,10 +133,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 void ausf_ue_state_authenticated(ogs_fsm_t *s, ausf_event_t *e)
 {
     ausf_ue_t *ausf_ue = NULL;
-#if 0
-    ogs_sbi_client_t *client = NULL;
-    ogs_sbi_message_t *message = NULL;
-#endif
+
     ogs_assert(s);
     ogs_assert(e);
 

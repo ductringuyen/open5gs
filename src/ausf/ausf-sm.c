@@ -300,11 +300,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     CASE(OGS_SBI_HTTP_METHOD_POST)
                         if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                             ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
-
                             ogs_fatal("TODO");
-#if 0
-                            ausf_nnrf_handle_nf_discover(ausf_ue, &message);
-#endif
                         } else {
                             ogs_error("[%s] HTTP response error [%d]",
                                     ausf_ue->id, message.res_status);

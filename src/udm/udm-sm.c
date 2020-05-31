@@ -292,11 +292,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                         CASE(OGS_SBI_HTTP_METHOD_GET)
                             if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                                 ogs_timer_stop(udm_ue->sbi_message_wait.timer);
-
                                 ogs_fatal("TODO");
-#if 0
-                                udm_nnrf_handle_nf_discover(udm_ue, &message);
-#endif
                             } else {
                                 ogs_error("[%s] HTTP response error [%d]",
                                     udm_ue->id, message.res_status);
