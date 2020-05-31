@@ -123,8 +123,6 @@ ogs_mongoc_t *ogs_mongoc(void)
     return &self;
 }
 
-static mongoc_collection_t *subscriberCollection = NULL;
-
 int ogs_dbi_init(const char *db_uri)
 {
     int rv;
@@ -137,9 +135,9 @@ int ogs_dbi_init(const char *db_uri)
     if (rv != OGS_OK) return rv;
 
     if (ogs_mongoc()->client && ogs_mongoc()->name) {
-        subscriberCollection = mongoc_client_get_collection(
+        self.collection.subscriber = mongoc_client_get_collection(
             ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
-        ogs_assert(subscriberCollection);
+        ogs_assert(self.collection.subscriber);
     }
 
     return OGS_OK;
@@ -147,14 +145,9 @@ int ogs_dbi_init(const char *db_uri)
 
 void ogs_dbi_final()
 {
-    if (subscriberCollection) {
-        mongoc_collection_destroy(subscriberCollection);
+    if (self.collection.subscriber) {
+        mongoc_collection_destroy(self.collection.subscriber);
     }
 
     ogs_mongoc_final();
-}
-
-void *ogs_dbi_get_subscriber_collection(void)
-{
-    return subscriberCollection;
 }

@@ -38,9 +38,9 @@ int ogs_dbi_auth_info(char *imsi_bcd, ogs_dbi_auth_info_t *auth_info)
     query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
 #if MONGOC_MAJOR_VERSION >= 1 && MONGOC_MINOR_VERSION >= 5
     cursor = mongoc_collection_find_with_opts(
-            ogs_dbi_get_subscriber_collection(), query, NULL, NULL);
+            ogs_mongoc()->collection.subscriber, query, NULL, NULL);
 #else
-    cursor = mongoc_collection_find(ogs_dbi_get_subscriber_collection(),
+    cursor = mongoc_collection_find(ogs_mongoc()->collection.subscriber,
             MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
 #endif
 
@@ -117,7 +117,7 @@ int ogs_dbi_update_rand_and_sqn(char *imsi_bcd, uint8_t *rand, uint64_t sqn)
                 "security.sqn", BCON_INT64(sqn),
             "}");
 
-    if (!mongoc_collection_update(ogs_dbi_get_subscriber_collection(),
+    if (!mongoc_collection_update(ogs_mongoc()->collection.subscriber,
             MONGOC_UPDATE_NONE, query, update, NULL, &error)) {
         ogs_error("mongoc_collection_update() failure: %s", error.message);
 
@@ -143,7 +143,7 @@ int ogs_dbi_increment_sqn(char *imsi_bcd)
             "{",
                 "security.sqn", BCON_INT64(32),
             "}");
-    if (!mongoc_collection_update(ogs_dbi_get_subscriber_collection(),
+    if (!mongoc_collection_update(ogs_mongoc()->collection.subscriber,
             MONGOC_UPDATE_NONE, query, update, NULL, &error)) {
         ogs_error("mongoc_collection_update() failure: %s", error.message);
 
@@ -157,7 +157,7 @@ int ogs_dbi_increment_sqn(char *imsi_bcd)
                 "security.sqn", 
                 "{", "and", BCON_INT64(max_sqn), "}",
             "}");
-    if (!mongoc_collection_update(ogs_dbi_get_subscriber_collection(),
+    if (!mongoc_collection_update(ogs_mongoc()->collection.subscriber,
             MONGOC_UPDATE_NONE, query, update, NULL, &error)) {
         ogs_error("mongoc_collection_update() failure: %s", error.message);
 
@@ -190,9 +190,9 @@ int ogs_dbi_subscription_data(
     query = BCON_NEW("imsi", BCON_UTF8(imsi_bcd));
 #if MONGOC_MAJOR_VERSION >= 1 && MONGOC_MINOR_VERSION >= 5
     cursor = mongoc_collection_find_with_opts(
-            ogs_dbi_get_subscriber_collection(), query, NULL, NULL);
+            ogs_mongoc()->collection.subscriber, query, NULL, NULL);
 #else
-    cursor = mongoc_collection_find(ogs_dbi_get_subscriber_collection(),
+    cursor = mongoc_collection_find(ogs_mongoc()->collection.subscriber,
             MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
 #endif
 

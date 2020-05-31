@@ -36,6 +36,10 @@ typedef struct ogs_mongoc_s {
     void *uri;
     void *client;
     void *database;
+
+    struct {
+        void *subscriber;
+    } collection;
 } ogs_mongoc_t;
 
 int ogs_mongoc_init(const char *db_uri);
@@ -44,8 +48,6 @@ ogs_mongoc_t *ogs_mongoc(void);
 
 int ogs_dbi_init(const char *db_uri);
 void ogs_dbi_final(void);
-
-void *ogs_dbi_get_subscriber_collection(void);
 
 #ifdef __cplusplus
 }
