@@ -66,7 +66,7 @@ char *ogs_nas_5gs_ueid_from_mobile_identity(
         (ogs_nas_5gs_mobile_identity_imsi_t *)mobile_identity->buffer;
     ogs_assert(mobile_identity_imsi);
 
-    ueid = ogs_strdup("suci-0-");
+    ueid = ogs_msprintf("suci-%d-", mobile_identity_imsi->h.supi_format);
     ogs_assert(ueid);
 
     ogs_nas_to_plmn_id(&plmn_id, &mobile_identity_imsi->nas_plmn_id);
