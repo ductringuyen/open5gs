@@ -155,6 +155,8 @@ void udm_ue_remove(udm_ue_t *udm_ue)
         ogs_free(udm_ue->serving_network_name);
     if (udm_ue->ausf_instance_id)
         ogs_free(udm_ue->ausf_instance_id);
+    if (udm_ue->ue_id)
+        ogs_free(udm_ue->ue_id);
     
     CLEAR_UDM_UE_ALL_TIMERS(udm_ue);
     ogs_timer_delete(udm_ue->sbi_message_wait.timer);

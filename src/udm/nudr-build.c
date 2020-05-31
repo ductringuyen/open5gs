@@ -32,7 +32,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_query(udm_ue_t *udm_ue)
     message.h.api.version = (char *)OGS_SBI_API_VERSION;
     message.h.resource.component[0] =
         (char *)OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA;
-    message.h.resource.component[1] = udm_ue->id;
+    message.h.resource.component[1] = udm_ue->ue_id;
     message.h.resource.component[2] =
         (char *)OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA;
     message.h.resource.component[3] =

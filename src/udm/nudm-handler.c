@@ -39,25 +39,33 @@ bool udm_nudm_handle_authenticate(ogs_sbi_server_t *server,
 
     AuthenticationInfoRequest = recvmsg->AuthenticationInfoRequest;
     if (!AuthenticationInfoRequest) {
-        ogs_error("No AuthenticationInfoRequest");
+        ogs_error("[%s] No AuthenticationInfoRequest", udm_ue->id);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfoRequest", NULL);
+                recvmsg, "No AuthenticationInfoRequest", udm_ue->id);
         return false;
     }
 
     serving_network_name = AuthenticationInfoRequest->serving_network_name;
     if (!AuthenticationInfoRequest) {
-        ogs_error("No servingNetworkName");
+        ogs_error("[%s] No servingNetworkName", udm_ue->id);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No servingNetworkName", NULL);
+                recvmsg, "No servingNetworkName", udm_ue->id);
         return false;
     }
 
     ausf_instance_id = AuthenticationInfoRequest->ausf_instance_id;
     if (!AuthenticationInfoRequest) {
-        ogs_error("No ausfInstanceId");
+        ogs_error("[%s] No ausfInstanceId", udm_ue->id);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No ausfInstanceId", NULL);
+                recvmsg, "No ausfInstanceId", udm_ue->id);
+        return false;
+    }
+
+    udm_ue->ue_id = ogs_sbi_ueid_from_suci(udm_ue->id);
+    if (!udm_ue->ue_id) {
+        ogs_error("[%s] Invalid SUCI", udm_ue->id);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "Invalid SUCI", udm_ue->id);
         return false;
     }
 

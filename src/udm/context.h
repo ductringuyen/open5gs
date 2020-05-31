@@ -56,6 +56,7 @@ struct udm_ue_s {
     char *id;
     char *serving_network_name;
     char *ausf_instance_id;
+    char *ue_id;
 
 #define CLEAR_UDM_UE_ALL_TIMERS(__aUSF) \
     do { \
