@@ -296,8 +296,8 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                             } else {
                                 ogs_error("[%s] HTTP response error [%d]",
                                     udm_ue->id, message.res_status);
-                                ogs_sbi_server_send_error(session,
-                                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE,
+                                ogs_sbi_server_send_error(
+                                    session, message.res_status,
                                     NULL, "HTTP response error", udm_ue->id);
                             }
                             break;

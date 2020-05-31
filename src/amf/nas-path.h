@@ -36,6 +36,8 @@ int nas_5gs_send_to_downlink_nas_transport(
 
 void nas_5gs_send_nas_reject(
         amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t gmm_cause);
+void nas_5gs_send_nas_reject_from_sbi(
+        amf_ue_t *amf_ue, int status);
 
 void nas_5gs_send_registration_accept(amf_ue_t *amf_ue);
 void nas_5gs_send_registration_reject(

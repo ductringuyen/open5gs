@@ -21,22 +21,70 @@
 #include "nnrf-handler.h"
 #include "nudr-handler.h"
 
-bool udr_nudr_dr_handle_query(ogs_sbi_server_t *server,
+bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     ogs_dbi_auth_info_t auth_info;
+    const char *id_type = NULL;
+    char *ue_id = NULL;
     int rv;
 
     ogs_assert(session);
     ogs_assert(server);
     ogs_assert(recvmsg);
 
-    rv = ogs_dbi_auth_info((char *)"2089300007487", &auth_info);
-    if (rv != OGS_OK) {
-        ogs_fatal("Cannot find IMSI in DB : %s", "asdfkljsdf");
+    if (!recvmsg->h.resource.component[1]) {
+        ogs_error("No ueId");
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No ueId", NULL);
         return false;
     }
-    ogs_fatal("asdflkjasdf");
+
+    if (strncmp(recvmsg->h.resource.component[1],
+            OGS_DBI_UE_ID_TYPE_IMSI, strlen(OGS_DBI_UE_ID_TYPE_IMSI)) == 0) {
+        id_type = OGS_DBI_UE_ID_TYPE_IMSI;
+        ue_id = recvmsg->h.resource.component[1] +
+            strlen(OGS_DBI_UE_ID_TYPE_IMSI) + 1;
+    } else {
+        ogs_error("Unknown ueId Type");
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+                recvmsg, "Unknwon ueId Type", NULL);
+        return false;
+    }
+
+    SWITCH(recvmsg->h.resource.component[2])
+    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+        SWITCH(recvmsg->h.resource.component[3])
+        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+            rv = ogs_dbi_auth_info(ue_id, &auth_info);
+            if (rv != OGS_OK) {
+                ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                        recvmsg, "Unknwon ueId Type", ue_id);
+                return false;
+            }
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    recvmsg->h.resource.component[3]);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                    recvmsg, "Unknown resource name",
+                    recvmsg->h.resource.component[3]);
+            return false;
+        END
+        break;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[2]);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                recvmsg, "Unknown resource name",
+                recvmsg->h.resource.component[2]);
+    END
 
     return true;
 }

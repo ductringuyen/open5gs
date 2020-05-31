@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#define OGS_DBI_UE_ID_TYPE_IMSI         "imsi"
+
 #define OGS_DBI_KEY_LEN                 16
 #define OGS_DBI_AMF_LEN                 2
 

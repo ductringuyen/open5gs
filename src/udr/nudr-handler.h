@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-bool udr_nudr_dr_handle_query(ogs_sbi_server_t *server,
+bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
 #ifdef __cplusplus

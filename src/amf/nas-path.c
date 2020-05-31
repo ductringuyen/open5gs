@@ -101,14 +101,30 @@ void nas_5gs_send_nas_reject(
 
     switch(amf_ue->nas.type) {
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
-        nas_5gs_send_registration_reject(amf_ue,
-            OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        nas_5gs_send_registration_reject(amf_ue, gmm_cause);
         break;
     default: 
         ogs_fatal("Unknown type : %d", amf_ue->nas.type);
         ogs_assert_if_reached();
         break;
     }
+}
+
+void nas_5gs_send_nas_reject_from_sbi(amf_ue_t *amf_ue, int status)
+{
+    ogs_nas_5gmm_cause_t gmm_cause;
+
+    ogs_assert(amf_ue);
+
+    switch(status) {
+    case OGS_SBI_HTTP_STATUS_NOT_FOUND:
+        gmm_cause = OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED;
+        break;
+    default:
+        gmm_cause = OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED;
+    }
+
+    nas_5gs_send_nas_reject(amf_ue, gmm_cause);
 }
 
 #if 0
