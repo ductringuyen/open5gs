@@ -193,12 +193,15 @@ int hss_context_parse_config(void)
                                         YAML_MAPPING_NODE) {
                                         memcpy(&conn_iter, &conn_array,
                                                 sizeof(ogs_yaml_iter_t));
-                                    } else if (ogs_yaml_iter_type(&conn_array) ==
+                                    } else if (ogs_yaml_iter_type(
+                                                &conn_array) ==
                                         YAML_SEQUENCE_NODE) {
                                         if (!ogs_yaml_iter_next(&conn_array))
                                             break;
-                                        ogs_yaml_iter_recurse(&conn_array, &conn_iter);
-                                    } else if (ogs_yaml_iter_type(&conn_array) ==
+                                        ogs_yaml_iter_recurse(
+                                                &conn_array, &conn_iter);
+                                    } else if (ogs_yaml_iter_type(
+                                                &conn_array) ==
                                         YAML_SCALAR_NODE) {
                                         break;
                                     } else
@@ -212,13 +215,15 @@ int hss_context_parse_config(void)
                                             identity = ogs_yaml_iter_value(
                                                     &conn_iter);
                                         } else if (!strcmp(conn_key, "addr")) {
-                                            addr = ogs_yaml_iter_value(&conn_iter);
+                                            addr = ogs_yaml_iter_value(
+                                                    &conn_iter);
                                         } else if (!strcmp(conn_key, "port")) {
                                             const char *v =
                                                 ogs_yaml_iter_value(&conn_iter);
                                             if (v) port = atoi(v);
                                         } else
-                                            ogs_warn("unknown key `%s`", conn_key);
+                                            ogs_warn("unknown key `%s`",
+                                                    conn_key);
                                     }
 
                                     if (identity && addr) {
