@@ -129,6 +129,8 @@ int ogs_dbi_init(const char *db_uri)
 {
     int rv;
 
+    ogs_log_install_domain(&__ogs_dbi_domain, "dbi", ogs_core()->log.level);
+
     ogs_assert(db_uri);
 
     rv = ogs_mongoc_init(db_uri);
@@ -143,15 +145,13 @@ int ogs_dbi_init(const char *db_uri)
     return OGS_OK;
 }
 
-int ogs_dbi_final()
+void ogs_dbi_final()
 {
     if (subscriberCollection) {
         mongoc_collection_destroy(subscriberCollection);
     }
 
     ogs_mongoc_final();
-
-    return OGS_OK;
 }
 
 void *ogs_dbi_get_subscriber_collection(void)

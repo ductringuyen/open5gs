@@ -43,7 +43,7 @@ void ogs_mongoc_final(void);
 ogs_mongoc_t *ogs_mongoc(void);
 
 int ogs_dbi_init(const char *db_uri);
-int ogs_dbi_final(void);
+void ogs_dbi_final(void);
 
 void *ogs_dbi_get_subscriber_collection(void);
 

@@ -41,6 +41,9 @@ int udr_initialize()
             ogs_config()->logger.domain, ogs_config()->logger.level);
     if (rv != OGS_OK) return rv;
 
+    rv = ogs_dbi_init(ogs_config()->db_uri);
+    if (rv != OGS_OK) return rv;
+
     thread = ogs_thread_create(udr_main, NULL);
     if (!thread) return OGS_ERROR;
 
@@ -78,6 +81,8 @@ void udr_terminate(void)
     event_termination();
     ogs_thread_destroy(thread);
     ogs_timer_delete(t_termination_holding);
+
+    ogs_dbi_final();
 
     udr_context_final();
     ogs_sbi_context_final();

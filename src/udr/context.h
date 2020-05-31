@@ -21,6 +21,7 @@
 #define UDR_CONTEXT_H
 
 #include "ogs-app.h"
+#include "ogs-dbi.h"
 #include "ogs-sbi.h"
 
 #include "udr-sm.h"
