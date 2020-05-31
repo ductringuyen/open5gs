@@ -125,6 +125,47 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
+            SWITCH(message.h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
+                SWITCH(message.h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+                    SWITCH(message.h.resource.component[3])
+                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+
+                        ogs_fatal("asdlkfjskadlfasdf");
+                        break;
+
+                    DEFAULT
+                        ogs_error("Invalid resource name [%s]",
+                                message.h.resource.component[3]);
+                        ogs_sbi_server_send_error(session,
+                                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                                &message,
+                                "Unknown resource name",
+                                message.h.resource.component[3]);
+                    END
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid resource name [%s]",
+                            message.h.resource.component[2]);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                            "Unknown resource name",
+                            message.h.resource.component[2]);
+                END
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        message.h.resource.component[0]);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                        "Unknown resource name",
+                        message.h.resource.component[0]);
+            END
+            break;
+
 #if 0
             ueid = message.h.resource.component[0];
             if (!ueid) {
