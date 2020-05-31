@@ -38,6 +38,8 @@ char *ogs_sbi_client_uri(ogs_sbi_client_t *client, ogs_sbi_header_t *h);
 char *ogs_sbi_parse_url(char *url, const char *delim, char **saveptr);
 ogs_sockaddr_t *ogs_sbi_getaddr_from_uri(char *uri);
 
+char *ogs_sbi_imsi_from_ueid(char *ueid);
+
 #ifdef __cplusplus
 }
 #endif

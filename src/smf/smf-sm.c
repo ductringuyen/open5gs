@@ -382,12 +382,14 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
 
                 DEFAULT
                     ogs_error("Invalid HTTP method [%s]", sbi_message.h.method);
+                    ogs_assert_if_reached();
                 END
                 break;
             
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
                         sbi_message.h.resource.component[0]);
+                ogs_assert_if_reached();
             END
             break;
 
@@ -405,11 +407,13 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
                         sbi_message.h.resource.component[0]);
+                ogs_assert_if_reached();
             END
             break;
 
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
+            ogs_assert_if_reached();
         END
 
         ogs_sbi_message_free(&sbi_message);
