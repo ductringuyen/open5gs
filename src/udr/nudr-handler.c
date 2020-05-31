@@ -24,10 +24,16 @@
 bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
+    int status, rv;
+    bool handled;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_response_t *response = NULL;
     ogs_dbi_auth_info_t auth_info;
     const char *id_type = NULL;
     const char *ue_id = NULL;
-    int rv;
+
+    OpenAPI_authentication_subscription_t AuthenticationSubscription;
 
     ogs_assert(session);
     ogs_assert(server);
@@ -52,6 +58,8 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         return false;
     }
 
+    memset(&AuthenticationSubscription, 0, sizeof(AuthenticationSubscription));
+
     SWITCH(recvmsg->h.resource.component[2])
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
@@ -64,6 +72,10 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
                         recvmsg, "Unknwon ueId Type", ue_id);
                 return false;
             }
+
+            AuthenticationSubscription.authentication_method =
+                OpenAPI_auth_method_5G_AKA;
+
             break;
 
         DEFAULT
@@ -85,6 +97,15 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
                 recvmsg, "Unknown resource name",
                 recvmsg->h.resource.component[2]);
     END
+
+    memset(&sendmsg, 0, sizeof(sendmsg));
+
+    ogs_assert(AuthenticationSubscription.authentication_method);
+    sendmsg.AuthenticationSubscription = &AuthenticationSubscription;
+
+    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+    ogs_assert(response);
+    ogs_sbi_server_send_response(session, response);
 
     return true;
 }
