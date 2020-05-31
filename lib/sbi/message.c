@@ -62,6 +62,9 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->AuthenticationInfoRequest)
         OpenAPI_authentication_info_request_free(
                 message->AuthenticationInfoRequest);
+    if (message->AuthenticationSubscription)
+        OpenAPI_authentication_subscription_free(
+                message->AuthenticationSubscription);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -326,6 +329,10 @@ static char *build_content(ogs_sbi_message_t *message)
     } else if (message->AuthenticationInfoRequest) {
         item = OpenAPI_authentication_info_request_convertToJSON(
                 message->AuthenticationInfoRequest);
+        ogs_assert(item);
+    } else if (message->AuthenticationSubscription) {
+        item = OpenAPI_authentication_subscription_convertToJSON(
+                message->AuthenticationSubscription);
         ogs_assert(item);
     }
 
@@ -634,6 +641,41 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
                             message->h.resource.component[1]);
+                END
+                break;
+
+            CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
+                SWITCH(message->h.resource.component[0])
+                CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
+                    SWITCH(message->h.resource.component[2])
+                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+                        SWITCH(message->h.resource.component[3])
+                        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+                            message->AuthenticationSubscription =
+                                OpenAPI_authentication_subscription_parseFromJSON(item);
+                            if (!message->AuthenticationSubscription) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                            break;
+                        DEFAULT
+                            rv = OGS_ERROR;
+                            ogs_error("Unknown resource name [%s]",
+                                    message->h.resource.component[3]);
+                        END
+                        break;
+
+                    DEFAULT
+                        rv = OGS_ERROR;
+                        ogs_error("Unknown resource name [%s]",
+                                message->h.resource.component[2]);
+                    END
+                    break;
+
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.component[0]);
                 END
                 break;
 
