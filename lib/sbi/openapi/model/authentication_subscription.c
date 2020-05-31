@@ -5,7 +5,7 @@
 #include "authentication_subscription.h"
 
 OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_create(
-    OpenAPI_auth_method_t *authentication_method,
+    OpenAPI_auth_method_e authentication_method,
     char *enc_permanent_key,
     char *protection_parameter_id,
     OpenAPI_sequence_number_t *sequence_number,
@@ -39,7 +39,6 @@ void OpenAPI_authentication_subscription_free(OpenAPI_authentication_subscriptio
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_auth_method_free(authentication_subscription->authentication_method);
     ogs_free(authentication_subscription->enc_permanent_key);
     ogs_free(authentication_subscription->protection_parameter_id);
     OpenAPI_sequence_number_free(authentication_subscription->sequence_number);
@@ -64,13 +63,7 @@ cJSON *OpenAPI_authentication_subscription_convertToJSON(OpenAPI_authentication_
         ogs_error("OpenAPI_authentication_subscription_convertToJSON() failed [authentication_method]");
         goto end;
     }
-    cJSON *authentication_method_local_JSON = OpenAPI_auth_method_convertToJSON(authentication_subscription->authentication_method);
-    if (authentication_method_local_JSON == NULL) {
-        ogs_error("OpenAPI_authentication_subscription_convertToJSON() failed [authentication_method]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "authenticationMethod", authentication_method_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "authenticationMethod", OpenAPI_auth_method_ToString(authentication_subscription->authentication_method)) == NULL) {
         ogs_error("OpenAPI_authentication_subscription_convertToJSON() failed [authentication_method]");
         goto end;
     }
@@ -150,9 +143,13 @@ OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_parse
         goto end;
     }
 
-    OpenAPI_auth_method_t *authentication_method_local_nonprim = NULL;
+    OpenAPI_auth_method_e authentication_methodVariable;
 
-    authentication_method_local_nonprim = OpenAPI_auth_method_parseFromJSON(authentication_method);
+    if (!cJSON_IsString(authentication_method)) {
+        ogs_error("OpenAPI_authentication_subscription_parseFromJSON() failed [authentication_method]");
+        goto end;
+    }
+    authentication_methodVariable = OpenAPI_auth_method_FromString(authentication_method->valuestring);
 
     cJSON *enc_permanent_key = cJSON_GetObjectItemCaseSensitive(authentication_subscriptionJSON, "encPermanentKey");
 
@@ -225,7 +222,7 @@ OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_parse
     }
 
     authentication_subscription_local_var = OpenAPI_authentication_subscription_create (
-        authentication_method_local_nonprim,
+        authentication_methodVariable,
         enc_permanent_key ? ogs_strdup(enc_permanent_key->valuestring) : NULL,
         protection_parameter_id ? ogs_strdup(protection_parameter_id->valuestring) : NULL,
         sequence_number ? sequence_number_local_nonprim : NULL,

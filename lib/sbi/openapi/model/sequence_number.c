@@ -5,7 +5,7 @@
 #include "sequence_number.h"
 
 OpenAPI_sequence_number_t *OpenAPI_sequence_number_create(
-    OpenAPI_sqn_scheme_t *sqn_scheme,
+    OpenAPI_sqn_scheme_e sqn_scheme,
     char *sqn,
     OpenAPI_list_t* last_indexes,
     int ind_length,
@@ -31,7 +31,6 @@ void OpenAPI_sequence_number_free(OpenAPI_sequence_number_t *sequence_number)
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_sqn_scheme_free(sequence_number->sqn_scheme);
     ogs_free(sequence_number->sqn);
     OpenAPI_list_for_each(sequence_number->last_indexes, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
@@ -53,13 +52,7 @@ cJSON *OpenAPI_sequence_number_convertToJSON(OpenAPI_sequence_number_t *sequence
 
     item = cJSON_CreateObject();
     if (sequence_number->sqn_scheme) {
-        cJSON *sqn_scheme_local_JSON = OpenAPI_sqn_scheme_convertToJSON(sequence_number->sqn_scheme);
-        if (sqn_scheme_local_JSON == NULL) {
-            ogs_error("OpenAPI_sequence_number_convertToJSON() failed [sqn_scheme]");
-            goto end;
-        }
-        cJSON_AddItemToObject(item, "sqnScheme", sqn_scheme_local_JSON);
-        if (item->child == NULL) {
+        if (cJSON_AddStringToObject(item, "sqnScheme", OpenAPI_sqn_scheme_ToString(sequence_number->sqn_scheme)) == NULL) {
             ogs_error("OpenAPI_sequence_number_convertToJSON() failed [sqn_scheme]");
             goto end;
         }
@@ -110,9 +103,13 @@ OpenAPI_sequence_number_t *OpenAPI_sequence_number_parseFromJSON(cJSON *sequence
     OpenAPI_sequence_number_t *sequence_number_local_var = NULL;
     cJSON *sqn_scheme = cJSON_GetObjectItemCaseSensitive(sequence_numberJSON, "sqnScheme");
 
-    OpenAPI_sqn_scheme_t *sqn_scheme_local_nonprim = NULL;
+    OpenAPI_sqn_scheme_e sqn_schemeVariable;
     if (sqn_scheme) {
-        sqn_scheme_local_nonprim = OpenAPI_sqn_scheme_parseFromJSON(sqn_scheme);
+        if (!cJSON_IsString(sqn_scheme)) {
+            ogs_error("OpenAPI_sequence_number_parseFromJSON() failed [sqn_scheme]");
+            goto end;
+        }
+        sqn_schemeVariable = OpenAPI_sqn_scheme_FromString(sqn_scheme->valuestring);
     }
 
     cJSON *sqn = cJSON_GetObjectItemCaseSensitive(sequence_numberJSON, "sqn");
@@ -162,7 +159,7 @@ OpenAPI_sequence_number_t *OpenAPI_sequence_number_parseFromJSON(cJSON *sequence
     }
 
     sequence_number_local_var = OpenAPI_sequence_number_create (
-        sqn_scheme ? sqn_scheme_local_nonprim : NULL,
+        sqn_scheme ? sqn_schemeVariable : 0,
         sqn ? ogs_strdup(sqn->valuestring) : NULL,
         last_indexes ? last_indexesList : NULL,
         ind_length ? ind_length->valuedouble : 0,

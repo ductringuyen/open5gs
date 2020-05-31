@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct OpenAPI_sqn_scheme_s OpenAPI_sqn_scheme_t;
-typedef struct OpenAPI_sqn_scheme_s {
-} OpenAPI_sqn_scheme_t;
+typedef enum { OpenAPI_sqn_scheme_NULL = 0, OpenAPI_sqn_scheme_GENERAL, OpenAPI_sqn_scheme_NON_TIME_BASED, OpenAPI_sqn_scheme_TIME_BASED } OpenAPI_sqn_scheme_e;
 
-OpenAPI_sqn_scheme_t *OpenAPI_sqn_scheme_create(
-    );
-void OpenAPI_sqn_scheme_free(OpenAPI_sqn_scheme_t *sqn_scheme);
-OpenAPI_sqn_scheme_t *OpenAPI_sqn_scheme_parseFromJSON(cJSON *sqn_schemeJSON);
-cJSON *OpenAPI_sqn_scheme_convertToJSON(OpenAPI_sqn_scheme_t *sqn_scheme);
+char* OpenAPI_sqn_scheme_ToString(OpenAPI_sqn_scheme_e sqn_scheme);
+
+OpenAPI_sqn_scheme_e OpenAPI_sqn_scheme_FromString(char* sqn_scheme);
 
 #ifdef __cplusplus
 }

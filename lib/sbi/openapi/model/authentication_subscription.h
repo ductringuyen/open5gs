@@ -21,7 +21,7 @@ extern "C" {
 
 typedef struct OpenAPI_authentication_subscription_s OpenAPI_authentication_subscription_t;
 typedef struct OpenAPI_authentication_subscription_s {
-    struct OpenAPI_auth_method_s *authentication_method;
+    OpenAPI_auth_method_e authentication_method;
     char *enc_permanent_key;
     char *protection_parameter_id;
     struct OpenAPI_sequence_number_s *sequence_number;
@@ -33,7 +33,7 @@ typedef struct OpenAPI_authentication_subscription_s {
 } OpenAPI_authentication_subscription_t;
 
 OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_create(
-    OpenAPI_auth_method_t *authentication_method,
+    OpenAPI_auth_method_e authentication_method,
     char *enc_permanent_key,
     char *protection_parameter_id,
     OpenAPI_sequence_number_t *sequence_number,

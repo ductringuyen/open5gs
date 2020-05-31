@@ -3319,13 +3319,13 @@ components:
           $ref: '#/components/schemas/Sign'
 
     SqnScheme:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - GENERAL
             - NON_TIME_BASED
             - TIME_BASED
-        - type: string
+          type: string
     Sign:
       type: string
       enum:
@@ -3430,13 +3430,13 @@ components:
         supportedFeatures:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
     AuthMethod:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - 5G_AKA
             - EAP_AKA_PRIME
             - EAP_TLS
-        - type: string
+          type: string
     PpData:
       $ref: 'TS29503_Nudm_PP.yaml#/components/schemas/PpData'
     EeSubscription:

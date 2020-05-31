@@ -21,7 +21,7 @@ extern "C" {
 
 typedef struct OpenAPI_sequence_number_s OpenAPI_sequence_number_t;
 typedef struct OpenAPI_sequence_number_s {
-    struct OpenAPI_sqn_scheme_s *sqn_scheme;
+    OpenAPI_sqn_scheme_e sqn_scheme;
     char *sqn;
     OpenAPI_list_t* last_indexes;
     int ind_length;
@@ -29,7 +29,7 @@ typedef struct OpenAPI_sequence_number_s {
 } OpenAPI_sequence_number_t;
 
 OpenAPI_sequence_number_t *OpenAPI_sequence_number_create(
-    OpenAPI_sqn_scheme_t *sqn_scheme,
+    OpenAPI_sqn_scheme_e sqn_scheme,
     char *sqn,
     OpenAPI_list_t* last_indexes,
     int ind_length,
