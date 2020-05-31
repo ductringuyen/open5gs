@@ -30,8 +30,16 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
     ogs_dbi_auth_info_t auth_info;
+
     const char *id_type = NULL;
     const char *ue_id = NULL;
+
+    char k[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
+    bool use_opc;
+    char opc[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
+    char op[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
+    char amf[OGS_KEYSTRLEN(OGS_DBI_AMF_LEN)];
+    char rand[OGS_KEYSTRLEN(OGS_RAND_LEN)];
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
 
@@ -64,6 +72,7 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+
             rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
             if (rv != OGS_OK) {
                 ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
@@ -75,6 +84,9 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
 
             AuthenticationSubscription.authentication_method =
                 OpenAPI_auth_method_5G_AKA;
+
+            ogs_hex_to_ascii(auth_info.k, sizeof(auth_info.k), k, sizeof(k));
+            ogs_fatal("k = %s", k);
 
             break;
 

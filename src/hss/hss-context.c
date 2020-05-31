@@ -377,7 +377,8 @@ int hss_db_update_rand_and_sqn(
     char printable_rand[128];
 
     ogs_assert(rand);
-    ogs_hex_to_ascii(rand, OGS_RAND_LEN, printable_rand, sizeof(printable_rand));
+    ogs_hex_to_ascii(rand, OGS_RAND_LEN,
+            printable_rand, sizeof(printable_rand));
 
     ogs_thread_mutex_lock(&self.db_lock);
 

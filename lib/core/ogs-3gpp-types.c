@@ -103,16 +103,10 @@ ogs_amf_id_t *ogs_amf_id_from_string(ogs_amf_id_t *amf_id, const char *hex)
 
 char *ogs_amf_id_to_string(ogs_amf_id_t *amf_id, char *buf)
 {
-    int i;
     ogs_assert(amf_id);
     ogs_assert(buf);
 
     ogs_hex_to_ascii(amf_id, sizeof(ogs_amf_id_t), buf, OGS_AMFIDSTRLEN);
-
-    /* I'd just like to use lower character */
-    for (i = 0; buf[i]; i++)
-        if (buf[i] >= 'A' && buf[i] <= 'Z')
-            buf[i] = buf[i] + 'a' - 'A';
 
     return buf;
 }

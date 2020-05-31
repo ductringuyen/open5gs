@@ -107,7 +107,7 @@ int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
     bson_t *query = NULL;
     bson_t *update = NULL;
     bson_error_t error;
-    char printable_rand[128];
+    char printable_rand[OGS_KEYSTRLEN(OGS_RAND_LEN)];
 
     ogs_assert(id_type);
     ogs_assert(ue_id);
