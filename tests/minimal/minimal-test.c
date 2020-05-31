@@ -132,11 +132,11 @@ static void test1_func(abts_case *tc, void *data)
         recvbuf->len) == 0);
     ogs_pkbuf_free(recvbuf);
 
+    /********** Insert Subscriber in Database */
     collection = mongoc_client_get_collection(
         ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
     ABTS_PTR_NOTNULL(tc, collection);
 
-    /********** Insert Subscriber in Database */
     doc = bson_new_from_json((const uint8_t *)json, -1, &error);;
     ABTS_PTR_NOTNULL(tc, doc);
     ABTS_TRUE(tc, mongoc_collection_insert(collection, 
@@ -151,6 +151,7 @@ static void test1_func(abts_case *tc, void *data)
     } while (count == 0);
     bson_destroy(doc);
 
+    /* Send Registration Request */
     gmmbuf = testgmm_build_registration_request();
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_initial_ue_message(gmmbuf);
