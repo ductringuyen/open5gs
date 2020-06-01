@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct OpenAPI_authentication_vector_s OpenAPI_authentication_vector_t;
 typedef struct OpenAPI_authentication_vector_s {
-    struct OpenAPI_av_type_s *av_type;
+    OpenAPI_av_type_e av_type;
     char *rand;
     char *xres;
     char *autn;
@@ -33,7 +33,7 @@ typedef struct OpenAPI_authentication_vector_s {
 } OpenAPI_authentication_vector_t;
 
 OpenAPI_authentication_vector_t *OpenAPI_authentication_vector_create(
-    OpenAPI_av_type_t *av_type,
+    OpenAPI_av_type_e av_type,
     char *rand,
     char *xres,
     char *autn,

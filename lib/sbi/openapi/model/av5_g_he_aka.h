@@ -20,7 +20,7 @@ extern "C" {
 
 typedef struct OpenAPI_av5_g_he_aka_s OpenAPI_av5_g_he_aka_t;
 typedef struct OpenAPI_av5_g_he_aka_s {
-    struct OpenAPI_av_type_s *av_type;
+    OpenAPI_av_type_e av_type;
     char *rand;
     char *xres_star;
     char *autn;
@@ -28,7 +28,7 @@ typedef struct OpenAPI_av5_g_he_aka_s {
 } OpenAPI_av5_g_he_aka_t;
 
 OpenAPI_av5_g_he_aka_t *OpenAPI_av5_g_he_aka_create(
-    OpenAPI_av_type_t *av_type,
+    OpenAPI_av_type_e av_type,
     char *rand,
     char *xres_star,
     char *autn,

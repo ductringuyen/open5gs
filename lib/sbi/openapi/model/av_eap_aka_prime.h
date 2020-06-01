@@ -20,7 +20,7 @@ extern "C" {
 
 typedef struct OpenAPI_av_eap_aka_prime_s OpenAPI_av_eap_aka_prime_t;
 typedef struct OpenAPI_av_eap_aka_prime_s {
-    struct OpenAPI_av_type_s *av_type;
+    OpenAPI_av_type_e av_type;
     char *rand;
     char *xres;
     char *autn;
@@ -29,7 +29,7 @@ typedef struct OpenAPI_av_eap_aka_prime_s {
 } OpenAPI_av_eap_aka_prime_t;
 
 OpenAPI_av_eap_aka_prime_t *OpenAPI_av_eap_aka_prime_create(
-    OpenAPI_av_type_t *av_type,
+    OpenAPI_av_type_e av_type,
     char *rand,
     char *xres,
     char *autn,

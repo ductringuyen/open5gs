@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct OpenAPI_av_type_s OpenAPI_av_type_t;
-typedef struct OpenAPI_av_type_s {
-} OpenAPI_av_type_t;
+typedef enum { OpenAPI_av_type_NULL = 0, OpenAPI_av_type_5G_HE_AKA, OpenAPI_av_type_EAP_AKA_PRIME } OpenAPI_av_type_e;
 
-OpenAPI_av_type_t *OpenAPI_av_type_create(
-    );
-void OpenAPI_av_type_free(OpenAPI_av_type_t *av_type);
-OpenAPI_av_type_t *OpenAPI_av_type_parseFromJSON(cJSON *av_typeJSON);
-cJSON *OpenAPI_av_type_convertToJSON(OpenAPI_av_type_t *av_type);
+char* OpenAPI_av_type_ToString(OpenAPI_av_type_e av_type);
+
+OpenAPI_av_type_e OpenAPI_av_type_FromString(char* av_type);
 
 #ifdef __cplusplus
 }

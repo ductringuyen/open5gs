@@ -5,7 +5,7 @@
 #include "authentication_vector.h"
 
 OpenAPI_authentication_vector_t *OpenAPI_authentication_vector_create(
-    OpenAPI_av_type_t *av_type,
+    OpenAPI_av_type_e av_type,
     char *rand,
     char *xres,
     char *autn,
@@ -37,7 +37,6 @@ void OpenAPI_authentication_vector_free(OpenAPI_authentication_vector_t *authent
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_av_type_free(authentication_vector->av_type);
     ogs_free(authentication_vector->rand);
     ogs_free(authentication_vector->xres);
     ogs_free(authentication_vector->autn);
@@ -62,13 +61,7 @@ cJSON *OpenAPI_authentication_vector_convertToJSON(OpenAPI_authentication_vector
         ogs_error("OpenAPI_authentication_vector_convertToJSON() failed [av_type]");
         goto end;
     }
-    cJSON *av_type_local_JSON = OpenAPI_av_type_convertToJSON(authentication_vector->av_type);
-    if (av_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_authentication_vector_convertToJSON() failed [av_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "avType", av_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "avType", OpenAPI_av_type_ToString(authentication_vector->av_type)) == NULL) {
         ogs_error("OpenAPI_authentication_vector_convertToJSON() failed [av_type]");
         goto end;
     }
@@ -149,9 +142,13 @@ OpenAPI_authentication_vector_t *OpenAPI_authentication_vector_parseFromJSON(cJS
         goto end;
     }
 
-    OpenAPI_av_type_t *av_type_local_nonprim = NULL;
+    OpenAPI_av_type_e av_typeVariable;
 
-    av_type_local_nonprim = OpenAPI_av_type_parseFromJSON(av_type);
+    if (!cJSON_IsString(av_type)) {
+        ogs_error("OpenAPI_authentication_vector_parseFromJSON() failed [av_type]");
+        goto end;
+    }
+    av_typeVariable = OpenAPI_av_type_FromString(av_type->valuestring);
 
     cJSON *rand = cJSON_GetObjectItemCaseSensitive(authentication_vectorJSON, "rand");
     if (!rand) {
@@ -238,7 +235,7 @@ OpenAPI_authentication_vector_t *OpenAPI_authentication_vector_parseFromJSON(cJS
     }
 
     authentication_vector_local_var = OpenAPI_authentication_vector_create (
-        av_type_local_nonprim,
+        av_typeVariable,
         ogs_strdup(rand->valuestring),
         ogs_strdup(xres->valuestring),
         ogs_strdup(autn->valuestring),

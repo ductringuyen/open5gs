@@ -5,7 +5,7 @@
 #include "av_eap_aka_prime.h"
 
 OpenAPI_av_eap_aka_prime_t *OpenAPI_av_eap_aka_prime_create(
-    OpenAPI_av_type_t *av_type,
+    OpenAPI_av_type_e av_type,
     char *rand,
     char *xres,
     char *autn,
@@ -33,7 +33,6 @@ void OpenAPI_av_eap_aka_prime_free(OpenAPI_av_eap_aka_prime_t *av_eap_aka_prime)
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_av_type_free(av_eap_aka_prime->av_type);
     ogs_free(av_eap_aka_prime->rand);
     ogs_free(av_eap_aka_prime->xres);
     ogs_free(av_eap_aka_prime->autn);
@@ -56,13 +55,7 @@ cJSON *OpenAPI_av_eap_aka_prime_convertToJSON(OpenAPI_av_eap_aka_prime_t *av_eap
         ogs_error("OpenAPI_av_eap_aka_prime_convertToJSON() failed [av_type]");
         goto end;
     }
-    cJSON *av_type_local_JSON = OpenAPI_av_type_convertToJSON(av_eap_aka_prime->av_type);
-    if (av_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_av_eap_aka_prime_convertToJSON() failed [av_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "avType", av_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "avType", OpenAPI_av_type_ToString(av_eap_aka_prime->av_type)) == NULL) {
         ogs_error("OpenAPI_av_eap_aka_prime_convertToJSON() failed [av_type]");
         goto end;
     }
@@ -125,9 +118,13 @@ OpenAPI_av_eap_aka_prime_t *OpenAPI_av_eap_aka_prime_parseFromJSON(cJSON *av_eap
         goto end;
     }
 
-    OpenAPI_av_type_t *av_type_local_nonprim = NULL;
+    OpenAPI_av_type_e av_typeVariable;
 
-    av_type_local_nonprim = OpenAPI_av_type_parseFromJSON(av_type);
+    if (!cJSON_IsString(av_type)) {
+        ogs_error("OpenAPI_av_eap_aka_prime_parseFromJSON() failed [av_type]");
+        goto end;
+    }
+    av_typeVariable = OpenAPI_av_type_FromString(av_type->valuestring);
 
     cJSON *rand = cJSON_GetObjectItemCaseSensitive(av_eap_aka_primeJSON, "rand");
     if (!rand) {
@@ -190,7 +187,7 @@ OpenAPI_av_eap_aka_prime_t *OpenAPI_av_eap_aka_prime_parseFromJSON(cJSON *av_eap
     }
 
     av_eap_aka_prime_local_var = OpenAPI_av_eap_aka_prime_create (
-        av_type_local_nonprim,
+        av_typeVariable,
         ogs_strdup(rand->valuestring),
         ogs_strdup(xres->valuestring),
         ogs_strdup(autn->valuestring),

@@ -4,48 +4,27 @@
 #include <stdio.h>
 #include "av_type.h"
 
-OpenAPI_av_type_t *OpenAPI_av_type_create(
-    )
+char* OpenAPI_av_type_ToString(OpenAPI_av_type_e av_type)
 {
-    OpenAPI_av_type_t *av_type_local_var = OpenAPI_malloc(sizeof(OpenAPI_av_type_t));
-    if (!av_type_local_var) {
-        return NULL;
-    }
-
-    return av_type_local_var;
+    const char *av_typeArray[] =  { "NULL", "5G_HE_AKA", "EAP_AKA_PRIME" };
+    size_t sizeofArray = sizeof(av_typeArray) / sizeof(av_typeArray[0]);
+    if (av_type < sizeofArray)
+        return (char *)av_typeArray[av_type];
+    else
+        return (char *)"Unknown";
 }
 
-void OpenAPI_av_type_free(OpenAPI_av_type_t *av_type)
+OpenAPI_av_type_e OpenAPI_av_type_FromString(char* av_type)
 {
-    if (NULL == av_type) {
-        return;
+    int stringToReturn = 0;
+    const char *av_typeArray[] =  { "NULL", "5G_HE_AKA", "EAP_AKA_PRIME" };
+    size_t sizeofArray = sizeof(av_typeArray) / sizeof(av_typeArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(av_type, av_typeArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    OpenAPI_lnode_t *node;
-    ogs_free(av_type);
-}
-
-cJSON *OpenAPI_av_type_convertToJSON(OpenAPI_av_type_t *av_type)
-{
-    cJSON *item = NULL;
-
-    if (av_type == NULL) {
-        ogs_error("OpenAPI_av_type_convertToJSON() failed [AvType]");
-        return NULL;
-    }
-
-    item = cJSON_CreateObject();
-end:
-    return item;
-}
-
-OpenAPI_av_type_t *OpenAPI_av_type_parseFromJSON(cJSON *av_typeJSON)
-{
-    OpenAPI_av_type_t *av_type_local_var = NULL;
-    av_type_local_var = OpenAPI_av_type_create (
-        );
-
-    return av_type_local_var;
-end:
-    return NULL;
+    return 0;
 }
 
