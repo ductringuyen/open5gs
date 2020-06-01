@@ -97,7 +97,7 @@ void amf_nnrf_handle_nf_status_subscribe(
     }
 }
 
-bool amf_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
+bool amf_nnrf_handle_nf_status_notify(
         ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     ogs_sbi_response_t *response = NULL;

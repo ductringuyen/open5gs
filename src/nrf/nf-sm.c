@@ -84,7 +84,6 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
     bool handled;
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
-    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_message_t *message = NULL;
 
@@ -108,8 +107,6 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(message);
         session = e->sbi.session;
         ogs_assert(session);
-        server = e->sbi.server;
-        ogs_assert(server);
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
@@ -121,7 +118,7 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
                 CASE(OGS_SBI_HTTP_METHOD_PUT)
 
                     handled = nrf_nnrf_handle_nf_register(
-                            nf_instance, server, session, message);
+                            nf_instance, session, message);
                     if (handled == false)
                         OGS_FSM_TRAN(s, nrf_nf_state_exception);
                     break;
@@ -172,7 +169,6 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
     bool handled;
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
-    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_message_t *message = NULL;
     ogs_sbi_response_t *response = NULL;
@@ -213,8 +209,6 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(message);
         session = e->sbi.session;
         ogs_assert(session);
-        server = e->sbi.server;
-        ogs_assert(server);
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
@@ -232,7 +226,7 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
                     }
 
                     handled = nrf_nnrf_handle_nf_update(
-                            nf_instance, server, session, message);
+                            nf_instance, session, message);
                     if (handled == false)
                         OGS_FSM_TRAN(s, nrf_nf_state_exception);
                     break;

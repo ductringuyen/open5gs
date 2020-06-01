@@ -31,7 +31,7 @@ void udm_nnrf_handle_nf_register(
 void udm_nnrf_handle_nf_status_subscribe(
         ogs_sbi_subscription_t *subscription, ogs_sbi_message_t *message);
 
-bool udm_nnrf_handle_nf_status_notify(ogs_sbi_server_t *server,
+bool udm_nnrf_handle_nf_status_notify(
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
 void udm_nnrf_handle_nf_discover(

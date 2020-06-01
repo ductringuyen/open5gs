@@ -21,7 +21,7 @@
 #include "nnrf-handler.h"
 #include "nudr-handler.h"
 
-bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
+bool udr_nudr_dr_handle_query_subscription_data(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     int rv;
@@ -44,7 +44,6 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     OpenAPI_sequence_number_t SequenceNumber;
 
     ogs_assert(session);
-    ogs_assert(server);
     ogs_assert(recvmsg);
 
     if (!recvmsg->h.resource.component[1]) {

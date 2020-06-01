@@ -19,8 +19,7 @@
 
 #include "nnrf-handler.h"
 
-bool nrf_nnrf_handle_nf_register(
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_register(ogs_sbi_nf_instance_t *nf_instance,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     int status;
@@ -30,7 +29,6 @@ bool nrf_nnrf_handle_nf_register(
     OpenAPI_nf_profile_t *NFProfile = NULL;
 
     ogs_assert(nf_instance);
-    ogs_assert(server);
     ogs_assert(session);
     ogs_assert(message);
 
@@ -62,8 +60,7 @@ bool nrf_nnrf_handle_nf_register(
     return true;
 }
 
-bool nrf_nnrf_handle_nf_update(
-        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_update(ogs_sbi_nf_instance_t *nf_instance,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     ogs_sbi_response_t *response = NULL;
@@ -77,7 +74,7 @@ bool nrf_nnrf_handle_nf_update(
     SWITCH(message->h.method)
     CASE(OGS_SBI_HTTP_METHOD_PUT)
         return nrf_nnrf_handle_nf_register(
-                nf_instance, server, session, message);
+                nf_instance, session, message);
 
     CASE(OGS_SBI_HTTP_METHOD_PATCH)
         PatchItemList = message->PatchItemList;
@@ -112,7 +109,7 @@ bool nrf_nnrf_handle_nf_update(
     return true;
 }
 
-bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_status_subscribe(
         ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     int status;
@@ -212,7 +209,7 @@ bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
     return true;
 }
 
-bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_status_unsubscribe(
         ogs_sbi_session_t *session, ogs_sbi_message_t *message)
 {
     ogs_sbi_subscription_t *subscription = NULL;
@@ -238,10 +235,11 @@ bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
     return true;
 }
 
-bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_list_retrieval(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     ogs_sbi_message_t sendmsg;
+    ogs_sbi_server_t *server = NULL;
     ogs_sbi_response_t *response = NULL;
     ogs_sbi_nf_instance_t *nf_instance = NULL;
     int i = 0;
@@ -250,6 +248,7 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
     OpenAPI_lnode_t *node = NULL;
 
     ogs_assert(session);
+    server = ogs_sbi_session_get_server(session);
     ogs_assert(recvmsg);
 
     links = ogs_calloc(1, sizeof(*links));
@@ -297,7 +296,7 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
     return true;
 }
 
-bool nrf_nnrf_handle_nf_profile_retrieval(ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_profile_retrieval(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     ogs_sbi_message_t sendmsg;
@@ -334,7 +333,7 @@ bool nrf_nnrf_handle_nf_profile_retrieval(ogs_sbi_server_t *server,
     return true;
 }
 
-bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
+bool nrf_nnrf_handle_nf_discover(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     ogs_sbi_message_t sendmsg;

@@ -39,7 +39,6 @@ void nrf_state_final(ogs_fsm_t *s, nrf_event_t *e)
 void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 {
     int rv;
-    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_message_t message;
@@ -69,8 +68,6 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(request);
         session = e->sbi.session;
         ogs_assert(session);
-        server = e->sbi.server;
-        ogs_assert(server);
 
         rv = ogs_sbi_parse_request(&message, request);
         if (rv != OGS_OK) {
@@ -97,11 +94,9 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message.h.resource.component[1]) {
-                        nrf_nnrf_handle_nf_profile_retrieval(
-                                server, session, &message);
+                        nrf_nnrf_handle_nf_profile_retrieval(session, &message);
                     } else {
-                        nrf_nnrf_handle_nf_list_retrieval(
-                                server, session, &message);
+                        nrf_nnrf_handle_nf_list_retrieval(session, &message);
                     }
                     break;
 
@@ -152,13 +147,11 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
-                    nrf_nnrf_handle_nf_status_subscribe(
-                            server, session, &message);
+                    nrf_nnrf_handle_nf_status_subscribe(session, &message);
                     break;
 
                 CASE(OGS_SBI_HTTP_METHOD_DELETE)
-                    nrf_nnrf_handle_nf_status_unsubscribe(
-                            server, session, &message);
+                    nrf_nnrf_handle_nf_status_unsubscribe(session, &message);
                     break;
 
                 DEFAULT
@@ -187,7 +180,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
-                    nrf_nnrf_handle_nf_discover(server, session, &message);
+                    nrf_nnrf_handle_nf_discover(session, &message);
                     break;
 
                 DEFAULT

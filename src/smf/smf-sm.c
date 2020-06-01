@@ -58,7 +58,6 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
     ogs_pfcp_xact_t *pfcp_xact = NULL;
     ogs_pfcp_message_t pfcp_message;
 
-    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_request_t *sbi_request = NULL;
 
@@ -255,8 +254,6 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(sbi_request);
         session = e->sbi.session;
         ogs_assert(session);
-        server = e->sbi.server;
-        ogs_assert(server);
 
         rv = ogs_sbi_parse_request(&sbi_message, sbi_request);
         if (rv != OGS_OK) {
@@ -282,8 +279,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
-                    smf_nnrf_handle_nf_status_notify(
-                            server, session, &sbi_message);
+                    smf_nnrf_handle_nf_status_notify(session, &sbi_message);
                     break;
 
                 DEFAULT

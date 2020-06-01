@@ -21,7 +21,7 @@
 #include "nnrf-handler.h"
 #include "nudm-handler.h"
 
-bool udm_nudm_ueau_handle_get(ogs_sbi_server_t *server,
+bool udm_nudm_ueau_handle_get(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
     OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
@@ -34,7 +34,6 @@ bool udm_nudm_ueau_handle_get(ogs_sbi_server_t *server,
     udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
 
-    ogs_assert(server);
     ogs_assert(recvmsg);
 
     AuthenticationInfoRequest = recvmsg->AuthenticationInfoRequest;
