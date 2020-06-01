@@ -65,12 +65,14 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
         return false;
     }
 
-    memset(&AuthenticationSubscription, 0, sizeof(AuthenticationSubscription));
-
     SWITCH(recvmsg->h.resource.component[2])
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+
+            memset(&AuthenticationSubscription, 0,
+                    sizeof(AuthenticationSubscription));
+
             rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
             if (rv != OGS_OK) {
                 ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);

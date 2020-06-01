@@ -431,12 +431,12 @@ int ogs_sbi_parse_response(
         }
     }
 
+    message->res_status = response->status;
+
     if (parse_content(message, response->http.content) != OGS_OK) {
         ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
-
-    message->res_status = response->status;
 
     return OGS_OK;
 }

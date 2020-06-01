@@ -27,28 +27,39 @@ bool udm_nudr_dr_handle_get(
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
 
+    OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
+    OpenAPI_authentication_info_result_t AuthenticationInfoResult;
+
     ogs_assert(session);
-    ogs_assert(recvmsg);
     udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
 
-    OpenAPI_authentication_info_result_t AuthenticationInfoResult;
+    ogs_assert(recvmsg);
+    AuthenticationSubscription = recvmsg->AuthenticationSubscription;
+    ogs_assert(AuthenticationSubscription);
 
     SWITCH(recvmsg->h.resource.component[2])
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
 
-            ogs_fatal("asdfkljasdfasdF");
-#if 0
-            rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
-            if (rv != OGS_OK) {
-                ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
+            memset(&AuthenticationInfoResult,
+                    0, sizeof(AuthenticationInfoResult));
+
+            AuthenticationInfoResult.auth_type =
+                AuthenticationSubscription->authentication_method;
+
+            if (AuthenticationInfoResult.auth_type !=
+                    OpenAPI_auth_type_5G_AKA) {
+                ogs_error("[%s] Not supported Auth Method [%d]",
+                        udm_ue->id, AuthenticationInfoResult.auth_type);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                        recvmsg, "Unknwon ueId Type", ue_id);
+                        OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+                        recvmsg, "Not supported Auth Method", udm_ue->id);
                 return false;
+
             }
+#if 0
 
             AuthenticationSubscription.authentication_method =
                 OpenAPI_auth_method_5G_AKA;
