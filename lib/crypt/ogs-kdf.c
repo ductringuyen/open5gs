@@ -139,3 +139,23 @@ void ogs_kdf_xres_star(
 
     memcpy(xres_star, output+OGS_KEY_LEN, OGS_KEY_LEN);
 }
+
+/* TS33.501 Annex A.5 : HRES* and HXRES* derivation function */
+void ogs_kdf_hxres_star(
+        uint8_t *rand, uint8_t *xres_star,
+        uint8_t *hxres_star)
+{
+    uint8_t message[OGS_RAND_LEN + OGS_KEY_LEN];
+    uint8_t output[OGS_SHA256_DIGEST_SIZE];
+
+    ogs_assert(rand);
+    ogs_assert(xres_star);
+    ogs_assert(hxres_star);
+
+    memcpy(message, rand, OGS_RAND_LEN);
+    memcpy(message+OGS_RAND_LEN, xres_star, OGS_KEY_LEN);
+
+    ogs_sha256(message, OGS_RAND_LEN+OGS_KEY_LEN, output);
+
+    memcpy(hxres_star, output+OGS_KEY_LEN, OGS_KEY_LEN);
+}

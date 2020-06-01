@@ -43,9 +43,10 @@ bool ausf_nudm_ueau_handle_get(
     ogs_sbi_response_t *response = NULL;
 
     uint8_t rand[OGS_RAND_LEN];
-    uint8_t autn[OGS_AUTN_LEN];
     uint8_t xres_star[OGS_MAX_RES_LEN];
-    uint8_t kausf[OGS_SHA256_DIGEST_SIZE];
+    uint8_t hxres_star[OGS_MAX_RES_LEN];
+
+    char hxres_star_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
 
     OpenAPI_authentication_info_result_t *AuthenticationInfoResult = NULL;
     OpenAPI_authentication_vector_t *AuthenticationVector = NULL;
@@ -144,7 +145,21 @@ bool ausf_nudm_ueau_handle_get(
             memset(&AV5G_AKA, 0, sizeof(AV5G_AKA));
             AV5G_AKA.rand = AuthenticationVector->rand;
             AV5G_AKA.autn = AuthenticationVector->autn;
-            AV5G_AKA.hxres_star = AuthenticationVector->xres_star;
+
+            ogs_ascii_to_hex(
+                AuthenticationVector->rand,
+                strlen(AuthenticationVector->rand),
+                rand, sizeof(rand));
+            ogs_ascii_to_hex(
+                AuthenticationVector->xres_star,
+                strlen(AuthenticationVector->xres_star),
+                xres_star, sizeof(xres_star));
+
+            ogs_kdf_hxres_star(rand, xres_star, hxres_star);
+            ogs_hex_to_ascii(hxres_star, sizeof(hxres_star),
+                    hxres_star_string, sizeof(hxres_star_string));
+            AV5G_AKA.hxres_star = hxres_star_string;
+
             UeAuthenticationCtx._5g_auth_data = &AV5G_AKA;
 
             memset(&LinksValueSchemeValue, 0, sizeof(LinksValueSchemeValue));
@@ -173,8 +188,8 @@ bool ausf_nudm_ueau_handle_get(
             header.resource.component[0] =
                     (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
             header.resource.component[1] = ausf_ue->id;
-            sendmsg.http.location = ogs_sbi_server_uri(server, &header);
 
+            sendmsg.http.location = ogs_sbi_server_uri(server, &header);
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
 
             sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
