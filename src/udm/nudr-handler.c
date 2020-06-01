@@ -27,6 +27,7 @@ bool udm_nudr_dr_handle_get(
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
 
+    const char *rand_string = "4d45b0eeb8386b629f136968837a7b0b"; /* For test */
     char randbuf[OGS_RAND_LEN];
     char autnbuf[OGS_AUTN_LEN];
     char ikbuf[OGS_KEY_LEN];
@@ -118,7 +119,9 @@ bool udm_nudr_dr_handle_get(
 
             AuthenticationInfoResult.auth_type = OpenAPI_auth_type_5G_AKA;
 
+            /* FIX IT! TODO! NEW! */
             ogs_random(randbuf, OGS_RAND_LEN);
+            OGS_HEX(rand_string, strlen(rand_string), randbuf);
             milenage_generate(
                 (uint8_t *)AuthenticationSubscription->enc_opc_key,
                 (uint8_t *)AuthenticationSubscription->
