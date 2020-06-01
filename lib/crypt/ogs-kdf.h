@@ -28,9 +28,9 @@
 extern "C" {
 #endif
 
-/* KDF function : TS.33220 cluase B.2.0 */
-
+/* TS33.501 Annex A.4 : RES* and XRES* derivation function */
 void ogs_kdf_xres_star(
+        uint8_t *ck, uint8_t *ik,
         char *serving_network_name, uint8_t *rand,
         uint8_t *xres, size_t xres_len,
         uint8_t *xres_star);

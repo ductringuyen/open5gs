@@ -39,6 +39,7 @@ bool udm_nudr_dr_handle_get(
     uint8_t ak[OGS_AK_LEN];
     uint8_t xres[OGS_MAX_RES_LEN];
     size_t xres_len = 8;
+    uint8_t xres_star[OGS_MAX_RES_LEN];
 
     char rand_string[OGS_KEYSTRLEN(OGS_RAND_LEN)];
     char autn_string[OGS_KEYSTRLEN(OGS_AUTN_LEN)];
@@ -146,6 +147,12 @@ bool udm_nudr_dr_handle_get(
                 sqn, sizeof(sqn));
             milenage_generate(opc, amf, k, sqn, rand, autn, ik, ck, ak,
                 xres, &xres_len);
+
+            ogs_assert(udm_ue->serving_network_name);
+            /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
+            ogs_kdf_xres_star(ck, ik,
+                    udm_ue->serving_network_name,
+                    rand, xres, xres_len, xres_star);
 
             memset(&AuthenticationVector, 0, sizeof(AuthenticationVector));
             AuthenticationVector.av_type = OpenAPI_av_type_5G_HE_AKA;
