@@ -22,8 +22,6 @@
 static udr_timer_cfg_t g_udr_timer_cfg[MAX_NUM_OF_UDR_TIMER] = {
     [UDR_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL] =
         { .duration = ogs_time_from_sec(3) },
-    [UDR_TIMER_SBI_MESSAGE_WAIT] =
-        { .duration = ogs_time_from_sec(2) },
 };
 
 udr_timer_cfg_t *udr_timer_cfg(udr_timer_e id)
@@ -45,8 +43,6 @@ const char *udr_timer_get_name(udr_timer_e id)
         return "UDR_TIMER_NF_INSTANCE_VALIDITY";
     case UDR_TIMER_SUBSCRIPTION_VALIDITY:
         return "UDR_TIMER_SUBSCRIPTION_VALIDITY";
-    case UDR_TIMER_SBI_MESSAGE_WAIT:
-        return "UDR_TIMER_SBI_MESSAGE_WAIT";
     default: 
        break;
     }
@@ -66,12 +62,6 @@ static void sbi_timer_send_event(int timer_id, void *data)
     case UDR_TIMER_NF_INSTANCE_HEARTBEAT:
     case UDR_TIMER_NF_INSTANCE_VALIDITY:
     case UDR_TIMER_SUBSCRIPTION_VALIDITY:
-        e = udr_event_new(UDR_EVT_SBI_TIMER);
-        ogs_assert(e);
-        e->timer_id = timer_id;
-        e->sbi.data = data;
-        break;
-    case UDR_TIMER_SBI_MESSAGE_WAIT:
         e = udr_event_new(UDR_EVT_SBI_TIMER);
         ogs_assert(e);
         e->timer_id = timer_id;
@@ -114,9 +104,4 @@ void udr_timer_nf_instance_validity(void *data)
 void udr_timer_subscription_validity(void *data)
 {
     sbi_timer_send_event(UDR_TIMER_SUBSCRIPTION_VALIDITY, data);
-}
-
-void udr_timer_sbi_message_wait_expire(void *data)
-{
-    sbi_timer_send_event(UDR_TIMER_SBI_MESSAGE_WAIT, data);
 }

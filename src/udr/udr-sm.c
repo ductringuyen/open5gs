@@ -308,17 +308,6 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                     udr_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case UDR_TIMER_SBI_MESSAGE_WAIT:
-            session = e->sbi.data;
-            ogs_assert(session);
-            udr_ue = ogs_sbi_session_get_data(session);
-            ogs_assert(udr_ue);
-
-            ogs_error("[%s] Cannot receive SBI message", udr_ue->id);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT, NULL,
-                    "Cannot receive SBI message", udr_ue->id);
-            break;
         default:
             ogs_error("Unknown timer[%s:%d]",
                     udr_timer_get_name(e->timer_id), e->timer_id);

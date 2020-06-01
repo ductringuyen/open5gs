@@ -248,7 +248,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(udm_ue->sbi_message_wait.timer);
+                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
                         udm_nnrf_handle_nf_discover(session, &message);
                     } else {
@@ -334,7 +334,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     udm_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case UDM_TIMER_SBI_MESSAGE_WAIT:
+        case UDM_TIMER_SBI_CLIENT_WAIT:
             session = e->sbi.data;
             ogs_assert(session);
             udm_ue = ogs_sbi_session_get_data(session);

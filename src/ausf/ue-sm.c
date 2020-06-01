@@ -22,28 +22,6 @@
 #include "nausf-handler.h"
 #include "nudm-handler.h"
 
-void ausf_ue_fsm_init(ausf_ue_t *ausf_ue)
-{
-    ausf_event_t e;
-
-    ogs_assert(ausf_ue);
-    e.ausf_ue = ausf_ue;
-
-    ogs_fsm_create(&ausf_ue->sm, ausf_ue_state_initial, ausf_ue_state_final);
-    ogs_fsm_init(&ausf_ue->sm, &e);
-}
-
-void ausf_ue_fsm_fini(ausf_ue_t *ausf_ue)
-{
-    ausf_event_t e;
-
-    ogs_assert(ausf_ue);
-    e.ausf_ue = ausf_ue;
-
-    ogs_fsm_fini(&ausf_ue->sm, &e);
-    ogs_fsm_delete(&ausf_ue->sm);
-}
-
 void ausf_ue_state_initial(ogs_fsm_t *s, ausf_event_t *e)
 {
     ausf_ue_t *ausf_ue = NULL;
@@ -55,9 +33,6 @@ void ausf_ue_state_initial(ogs_fsm_t *s, ausf_event_t *e)
 
     ausf_ue = e->ausf_ue;
     ogs_assert(ausf_ue);
-
-    ausf_ue->sbi_message_wait.timer = ogs_timer_add(ausf_self()->timer_mgr,
-            ausf_timer_sbi_message_wait_expire, ausf_ue);
 
     OGS_FSM_TRAN(s, &ausf_ue_state_will_authenticate);
 }
@@ -73,9 +48,6 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
     ausf_ue = e->ausf_ue;
     ogs_assert(ausf_ue);
-
-    CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
-    ogs_timer_delete(ausf_ue->sbi_message_wait.timer);
 }
 
 void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)

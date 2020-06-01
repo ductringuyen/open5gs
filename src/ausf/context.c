@@ -117,6 +117,7 @@ int ausf_context_parse_config(void)
 
 ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
 {
+    ausf_event_t e;
     ausf_ue_t *ausf_ue = NULL;
 
     ogs_assert(session);
@@ -132,12 +133,14 @@ ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
 
+    ogs_list_init(&ausf_ue->auth_list);
+
     ausf_ue->sbi_message_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_message_wait_expire, session);
 
-    ogs_list_init(&ausf_ue->auth_list);
-
-    ausf_ue_fsm_init(ausf_ue);
+    e.ausf_ue = ausf_ue;
+    ogs_fsm_create(&ausf_ue->sm, ausf_ue_state_initial, ausf_ue_state_final);
+    ogs_fsm_init(&ausf_ue->sm, &e);
 
     ogs_list_add(&self.ausf_ue_list, ausf_ue);
 
@@ -146,13 +149,19 @@ ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
 
 void ausf_ue_remove(ausf_ue_t *ausf_ue)
 {
+    ausf_event_t e;
     int i;
 
     ogs_assert(ausf_ue);
 
     ogs_list_remove(&self.ausf_ue_list, ausf_ue);
 
-    ausf_ue_fsm_fini(ausf_ue);
+    e.ausf_ue = ausf_ue;
+    ogs_fsm_fini(&ausf_ue->sm, &e);
+    ogs_fsm_delete(&ausf_ue->sm);
+
+    CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
+    ogs_timer_delete(ausf_ue->sbi_message_wait.timer);
 
     ausf_auth_remove_all(ausf_ue);
 
@@ -163,9 +172,6 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     if (ausf_ue->serving_network_name)
         ogs_free(ausf_ue->serving_network_name);
     
-    CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
-    ogs_timer_delete(ausf_ue->sbi_message_wait.timer);
-
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (ausf_ue->nf_types[i].nf_instance)
             ogs_sbi_nf_instance_remove(ausf_ue->nf_types[i].nf_instance);

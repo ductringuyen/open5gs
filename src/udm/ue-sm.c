@@ -22,60 +22,15 @@
 #include "nudm-handler.h"
 #include "nudr-handler.h"
 
-void udm_ue_fsm_init(udm_ue_t *udm_ue)
-{
-    udm_event_t e;
-
-    ogs_assert(udm_ue);
-    e.udm_ue = udm_ue;
-
-    ogs_fsm_create(&udm_ue->sm, udm_ue_state_initial, udm_ue_state_final);
-    ogs_fsm_init(&udm_ue->sm, &e);
-}
-
-void udm_ue_fsm_fini(udm_ue_t *udm_ue)
-{
-    udm_event_t e;
-
-    ogs_assert(udm_ue);
-    e.udm_ue = udm_ue;
-
-    ogs_fsm_fini(&udm_ue->sm, &e);
-    ogs_fsm_delete(&udm_ue->sm);
-}
-
 void udm_ue_state_initial(ogs_fsm_t *s, udm_event_t *e)
 {
-    udm_ue_t *udm_ue = NULL;
-
     ogs_assert(s);
-    ogs_assert(e);
-
-    udm_sm_debug(e);
-
-    udm_ue = e->udm_ue;
-    ogs_assert(udm_ue);
-
-    udm_ue->sbi_message_wait.timer = ogs_timer_add(udm_self()->timer_mgr,
-            udm_timer_sbi_message_wait_expire, udm_ue);
 
     OGS_FSM_TRAN(s, &udm_ue_state_will_authenticate);
 }
 
 void udm_ue_state_final(ogs_fsm_t *s, udm_event_t *e)
 {
-    udm_ue_t *udm_ue = NULL;
-
-    ogs_assert(s);
-    ogs_assert(e);
-
-    udm_sm_debug(e);
-
-    udm_ue = e->udm_ue;
-    ogs_assert(udm_ue);
-
-    CLEAR_UDM_UE_ALL_TIMERS(udm_ue);
-    ogs_timer_delete(udm_ue->sbi_message_wait.timer);
 }
 
 void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
@@ -134,7 +89,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
                 SWITCH(message->h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(udm_ue->sbi_message_wait.timer);
+                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
                         udm_nudr_dr_handle_query(session, message);
                     } else {

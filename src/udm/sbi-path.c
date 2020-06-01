@@ -145,8 +145,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
     if (nf == false) {
         ogs_warn("[%s] Try to discover UDR", udm_ue->id);
-        ogs_timer_start(udm_ue->sbi_message_wait.timer,
-                udm_timer_cfg(UDM_TIMER_SBI_MESSAGE_WAIT)->duration);
+        ogs_timer_start(udm_ue->sbi_client_wait.timer,
+                udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
             udm_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
@@ -175,8 +175,8 @@ void udm_nudr_dr_send_query(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
     ogs_assert(client);
 
-    ogs_timer_start(udm_ue->sbi_message_wait.timer,
-            udm_timer_cfg(UDM_TIMER_SBI_MESSAGE_WAIT)->duration);
+    ogs_timer_start(udm_ue->sbi_client_wait.timer,
+            udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 
     request = udm_nudr_dr_build_query(udm_ue);
     ogs_assert(request);
