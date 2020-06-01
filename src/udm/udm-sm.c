@@ -151,7 +151,6 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 ogs_sbi_message_free(&message);
                 udm_ue_remove(udm_ue);
             }
-
             break;
 
         DEFAULT
@@ -279,46 +278,19 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
-                SWITCH(message.h.resource.component[2])
-                CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
-                    SWITCH(message.h.resource.component[3])
-                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
-                        session = e->sbi.data;
-                        ogs_assert(session);
-                        udm_ue = ogs_sbi_session_get_data(session);
-                        ogs_assert(udm_ue);
+                session = e->sbi.data;
+                ogs_assert(session);
+                udm_ue = ogs_sbi_session_get_data(session);
+                ogs_assert(udm_ue);
 
-                        SWITCH(message.h.method)
-                        CASE(OGS_SBI_HTTP_METHOD_GET)
-                            if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                                ogs_timer_stop(udm_ue->sbi_message_wait.timer);
-                                ogs_fatal("TODO");
-                            } else {
-                                ogs_error("[%s] HTTP response error [%d]",
-                                    udm_ue->id, message.res_status);
-                                ogs_sbi_server_send_error(
-                                    session, message.res_status,
-                                    NULL, "HTTP response error", udm_ue->id);
-                            }
-                            break;
-
-                        DEFAULT
-                            ogs_error("[%s] Invalid HTTP method [%s]",
-                                    udm_ue->id, message.h.method);
-                            ogs_assert_if_reached();
-                        END
-                        break;
-                    DEFAULT
-                        ogs_error("Invalid resource name [%s]",
-                                message.h.resource.component[3]);
-                        ogs_assert_if_reached();
-                    END
-                break;
-                DEFAULT
-                    ogs_error("Invalid resource name [%s]",
-                            message.h.resource.component[2]);
-                    ogs_assert_if_reached();
-                END
+                e->udm_ue = udm_ue;
+                e->sbi.message = &message;
+                ogs_fsm_dispatch(&udm_ue->sm, e);
+                if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_exception)) {
+                    ogs_error("[%s] State machine exception", udm_ue->id);
+                    ogs_sbi_message_free(&message);
+                    udm_ue_remove(udm_ue);
+                }
                 break;
 
             DEFAULT
