@@ -25,13 +25,13 @@
 #endif
 #include "nas-path.h"
 #include "nas-security.h"
-#include "kdf.h"
 #include "ngap-path.h"
 #if 0
 #include "sgsap-types.h"
 #include "sgsap-path.h"
 #include "amf-path.h"
 #endif
+#include "nausf-handler.h"
 #include "sbi-path.h"
 #include "amf-sm.h"
 
@@ -511,6 +511,9 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
+    ogs_sbi_response_t *sbi_response = NULL;
+    ogs_sbi_message_t *sbi_message = NULL;
+
     ogs_assert(s);
     ogs_assert(e);
     
@@ -675,6 +678,42 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 #endif
+        break;
+    case AMF_EVT_SBI_CLIENT:
+        sbi_response = e->sbi.response;
+        ogs_assert(sbi_response);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
+
+        SWITCH(sbi_message->h.resource.component[0])
+        CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
+            SWITCH(sbi_message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_POST)
+                if (sbi_message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
+                    ogs_timer_stop(amf_ue->sbi_message_wait.timer);
+
+                    amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
+                    
+                } else {
+                    ogs_error("[%s] HTTP response error [%d]",
+                            amf_ue->id, sbi_message->res_status);
+                    nas_5gs_send_nas_reject_from_sbi(amf_ue,
+                            sbi_message->res_status);
+                }
+                break;
+
+            DEFAULT
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        amf_ue->id, sbi_message->h.method);
+                ogs_assert_if_reached();
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    sbi_message->h.resource.component[0]);
+            ogs_assert_if_reached();
+        END
         break;
     default:
         ogs_error("Unknown event[%s]", amf_event_get_name(e));

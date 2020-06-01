@@ -23,6 +23,17 @@
 #include "ogs-crypt.h"
 #include "context.h"
 
+/* Algorithm Type Distinguishers */
+#define AMF_KDF_NAS_ENC_ALG 0x01
+#define AMF_KDF_NAS_INT_ALG 0x02
+
+/* Algorithm Identity defined in nas_ies.h 
+#define NAS_SECURITY_ALGORITHMS_EIA0_EEA0 0
+#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA1 1
+#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA2 2
+#define NAS_SECURITY_ALGORITHMS_128_EIA3_EEA3 3
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

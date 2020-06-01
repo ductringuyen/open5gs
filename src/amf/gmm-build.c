@@ -18,7 +18,6 @@
  */
 
 #include "nas-security.h"
-#include "kdf.h"
 #include "gmm-build.h"
 #include "amf-sm.h"
 

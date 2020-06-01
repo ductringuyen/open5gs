@@ -18,7 +18,6 @@
  */
 
 #include "nas-security.h"
-#include "kdf.h"
 
 #include "ngap-path.h"
 #include "nas-path.h"
@@ -106,8 +105,10 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     CLEAR_5GS_BEARER_ID(amf_ue);
     CLEAR_SERVICE_INDICATOR(amf_ue);
     if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
+#if 0
         amf_kdf_gnb(amf_ue->kasme, amf_ue->ul_count.i32, amf_ue->kgnb);
         amf_kdf_nh(amf_ue->kasme, amf_ue->kgnb, amf_ue->nh);
+#endif
         amf_ue->nhcc = 1;
     }
 

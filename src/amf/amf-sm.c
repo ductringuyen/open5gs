@@ -265,6 +265,19 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
+            amf_ue = e->sbi.data;
+            ogs_assert(amf_ue);
+            ogs_assert(OGS_FSM_STATE(&amf_ue->sm));
+
+            e->amf_ue = amf_ue;
+            e->sbi.message = &sbi_message;;
+
+            ogs_fsm_dispatch(&amf_ue->sm, e);
+            if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_exception)) {
+                /* TODO */
+            }
+            break;
+#if 0
             SWITCH(sbi_message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
                 amf_ue = e->sbi.data;
@@ -297,6 +310,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 ogs_assert_if_reached();
             END
             break;
+#endif
 
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
@@ -515,11 +529,11 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         e->nas.message = &nas_message;
 
         ogs_fsm_dispatch(&amf_ue->sm, e);
+        if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_exception)) {
 #if 0
-        if (OGS_FSM_CHECK(&amf_ue->sm, emm_state_exception)) {
             mme_send_delete_session_or_amf_ue_context_release(amf_ue);
-        }
 #endif
+        }
 
         ogs_pkbuf_free(pkbuf);
         break;

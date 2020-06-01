@@ -20,9 +20,12 @@ libamf_sources = files('''
     event.c
     timer.c
 
-    nnrf-handler.c
     nausf-build.c
+    nausf-handler.c
+
+    nnrf-handler.c
     sbi-path.c
+
     nf-sm.c
 
     ngap-sctp.c
@@ -31,7 +34,6 @@ libamf_sources = files('''
     ngap-path.c
     ngap-sm.c
 
-    kdf.c
     nas-security.c
 
     gmm-build.c
@@ -40,7 +42,6 @@ libamf_sources = files('''
     gmm-sm.c
 
     gsm-sm.c
-
     amf-sm.c
 
     init.c
