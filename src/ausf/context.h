@@ -93,6 +93,17 @@ struct ausf_ue_s {
     } while(0)
 
     ogs_sbi_nf_types_t nf_types;
+
+    ogs_list_t auth_list;
+};
+
+struct ausf_auth_s {
+    ogs_lnode_t lnode;
+    ogs_fsm_t sm;
+
+    char *id;
+
+    ausf_ue_t *ausf_ue;
 };
 
 void ausf_context_init(void);
@@ -105,6 +116,11 @@ ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id);
 void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
 ausf_ue_t *ausf_ue_find(char *id);
+
+ausf_auth_t *ausf_auth_add(ogs_sbi_session_t *session, ausf_ue_t *ausf_ue);
+void ausf_auth_remove(ausf_auth_t *auth);
+void ausf_auth_remove_all(ausf_ue_t *ausf_ue);
+ausf_auth_t *ausf_auth_find(ausf_ue_t *ausf_ue, char *id);
 
 #ifdef __cplusplus
 }

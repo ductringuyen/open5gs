@@ -140,8 +140,10 @@ static void recalculate_pool_size(void)
 #define MAX_NUM_OF_NF_SERVICE   16  /* Num of NF Service per NF Instance */
 #define MAX_NUM_OF_SBI_MESSAGE  8   /* Num of HTTP(s) Request/Response per NF */
 #define MAX_NUM_OF_NF_SUBSCRIPTION  4 /* Num of Subscription per NF */
+#define MAX_NUM_OF_AUTH         4   /* Num of Subscription per UE */
 
     self.pool.ue = self.max.ue * self.max.gnb;
+    self.pool.auth = self.pool.ue * MAX_NUM_OF_AUTH;
     self.pool.pfcp = ogs_max(self.max.smf, self.max.upf);
     self.pool.sess = self.pool.ue * OGS_MAX_NUM_OF_SESS;
     self.pool.bearer = self.pool.sess * MAX_NUM_OF_BEARER;

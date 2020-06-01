@@ -87,6 +87,7 @@ typedef struct ogs_config_s {
         int packet;
 
         int ue;
+        int auth;
         int pfcp;
         int sess;
         int bearer;

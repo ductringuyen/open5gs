@@ -54,6 +54,8 @@ void udm_context_final(void)
     ogs_assert(self.ueid_hash);
     ogs_hash_destroy(self.ueid_hash);
 
+    ogs_pool_final(&udm_ue_pool);
+
     context_initialized = 0;
 }
 

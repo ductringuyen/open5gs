@@ -69,7 +69,6 @@ struct udr_ue_s {
         (__aUSF_UE_TIMER).retry_count = 0; \
     } while(0);
     struct {
-        ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
     } sbi_message_wait;

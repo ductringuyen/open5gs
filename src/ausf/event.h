@@ -35,6 +35,7 @@ typedef struct ogs_sbi_nf_instance_s ogs_sbi_nf_instance_t;
 typedef struct ogs_sbi_subscription_s ogs_sbi_subscription_t;
 
 typedef struct ausf_ue_s ausf_ue_t;
+typedef struct ausf_auth_s ausf_auth_t;
 
 typedef enum {
     AUSF_EVT_BASE = OGS_FSM_USER_SIG,
@@ -65,6 +66,7 @@ typedef struct ausf_event_s {
     } sbi;
 
     ausf_ue_t *ausf_ue;
+    ausf_auth_t *ausf_auth;
 
     ogs_timer_t *timer;
 } ausf_event_t;

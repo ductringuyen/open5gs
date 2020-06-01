@@ -23,8 +23,6 @@ static udr_context_t self;
 
 int __udr_log_domain;
 
-static OGS_POOL(udr_ue_pool, udr_ue_t);
-
 static int context_initialized = 0;
 
 void udr_context_init(void)
@@ -36,9 +34,6 @@ void udr_context_init(void)
 
     ogs_log_install_domain(&__ogs_dbi_domain, "dbi", ogs_core()->log.level);
     ogs_log_install_domain(&__udr_log_domain, "udr", ogs_core()->log.level);
-
-    /* Allocate TWICE the pool to check if maximum number of gNBs is reached */
-    ogs_pool_init(&udr_ue_pool, ogs_config()->pool.ue);
 
     context_initialized = 1;
 }
