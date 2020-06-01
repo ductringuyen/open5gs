@@ -32,8 +32,6 @@ void ausf_state_initial(ogs_fsm_t *s, ausf_event_t *e)
 void ausf_state_final(ogs_fsm_t *s, ausf_event_t *e)
 {
     ausf_sm_debug(e);
-
-    ogs_assert(s);
 }
 
 void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
@@ -258,7 +256,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
+                        ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
                         ausf_nnrf_handle_nf_discover(session, &message);
                     } else {
@@ -336,7 +334,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     ausf_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case AUSF_TIMER_SBI_MESSAGE_WAIT:
+        case AUSF_TIMER_SBI_CLIENT_WAIT:
             session = e->sbi.data;
             ogs_assert(session);
             ausf_ue = ogs_sbi_session_get_data(session);

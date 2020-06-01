@@ -59,7 +59,7 @@ struct ausf_ue_s {
 
 #define CLEAR_AUSF_UE_ALL_TIMERS(__aUSF) \
     do { \
-        CLEAR_AUSF_UE_TIMER((__aUSF)->sbi_message_wait); \
+        CLEAR_AUSF_UE_TIMER((__aUSF)->sbi_client_wait); \
     } while(0);
 #define CLEAR_AUSF_UE_TIMER(__aUSF_UE_TIMER) \
     do { \
@@ -74,7 +74,7 @@ struct ausf_ue_s {
         ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
-    } sbi_message_wait;
+    } sbi_client_wait;
 
 #define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

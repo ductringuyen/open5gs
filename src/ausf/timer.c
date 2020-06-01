@@ -22,7 +22,7 @@
 static ausf_timer_cfg_t g_ausf_timer_cfg[MAX_NUM_OF_AUSF_TIMER] = {
     [AUSF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL] =
         { .duration = ogs_time_from_sec(3) },
-    [AUSF_TIMER_SBI_MESSAGE_WAIT] =
+    [AUSF_TIMER_SBI_CLIENT_WAIT] =
         { .duration = ogs_time_from_sec(2) },
 };
 
@@ -45,8 +45,8 @@ const char *ausf_timer_get_name(ausf_timer_e id)
         return "AUSF_TIMER_NF_INSTANCE_VALIDITY";
     case AUSF_TIMER_SUBSCRIPTION_VALIDITY:
         return "AUSF_TIMER_SUBSCRIPTION_VALIDITY";
-    case AUSF_TIMER_SBI_MESSAGE_WAIT:
-        return "AUSF_TIMER_SBI_MESSAGE_WAIT";
+    case AUSF_TIMER_SBI_CLIENT_WAIT:
+        return "AUSF_TIMER_SBI_CLIENT_WAIT";
     default: 
        break;
     }
@@ -71,7 +71,7 @@ static void sbi_timer_send_event(int timer_id, void *data)
         e->timer_id = timer_id;
         e->sbi.data = data;
         break;
-    case AUSF_TIMER_SBI_MESSAGE_WAIT:
+    case AUSF_TIMER_SBI_CLIENT_WAIT:
         e = ausf_event_new(AUSF_EVT_SBI_TIMER);
         ogs_assert(e);
         e->timer_id = timer_id;
@@ -116,7 +116,7 @@ void ausf_timer_subscription_validity(void *data)
     sbi_timer_send_event(AUSF_TIMER_SUBSCRIPTION_VALIDITY, data);
 }
 
-void ausf_timer_sbi_message_wait_expire(void *data)
+void ausf_timer_sbi_client_wait_expire(void *data)
 {
-    sbi_timer_send_event(AUSF_TIMER_SBI_MESSAGE_WAIT, data);
+    sbi_timer_send_event(AUSF_TIMER_SBI_CLIENT_WAIT, data);
 }

@@ -32,8 +32,6 @@ void udm_state_initial(ogs_fsm_t *s, udm_event_t *e)
 void udm_state_final(ogs_fsm_t *s, udm_event_t *e)
 {
     udm_sm_debug(e);
-
-    ogs_assert(s);
 }
 
 void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)

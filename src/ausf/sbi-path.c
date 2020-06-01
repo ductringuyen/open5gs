@@ -145,8 +145,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
     if (nf == false) {
         ogs_warn("[%s] Try to discover UDM", ausf_ue->id);
-        ogs_timer_start(ausf_ue->sbi_message_wait.timer,
-                ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
+        ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+                ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
             ausf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
@@ -174,8 +174,8 @@ void ausf_nudm_ueau_send_get(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
     ogs_assert(client);
 
-    ogs_timer_start(ausf_ue->sbi_message_wait.timer,
-            ausf_timer_cfg(AUSF_TIMER_SBI_MESSAGE_WAIT)->duration);
+    ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+            ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
     request = ausf_nudm_ueau_build_get(ausf_ue);
     ogs_assert(request);

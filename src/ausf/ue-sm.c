@@ -112,7 +112,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
             SWITCH(message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                    ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
+                    ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
                     ausf_nudm_ueau_handle_get(session, message);
                 } else {
