@@ -86,6 +86,7 @@ extern "C" {
 
 #define OGS_SBI_SERVICE_NAME_NAUSF_AUTH             "nausf-auth"
 #define OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS    "ue-authentications"
+#define OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION   "5g-aka-confirmation"
 
 #define OGS_SBI_SERVICE_NAME_NUDM_SDM               "nudm-sdm"
 #define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"
@@ -145,7 +146,7 @@ typedef struct ogs_sbi_message_s {
         char *accept;
         char *content_encoding;
         char *content_type;
-        bool location;
+        char *location;
         char *cache_control;
     } http;
 

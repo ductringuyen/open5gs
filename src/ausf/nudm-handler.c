@@ -35,9 +35,11 @@ static const char *links_member_name(OpenAPI_auth_type_e auth_type)
 bool ausf_nudm_ueau_handle_get(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
+    ogs_sbi_server_t *server = NULL;
     ausf_ue_t *ausf_ue = NULL;
 
     ogs_sbi_message_t sendmsg;
+    ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
     uint8_t rand[OGS_RAND_LEN];
@@ -55,6 +57,8 @@ bool ausf_nudm_ueau_handle_get(
     ogs_assert(session);
     ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
+    server = ogs_sbi_session_get_server(session);
+    ogs_assert(server);
 
     ogs_assert(recvmsg);
 
@@ -144,7 +148,16 @@ bool ausf_nudm_ueau_handle_get(
             UeAuthenticationCtx._5g_auth_data = &AV5G_AKA;
 
             memset(&LinksValueSchemeValue, 0, sizeof(LinksValueSchemeValue));
-            LinksValueSchemeValue.href = (char*)"asdfsadf";
+
+            memset(&header, 0, sizeof(header));
+            header.service.name = (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH;
+            header.api.version = (char *)OGS_SBI_API_VERSION;
+            header.resource.component[0] =
+                    (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
+            header.resource.component[1] = ausf_ue->id;
+            header.resource.component[2] =
+                    (char *)OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION;
+            LinksValueSchemeValue.href = ogs_sbi_server_uri(server, &header);
             LinksValueScheme = OpenAPI_map_create(
                     (char *)links_member_name(UeAuthenticationCtx.auth_type),
                     &LinksValueSchemeValue);
@@ -154,10 +167,17 @@ bool ausf_nudm_ueau_handle_get(
 
             memset(&sendmsg, 0, sizeof(sendmsg));
 
-            sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
-#if 0
+            memset(&header, 0, sizeof(header));
+            header.service.name = (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH;
+            header.api.version = (char *)OGS_SBI_API_VERSION;
+            header.resource.component[0] =
+                    (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
+            header.resource.component[1] = ausf_ue->id;
+            sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
-#endif
+
+            sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
 
             response = ogs_sbi_build_response(&sendmsg,
                 OGS_SBI_HTTP_STATUS_CREATED);
@@ -166,6 +186,9 @@ bool ausf_nudm_ueau_handle_get(
 
             OpenAPI_list_free(UeAuthenticationCtx._links);
             OpenAPI_map_free(LinksValueScheme);
+
+            ogs_free(LinksValueSchemeValue.href);
+            ogs_free(sendmsg.http.location);
 
             return true;
 

@@ -641,3 +641,11 @@ void *ogs_sbi_session_get_data(ogs_sbi_session_t *session)
 
     return session->data;
 }
+
+ogs_sbi_server_t *ogs_sbi_session_get_server(ogs_sbi_session_t *session)
+{
+    ogs_assert(session);
+    ogs_assert(session->server);
+
+    return session->server;
+}

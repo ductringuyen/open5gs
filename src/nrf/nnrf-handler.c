@@ -48,7 +48,7 @@ bool nrf_nnrf_handle_nf_register(
     if (!handled) return false;
 
     if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_will_register)) {
-        message->http.location = true;
+        message->http.location = message->h.url;
         status = OGS_SBI_HTTP_STATUS_CREATED;
     } else if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_registered)) {
         status = OGS_SBI_HTTP_STATUS_OK;
@@ -202,7 +202,7 @@ bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
                 ogs_time_from_sec(subscription->time.validity));
     }
 
-    message->http.location = true;
+    message->http.location = message->h.url;
     status = OGS_SBI_HTTP_STATUS_CREATED;
 
     response = ogs_sbi_build_response(message, status);
