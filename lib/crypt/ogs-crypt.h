@@ -36,6 +36,8 @@
 #include "crypt/zuc.h"
 #include "crypt/kasumi.h"
 
+#include "crypt/ogs-kdf.h"
+
 #undef OGS_CRYPT_INSIDE
 
 #ifdef __cplusplus
