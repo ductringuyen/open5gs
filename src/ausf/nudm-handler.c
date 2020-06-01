@@ -19,6 +19,19 @@
 
 #include "nudm-handler.h"
 
+static const char *links_member_name(OpenAPI_auth_type_e auth_type)
+{
+    if (auth_type == OpenAPI_auth_type_5G_AKA ||
+        auth_type == OpenAPI_auth_type_EAP_AKA_PRIME) {
+        return "5g-aka";
+    } else if (auth_type == OpenAPI_auth_type_EAP_TLS) {
+        return "eap_session";
+    }
+
+    ogs_assert_if_reached();
+    return NULL;
+}
+
 bool ausf_nudm_ueau_handle_get(
         ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
 {
@@ -132,16 +145,15 @@ bool ausf_nudm_ueau_handle_get(
 
             memset(&LinksValueSchemeValue, 0, sizeof(LinksValueSchemeValue));
             LinksValueSchemeValue.href = (char*)"asdfsadf";
-            char *key = "self";
-
-            LinksValueScheme = OpenAPI_map_create(key, &LinksValueSchemeValue);
+            LinksValueScheme = OpenAPI_map_create(
+                    (char *)links_member_name(UeAuthenticationCtx.auth_type),
+                    &LinksValueSchemeValue);
 
             UeAuthenticationCtx._links = OpenAPI_list_create();
             OpenAPI_list_add(UeAuthenticationCtx._links, LinksValueScheme);
 
             memset(&sendmsg, 0, sizeof(sendmsg));
 
-            ogs_assert(UeAuthenticationCtx.auth_type);
             sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
 #if 0
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
