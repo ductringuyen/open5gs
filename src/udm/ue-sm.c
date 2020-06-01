@@ -20,6 +20,7 @@
 #include "sbi-path.h"
 #include "nnrf-handler.h"
 #include "nudm-handler.h"
+#include "nudr-handler.h"
 
 void udm_ue_fsm_init(udm_ue_t *udm_ue)
 {
@@ -138,8 +139,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
                     if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(udm_ue->sbi_message_wait.timer);
 
-
-                        ogs_fatal("[%s]", udm_ue->id);
+                        udm_nudr_dr_handle_get(session, message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->id, message->res_status);
