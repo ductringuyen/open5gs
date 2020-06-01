@@ -36,8 +36,11 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     char k[OGS_KEYSTRLEN(OGS_KEY_LEN)];
     char opc[OGS_KEYSTRLEN(OGS_KEY_LEN)];
     char amf[OGS_KEYSTRLEN(OGS_AMF_LEN)];
+    char sqn_buf[OGS_SQN_LEN];
+    char sqn[OGS_KEYSTRLEN(OGS_SQN_LEN)];
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
+    OpenAPI_sequence_number_t SequenceNumber;
 
     ogs_assert(session);
     ogs_assert(server);
@@ -94,6 +97,14 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
             ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
                     opc, sizeof(opc));
             AuthenticationSubscription.enc_opc_key = opc;
+
+            ogs_uint64_to_buffer(auth_info.sqn, OGS_SQN_LEN, sqn_buf);
+            ogs_hex_to_ascii(sqn_buf, sizeof(sqn_buf), sqn, sizeof(sqn));
+
+            memset(&SequenceNumber, 0, sizeof(SequenceNumber));
+            SequenceNumber.sqn_scheme = OpenAPI_sqn_scheme_NON_TIME_BASED;
+            SequenceNumber.sqn = sqn;
+            AuthenticationSubscription.sequence_number = &SequenceNumber;
             break;
 
         DEFAULT

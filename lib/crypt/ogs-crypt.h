@@ -48,7 +48,9 @@ extern "C" {
 #define OGS_AUTN_LEN                    16
 #define OGS_AUTS_LEN                    14
 #define OGS_MAX_RES_LEN                 16
+#define OGS_AK_LEN                      6
 
+#define OGS_SQN_LEN                     6
 #define OGS_MAX_SQN                     0x7ffffffffff
 
 #define OGS_KEYSTRLEN(x)                ((x*2)+1)

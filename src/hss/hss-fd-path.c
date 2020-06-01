@@ -53,12 +53,12 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
     union avp_value val;
 
     char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
-    uint8_t opc[HSS_KEY_LEN];
-    uint8_t sqn[HSS_SQN_LEN];
+    uint8_t opc[OGS_KEY_LEN];
+    uint8_t sqn[OGS_SQN_LEN];
     uint8_t autn[OGS_AUTN_LEN];
-    uint8_t ik[HSS_KEY_LEN];
-    uint8_t ck[HSS_KEY_LEN];
-    uint8_t ak[HSS_AK_LEN];
+    uint8_t ik[OGS_KEY_LEN];
+    uint8_t ck[OGS_KEY_LEN];
+    uint8_t ak[OGS_AK_LEN];
     uint8_t xres[OGS_MAX_RES_LEN];
     uint8_t kasme[OGS_SHA256_DIGEST_SIZE];
     size_t xres_len = 8;
@@ -114,21 +114,21 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
             ogs_assert(ret == 0);
             hss_auc_sqn(opc, auth_info.k, hdr->avp_value->os.data, sqn, mac_s);
             if (memcmp(mac_s, hdr->avp_value->os.data +
-                        OGS_RAND_LEN + HSS_SQN_LEN, MAC_S_LEN) == 0) {
+                        OGS_RAND_LEN + OGS_SQN_LEN, MAC_S_LEN) == 0) {
                 ogs_random(auth_info.rand, OGS_RAND_LEN);
-                auth_info.sqn = ogs_buffer_to_uint64(sqn, HSS_SQN_LEN);
+                auth_info.sqn = ogs_buffer_to_uint64(sqn, OGS_SQN_LEN);
                 /* 33.102 C.3.4 Guide : IND + 1 */
-                auth_info.sqn = (auth_info.sqn + 32 + 1) & HSS_MAX_SQN;
+                auth_info.sqn = (auth_info.sqn + 32 + 1) & OGS_MAX_SQN;
             } else {
                 ogs_error("Re-synch MAC failed for IMSI:`%s`", imsi_bcd);
                 ogs_log_print(OGS_LOG_ERROR, "MAC_S: ");
                 ogs_log_hexdump(OGS_LOG_ERROR, mac_s, MAC_S_LEN);
                 ogs_log_hexdump(OGS_LOG_ERROR,
                     (void*)(hdr->avp_value->os.data + 
-                        OGS_RAND_LEN + HSS_SQN_LEN),
+                        OGS_RAND_LEN + OGS_SQN_LEN),
                     MAC_S_LEN);
                 ogs_log_print(OGS_LOG_ERROR, "SQN: ");
-                ogs_log_hexdump(OGS_LOG_ERROR, sqn, HSS_SQN_LEN);
+                ogs_log_hexdump(OGS_LOG_ERROR, sqn, OGS_SQN_LEN);
                 result_code = OGS_DIAM_S6A_AUTHENTICATION_DATA_UNAVAILABLE;
                 goto out;
             }
@@ -158,7 +158,7 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
 #endif
 
     milenage_generate(opc, auth_info.amf, auth_info.k,
-        ogs_uint64_to_buffer(auth_info.sqn, HSS_SQN_LEN, sqn), auth_info.rand,
+        ogs_uint64_to_buffer(auth_info.sqn, OGS_SQN_LEN, sqn), auth_info.rand,
         autn, ik, ck, ak, xres, &xres_len);
     hss_auc_kasme(ck, ik, hdr->avp_value->os.data, sqn, ak, kasme);
 
@@ -171,7 +171,7 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
     ret = fd_msg_avp_new(ogs_diam_s6a_rand, 0, &avp_rand);
     ogs_assert(ret == 0);
     val.os.data = auth_info.rand;
-    val.os.len = HSS_KEY_LEN;
+    val.os.len = OGS_KEY_LEN;
     ret = fd_msg_avp_setvalue(avp_rand, &val);
     ogs_assert(ret == 0);
     ret = fd_msg_avp_add(avp_e_utran_vector, MSG_BRW_LAST_CHILD, avp_rand);
