@@ -139,7 +139,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
                     if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(udm_ue->sbi_message_wait.timer);
 
-                        udm_nudr_dr_handle_get(session, message);
+                        udm_nudr_dr_handle_query(session, message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->id, message->res_status);

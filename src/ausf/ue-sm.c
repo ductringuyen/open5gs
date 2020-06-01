@@ -20,6 +20,7 @@
 #include "sbi-path.h"
 #include "nnrf-handler.h"
 #include "nausf-handler.h"
+#include "nudm-handler.h"
 
 void ausf_ue_fsm_init(ausf_ue_t *ausf_ue)
 {
@@ -120,6 +121,67 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
                     "Invalid HTTP method", message->h.method);
         END
         break;
+
+    case AUSF_EVT_SBI_CLIENT:
+        message = e->sbi.message;
+        ogs_assert(message);
+        session = e->sbi.data;
+        ogs_assert(session);
+        ausf_ue = ogs_sbi_session_get_data(session);
+        ogs_assert(ausf_ue);
+
+        SWITCH(message->h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                SWITCH(message->h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
+                    session = e->sbi.data;
+                    ogs_assert(session);
+                    ausf_ue = ogs_sbi_session_get_data(session);
+                    ogs_assert(ausf_ue);
+
+                    SWITCH(message->h.method)
+                    CASE(OGS_SBI_HTTP_METHOD_POST)
+                        if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                            ogs_timer_stop(ausf_ue->sbi_message_wait.timer);
+
+                            ausf_nudm_ueau_handle_get(session, message);
+                        } else {
+                            ogs_error("[%s] HTTP response error [%d]",
+                                    ausf_ue->id, message->res_status);
+                            ogs_sbi_server_send_error(
+                                    session, message->res_status,
+                                    NULL, "HTTP response error", ausf_ue->id);
+                        }
+                        break;
+
+                    DEFAULT
+                        ogs_error("[%s] Invalid HTTP method [%s]",
+                                ausf_ue->id, message->h.method);
+                        ogs_assert_if_reached();
+                    END
+                    break;
+                DEFAULT
+                    ogs_error("Invalid resource name [%s]",
+                            message->h.resource.component[2]);
+                    ogs_assert_if_reached();
+                END
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        message->h.resource.component[1]);
+                ogs_assert_if_reached();
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid API name [%s]", message->h.service.name);
+            ogs_assert_if_reached();
+        END
+        break;
+
 
     default:
         ogs_error("[%s] Unknown event %s", ausf_ue->id, ausf_event_get_name(e));

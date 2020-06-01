@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
  *
  * This file is part of Open5GS.
  *
@@ -17,20 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UDM_NUDR_HANDLER_H
-#define UDM_NUDR_HANDLER_H
+#include "nudm-handler.h"
 
-#include "context.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-bool udm_nudr_dr_handle_query(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg);
-
-#ifdef __cplusplus
+bool ausf_nudm_ueau_handle_get(
+        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+{
+    ogs_fatal("asdflkjasdf");
+    return true;
 }
-#endif
-
-#endif /* UDM_NUDR_HANDLER_H */
