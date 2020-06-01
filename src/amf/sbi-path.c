@@ -138,8 +138,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
     if (nf == false) {
         ogs_warn("[%s] Try to discover AUSF", amf_ue->id);
-        ogs_timer_start(amf_ue->sbi_message_wait.timer,
-                amf_timer_cfg(AMF_TIMER_SBI_MESSAGE_WAIT)->duration);
+        ogs_timer_start(amf_ue->sbi_client_wait.timer,
+                amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
             amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
@@ -164,8 +164,8 @@ void amf_nausf_auth_send_authenticate(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
     ogs_assert(client);
 
-    ogs_timer_start(amf_ue->sbi_message_wait.timer,
-            amf_timer_cfg(AMF_TIMER_SBI_MESSAGE_WAIT)->duration);
+    ogs_timer_start(amf_ue->sbi_client_wait.timer,
+            amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
     request = amf_nausf_auth_build_authenticate(amf_ue);
     ogs_assert(request);

@@ -690,7 +690,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (sbi_message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
-                    ogs_timer_stop(amf_ue->sbi_message_wait.timer);
+                    ogs_timer_stop(amf_ue->sbi_client_wait.timer);
 
                     amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
                     

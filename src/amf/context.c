@@ -1124,8 +1124,8 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 #endif
 
     /* Add All Timers */
-    amf_ue->sbi_message_wait.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_sbi_message_wait_expire, amf_ue);
+    amf_ue->sbi_client_wait.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_sbi_client_wait_expire, amf_ue);
 
     amf_ue->t3413.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_t3413_expire, amf_ue);
@@ -1145,7 +1145,6 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     /* Create FSM */
     e.amf_ue = amf_ue;
-    e.id = 0;
     ogs_fsm_create(&amf_ue->sm, gmm_state_initial, gmm_state_final);
     ogs_fsm_init(&amf_ue->sm, &e);
 
@@ -1196,7 +1195,7 @@ void amf_ue_remove(amf_ue_t *amf_ue)
 
     /* Delete All Timers */
     CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
-    ogs_timer_delete(amf_ue->sbi_message_wait.timer);
+    ogs_timer_delete(amf_ue->sbi_client_wait.timer);
     ogs_timer_delete(amf_ue->t3413.timer);
     ogs_timer_delete(amf_ue->t3422.timer);
     ogs_timer_delete(amf_ue->t3450.timer);

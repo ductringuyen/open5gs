@@ -319,7 +319,7 @@ struct amf_ue_s {
 
 #define CLEAR_AMF_UE_ALL_TIMERS(__aMF) \
     do { \
-        CLEAR_AMF_UE_TIMER((__aMF)->sbi_message_wait); \
+        CLEAR_AMF_UE_TIMER((__aMF)->sbi_client_wait); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3413); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3422); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3450); \
@@ -339,7 +339,7 @@ struct amf_ue_s {
         ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
-    } sbi_message_wait, t3413, t3422, t3450, t3460, t3470;
+    } sbi_client_wait, t3413, t3422, t3450, t3460, t3470;
 
 #define CLEAR_SERVICE_INDICATOR(__aMF) \
     do { \
