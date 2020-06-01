@@ -169,6 +169,7 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_authentication_info_request_t *AuthenticationInfoRequest;
     OpenAPI_authentication_info_result_t *AuthenticationInfoResult;
     OpenAPI_authentication_subscription_t *AuthenticationSubscription;
+    OpenAPI_ue_authentication_ctx_t *UeAuthenticationCtx;
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;

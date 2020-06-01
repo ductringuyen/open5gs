@@ -56,13 +56,20 @@ bool udm_nudr_dr_handle_query(
     ogs_assert(udm_ue);
 
     ogs_assert(recvmsg);
-    AuthenticationSubscription = recvmsg->AuthenticationSubscription;
-    ogs_assert(AuthenticationSubscription);
 
     SWITCH(recvmsg->h.resource.component[2])
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+
+            AuthenticationSubscription = recvmsg->AuthenticationSubscription;
+            if (!AuthenticationSubscription) {
+                ogs_error("[%s] No AuthenticationSubscription", udm_ue->id);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                        recvmsg, "No AuthenticationSubscription", udm_ue->id);
+                return false;
+            }
 
             if (AuthenticationSubscription->authentication_method !=
                     OpenAPI_auth_method_5G_AKA) {
@@ -182,36 +189,29 @@ bool udm_nudr_dr_handle_query(
 
             AuthenticationInfoResult.authentication_vector =
                 &AuthenticationVector;
-            break;
+
+            memset(&sendmsg, 0, sizeof(sendmsg));
+
+            ogs_assert(AuthenticationInfoResult.auth_type);
+            sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
+
+            response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+            ogs_assert(response);
+            ogs_sbi_server_send_response(session, response);
+
+            return true;
 
         DEFAULT
             ogs_error("Invalid resource name [%s]",
                     recvmsg->h.resource.component[3]);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                    recvmsg, "Unknown resource name",
-                    recvmsg->h.resource.component[3]);
-            return false;
         END
         break;
 
     DEFAULT
         ogs_error("Invalid resource name [%s]",
                 recvmsg->h.resource.component[2]);
-        ogs_sbi_server_send_error(session,
-                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                recvmsg, "Unknown resource name",
-                recvmsg->h.resource.component[2]);
     END
 
-    memset(&sendmsg, 0, sizeof(sendmsg));
-
-    ogs_assert(AuthenticationInfoResult.auth_type);
-    sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
-
-    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
-    ogs_assert(response);
-    ogs_sbi_server_send_response(session, response);
-
-    return true;
+    ogs_assert_if_reached();
+    return false;
 }

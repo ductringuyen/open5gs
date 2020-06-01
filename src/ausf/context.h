@@ -21,6 +21,7 @@
 #define AUSF_CONTEXT_H
 
 #include "ogs-app.h"
+#include "ogs-crypt.h"
 #include "ogs-sbi.h"
 
 #include "ausf-sm.h"

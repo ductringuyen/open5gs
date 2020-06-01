@@ -68,6 +68,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->AuthenticationSubscription)
         OpenAPI_authentication_subscription_free(
                 message->AuthenticationSubscription);
+    if (message->UeAuthenticationCtx)
+        OpenAPI_ue_authentication_ctx_free(message->UeAuthenticationCtx);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -341,6 +343,10 @@ static char *build_content(ogs_sbi_message_t *message)
         item = OpenAPI_authentication_subscription_convertToJSON(
                 message->AuthenticationSubscription);
         ogs_assert(item);
+    } else if (message->UeAuthenticationCtx) {
+        item = OpenAPI_ue_authentication_ctx_convertToJSON(
+                message->UeAuthenticationCtx);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -609,11 +615,20 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
             CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
-                    message->AuthenticationInfo =
-                        OpenAPI_authentication_info_parseFromJSON(item);
-                    if (!message->AuthenticationInfo) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
+                    if (message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
+                        message->UeAuthenticationCtx =
+                        OpenAPI_ue_authentication_ctx_parseFromJSON(item);
+                        if (!message->UeAuthenticationCtx) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else {
+                        message->AuthenticationInfo =
+                            OpenAPI_authentication_info_parseFromJSON(item);
+                        if (!message->AuthenticationInfo) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
                     }
                     break;
 
