@@ -77,6 +77,34 @@ static void ogs_kdf_common(uint8_t *key, uint32_t key_size,
     ogs_free(s);
 }
 
+/* TS33.501 Annex A.2 : Kausf derviation function */
+void ogs_kdf_kausf(
+        uint8_t *ck, uint8_t *ik,
+        char *serving_network_name, uint8_t *autn,
+        uint8_t *kausf)
+{
+    kdf_param_t param;
+    uint8_t key[OGS_KEY_LEN*2];
+
+    ogs_assert(ck);
+    ogs_assert(ik);
+    ogs_assert(serving_network_name);
+    ogs_assert(autn);
+    ogs_assert(kausf);
+
+    memcpy(key, ck, OGS_KEY_LEN);
+    memcpy(key+OGS_KEY_LEN, ik, OGS_KEY_LEN);
+
+    memset(param, 0, sizeof(param));
+    param[0].buf = (uint8_t *)serving_network_name;
+    param[0].len = strlen(serving_network_name);
+    param[1].buf = autn;
+    param[1].len = OGS_SQN_XOR_AK_LEN;
+
+    ogs_kdf_common(key, OGS_KEY_LEN*2,
+            FC_FOR_KAUSF_DERIVATION, param, kausf);
+}
+
 /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
 void ogs_kdf_xres_star(
         uint8_t *ck, uint8_t *ik,

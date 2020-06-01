@@ -40,10 +40,11 @@ bool udm_nudr_dr_handle_get(
     uint8_t xres[OGS_MAX_RES_LEN];
     size_t xres_len = 8;
     uint8_t xres_star[OGS_MAX_RES_LEN];
+    uint8_t kausf[OGS_SHA256_DIGEST_SIZE];
 
     char rand_string[OGS_KEYSTRLEN(OGS_RAND_LEN)];
     char autn_string[OGS_KEYSTRLEN(OGS_AUTN_LEN)];
-    char xres_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
+    char kausf_string[OGS_KEYSTRLEN(OGS_SHA256_DIGEST_SIZE)];
     char xres_star_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
 
     OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
@@ -150,6 +151,13 @@ bool udm_nudr_dr_handle_get(
                 xres, &xres_len);
 
             ogs_assert(udm_ue->serving_network_name);
+
+            /* TS33.501 Annex A.2 : Kausf derviation function */
+            ogs_kdf_kausf(
+                    ck, ik,
+                    udm_ue->serving_network_name, autn,
+                    kausf);
+
             /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
             ogs_kdf_xres_star(
                     ck, ik,
@@ -162,15 +170,15 @@ bool udm_nudr_dr_handle_get(
             ogs_hex_to_ascii(rand, sizeof(rand),
                     rand_string, sizeof(rand_string));
             AuthenticationVector.rand = rand_string;
-            ogs_hex_to_ascii(xres, sizeof(xres),
-                    xres_string, sizeof(xres_string));
-            AuthenticationVector.xres_star = xres_string;
-            ogs_hex_to_ascii(autn, sizeof(autn),
-                    autn_string, sizeof(autn_string));
-            AuthenticationVector.autn = autn_string;
             ogs_hex_to_ascii(xres_star, sizeof(xres_star),
                     xres_star_string, sizeof(xres_star_string));
             AuthenticationVector.xres_star = xres_star_string;
+            ogs_hex_to_ascii(autn, sizeof(autn),
+                    autn_string, sizeof(autn_string));
+            AuthenticationVector.autn = autn_string;
+            ogs_hex_to_ascii(kausf, sizeof(kausf),
+                    kausf_string, sizeof(kausf_string));
+            AuthenticationVector.kausf = kausf_string;
 
             AuthenticationInfoResult.authentication_vector =
                 &AuthenticationVector;

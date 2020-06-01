@@ -28,6 +28,12 @@
 extern "C" {
 #endif
 
+/* TS33.501 Annex A.2 : Kausf derviation function */
+void ogs_kdf_kausf(
+        uint8_t *ck, uint8_t *ik,
+        char *serving_network_name, uint8_t *autn,
+        uint8_t *kausf);
+
 /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
 void ogs_kdf_xres_star(
         uint8_t *ck, uint8_t *ik,
