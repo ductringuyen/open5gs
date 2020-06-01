@@ -62,6 +62,9 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->AuthenticationInfoRequest)
         OpenAPI_authentication_info_request_free(
                 message->AuthenticationInfoRequest);
+    if (message->AuthenticationInfoResult)
+        OpenAPI_authentication_info_result_free(
+                message->AuthenticationInfoResult);
     if (message->AuthenticationSubscription)
         OpenAPI_authentication_subscription_free(
                 message->AuthenticationSubscription);
@@ -329,6 +332,10 @@ static char *build_content(ogs_sbi_message_t *message)
     } else if (message->AuthenticationInfoRequest) {
         item = OpenAPI_authentication_info_request_convertToJSON(
                 message->AuthenticationInfoRequest);
+        ogs_assert(item);
+    } else if (message->AuthenticationInfoResult) {
+        item = OpenAPI_authentication_info_result_convertToJSON(
+                message->AuthenticationInfoResult);
         ogs_assert(item);
     } else if (message->AuthenticationSubscription) {
         item = OpenAPI_authentication_subscription_convertToJSON(
@@ -622,12 +629,22 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                 CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
                     SWITCH(message->h.resource.component[2])
                     CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
-                        message->AuthenticationInfoRequest =
+                        if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                            message->AuthenticationInfoResult =
+                            OpenAPI_authentication_info_result_parseFromJSON(
+                                    item);
+                            if (!message->AuthenticationInfoResult) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                        } else {
+                            message->AuthenticationInfoRequest =
                             OpenAPI_authentication_info_request_parseFromJSON(
                                     item);
-                        if (!message->AuthenticationInfoRequest) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
+                            if (!message->AuthenticationInfoRequest) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
                         }
                         break;
                     DEFAULT
