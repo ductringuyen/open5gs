@@ -61,7 +61,7 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
             strlen(OGS_DBI_UE_ID_TYPE_IMSI) + 1;
     } else {
         ogs_error("Unknown ueId Type");
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_FORBIDDEN,
                 recvmsg, "Unknwon ueId Type", NULL);
         return false;
     }

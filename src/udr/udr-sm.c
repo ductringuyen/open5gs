@@ -110,8 +110,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                             message.h.method);
                     ogs_sbi_server_send_error(session,
                             OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                            &message,
-                            "Invalid HTTP method", message.h.method);
+                            &message, "Invalid HTTP method", message.h.method);
                 END
                 break;
 
@@ -321,7 +320,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
 
             ogs_error("[%s] Cannot receive SBI message", udr_ue->id);
             ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                    OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT, NULL,
                     "Cannot receive SBI message", udr_ue->id);
             break;
         default:

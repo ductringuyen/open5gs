@@ -341,8 +341,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             ogs_assert(amf_ue);
 
             ogs_error("[%s] Cannot receive SBI message", amf_ue->id);
-            nas_5gs_send_nas_reject(
-                    amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+            nas_5gs_send_nas_reject_from_sbi(amf_ue,
+                    OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT);
             break;
         default:
             ogs_error("Unknown timer[%s:%d]",

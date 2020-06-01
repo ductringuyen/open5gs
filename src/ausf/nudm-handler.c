@@ -82,7 +82,7 @@ bool ausf_nudm_ueau_handle_get(
                 ogs_error("[%s] Not supported Auth Method [%d]",
                     ausf_ue->id, AuthenticationInfoResult->auth_type);
                 ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
                     recvmsg, "Not supported Auth Method", ausf_ue->id);
                 return false;
             }
@@ -101,7 +101,7 @@ bool ausf_nudm_ueau_handle_get(
                 ogs_error("[%s] Not supported Auth Method [%d]",
                     ausf_ue->id, AuthenticationVector->av_type);
                 ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
                     recvmsg, "Not supported Auth Method", ausf_ue->id);
                 return false;
             }

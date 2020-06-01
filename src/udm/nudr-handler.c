@@ -77,7 +77,7 @@ bool udm_nudr_dr_handle_query(
                         udm_ue->id,
                         AuthenticationSubscription->authentication_method);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_NOT_IMPLEMENTED,
+                        OGS_SBI_HTTP_STATUS_FORBIDDEN,
                         recvmsg, "Not supported Auth Method", udm_ue->id);
                 return false;
 
@@ -116,7 +116,7 @@ bool udm_nudr_dr_handle_query(
                 ogs_error("[%s] No SequenceNumber.sqnScheme [%d]", udm_ue->id,
                     AuthenticationSubscription->sequence_number->sqn_scheme);
                 ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
                     recvmsg, "No SequenceNumber.sqnScheme", udm_ue->id);
                 return false;
             }
