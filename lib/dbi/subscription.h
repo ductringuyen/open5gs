@@ -30,11 +30,6 @@ extern "C" {
 
 #define OGS_DBI_UE_ID_TYPE_IMSI         "imsi"
 
-#define OGS_DBI_KEY_LEN                 16
-#define OGS_DBI_AMF_LEN                 2
-
-#define OGS_DBI_MAX_SQN                 0x7ffffffffff
-
 typedef struct ogs_dbi_subscription_data_s {
 #define OGS_DBI_ACCESS_RESTRICTION_UTRAN_NOT_ALLOWED                (1)
 #define OGS_DBI_ACCESS_RESTRICTION_GERAN_NOT_ALLOWED                (1<<1)
@@ -62,11 +57,11 @@ typedef struct ogs_dbi_subscription_data_s {
 } ogs_dbi_subscription_data_t;
 
 typedef struct ogs_dbi_auth_info_s {
-    uint8_t       k[OGS_DBI_KEY_LEN];
+    uint8_t       k[OGS_KEY_LEN];
     uint8_t       use_opc;
-    uint8_t       opc[OGS_DBI_KEY_LEN];
-    uint8_t       op[OGS_DBI_KEY_LEN];
-    uint8_t       amf[OGS_DBI_AMF_LEN];
+    uint8_t       opc[OGS_KEY_LEN];
+    uint8_t       op[OGS_KEY_LEN];
+    uint8_t       amf[OGS_AMF_LEN];
     uint8_t       rand[OGS_RAND_LEN];
     uint64_t      sqn;
 } ogs_dbi_auth_info_t;

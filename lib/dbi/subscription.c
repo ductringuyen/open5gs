@@ -29,7 +29,7 @@ int ogs_dbi_auth_info(const char *id_type, const char *ue_id,
     const bson_t *document;
     bson_iter_t iter;
     bson_iter_t inner_iter;
-    char buf[OGS_DBI_KEY_LEN];
+    char buf[OGS_KEY_LEN];
     char *utf8 = NULL;
     uint32_t length = 0;
 
@@ -74,17 +74,17 @@ int ogs_dbi_auth_info(const char *id_type, const char *ue_id,
 
         if (!strcmp(key, "k") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
             utf8 = (char *)bson_iter_utf8(&inner_iter, &length);
-            memcpy(auth_info->k, OGS_HEX(utf8, length, buf), OGS_DBI_KEY_LEN);
+            memcpy(auth_info->k, OGS_HEX(utf8, length, buf), OGS_KEY_LEN);
         } else if (!strcmp(key, "opc") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
             utf8 = (char *)bson_iter_utf8(&inner_iter, &length);
             auth_info->use_opc = 1;
-            memcpy(auth_info->opc, OGS_HEX(utf8, length, buf), OGS_DBI_KEY_LEN);
+            memcpy(auth_info->opc, OGS_HEX(utf8, length, buf), OGS_KEY_LEN);
         } else if (!strcmp(key, "op") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
             utf8 = (char *)bson_iter_utf8(&inner_iter, &length);
-            memcpy(auth_info->op, OGS_HEX(utf8, length, buf), OGS_DBI_KEY_LEN);
+            memcpy(auth_info->op, OGS_HEX(utf8, length, buf), OGS_KEY_LEN);
         } else if (!strcmp(key, "amf") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
             utf8 = (char *)bson_iter_utf8(&inner_iter, &length);
-            memcpy(auth_info->amf, OGS_HEX(utf8, length, buf), OGS_DBI_AMF_LEN);
+            memcpy(auth_info->amf, OGS_HEX(utf8, length, buf), OGS_AMF_LEN);
         } else if (!strcmp(key, "rand") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
             utf8 = (char *)bson_iter_utf8(&inner_iter, &length);
             memcpy(auth_info->rand, OGS_HEX(utf8, length, buf), OGS_RAND_LEN);
@@ -141,7 +141,7 @@ int ogs_dbi_increment_sqn(const char *id_type, const char *ue_id)
     bson_t *query = NULL;
     bson_t *update = NULL;
     bson_error_t error;
-    uint64_t max_sqn = OGS_DBI_MAX_SQN;
+    uint64_t max_sqn = OGS_MAX_SQN;
 
     ogs_assert(id_type);
     ogs_assert(ue_id);

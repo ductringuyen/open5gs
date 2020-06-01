@@ -33,10 +33,9 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
     const char *id_type = NULL;
     const char *ue_id = NULL;
 
-    char k[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
-    char opc[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
-    char op[OGS_KEYSTRLEN(OGS_DBI_KEY_LEN)];
-    char amf[OGS_KEYSTRLEN(OGS_DBI_AMF_LEN)];
+    char k[OGS_KEYSTRLEN(OGS_KEY_LEN)];
+    char opc[OGS_KEYSTRLEN(OGS_KEY_LEN)];
+    char amf[OGS_KEYSTRLEN(OGS_AMF_LEN)];
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
 
@@ -88,15 +87,13 @@ bool udr_nudr_dr_handle_query_subscription_data(ogs_sbi_server_t *server,
                     amf, sizeof(amf));
             AuthenticationSubscription.authentication_management_field = amf;
 
-            if (auth_info.use_opc) {
-                ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
-                        opc, sizeof(opc));
-                AuthenticationSubscription.enc_opc_key = opc;
-            } else {
-                ogs_hex_to_ascii(auth_info.op, sizeof(auth_info.op),
-                        op, sizeof(op));
-                ogs_fatal("op = %s", op);
+            if (!auth_info.use_opc) {
+                milenage_opc(auth_info.k, auth_info.op, auth_info.opc);
             }
+
+            ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
+                    opc, sizeof(opc));
+            AuthenticationSubscription.enc_opc_key = opc;
             break;
 
         DEFAULT

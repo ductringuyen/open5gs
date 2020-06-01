@@ -42,10 +42,14 @@
 extern "C" {
 #endif
 
+#define OGS_KEY_LEN                     16
+#define OGS_AMF_LEN                     2
 #define OGS_RAND_LEN                    16
 #define OGS_AUTN_LEN                    16
 #define OGS_AUTS_LEN                    14
 #define OGS_MAX_RES_LEN                 16
+
+#define OGS_MAX_SQN                     0x7ffffffffff
 
 #define OGS_KEYSTRLEN(x)                ((x*2)+1)
 
