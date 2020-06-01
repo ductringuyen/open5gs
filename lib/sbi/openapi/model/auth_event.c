@@ -8,7 +8,7 @@ OpenAPI_auth_event_t *OpenAPI_auth_event_create(
     char *nf_instance_id,
     int success,
     char *time_stamp,
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     char *serving_network_name
     )
 {
@@ -33,7 +33,6 @@ void OpenAPI_auth_event_free(OpenAPI_auth_event_t *auth_event)
     OpenAPI_lnode_t *node;
     ogs_free(auth_event->nf_instance_id);
     ogs_free(auth_event->time_stamp);
-    OpenAPI_auth_type_free(auth_event->auth_type);
     ogs_free(auth_event->serving_network_name);
     ogs_free(auth_event);
 }
@@ -79,13 +78,7 @@ cJSON *OpenAPI_auth_event_convertToJSON(OpenAPI_auth_event_t *auth_event)
         ogs_error("OpenAPI_auth_event_convertToJSON() failed [auth_type]");
         goto end;
     }
-    cJSON *auth_type_local_JSON = OpenAPI_auth_type_convertToJSON(auth_event->auth_type);
-    if (auth_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_auth_event_convertToJSON() failed [auth_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "authType", auth_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "authType", OpenAPI_auth_type_ToString(auth_event->auth_type)) == NULL) {
         ogs_error("OpenAPI_auth_event_convertToJSON() failed [auth_type]");
         goto end;
     }
@@ -148,9 +141,13 @@ OpenAPI_auth_event_t *OpenAPI_auth_event_parseFromJSON(cJSON *auth_eventJSON)
         goto end;
     }
 
-    OpenAPI_auth_type_t *auth_type_local_nonprim = NULL;
+    OpenAPI_auth_type_e auth_typeVariable;
 
-    auth_type_local_nonprim = OpenAPI_auth_type_parseFromJSON(auth_type);
+    if (!cJSON_IsString(auth_type)) {
+        ogs_error("OpenAPI_auth_event_parseFromJSON() failed [auth_type]");
+        goto end;
+    }
+    auth_typeVariable = OpenAPI_auth_type_FromString(auth_type->valuestring);
 
     cJSON *serving_network_name = cJSON_GetObjectItemCaseSensitive(auth_eventJSON, "servingNetworkName");
     if (!serving_network_name) {
@@ -168,7 +165,7 @@ OpenAPI_auth_event_t *OpenAPI_auth_event_parseFromJSON(cJSON *auth_eventJSON)
         ogs_strdup(nf_instance_id->valuestring),
         success->valueint,
         ogs_strdup(time_stamp->valuestring),
-        auth_type_local_nonprim,
+        auth_typeVariable,
         ogs_strdup(serving_network_name->valuestring)
         );
 

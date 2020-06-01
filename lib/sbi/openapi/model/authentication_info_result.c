@@ -5,7 +5,7 @@
 #include "authentication_info_result.h"
 
 OpenAPI_authentication_info_result_t *OpenAPI_authentication_info_result_create(
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     char *supported_features,
     OpenAPI_authentication_vector_t *authentication_vector,
     char *supi
@@ -29,7 +29,6 @@ void OpenAPI_authentication_info_result_free(OpenAPI_authentication_info_result_
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_auth_type_free(authentication_info_result->auth_type);
     ogs_free(authentication_info_result->supported_features);
     OpenAPI_authentication_vector_free(authentication_info_result->authentication_vector);
     ogs_free(authentication_info_result->supi);
@@ -50,13 +49,7 @@ cJSON *OpenAPI_authentication_info_result_convertToJSON(OpenAPI_authentication_i
         ogs_error("OpenAPI_authentication_info_result_convertToJSON() failed [auth_type]");
         goto end;
     }
-    cJSON *auth_type_local_JSON = OpenAPI_auth_type_convertToJSON(authentication_info_result->auth_type);
-    if (auth_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_authentication_info_result_convertToJSON() failed [auth_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "authType", auth_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "authType", OpenAPI_auth_type_ToString(authentication_info_result->auth_type)) == NULL) {
         ogs_error("OpenAPI_authentication_info_result_convertToJSON() failed [auth_type]");
         goto end;
     }
@@ -101,9 +94,13 @@ OpenAPI_authentication_info_result_t *OpenAPI_authentication_info_result_parseFr
         goto end;
     }
 
-    OpenAPI_auth_type_t *auth_type_local_nonprim = NULL;
+    OpenAPI_auth_type_e auth_typeVariable;
 
-    auth_type_local_nonprim = OpenAPI_auth_type_parseFromJSON(auth_type);
+    if (!cJSON_IsString(auth_type)) {
+        ogs_error("OpenAPI_authentication_info_result_parseFromJSON() failed [auth_type]");
+        goto end;
+    }
+    auth_typeVariable = OpenAPI_auth_type_FromString(auth_type->valuestring);
 
     cJSON *supported_features = cJSON_GetObjectItemCaseSensitive(authentication_info_resultJSON, "supportedFeatures");
 
@@ -131,7 +128,7 @@ OpenAPI_authentication_info_result_t *OpenAPI_authentication_info_result_parseFr
     }
 
     authentication_info_result_local_var = OpenAPI_authentication_info_result_create (
-        auth_type_local_nonprim,
+        auth_typeVariable,
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
         authentication_vector ? authentication_vector_local_nonprim : NULL,
         supi ? ogs_strdup(supi->valuestring) : NULL

@@ -5,7 +5,7 @@
 #include "ue_authentication_ctx.h"
 
 OpenAPI_ue_authentication_ctx_t *OpenAPI_ue_authentication_ctx_create(
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     OpenAPI_av5g_aka_t *_5g_auth_data,
     OpenAPI_list_t* _links,
     char *serving_network_name
@@ -29,7 +29,6 @@ void OpenAPI_ue_authentication_ctx_free(OpenAPI_ue_authentication_ctx_t *ue_auth
         return;
     }
     OpenAPI_lnode_t *node;
-    OpenAPI_auth_type_free(ue_authentication_ctx->auth_type);
     OpenAPI_av5g_aka_free(ue_authentication_ctx->_5g_auth_data);
     OpenAPI_list_for_each(ue_authentication_ctx->_links, node) {
         OpenAPI_map_t *localKeyValue = (OpenAPI_map_t*)node->data;
@@ -55,13 +54,7 @@ cJSON *OpenAPI_ue_authentication_ctx_convertToJSON(OpenAPI_ue_authentication_ctx
         ogs_error("OpenAPI_ue_authentication_ctx_convertToJSON() failed [auth_type]");
         goto end;
     }
-    cJSON *auth_type_local_JSON = OpenAPI_auth_type_convertToJSON(ue_authentication_ctx->auth_type);
-    if (auth_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_ue_authentication_ctx_convertToJSON() failed [auth_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "authType", auth_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "authType", OpenAPI_auth_type_ToString(ue_authentication_ctx->auth_type)) == NULL) {
         ogs_error("OpenAPI_ue_authentication_ctx_convertToJSON() failed [auth_type]");
         goto end;
     }
@@ -124,9 +117,13 @@ OpenAPI_ue_authentication_ctx_t *OpenAPI_ue_authentication_ctx_parseFromJSON(cJS
         goto end;
     }
 
-    OpenAPI_auth_type_t *auth_type_local_nonprim = NULL;
+    OpenAPI_auth_type_e auth_typeVariable;
 
-    auth_type_local_nonprim = OpenAPI_auth_type_parseFromJSON(auth_type);
+    if (!cJSON_IsString(auth_type)) {
+        ogs_error("OpenAPI_ue_authentication_ctx_parseFromJSON() failed [auth_type]");
+        goto end;
+    }
+    auth_typeVariable = OpenAPI_auth_type_FromString(auth_type->valuestring);
 
     cJSON *_5g_auth_data = cJSON_GetObjectItemCaseSensitive(ue_authentication_ctxJSON, "5gAuthData");
     if (!_5g_auth_data) {
@@ -174,7 +171,7 @@ OpenAPI_ue_authentication_ctx_t *OpenAPI_ue_authentication_ctx_parseFromJSON(cJS
     }
 
     ue_authentication_ctx_local_var = OpenAPI_ue_authentication_ctx_create (
-        auth_type_local_nonprim,
+        auth_typeVariable,
         _5g_auth_data_local_nonprim,
         _linksList,
         serving_network_name ? ogs_strdup(serving_network_name->valuestring) : NULL

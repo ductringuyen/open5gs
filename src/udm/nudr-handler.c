@@ -24,64 +24,88 @@ bool udm_nudr_dr_handle_get(
 {
     udm_ue_t *udm_ue = NULL;
 
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_response_t *response = NULL;
+
     ogs_assert(session);
     ogs_assert(recvmsg);
     udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
 
+    OpenAPI_authentication_info_result_t AuthenticationInfoResult;
+
+    SWITCH(recvmsg->h.resource.component[2])
+    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+        SWITCH(recvmsg->h.resource.component[3])
+        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+
+            ogs_fatal("asdfkljasdfasdF");
 #if 0
-    OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
-    char *serving_network_name = NULL;
-    char *ausf_instance_id = NULL;
+            rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
+            if (rv != OGS_OK) {
+                ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                        recvmsg, "Unknwon ueId Type", ue_id);
+                return false;
+            }
 
-    udm_ue_t *udm_ue = NULL;
+            AuthenticationSubscription.authentication_method =
+                OpenAPI_auth_method_5G_AKA;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
-    ogs_assert(udm_ue);
+            ogs_hex_to_ascii(auth_info.k, sizeof(auth_info.k), k, sizeof(k));
+            AuthenticationSubscription.enc_permanent_key = k;
 
-    ogs_assert(server);
-    ogs_assert(recvmsg);
+            ogs_hex_to_ascii(auth_info.amf, sizeof(auth_info.amf),
+                    amf, sizeof(amf));
+            AuthenticationSubscription.authentication_management_field = amf;
 
-    AuthenticationInfoRequest = recvmsg->AuthenticationInfoRequest;
-    if (!AuthenticationInfoRequest) {
-        ogs_error("[%s] No AuthenticationInfoRequest", udm_ue->id);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfoRequest", udm_ue->id);
-        return false;
-    }
+            if (!auth_info.use_opc) {
+                milenage_opc(auth_info.k, auth_info.op, auth_info.opc);
+            }
 
-    serving_network_name = AuthenticationInfoRequest->serving_network_name;
-    if (!AuthenticationInfoRequest) {
-        ogs_error("[%s] No servingNetworkName", udm_ue->id);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No servingNetworkName", udm_ue->id);
-        return false;
-    }
+            ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
+                    opc, sizeof(opc));
+            AuthenticationSubscription.enc_opc_key = opc;
 
-    ausf_instance_id = AuthenticationInfoRequest->ausf_instance_id;
-    if (!AuthenticationInfoRequest) {
-        ogs_error("[%s] No ausfInstanceId", udm_ue->id);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No ausfInstanceId", udm_ue->id);
-        return false;
-    }
+            ogs_uint64_to_buffer(auth_info.sqn, OGS_SQN_LEN, sqn_buf);
+            ogs_hex_to_ascii(sqn_buf, sizeof(sqn_buf), sqn, sizeof(sqn));
 
-    udm_ue->ue_id = ogs_sbi_ueid_from_suci(udm_ue->id);
-    if (!udm_ue->ue_id) {
-        ogs_error("[%s] Invalid SUCI", udm_ue->id);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "Invalid SUCI", udm_ue->id);
-        return false;
-    }
-
-    udm_ue->serving_network_name = ogs_strdup(serving_network_name);
-    ogs_assert(udm_ue->serving_network_name);
-    udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
-    ogs_assert(udm_ue->ausf_instance_id);
-
-    udm_nudr_dr_discover_and_send_query(session);
+            memset(&SequenceNumber, 0, sizeof(SequenceNumber));
+            SequenceNumber.sqn_scheme = OpenAPI_sqn_scheme_NON_TIME_BASED;
+            SequenceNumber.sqn = sqn;
+            AuthenticationSubscription.sequence_number = &SequenceNumber;
 #endif
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    recvmsg->h.resource.component[3]);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                    recvmsg, "Unknown resource name",
+                    recvmsg->h.resource.component[3]);
+            return false;
+        END
+        break;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[2]);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                recvmsg, "Unknown resource name",
+                recvmsg->h.resource.component[2]);
+    END
+
+    memset(&sendmsg, 0, sizeof(sendmsg));
+
+    ogs_assert(AuthenticationInfoResult.auth_type);
+    sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
+
+    response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+    ogs_assert(response);
+    ogs_sbi_server_send_response(session, response);
 
     return true;
 }

@@ -21,14 +21,14 @@ extern "C" {
 
 typedef struct OpenAPI_authentication_info_result_s OpenAPI_authentication_info_result_t;
 typedef struct OpenAPI_authentication_info_result_s {
-    struct OpenAPI_auth_type_s *auth_type;
+    OpenAPI_auth_type_e auth_type;
     char *supported_features;
     struct OpenAPI_authentication_vector_s *authentication_vector;
     char *supi;
 } OpenAPI_authentication_info_result_t;
 
 OpenAPI_authentication_info_result_t *OpenAPI_authentication_info_result_create(
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     char *supported_features,
     OpenAPI_authentication_vector_t *authentication_vector,
     char *supi

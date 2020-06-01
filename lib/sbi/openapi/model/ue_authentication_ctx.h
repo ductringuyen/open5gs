@@ -22,14 +22,14 @@ extern "C" {
 
 typedef struct OpenAPI_ue_authentication_ctx_s OpenAPI_ue_authentication_ctx_t;
 typedef struct OpenAPI_ue_authentication_ctx_s {
-    struct OpenAPI_auth_type_s *auth_type;
+    OpenAPI_auth_type_e auth_type;
     struct OpenAPI_av5g_aka_s *_5g_auth_data;
     OpenAPI_list_t* _links;
     char *serving_network_name;
 } OpenAPI_ue_authentication_ctx_t;
 
 OpenAPI_ue_authentication_ctx_t *OpenAPI_ue_authentication_ctx_create(
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     OpenAPI_av5g_aka_t *_5g_auth_data,
     OpenAPI_list_t* _links,
     char *serving_network_name

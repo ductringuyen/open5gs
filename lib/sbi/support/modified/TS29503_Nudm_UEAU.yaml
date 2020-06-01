@@ -537,13 +537,13 @@ components:
 # ENUMS:
 
     AuthType:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
           - 5G_AKA
           - EAP_AKA_PRIME
           - EAP_TLS
-        - type: string
+          type: string
 
     AvType:
 #      anyOf:

@@ -37,6 +37,7 @@
 #include "model/search_result.h"
 #include "model/authentication_info.h"
 #include "model/authentication_info_request.h"
+#include "model/authentication_info_result.h"
 #include "model/authentication_subscription.h"
 
 #include "custom/links.h"

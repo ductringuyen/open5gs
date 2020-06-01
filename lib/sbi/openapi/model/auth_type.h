@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct OpenAPI_auth_type_s OpenAPI_auth_type_t;
-typedef struct OpenAPI_auth_type_s {
-} OpenAPI_auth_type_t;
+typedef enum { OpenAPI_auth_type_NULL = 0, OpenAPI_auth_type_5G_AKA, OpenAPI_auth_type_EAP_AKA_PRIME, OpenAPI_auth_type_EAP_TLS } OpenAPI_auth_type_e;
 
-OpenAPI_auth_type_t *OpenAPI_auth_type_create(
-    );
-void OpenAPI_auth_type_free(OpenAPI_auth_type_t *auth_type);
-OpenAPI_auth_type_t *OpenAPI_auth_type_parseFromJSON(cJSON *auth_typeJSON);
-cJSON *OpenAPI_auth_type_convertToJSON(OpenAPI_auth_type_t *auth_type);
+char* OpenAPI_auth_type_ToString(OpenAPI_auth_type_e auth_type);
+
+OpenAPI_auth_type_e OpenAPI_auth_type_FromString(char* auth_type);
 
 #ifdef __cplusplus
 }

@@ -23,7 +23,7 @@ typedef struct OpenAPI_auth_event_s {
     char *nf_instance_id;
     int success;
     char *time_stamp;
-    struct OpenAPI_auth_type_s *auth_type;
+    OpenAPI_auth_type_e auth_type;
     char *serving_network_name;
 } OpenAPI_auth_event_t;
 
@@ -31,7 +31,7 @@ OpenAPI_auth_event_t *OpenAPI_auth_event_create(
     char *nf_instance_id,
     int success,
     char *time_stamp,
-    OpenAPI_auth_type_t *auth_type,
+    OpenAPI_auth_type_e auth_type,
     char *serving_network_name
     );
 void OpenAPI_auth_event_free(OpenAPI_auth_event_t *auth_event);
