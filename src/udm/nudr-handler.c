@@ -27,18 +27,22 @@ bool udm_nudr_dr_handle_get(
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
 
-    const char *rand_string = "4d45b0eeb8386b629f136968837a7b0b"; /* For test */
-    char randbuf[OGS_RAND_LEN];
-    char autnbuf[OGS_AUTN_LEN];
-    char ikbuf[OGS_KEY_LEN];
-    char ckbuf[OGS_KEY_LEN];
-    char akbuf[OGS_AK_LEN];
-    char xresbuf[OGS_MAX_RES_LEN];
+    const char *tmp = "4d45b0eeb8386b629f136968837a7b0b"; /* For test */
+    uint8_t k[OGS_KEY_LEN];
+    uint8_t opc[OGS_KEY_LEN];
+    uint8_t amf[OGS_AMF_LEN];
+    uint8_t sqn[OGS_SQN_LEN];
+    uint8_t rand[OGS_RAND_LEN];
+    uint8_t autn[OGS_AUTN_LEN];
+    uint8_t ik[OGS_KEY_LEN];
+    uint8_t ck[OGS_KEY_LEN];
+    uint8_t ak[OGS_AK_LEN];
+    uint8_t xres[OGS_MAX_RES_LEN];
     size_t xres_len = 8;
 
-    char rand[OGS_KEYSTRLEN(OGS_RAND_LEN)];
-    char autn[OGS_KEYSTRLEN(OGS_AUTN_LEN)];
-    char xres[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
+    char rand_string[OGS_KEYSTRLEN(OGS_RAND_LEN)];
+    char autn_string[OGS_KEYSTRLEN(OGS_AUTN_LEN)];
+    char xres_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
 
     OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
     OpenAPI_authentication_info_result_t AuthenticationInfoResult;
@@ -120,27 +124,41 @@ bool udm_nudr_dr_handle_get(
             AuthenticationInfoResult.auth_type = OpenAPI_auth_type_5G_AKA;
 
             /* FIX IT! TODO! NEW! */
-            ogs_random(randbuf, OGS_RAND_LEN);
-            OGS_HEX(rand_string, strlen(rand_string), randbuf);
-            milenage_generate(
-                (uint8_t *)AuthenticationSubscription->enc_opc_key,
-                (uint8_t *)AuthenticationSubscription->
-                                authentication_management_field,
-                (uint8_t *)AuthenticationSubscription->enc_permanent_key,
-                (uint8_t *)AuthenticationSubscription->sequence_number->sqn,
-                (uint8_t *)randbuf, (uint8_t *)autnbuf,
-                (uint8_t *)ikbuf, (uint8_t *)ckbuf, (uint8_t *)akbuf,
-                (uint8_t *)xresbuf, &xres_len);
+            ogs_random(rand, OGS_RAND_LEN);
+            OGS_HEX(tmp, strlen(tmp), rand);
+
+            ogs_ascii_to_hex(
+                AuthenticationSubscription->enc_opc_key,
+                strlen(AuthenticationSubscription->enc_opc_key),
+                opc, sizeof(opc));
+            ogs_ascii_to_hex(
+                AuthenticationSubscription->authentication_management_field,
+                strlen(AuthenticationSubscription->
+                    authentication_management_field),
+                amf, sizeof(amf));
+            ogs_ascii_to_hex(
+                AuthenticationSubscription->enc_permanent_key,
+                strlen(AuthenticationSubscription->enc_permanent_key),
+                k, sizeof(k));
+            ogs_ascii_to_hex(
+                AuthenticationSubscription->sequence_number->sqn,
+                strlen(AuthenticationSubscription->sequence_number->sqn),
+                sqn, sizeof(sqn));
+            milenage_generate(opc, amf, k, sqn, rand, autn, ik, ck, ak,
+                xres, &xres_len);
 
             memset(&AuthenticationVector, 0, sizeof(AuthenticationVector));
             AuthenticationVector.av_type = OpenAPI_av_type_5G_HE_AKA;
 
-            ogs_hex_to_ascii(randbuf, sizeof(randbuf), rand, sizeof(rand));
-            AuthenticationVector.rand = rand;
-            ogs_hex_to_ascii(xresbuf, sizeof(xresbuf), xres, sizeof(xres));
-            AuthenticationVector.xres_star = xres;
-            ogs_hex_to_ascii(autnbuf, sizeof(autnbuf), autn, sizeof(autn));
-            AuthenticationVector.autn = autn;
+            ogs_hex_to_ascii(rand, sizeof(rand),
+                    rand_string, sizeof(rand_string));
+            AuthenticationVector.rand = rand_string;
+            ogs_hex_to_ascii(xres, sizeof(xres),
+                    xres_string, sizeof(xres_string));
+            AuthenticationVector.xres_star = xres_string;
+            ogs_hex_to_ascii(autn, sizeof(autn),
+                    autn_string, sizeof(autn_string));
+            AuthenticationVector.autn = autn_string;
 
             AuthenticationInfoResult.authentication_vector =
                 &AuthenticationVector;
