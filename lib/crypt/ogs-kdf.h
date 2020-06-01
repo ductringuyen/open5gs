@@ -28,7 +28,12 @@
 extern "C" {
 #endif
 
-void ogs_kdf_xres_star(const uint8_t *xres, uint8_t *xres_star);
+/* KDF function : TS.33220 cluase B.2.0 */
+
+void ogs_kdf_xres_star(
+        char *serving_network_name, uint8_t *rand,
+        uint8_t *xres, size_t xres_len,
+        uint8_t *xres_star);
 
 #ifdef __cplusplus
 }

@@ -19,6 +19,34 @@
 
 #include "ogs-crypt.h"
 
-void ogs_kdf_xres_star(const uint8_t *xres, uint8_t *xres_star)
+void ogs_kdf_xres_star(
+        char *serving_network_name, uint8_t *rand,
+        uint8_t *xres, size_t xres_len,
+        uint8_t *xres_star)
 {
+#if 0
+    uint8_t *s = ogs_calloc(1 +
+            strlen(serving_network_name) + 2 +
+            OGS_RAND_LEN + 2 + xres_len + 2);
+    uint16_t len;
+    uint8_t out[32];
+
+    s[0] = 0x6b; /* FC Value */
+
+    strcpy(s+1, serving_network_name);
+    len = strlen(serving_network_name);
+    memcpy(s+1+len, &
+    s[1] = algorithm_type_distinguishers;
+    s[2] = 0x00;
+    s[3] = 0x01;
+
+    s[4] = algorithm_identity;
+    s[5] = 0x00;
+    s[6] = 0x01;
+
+    ogs_hmac_sha256(kasme, 32, s, 7, out, 32);
+    memcpy(knas, out+16, 16);
+
+    ogs_free(s);
+#endif
 }
