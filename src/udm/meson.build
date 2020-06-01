@@ -39,12 +39,14 @@ libudm = static_library('udm',
     sources : libudm_sources,
     link_with : libipfw,
     dependencies : [libapp_dep,
+                    libcrypt_dep,
                     libsbi_dep],
     install : false)
 
 libudm_dep = declare_dependency(
     link_with : libudm,
     dependencies : [libapp_dep,
+                    libcrypt_dep,
                     libsbi_dep])
 
 udm_sources = files('''

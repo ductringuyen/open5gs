@@ -301,10 +301,10 @@ components:
       required:
         - avType
         - rand
-        - xres
+#        - xres
         - autn
-        - ckPrime
-        - ikPrime
+#        - ckPrime
+#        - ikPrime
       properties:
         avType:
           $ref: '#/components/schemas/AvType'
@@ -324,9 +324,9 @@ components:
       required:
         - avType
         - rand
-        - xresStar
+#        - xresStar
         - autn
-        - kausf
+#        - kausf
       properties:
         avType:
           $ref: '#/components/schemas/AvType'

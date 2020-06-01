@@ -21,6 +21,7 @@
 #define UDM_CONTEXT_H
 
 #include "ogs-app.h"
+#include "ogs-crypt.h"
 #include "ogs-sbi.h"
 
 #include "udm-sm.h"
