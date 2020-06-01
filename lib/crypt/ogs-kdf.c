@@ -108,5 +108,6 @@ void ogs_kdf_xres_star(
 
     ogs_kdf_common(key, OGS_KEY_LEN*2,
             FC_FOR_RES_STAR_XRES_STAR_DERIVATION, param, output);
-    ogs_log_hexdump(OGS_LOG_FATAL, output, OGS_SHA256_DIGEST_SIZE);
+
+    memcpy(xres_star, output+OGS_KEY_LEN, OGS_KEY_LEN);
 }

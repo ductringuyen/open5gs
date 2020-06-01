@@ -44,6 +44,7 @@ bool udm_nudr_dr_handle_get(
     char rand_string[OGS_KEYSTRLEN(OGS_RAND_LEN)];
     char autn_string[OGS_KEYSTRLEN(OGS_AUTN_LEN)];
     char xres_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
+    char xres_star_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
 
     OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
     OpenAPI_authentication_info_result_t AuthenticationInfoResult;
@@ -150,9 +151,10 @@ bool udm_nudr_dr_handle_get(
 
             ogs_assert(udm_ue->serving_network_name);
             /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
-            ogs_kdf_xres_star(ck, ik,
-                    udm_ue->serving_network_name,
-                    rand, xres, xres_len, xres_star);
+            ogs_kdf_xres_star(
+                    ck, ik,
+                    udm_ue->serving_network_name, rand, xres, xres_len,
+                    xres_star);
 
             memset(&AuthenticationVector, 0, sizeof(AuthenticationVector));
             AuthenticationVector.av_type = OpenAPI_av_type_5G_HE_AKA;
@@ -166,6 +168,9 @@ bool udm_nudr_dr_handle_get(
             ogs_hex_to_ascii(autn, sizeof(autn),
                     autn_string, sizeof(autn_string));
             AuthenticationVector.autn = autn_string;
+            ogs_hex_to_ascii(xres_star, sizeof(xres_star),
+                    xres_star_string, sizeof(xres_star_string));
+            AuthenticationVector.xres_star = xres_star_string;
 
             AuthenticationInfoResult.authentication_vector =
                 &AuthenticationVector;
