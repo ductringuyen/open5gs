@@ -193,6 +193,7 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
 int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_authentication_response_t *authentication_response)
 {
+    int rv;
     ogs_nas_authentication_response_parameter_t
         *authentication_response_parameter = NULL;
     uint8_t hxres_star[OGS_MAX_RES_LEN];
@@ -210,7 +211,6 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     if (authentication_response_parameter->length != OGS_MAX_RES_LEN) {
         ogs_error("[%s] Invalid length [%d]",
                 amf_ue->id, authentication_response_parameter->length);
-        nas_5gs_send_authentication_reject(amf_ue);
         return OGS_ERROR;
     }
 
@@ -224,14 +224,17 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         ogs_log_hexdump(OGS_LOG_WARN, hxres_star, OGS_MAX_RES_LEN);
         ogs_log_hexdump(OGS_LOG_WARN,
                 amf_ue->hxres_star, OGS_MAX_RES_LEN);
-        nas_5gs_send_authentication_reject(amf_ue);
         return OGS_ERROR;
     }
 
     memcpy(amf_ue->xres_star, authentication_response_parameter->res,
             authentication_response_parameter->length);
 
-    amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+    rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+    if (rv == OGS_ERROR) {
+        ogs_error("[%s] Cannot send SBI message", amf_ue->id);
+        return OGS_ERROR;
+    }
 
     return OGS_OK;
 }

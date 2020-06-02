@@ -220,6 +220,7 @@ bool amf_nnrf_handle_nf_status_notify(
 
 void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 {
+    int rv;
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
     OpenAPI_search_result_t *SearchResult = NULL;
@@ -306,7 +307,12 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
             nas_5gs_send_nas_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         } else {
-            amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
+            rv = amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
+            if (rv != OGS_OK) {
+                ogs_error("[%s] Cannot send SBI message", amf_ue->id);
+                nas_5gs_send_nas_reject(
+                        amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+            }
         }
     } else {
         ogs_fatal("Should implement other case");

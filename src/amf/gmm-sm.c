@@ -357,9 +357,9 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 nas_5gs_send_attach_reject(amf_ue,
                     EMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-                OGS_FSM_TRAN(s, &emm_state_exception);
+                OGS_FSM_TRAN(s, &gmm_state_exception);
             } else {
-                OGS_FSM_TRAN(s, &emm_state_initial_context_setup);
+                OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
             }
 #endif
         } else {
@@ -370,7 +370,14 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 amf_sbi_send_authenticate(amf_ue);
             }
 #else
-            amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            if (rv == OGS_ERROR) {
+                ogs_error("[%s] Cannot send SBI message", amf_ue->id);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(s, &gmm_state_exception);
+                break;
+            }
 #endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
         }
@@ -531,6 +538,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                     amf_ue, &message->gmm.authentication_response);
 
             if (rv != OGS_OK) {
+                nas_5gs_send_authentication_reject(amf_ue);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             }
 #if 0 /* FIX IT */
