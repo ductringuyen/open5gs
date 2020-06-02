@@ -43,7 +43,7 @@ static amf_timer_cfg_t g_amf_timer_cfg[MAX_NUM_OF_AMF_TIMER] = {
     /* AUTHENTICATION REQUEST sent
      * SECURITY MODE COMMAND sent */
     [AMF_TIMER_T3560] =
-        { .max_count = 2, .duration = ogs_time_from_sec(6) },
+        { .max_count = 4, .duration = ogs_time_from_sec(6) },
 
     /* IDENTITY REQUEST sent */
     [AMF_TIMER_T3570] =
