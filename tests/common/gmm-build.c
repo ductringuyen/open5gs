@@ -19,7 +19,7 @@
 
 #include "test-common.h"
 
-ogs_pkbuf_t *testgmm_build_registration_request(
+ogs_pkbuf_t *testgmm_build_registration_request(test_ue_t *test_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
     ogs_nas_5gs_message_t message;
@@ -33,6 +33,9 @@ ogs_pkbuf_t *testgmm_build_registration_request(
     ogs_nas_ue_security_capability_t *ue_security_capability =
             &registration_request->ue_security_capability;
 
+    ogs_assert(test_ue);
+    ogs_assert(mobile_identity);
+
     memset(&message, 0, sizeof(message));
     message.gmm.h.extended_protocol_discriminator =
             OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
@@ -42,7 +45,6 @@ ogs_pkbuf_t *testgmm_build_registration_request(
     registration_type->follow_on_request = 1;
     registration_type->value = 1;
 
-    ogs_assert(mobile_identity);
     registration_request->mobile_identity.length = mobile_identity->length;
     registration_request->mobile_identity.buffer = mobile_identity->buffer;
 
@@ -64,13 +66,25 @@ ogs_pkbuf_t *testgmm_build_registration_request(
     return ogs_nas_5gs_plain_encode(&message);
 }
 
-ogs_pkbuf_t *testgmm_build_authentication_response(void)
+ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
+        uint8_t *k, uint8_t *opc)
 {
     ogs_nas_5gs_message_t message;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_nas_5gs_authentication_response_t *authentication_response =
             &message.gmm.authentication_response;
     ogs_nas_authentication_response_parameter_t *authentication_response_parameter = &authentication_response->authentication_response_parameter;
+
+    uint8_t ik[OGS_KEY_LEN];
+    uint8_t ck[OGS_KEY_LEN];
+    uint8_t ak[OGS_AK_LEN];
+    uint8_t res[OGS_MAX_RES_LEN];
+    uint8_t xres_star[OGS_MAX_RES_LEN];
+    char *serving_network_name;
+
+    ogs_assert(test_ue);
+    ogs_assert(k);
+    ogs_assert(opc);
 
     memset(&message, 0, sizeof(message));
     message.gmm.h.extended_protocol_discriminator =
@@ -80,7 +94,15 @@ ogs_pkbuf_t *testgmm_build_authentication_response(void)
     authentication_response->presencemask |=
         OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
 
+    milenage_f2345(opc, k, test_ue->rand, res, ck, ik, ak, NULL);
+    serving_network_name = ogs_plmn_id_string(&test_self()->tai.plmn_id);
+    ogs_kdf_xres_star(
+            ck, ik,
+            serving_network_name, test_ue->rand, res, 8,
+            authentication_response_parameter->res);
+
     authentication_response_parameter->length = 16;
+    ogs_free(serving_network_name);
 
     return ogs_nas_5gs_plain_encode(&message);
 }

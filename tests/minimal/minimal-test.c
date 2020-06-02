@@ -64,6 +64,11 @@ static void test1_func(abts_case *tc, void *data)
         "000b403b00000300 000005c00100009d 000800020001001a 002524271f9b491e"
         "030761430f10004f 00700065006e0035 0047005347812072 11240563490100";
 
+    const char *_k_string = "5122250214c33e723a5dd523fc145fc0";
+    uint8_t k[OGS_KEY_LEN];
+    const char *_opc_string = "981d464c7c52eb6e5036234984ad0bcf";
+    uint8_t opc[OGS_KEY_LEN];
+
     mongoc_collection_t *collection = NULL;
     bson_t *doc = NULL;
     int64_t count = 0;
@@ -155,6 +160,10 @@ static void test1_func(abts_case *tc, void *data)
     } while (count == 0);
     bson_destroy(doc);
 
+    /* Clear Test UE Context */
+    memset(&test_ue, 0, sizeof(test_ue));
+
+    /* Setup Mobile Identity */
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
     mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
     mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
@@ -175,15 +184,12 @@ static void test1_func(abts_case *tc, void *data)
     mobile_identity.buffer = &mobile_identity_imsi;
 
     /* Send Registration Request */
-    gmmbuf = testgmm_build_registration_request(&mobile_identity);
+    gmmbuf = testgmm_build_registration_request(&test_ue, &mobile_identity);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_initial_ue_message(gmmbuf);
     ABTS_PTR_NOTNULL(tc, sendbuf);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
-
-    /* Clear Test UE Context */
-    memset(&test_ue, 0, sizeof(test_ue));
 
     /* Receive Authentication Request */
     recvbuf = testgnb_ngap_read(ngap);
@@ -196,7 +202,9 @@ static void test1_func(abts_case *tc, void *data)
 #endif
 
     /* Send Authentication Response */
-    gmmbuf = testgmm_build_authentication_response();
+    gmmbuf = testgmm_build_authentication_response(
+            &test_ue, OGS_HEX(_k_string, strlen(_k_string), k),
+            OGS_HEX(_opc_string, strlen(_opc_string), opc));
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
     ABTS_PTR_NOTNULL(tc, sendbuf);

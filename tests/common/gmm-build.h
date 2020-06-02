@@ -24,9 +24,10 @@
 extern "C" {
 #endif
 
-ogs_pkbuf_t *testgmm_build_registration_request(
+ogs_pkbuf_t *testgmm_build_registration_request(test_ue_t *test_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity);
-ogs_pkbuf_t *testgmm_build_authentication_response(void);
+ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
+        uint8_t *k, uint8_t *opc);
 
 #ifdef __cplusplus
 }
