@@ -212,6 +212,11 @@ ausf_auth_t *ausf_auth_add(ogs_sbi_session_t *session, ausf_ue_t *ausf_ue)
     auth->id = ogs_strdup(id);
     ogs_assert(auth->id);
 
+    auth->sbi_server_wait.timer = ogs_timer_add(
+            self.timer_mgr, ausf_timer_sbi_auth_server_wait_expire, auth);
+    auth->sbi_client_wait.timer = ogs_timer_add(
+            self.timer_mgr, ausf_timer_sbi_auth_client_wait_expire, auth);
+
     auth->ausf_ue = ausf_ue;
 
     ogs_list_add(&ausf_ue->auth_list, auth);
@@ -228,6 +233,9 @@ void ausf_auth_remove(ausf_auth_t *auth)
     ogs_assert(ausf_ue);
 
     ogs_list_remove(&ausf_ue->auth_list, auth);
+
+    ogs_timer_delete(auth->sbi_server_wait.timer);
+    ogs_timer_delete(auth->sbi_client_wait.timer);
 
     ogs_assert(ausf_ue->id);
     ogs_free(ausf_ue->id);

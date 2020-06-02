@@ -154,7 +154,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
                 ogs_error("[%s] State machine exception", ausf_ue->id);
-                ogs_sbi_message_free(&message);
                 ausf_ue_remove(ausf_ue);
             }
             break;
@@ -289,7 +288,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
                 ogs_error("[%s] State machine exception", ausf_ue->id);
-                ogs_sbi_message_free(&message);
                 ausf_ue_remove(ausf_ue);
             }
             break;
@@ -330,6 +328,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             ogs_nnrf_nfm_send_nf_status_subscribe(subscription->client,
                     ausf_self()->nf_type, subscription->nf_instance_id);
+            break;
+
+        case AUSF_TIMER_SBI_SERVER_WAIT:
+            ausf_ue = e->sbi.data;
+            ogs_assert(ausf_ue);
+
+            ogs_error("[%s] No expected HTTP request message", ausf_ue->id);
+            ausf_ue_remove(ausf_ue);
             break;
 
         case AUSF_TIMER_SBI_CLIENT_WAIT:

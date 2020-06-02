@@ -58,7 +58,7 @@ struct ausf_ue_s {
     char *serving_network_name;
 
     struct {
-        ogs_timer_t     *timer;
+        ogs_timer_t *timer;
     } sbi_server_wait, sbi_client_wait;
 
 #define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
@@ -90,7 +90,12 @@ struct ausf_auth_s {
 
     char *id;
 
+    struct {
+        ogs_timer_t *timer;
+    } sbi_server_wait, sbi_client_wait;
+
     ausf_ue_t *ausf_ue;
+    ogs_sbi_session_t *session;
 };
 
 void ausf_context_init(void);

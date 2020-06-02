@@ -51,6 +51,10 @@ const char *ausf_timer_get_name(ausf_timer_e id)
         return "AUSF_TIMER_SBI_SERVER_WAIT";
     case AUSF_TIMER_SBI_CLIENT_WAIT:
         return "AUSF_TIMER_SBI_CLIENT_WAIT";
+    case AUSF_TIMER_SBI_AUTH_SERVER_WAIT:
+        return "AUSF_TIMER_SBI_AUTH_SERVER_WAIT";
+    case AUSF_TIMER_SBI_AUTH_CLIENT_WAIT:
+        return "AUSF_TIMER_SBI_AUTH_CLIENT_WAIT";
     default: 
        break;
     }
@@ -72,6 +76,8 @@ static void sbi_timer_send_event(int timer_id, void *data)
     case AUSF_TIMER_SUBSCRIPTION_VALIDITY:
     case AUSF_TIMER_SBI_SERVER_WAIT:
     case AUSF_TIMER_SBI_CLIENT_WAIT:
+    case AUSF_TIMER_SBI_AUTH_SERVER_WAIT:
+    case AUSF_TIMER_SBI_AUTH_CLIENT_WAIT:
         e = ausf_event_new(AUSF_EVT_SBI_TIMER);
         ogs_assert(e);
         e->timer_id = timer_id;
@@ -116,12 +122,22 @@ void ausf_timer_subscription_validity(void *data)
     sbi_timer_send_event(AUSF_TIMER_SUBSCRIPTION_VALIDITY, data);
 }
 
+void ausf_timer_sbi_server_wait_expire(void *data)
+{
+    sbi_timer_send_event(AUSF_TIMER_SBI_SERVER_WAIT, data);
+}
+
 void ausf_timer_sbi_client_wait_expire(void *data)
 {
     sbi_timer_send_event(AUSF_TIMER_SBI_CLIENT_WAIT, data);
 }
 
-void ausf_timer_sbi_server_wait_expire(void *data)
+void ausf_timer_sbi_auth_server_wait_expire(void *data)
 {
-    sbi_timer_send_event(AUSF_TIMER_SBI_SERVER_WAIT, data);
+    sbi_timer_send_event(AUSF_TIMER_SBI_AUTH_SERVER_WAIT, data);
+}
+
+void ausf_timer_sbi_auth_client_wait_expire(void *data)
+{
+    sbi_timer_send_event(AUSF_TIMER_SBI_AUTH_CLIENT_WAIT, data);
 }
