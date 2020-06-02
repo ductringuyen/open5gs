@@ -39,16 +39,12 @@ typedef enum {
 
     AMF_TIMER_NG_DELAYED_SEND,
 
-    AMF_TIMER_T3413,
-    AMF_TIMER_T3422,
-    AMF_TIMER_T3450,
-    AMF_TIMER_T3460,
-    AMF_TIMER_T3470,
-    AMF_TIMER_T3489,
-
-#if 0
-    AMF_TIMER_SGS_CLI_CONN_TO_SRV,
-#endif
+    AMF_TIMER_T3513,
+    AMF_TIMER_T3522,
+    AMF_TIMER_T3550,
+    AMF_TIMER_T3560,
+    AMF_TIMER_T3570,
+    AMF_TIMER_T3589,
 
     MAX_NUM_OF_AMF_TIMER,
 
@@ -72,16 +68,12 @@ void amf_timer_sbi_client_wait_expire(void *data);
 
 void amf_timer_ng_delayed_send(void *data);
 
-void amf_timer_t3413_expire(void *data);
-void amf_timer_t3422_expire(void *data);
-void amf_timer_t3450_expire(void *data);
-void amf_timer_t3460_expire(void *data);
-void amf_timer_t3470_expire(void *data);
-void amf_timer_t3489_expire(void *data);
-
-#if 0
-void amf_timer_sgs_cli_conn_to_srv(void *data);
-#endif
+void amf_timer_t3513_expire(void *data);
+void amf_timer_t3522_expire(void *data);
+void amf_timer_t3550_expire(void *data);
+void amf_timer_t3560_expire(void *data);
+void amf_timer_t3570_expire(void *data);
+void amf_timer_t3589_expire(void *data);
 
 #ifdef __cplusplus
 }

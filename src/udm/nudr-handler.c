@@ -188,13 +188,13 @@ bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
             AuthenticationInfoResult.authentication_vector =
                 &AuthenticationVector;
 
-            ogs_timer_start(udm_ue->sbi_server_wait.timer,
-                    udm_timer_cfg(UDM_TIMER_SBI_SERVER_WAIT)->duration);
-
             memset(&sendmsg, 0, sizeof(sendmsg));
 
             ogs_assert(AuthenticationInfoResult.auth_type);
             sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
+
+            ogs_timer_start(udm_ue->sbi_server_wait.timer,
+                    udm_timer_cfg(UDM_TIMER_SBI_SERVER_WAIT)->duration);
 
             response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
             ogs_assert(response);

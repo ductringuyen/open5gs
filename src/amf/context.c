@@ -1127,21 +1127,21 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
     amf_ue->sbi_client_wait.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_sbi_client_wait_expire, amf_ue);
 
-    amf_ue->t3413.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3413_expire, amf_ue);
-    amf_ue->t3413.pkbuf = NULL;
-    amf_ue->t3422.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3422_expire, amf_ue);
-    amf_ue->t3422.pkbuf = NULL;
-    amf_ue->t3450.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3450_expire, amf_ue);
-    amf_ue->t3450.pkbuf = NULL;
-    amf_ue->t3460.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3460_expire, amf_ue);
-    amf_ue->t3460.pkbuf = NULL;
-    amf_ue->t3470.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3470_expire, amf_ue);
-    amf_ue->t3470.pkbuf = NULL;
+    amf_ue->t3513.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3513_expire, amf_ue);
+    amf_ue->t3513.pkbuf = NULL;
+    amf_ue->t3522.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3522_expire, amf_ue);
+    amf_ue->t3522.pkbuf = NULL;
+    amf_ue->t3550.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3550_expire, amf_ue);
+    amf_ue->t3550.pkbuf = NULL;
+    amf_ue->t3560.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3560_expire, amf_ue);
+    amf_ue->t3560.pkbuf = NULL;
+    amf_ue->t3570.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3570_expire, amf_ue);
+    amf_ue->t3570.pkbuf = NULL;
 
     /* Create FSM */
     e.amf_ue = amf_ue;
@@ -1182,9 +1182,6 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     if (amf_ue->_5g_aka_confirmation)
         ogs_free(amf_ue->_5g_aka_confirmation);
 
-    /* Clear Service Indicator */
-    CLEAR_SERVICE_INDICATOR(amf_ue);
-
     /* Free UeRadioCapability */
     OGS_ASN_CLEAR_DATA(&amf_ue->ueRadioCapability);
 
@@ -1194,11 +1191,11 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     /* Delete All Timers */
     CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
     ogs_timer_delete(amf_ue->sbi_client_wait.timer);
-    ogs_timer_delete(amf_ue->t3413.timer);
-    ogs_timer_delete(amf_ue->t3422.timer);
-    ogs_timer_delete(amf_ue->t3450.timer);
-    ogs_timer_delete(amf_ue->t3460.timer);
-    ogs_timer_delete(amf_ue->t3470.timer);
+    ogs_timer_delete(amf_ue->t3513.timer);
+    ogs_timer_delete(amf_ue->t3522.timer);
+    ogs_timer_delete(amf_ue->t3550.timer);
+    ogs_timer_delete(amf_ue->t3560.timer);
+    ogs_timer_delete(amf_ue->t3570.timer);
 
     amf_ue_deassociate(amf_ue);
 
@@ -1683,9 +1680,9 @@ amf_bearer_t *amf_bearer_add(amf_sess_t *sess)
 
     ogs_list_add(&sess->bearer_list, bearer);
 
-    bearer->t3489.timer = ogs_timer_add(
-            self.timer_mgr, amf_timer_t3489_expire, bearer);
-    bearer->t3489.pkbuf = NULL;
+    bearer->t3589.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3589_expire, bearer);
+    bearer->t3589.pkbuf = NULL;
     
     e.bearer = bearer;
     e.id = 0;
@@ -1707,7 +1704,7 @@ void amf_bearer_remove(amf_bearer_t *bearer)
     ogs_fsm_delete(&bearer->sm);
 
     CLEAR_BEARER_ALL_TIMERS(bearer);
-    ogs_timer_delete(bearer->t3489.timer);
+    ogs_timer_delete(bearer->t3589.timer);
 
     ogs_list_remove(&bearer->sess->bearer_list, bearer);
 

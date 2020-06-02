@@ -179,9 +179,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             UeAuthenticationCtx._links = OpenAPI_list_create();
             OpenAPI_list_add(UeAuthenticationCtx._links, LinksValueScheme);
 
-            ogs_timer_start(ausf_ue->sbi_server_wait.timer,
-                    ausf_timer_cfg(AUSF_TIMER_SBI_SERVER_WAIT)->duration);
-
             memset(&sendmsg, 0, sizeof(sendmsg));
 
             memset(&header, 0, sizeof(header));
@@ -195,6 +192,9 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
 
             sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
+
+            ogs_timer_start(ausf_ue->sbi_server_wait.timer,
+                    ausf_timer_cfg(AUSF_TIMER_SBI_SERVER_WAIT)->duration);
 
             response = ogs_sbi_build_response(&sendmsg,
                 OGS_SBI_HTTP_STATUS_CREATED);

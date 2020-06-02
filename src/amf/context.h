@@ -321,11 +321,11 @@ struct amf_ue_s {
 #define CLEAR_AMF_UE_ALL_TIMERS(__aMF) \
     do { \
         CLEAR_AMF_UE_TIMER((__aMF)->sbi_client_wait); \
-        CLEAR_AMF_UE_TIMER((__aMF)->t3413); \
-        CLEAR_AMF_UE_TIMER((__aMF)->t3422); \
-        CLEAR_AMF_UE_TIMER((__aMF)->t3450); \
-        CLEAR_AMF_UE_TIMER((__aMF)->t3460); \
-        CLEAR_AMF_UE_TIMER((__aMF)->t3470); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3513); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3522); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3550); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3560); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3570); \
     } while(0);
 #define CLEAR_AMF_UE_TIMER(__aMF_UE_TIMER) \
     do { \
@@ -340,21 +340,7 @@ struct amf_ue_s {
         ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
-    } sbi_client_wait, t3413, t3422, t3450, t3460, t3470;
-
-#define CLEAR_SERVICE_INDICATOR(__aMF) \
-    do { \
-        ogs_assert((__aMF)); \
-        (__aMF)->service_indicator = 0; \
-    } while(0);
-
-#define CS_CALL_SERVICE_INDICATOR(__aMF) \
-    (AMF_P_TMSI_IS_AVAILABLE(__aMF) && \
-     ((__aMF)->service_indicator) == SGSAP_CS_CALL_SERVICE_INDICATOR)
-#define SMS_SERVICE_INDICATOR(__aMF) \
-    (AMF_P_TMSI_IS_AVAILABLE(__aMF) && \
-     ((__aMF)->service_indicator) == SGSAP_SMS_SERVICE_INDICATOR)
-    uint8_t         service_indicator;
+    } sbi_client_wait, t3513, t3522, t3550, t3560, t3570;
 
     /* UE Radio Capability */
     OCTET_STRING_t  ueRadioCapability;
@@ -505,7 +491,7 @@ typedef struct amf_bearer_s {
 
 #define CLEAR_BEARER_ALL_TIMERS(__bEARER) \
     do { \
-        CLEAR_BEARER_TIMER((__bEARER)->t3489); \
+        CLEAR_BEARER_TIMER((__bEARER)->t3589); \
     } while(0);
 #define CLEAR_BEARER_TIMER(__bEARER_TIMER) \
     do { \
@@ -521,7 +507,7 @@ typedef struct amf_bearer_s {
         ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
-    } t3489;
+    } t3589;
 
     /* Related Context */
     amf_ue_t        *amf_ue;

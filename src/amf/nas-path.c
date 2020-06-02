@@ -184,17 +184,17 @@ void nas_5gs_send_identity_request(amf_ue_t *amf_ue)
 
     ogs_debug("Identity request");
 
-    if (amf_ue->t3470.pkbuf) {
-        gmmbuf = amf_ue->t3470.pkbuf;
+    if (amf_ue->t3570.pkbuf) {
+        gmmbuf = amf_ue->t3570.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
         gmmbuf = emm_build_identity_request(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
-    amf_ue->t3470.pkbuf = ogs_pkbuf_copy(gmmbuf);
-    ogs_timer_start(amf_ue->t3470.timer, 
-            amf_timer_cfg(MME_TIMER_T3470)->duration);
+    amf_ue->t3570.pkbuf = ogs_pkbuf_copy(gmmbuf);
+    ogs_timer_start(amf_ue->t3570.timer,
+            amf_timer_cfg(MME_TIMER_T3570)->duration);
 
     nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
 }
@@ -209,17 +209,17 @@ void nas_5gs_send_authentication_request(amf_ue_t *amf_ue)
 
     ogs_debug("[%s] Authentication request", amf_ue->id);
 
-    if (amf_ue->t3460.pkbuf) {
-        gmmbuf = amf_ue->t3460.pkbuf;
+    if (amf_ue->t3560.pkbuf) {
+        gmmbuf = amf_ue->t3560.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
         gmmbuf = gmm_build_authentication_request(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
-    amf_ue->t3460.pkbuf = ogs_pkbuf_copy(gmmbuf);
-    ogs_timer_start(amf_ue->t3460.timer, 
-            amf_timer_cfg(AMF_TIMER_T3460)->duration);
+    amf_ue->t3560.pkbuf = ogs_pkbuf_copy(gmmbuf);
+    ogs_timer_start(amf_ue->t3560.timer,
+            amf_timer_cfg(AMF_TIMER_T3560)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
@@ -236,17 +236,17 @@ void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
     ogs_debug("Security mode command");
     ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-    if (amf_ue->t3460.pkbuf) {
-        gmmbuf = amf_ue->t3460.pkbuf;
+    if (amf_ue->t3560.pkbuf) {
+        gmmbuf = amf_ue->t3560.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
         gmmbuf = emm_build_security_mode_command(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
-    amf_ue->t3460.pkbuf = ogs_pkbuf_copy(gmmbuf);
-    ogs_timer_start(amf_ue->t3460.timer, 
-            amf_timer_cfg(MME_TIMER_T3460)->duration);
+    amf_ue->t3560.pkbuf = ogs_pkbuf_copy(gmmbuf);
+    ogs_timer_start(amf_ue->t3560.timer,
+            amf_timer_cfg(MME_TIMER_T3560)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
@@ -329,17 +329,17 @@ void nas_5gs_send_esm_information_request(amf_bearer_t *bearer)
     amf_ue = bearer->amf_ue;
     ogs_assert(amf_ue);
 
-    if (bearer->t3489.pkbuf) {
-        gsmbuf = bearer->t3489.pkbuf;
+    if (bearer->t3589.pkbuf) {
+        gsmbuf = bearer->t3589.pkbuf;
         ogs_expect_or_return(gsmbuf);
     } else {
         gsmbuf = esm_build_information_request(bearer);
         ogs_expect_or_return(gsmbuf);
     }
 
-    bearer->t3489.pkbuf = ogs_pkbuf_copy(gsmbuf);
-    ogs_timer_start(bearer->t3489.timer, 
-            amf_timer_cfg(MME_TIMER_T3489)->duration);
+    bearer->t3589.pkbuf = ogs_pkbuf_copy(gsmbuf);
+    ogs_timer_start(bearer->t3589.timer,
+            amf_timer_cfg(MME_TIMER_T3589)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gsmbuf);
     ogs_expect(rv == OGS_OK);

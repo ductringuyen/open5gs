@@ -103,7 +103,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
 
     CLEAR_5GS_BEARER_ID(amf_ue);
-    CLEAR_SERVICE_INDICATOR(amf_ue);
     if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
 #if 0
         amf_kdf_gnb(amf_ue->kasme, amf_ue->ul_count.i32, amf_ue->kgnb);

@@ -69,7 +69,6 @@ void gmm_state_de_registered(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        CLEAR_SERVICE_INDICATOR(amf_ue);
         CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
         break;
     case OGS_FSM_EXIT_SIG:
@@ -164,7 +163,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 #if 0
         case OGS_NAS_5GS_IDENTITY_RESPONSE:
             ogs_debug("Identity response");
-            CLEAR_AMF_UE_TIMER(amf_ue->t3470);
+            CLEAR_AMF_UE_TIMER(amf_ue->t3570);
 
             rv = gmm_handle_identity_response(amf_ue,
                     &message->gmm.identity_response);
@@ -290,43 +289,39 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         }
         break;
     case AMF_EVT_5GMM_TIMER:
-#if 0
         switch (e->timer_id) {
-        case AMF_TIMER_T3413:
-            if (amf_ue->t3413.retry_count >=
-                    amf_timer_cfg(AMF_TIMER_T3413)->max_count) {
+        case AMF_TIMER_T3513:
+            if (amf_ue->t3513.retry_count >=
+                    amf_timer_cfg(AMF_TIMER_T3513)->max_count) {
                 /* Paging failed */
                 ogs_warn("Paging to IMSI[%s] failed. Stop paging",
                         amf_ue->imsi_bcd);
-                CLEAR_AMF_UE_TIMER(amf_ue->t3413);
+                CLEAR_AMF_UE_TIMER(amf_ue->t3513);
 
-                if (CS_CALL_SERVICE_INDICATOR(amf_ue) ||
-                    SMS_SERVICE_INDICATOR(amf_ue)) {
-                    sgsap_send_ue_unreachable(amf_ue,
-                            SGSAP_SGS_CAUSE_UE_UNREACHABLE);
-                }
-    
-                CLEAR_SERVICE_INDICATOR(amf_ue);
             } else {
-                amf_ue->t3413.retry_count++;
+                amf_ue->t3513.retry_count++;
                 /*
-                 * If t3413 is timeout, the saved pkbuf is used.
+                 * If t3513 is timeout, the saved pkbuf is used.
                  * We don't have to set CNDomain.
                  * So, we just set CNDomain to 0
                  */
+#if 0
                 ngap_send_paging(amf_ue, 0);
+#endif
             }
             break;
-        case AMF_TIMER_T3470:
-            if (amf_ue->t3470.retry_count >=
-                    amf_timer_cfg(AMF_TIMER_T3470)->max_count) {
+        case AMF_TIMER_T3570:
+            if (amf_ue->t3570.retry_count >=
+                    amf_timer_cfg(AMF_TIMER_T3570)->max_count) {
                 ogs_warn("Retransmission of Identity-Request failed. "
                         "Stop retransmission");
-                CLEAR_AMF_UE_TIMER(amf_ue->t3470);
+                CLEAR_AMF_UE_TIMER(amf_ue->t3570);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             } else {
-                amf_ue->t3470.retry_count++;
+                amf_ue->t3570.retry_count++;
+#if 0
                 nas_5gs_send_identity_request(amf_ue);
+#endif
             }
             break;
         default:
@@ -334,7 +329,6 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                     amf_timer_get_name(e->timer_id), e->timer_id);
             break;
         }
-#endif
         return;
     default:
         ogs_error("Unknown event[%s]", amf_event_get_name(e));
@@ -343,7 +337,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
 #if 0
     if (!AMF_UE_HAVE_IMSI(amf_ue)) {
-        CLEAR_AMF_UE_TIMER(amf_ue->t3470);
+        CLEAR_AMF_UE_TIMER(amf_ue->t3570);
         nas_5gs_send_identity_request(amf_ue);
         return;
     }
@@ -545,7 +539,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("Authentication response");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-            CLEAR_AMF_UE_TIMER(amf_ue->t3460);
+            CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
             if (authentication_response_parameter->length == 0 ||
                 memcmp(authentication_response_parameter->res,
@@ -579,7 +573,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("    IMSI[%s] EMM_CAUSE[%d]", amf_ue->imsi_bcd,
                     authentication_failure->gmm_cause);
 
-            CLEAR_AMF_UE_TIMER(amf_ue->t3460);
+            CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
             switch (authentication_failure->gmm_cause) {
             case EMM_CAUSE_MAC_FAILURE:
@@ -656,20 +650,21 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
         }
         break;
     case AMF_EVT_5GMM_TIMER:
-#if 0
         switch (e->timer_id) {
-        case AMF_TIMER_T3460:
-            if (amf_ue->t3460.retry_count >=
-                    amf_timer_cfg(AMF_TIMER_T3460)->max_count) {
+        case AMF_TIMER_T3560:
+            if (amf_ue->t3560.retry_count >=
+                    amf_timer_cfg(AMF_TIMER_T3560)->max_count) {
                 ogs_warn("Retransmission of IMSI[%s] failed. "
                         "Stop retransmission",
                         amf_ue->imsi_bcd);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
 
+#if 0
                 nas_5gs_send_authentication_reject(amf_ue);
+#endif
             } else {
-                amf_ue->t3460.retry_count++;
-                nas_5gs_send_authentication_request(amf_ue, NULL);
+                amf_ue->t3560.retry_count++;
+                nas_5gs_send_authentication_request(amf_ue);
             }
             break;
         default:
@@ -677,7 +672,6 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                     amf_timer_get_name(e->timer_id), e->timer_id);
             break;
         }
-#endif
         break;
     case AMF_EVT_SBI_CLIENT:
         sbi_response = e->sbi.response;
@@ -739,7 +733,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        CLEAR_AMF_UE_TIMER(amf_ue->t3460);
+        CLEAR_AMF_UE_TIMER(amf_ue->t3560);
         nas_5gs_send_security_mode_command(amf_ue);
         break;
     case OGS_FSM_EXIT_SIG:
@@ -762,7 +756,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("Security mode complete");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-            CLEAR_AMF_UE_TIMER(amf_ue->t3460);
+            CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
             /* Now, We will check the MAC in the NAS message*/
             h.type = e->nas_type;
@@ -814,7 +808,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_warn("Security mode reject : IMSI[%s] Cause[%d]",
                     amf_ue->imsi_bcd,
                     message->gmm.security_mode_reject.gmm_cause);
-            CLEAR_AMF_UE_TIMER(amf_ue->t3460);
+            CLEAR_AMF_UE_TIMER(amf_ue->t3560);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
@@ -863,9 +857,9 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {
-        case AMF_TIMER_T3460:
-            if (amf_ue->t3460.retry_count >=
-                    amf_timer_cfg(AMF_TIMER_T3460)->max_count) {
+        case AMF_TIMER_T3560:
+            if (amf_ue->t3560.retry_count >=
+                    amf_timer_cfg(AMF_TIMER_T3560)->max_count) {
                 ogs_warn("Retransmission of IMSI[%s] failed. "
                         "Stop retransmission",
                         amf_ue->imsi_bcd);
@@ -875,7 +869,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                     EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
             } else {
-                amf_ue->t3460.retry_count++;
+                amf_ue->t3560.retry_count++;
                 nas_5gs_send_security_mode_command(amf_ue);
             }
             break;
@@ -998,7 +992,6 @@ void gmm_state_exception(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        CLEAR_SERVICE_INDICATOR(amf_ue);
         CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
         break;
     case OGS_FSM_EXIT_SIG:
