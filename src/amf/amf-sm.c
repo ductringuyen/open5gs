@@ -270,7 +270,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
             ogs_fsm_dispatch(&amf_ue->sm, e);
             if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_exception)) {
-                /* TODO */
+                amf_ue_remove(amf_ue);
             }
             break;
 #if 0
@@ -528,6 +528,8 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_exception)) {
 #if 0
             mme_send_delete_session_or_amf_ue_context_release(amf_ue);
+#else
+            amf_ue_remove(amf_ue);
 #endif
         }
 

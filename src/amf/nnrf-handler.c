@@ -306,12 +306,14 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
             ogs_error("[%s] (NF discover) No AUSF", amf_ue->id);
             nas_5gs_send_nas_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+            amf_ue_remove(amf_ue);
         } else {
             rv = amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
             if (rv != OGS_OK) {
                 ogs_error("[%s] Cannot send SBI message", amf_ue->id);
                 nas_5gs_send_nas_reject(
                         amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+                amf_ue_remove(amf_ue);
             }
         }
     } else {
