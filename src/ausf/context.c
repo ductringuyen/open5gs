@@ -127,8 +127,6 @@ ausf_ue_t *ausf_ue_add(char *id)
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
 
-    ausf_ue->sbi_server_wait.timer = ogs_timer_add(
-            self.timer_mgr, ausf_timer_sbi_server_wait_expire, ausf_ue);
     ausf_ue->sbi_client_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_client_wait_expire, ausf_ue);
 
@@ -154,7 +152,6 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_fsm_fini(&ausf_ue->sm, &e);
     ogs_fsm_delete(&ausf_ue->sm);
 
-    ogs_timer_delete(ausf_ue->sbi_server_wait.timer);
     ogs_timer_delete(ausf_ue->sbi_client_wait.timer);
 
     ogs_assert(ausf_ue->id);

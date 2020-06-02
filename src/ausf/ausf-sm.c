@@ -330,14 +330,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     ausf_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case AUSF_TIMER_SBI_SERVER_WAIT:
-            ausf_ue = e->sbi.data;
-            ogs_assert(ausf_ue);
-
-            ogs_error("[%s] No expected HTTP request message", ausf_ue->id);
-            ausf_ue_remove(ausf_ue);
-            break;
-
         case AUSF_TIMER_SBI_CLIENT_WAIT:
             ausf_ue = e->sbi.data;
             ogs_assert(ausf_ue);

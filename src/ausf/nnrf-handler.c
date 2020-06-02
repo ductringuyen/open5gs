@@ -309,6 +309,7 @@ void ausf_nnrf_handle_nf_discover(
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                     "(NF discover) No UDM", ausf_ue->id);
+            ausf_ue_remove(ausf_ue);
         } else {
             ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
         }

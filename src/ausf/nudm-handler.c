@@ -190,9 +190,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
 
             sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
 
-            ogs_timer_start(ausf_ue->sbi_server_wait.timer,
-                    ausf_timer_cfg(AUSF_TIMER_SBI_SERVER_WAIT)->duration);
-
             response = ogs_sbi_build_response(&sendmsg,
                 OGS_SBI_HTTP_STATUS_CREATED);
             ogs_assert(response);

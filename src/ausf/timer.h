@@ -35,7 +35,6 @@ typedef enum {
     AUSF_TIMER_NF_INSTANCE_HEARTBEAT,
     AUSF_TIMER_NF_INSTANCE_VALIDITY,
     AUSF_TIMER_SUBSCRIPTION_VALIDITY,
-    AUSF_TIMER_SBI_SERVER_WAIT,
     AUSF_TIMER_SBI_CLIENT_WAIT,
 
     MAX_NUM_OF_AUSF_TIMER,
@@ -56,7 +55,6 @@ void ausf_timer_nf_instance_heartbeat_interval(void *data);
 void ausf_timer_nf_instance_heartbeat(void *data);
 void ausf_timer_nf_instance_validity(void *data);
 void ausf_timer_subscription_validity(void *data);
-void ausf_timer_sbi_server_wait_expire(void *data);
 void ausf_timer_sbi_client_wait_expire(void *data);
 
 #ifdef __cplusplus

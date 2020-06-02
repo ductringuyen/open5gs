@@ -63,7 +63,7 @@ struct ausf_ue_s {
 
     struct {
         ogs_timer_t *timer;
-    } sbi_server_wait, sbi_client_wait;
+    } sbi_client_wait;
 
 #define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \
