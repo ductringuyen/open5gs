@@ -23,8 +23,6 @@
 #include "test-common.h"
 #include "test-ngap.h"
 
-#include "amf/context.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
