@@ -86,7 +86,9 @@ extern "C" {
 
 #define OGS_SBI_SERVICE_NAME_NAUSF_AUTH             "nausf-auth"
 #define OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS    "ue-authentications"
+#define OGS_SBI_RESOURCE_NAME_5G_AKA                "5g-aka"
 #define OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION   "5g-aka-confirmation"
+#define OGS_SBI_RESOURCE_NAME_EAP_SESSION           "eap-session"
 
 #define OGS_SBI_SERVICE_NAME_NUDM_SDM               "nudm-sdm"
 #define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"

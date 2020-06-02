@@ -23,9 +23,9 @@ static const char *links_member_name(OpenAPI_auth_type_e auth_type)
 {
     if (auth_type == OpenAPI_auth_type_5G_AKA ||
         auth_type == OpenAPI_auth_type_EAP_AKA_PRIME) {
-        return "5g-aka";
+        return OGS_SBI_RESOURCE_NAME_5G_AKA;
     } else if (auth_type == OpenAPI_auth_type_EAP_TLS) {
-        return "eap_session";
+        return OGS_SBI_RESOURCE_NAME_EAP_SESSION;
     }
 
     ogs_assert_if_reached();
@@ -40,8 +40,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
     ogs_sbi_message_t sendmsg;
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
-
-    ausf_auth_t *auth = NULL;
 
     uint8_t rand[OGS_RAND_LEN];
     uint8_t xres_star[OGS_MAX_RES_LEN];
@@ -139,9 +137,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
                 return false;
             }
 
-            auth = ausf_auth_add(ausf_ue);
-            ogs_assert(auth);
-
             memset(&UeAuthenticationCtx, 0, sizeof(UeAuthenticationCtx));
 
             UeAuthenticationCtx.auth_type = OpenAPI_auth_type_5G_AKA;
@@ -173,7 +168,7 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             header.api.version = (char *)OGS_SBI_API_VERSION;
             header.resource.component[0] =
                     (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
-            header.resource.component[1] = auth->id;
+            header.resource.component[1] = ausf_ue->id;
             header.resource.component[2] =
                     (char *)OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION;
             LinksValueSchemeValue.href = ogs_sbi_server_uri(server, &header);
@@ -194,7 +189,7 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             header.api.version = (char *)OGS_SBI_API_VERSION;
             header.resource.component[0] =
                     (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
-            header.resource.component[1] = auth->id;
+            header.resource.component[1] = ausf_ue->id;
 
             sendmsg.http.location = ogs_sbi_server_uri(server, &header);
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;

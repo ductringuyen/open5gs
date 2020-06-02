@@ -87,7 +87,8 @@ bool amf_nausf_auth_handle_authenticate(
     OpenAPI_list_for_each(UeAuthenticationCtx->_links, node) {
         LinksValueScheme = node->data;
         if (LinksValueScheme) {
-            if (strcmp(LinksValueScheme->key, "5g-aka") == 0) {
+            if (strcmp(LinksValueScheme->key,
+                        OGS_SBI_RESOURCE_NAME_5G_AKA) == 0) {
                 LinksValueSchemeValue = LinksValueScheme->value;
                 break;
             }
@@ -107,6 +108,8 @@ bool amf_nausf_auth_handle_authenticate(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return false;
     }
+
+    ogs_fatal("LinksValueSchemeValue->href = %s", LinksValueSchemeValue->href);
 
     ogs_ascii_to_hex(AV5G_AKA->rand, strlen(AV5G_AKA->rand),
         amf_ue->rand, sizeof(amf_ue->rand));
