@@ -189,6 +189,47 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     return OGS_OK;
 }
 
+int gmm_handle_authentication_response(amf_ue_t *amf_ue,
+        ogs_nas_5gs_authentication_response_t *authentication_response)
+{
+    ogs_nas_authentication_response_parameter_t
+        *authentication_response_parameter = NULL;
+    uint8_t hxres_star[OGS_MAX_RES_LEN];
+
+    ogs_assert(amf_ue);
+    ogs_assert(authentication_response);
+
+    authentication_response_parameter = &authentication_response->
+                authentication_response_parameter;
+
+    ogs_debug("[%s] Authentication response", amf_ue->id);
+
+    CLEAR_AMF_UE_TIMER(amf_ue->t3560);
+
+    if (authentication_response_parameter->length != OGS_MAX_RES_LEN) {
+        ogs_error("[%s] Invalid length [%d]",
+                amf_ue->id, authentication_response_parameter->length);
+        nas_5gs_send_authentication_reject(amf_ue);
+        return OGS_ERROR;
+    }
+
+    ogs_kdf_hxres_star(
+            amf_ue->rand, authentication_response_parameter->res, hxres_star);
+
+    if (memcmp(hxres_star, amf_ue->hxres_star, OGS_MAX_RES_LEN) != 0) {
+        ogs_log_hexdump(OGS_LOG_WARN,
+                authentication_response_parameter->res,
+                authentication_response_parameter->length);
+        ogs_log_hexdump(OGS_LOG_WARN, hxres_star, OGS_MAX_RES_LEN);
+        ogs_log_hexdump(OGS_LOG_WARN,
+                amf_ue->hxres_star, OGS_MAX_RES_LEN);
+        nas_5gs_send_authentication_reject(amf_ue);
+        return OGS_ERROR;
+    }
+
+    return OGS_OK;
+}
+
 #if 0
 int gmm_handle_registration_complete(amf_ue_t *amf_ue,
         ogs_nas_5gs_registration_complete_t *registration_complete)

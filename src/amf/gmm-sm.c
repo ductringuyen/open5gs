@@ -527,37 +527,19 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_AUTHENTICATION_RESPONSE:
-        {
-            ogs_nas_5gs_authentication_response_t *authentication_response =
-                &message->gmm.authentication_response;
-            ogs_nas_authentication_response_parameter_t
-                *authentication_response_parameter =
-                    &authentication_response->
-                        authentication_response_parameter;
+            rv = gmm_handle_authentication_response(
+                    amf_ue, &message->gmm.authentication_response);
 
-            ogs_fatal("[%s] Authentication response", amf_ue->id);
-
-            CLEAR_AMF_UE_TIMER(amf_ue->t3560);
-
-#if 0
-            if (authentication_response_parameter->length == 0 ||
-                memcmp(authentication_response_parameter->res,
-                amf_ue->xres,
-                authentication_response_parameter->length) != 0) {
-                ogs_log_hexdump(OGS_LOG_WARN,
-                        authentication_response_parameter->res,
-                        authentication_response_parameter->length);
-                ogs_log_hexdump(OGS_LOG_WARN,
-                        amf_ue->xres, OGS_MAX_RES_LEN);
-                nas_5gs_send_authentication_reject(amf_ue);
+            if (rv != OGS_OK) {
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-            } else {
+            }
+#if 0 /* FIX IT */
+            else {
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);
             }
 #endif
-
             break;
-        }
+
         case OGS_NAS_5GS_AUTHENTICATION_FAILURE:
         {
 #if 0
@@ -714,9 +696,9 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
     }
 }
 
-#if 0
 void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 {
+#if 0
     int rv;
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
@@ -882,8 +864,10 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         ogs_error("Unknown event[%s]", amf_event_get_name(e));
         break;
     }
+#endif
 }
 
+#if 0
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;

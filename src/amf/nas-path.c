@@ -37,7 +37,7 @@ int nas_5gs_send_to_gnb(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)
 }
 
 #if 0
-int nas_5gs_send_emm_to_esm(amf_ue_t *amf_ue,
+int nas_5gs_send_gmm_to_esm(amf_ue_t *amf_ue,
         ogs_nas_esm_message_container_t *esm_message_container)
 {
     int rv;
@@ -147,7 +147,7 @@ void nas_5gs_send_registration_accept(amf_ue_t *amf_ue)
     gsmbuf = esm_build_activate_default_bearer_context_request(sess);
     ogs_expect_or_return(gsmbuf);
 
-    gmmbuf = emm_build_registration_accept(amf_ue, gsmbuf);
+    gmmbuf = gmm_build_registration_accept(amf_ue, gsmbuf);
     ogs_expect_or_return(gmmbuf);
 
     ngapbuf = ngap_build_initial_context_setup_request(amf_ue, gmmbuf);
@@ -188,7 +188,7 @@ void nas_5gs_send_identity_request(amf_ue_t *amf_ue)
         gmmbuf = amf_ue->t3570.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
-        gmmbuf = emm_build_identity_request(amf_ue);
+        gmmbuf = gmm_build_identity_request(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
@@ -225,6 +225,22 @@ void nas_5gs_send_authentication_request(amf_ue_t *amf_ue)
     ogs_expect(rv == OGS_OK);
 }
 
+void nas_5gs_send_authentication_reject(amf_ue_t *amf_ue)
+{
+    int rv;
+    ogs_pkbuf_t *gmmbuf = NULL;
+
+    ogs_assert(amf_ue);
+
+    ogs_debug("[%s] Authentication reject", amf_ue->id);
+
+    gmmbuf = gmm_build_authentication_reject();
+    ogs_expect_or_return(gmmbuf);
+
+    rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
+    ogs_expect(rv == OGS_OK);
+}
+
 #if 0
 void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
 {
@@ -240,30 +256,13 @@ void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
         gmmbuf = amf_ue->t3560.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
-        gmmbuf = emm_build_security_mode_command(amf_ue);
+        gmmbuf = gmm_build_security_mode_command(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
     amf_ue->t3560.pkbuf = ogs_pkbuf_copy(gmmbuf);
     ogs_timer_start(amf_ue->t3560.timer,
             amf_timer_cfg(MME_TIMER_T3560)->duration);
-
-    rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
-    ogs_expect(rv == OGS_OK);
-}
-
-void nas_5gs_send_authentication_reject(amf_ue_t *amf_ue)
-{
-    int rv;
-    ogs_pkbuf_t *gmmbuf = NULL;
-
-    ogs_assert(amf_ue);
-
-    ogs_debug("Authentication reject");
-    ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
-
-    gmmbuf = emm_build_authentication_reject();
-    ogs_expect_or_return(gmmbuf);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
@@ -281,7 +280,7 @@ void nas_5gs_send_detach_accept(amf_ue_t *amf_ue)
     /* reply with detach accept */
     if (amf_ue->nas_5gs.detach.switch_off == 0) {
         int rv;
-        gmmbuf = emm_build_detach_accept(amf_ue);
+        gmmbuf = gmm_build_detach_accept(amf_ue);
         ogs_expect_or_return(gmmbuf);
 
         rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
@@ -305,7 +304,7 @@ void nas_5gs_send_pdn_connectivity_reject(
     amf_ue = sess->amf_ue;
     ogs_assert(amf_ue);
 
-    if (OGS_FSM_CHECK(&amf_ue->sm, emm_state_registered)) {
+    if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_registered)) {
         gsmbuf = esm_build_pdn_connectivity_reject(sess, gsm_cause);
         ogs_expect_or_return(gsmbuf);
 
@@ -501,7 +500,7 @@ void nas_5gs_send_tau_accept(
     ogs_debug("Tracking area update accept");
     ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-    gmmbuf = emm_build_tau_accept(amf_ue);
+    gmmbuf = gmm_build_tau_accept(amf_ue);
     ogs_expect_or_return(gmmbuf);
 
     if (procedureCode == NGAP_ProcedureCode_id_InitialContextSetup) {
@@ -526,7 +525,7 @@ void nas_5gs_send_tau_reject(amf_ue_t *amf_ue, ogs_nas_gmm_cause_t gmm_cause)
     ogs_assert(amf_ue);
 
     /* Build TAU reject */
-    gmmbuf = emm_build_tau_reject(gmm_cause, amf_ue);
+    gmmbuf = gmm_build_tau_reject(gmm_cause, amf_ue);
     ogs_expect_or_return(gmmbuf);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
@@ -542,7 +541,7 @@ void nas_5gs_send_service_reject(amf_ue_t *amf_ue,
     ogs_assert(amf_ue);
 
     /* Build Service Reject */
-    gmmbuf = emm_build_service_reject(gmm_cause, amf_ue);
+    gmmbuf = gmm_build_service_reject(gmm_cause, amf_ue);
     ogs_expect_or_return(gmmbuf);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
@@ -559,7 +558,7 @@ void nas_5gs_send_cs_service_notification(amf_ue_t *amf_ue)
     ogs_debug("CS Service Notification");
     ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-    gmmbuf = emm_build_cs_service_notification(amf_ue);
+    gmmbuf = gmm_build_cs_service_notification(amf_ue);
     ogs_expect_or_return(gmmbuf);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
@@ -579,7 +578,7 @@ void nas_5gs_send_downlink_nas_transport(
     ogs_debug("Downlink NAS transport");
     ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
 
-    gmmbuf = emm_build_downlink_nas_transport(amf_ue, buffer, length);
+    gmmbuf = gmm_build_downlink_nas_transport(amf_ue, buffer, length);
     ogs_expect_or_return(gmmbuf);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
