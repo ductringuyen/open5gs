@@ -182,9 +182,10 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
-    /* Receive Authentication Request */
+    /* Clear Test UE Context */
     memset(&test_ue, 0, sizeof(test_ue));
 
+    /* Receive Authentication Request */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);

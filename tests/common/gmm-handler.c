@@ -22,5 +22,20 @@
 void testgmm_handle_authentication_request(test_ue_t *test_ue,
         ogs_nas_5gs_authentication_request_t *authentication_request)
 {
-    ogs_fatal("asdfkljasdfsdaf");
+    ogs_nas_authentication_parameter_rand_t *authentication_parameter_rand =
+        NULL;
+    ogs_nas_authentication_parameter_autn_t *authentication_parameter_autn =
+        NULL;
+
+    ogs_assert(test_ue);
+    ogs_assert(authentication_request);
+
+    authentication_parameter_rand = &authentication_request->
+        authentication_parameter_rand;
+    authentication_parameter_autn = &authentication_request->
+        authentication_parameter_autn;
+
+    memcpy(test_ue->rand, authentication_parameter_rand->rand, OGS_RAND_LEN);
+    memcpy(test_ue->autn, authentication_parameter_autn->autn, OGS_AUTN_LEN);
+
 }
