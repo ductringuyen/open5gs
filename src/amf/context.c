@@ -1179,8 +1179,8 @@ void amf_ue_remove(amf_ue_t *amf_ue)
         ogs_free(amf_ue->id);
     }
 
-    if (amf_ue->_5g_aka_confirmation)
-        ogs_free(amf_ue->_5g_aka_confirmation);
+    if (amf_ue->confirmation_url_for_5g_aka)
+        ogs_free(amf_ue->confirmation_url_for_5g_aka);
 
     /* Free UeRadioCapability */
     OGS_ASN_CLEAR_DATA(&amf_ue->ueRadioCapability);

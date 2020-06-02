@@ -109,10 +109,10 @@ bool amf_nausf_auth_handle_authenticate(
         return false;
     }
 
-    if (amf_ue->_5g_aka_confirmation)
-        ogs_free(amf_ue->_5g_aka_confirmation);
+    if (amf_ue->confirmation_url_for_5g_aka)
+        ogs_free(amf_ue->confirmation_url_for_5g_aka);
 
-    amf_ue->_5g_aka_confirmation = ogs_strdup(LinksValueSchemeValue->href);
+    amf_ue->confirmation_url_for_5g_aka = ogs_strdup(LinksValueSchemeValue->href);
 
     ogs_ascii_to_hex(AV5G_AKA->rand, strlen(AV5G_AKA->rand),
         amf_ue->rand, sizeof(amf_ue->rand));
