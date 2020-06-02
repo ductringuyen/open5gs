@@ -63,3 +63,24 @@ ogs_pkbuf_t *testgmm_build_registration_request(
 
     return ogs_nas_5gs_plain_encode(&message);
 }
+
+ogs_pkbuf_t *testgmm_build_authentication_response(void)
+{
+    ogs_nas_5gs_message_t message;
+    ogs_pkbuf_t *pkbuf = NULL;
+    ogs_nas_5gs_authentication_response_t *authentication_response =
+            &message.gmm.authentication_response;
+    ogs_nas_authentication_response_parameter_t *authentication_response_parameter = &authentication_response->authentication_response_parameter;
+
+    memset(&message, 0, sizeof(message));
+    message.gmm.h.extended_protocol_discriminator =
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+    message.gmm.h.message_type = OGS_NAS_5GS_AUTHENTICATION_RESPONSE;
+
+    authentication_response->presencemask |=
+        OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
+
+    authentication_response_parameter->length = 16;
+
+    return ogs_nas_5gs_plain_encode(&message);
+}

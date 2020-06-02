@@ -244,3 +244,99 @@ ogs_pkbuf_t *testngap_build_initial_ue_message(ogs_pkbuf_t *gmmbuf)
 
     return ogs_ngap_encode(&pdu);
 }
+
+ogs_pkbuf_t *testngap_build_uplink_nas_transport(
+        test_ue_t *test_ue, ogs_pkbuf_t *gmmbuf)
+{
+    NGAP_NGAP_PDU_t pdu;
+    NGAP_InitiatingMessage_t *initiatingMessage = NULL;
+    NGAP_UplinkNASTransport_t *UplinkNASTransport = NULL;
+
+    NGAP_UplinkNASTransport_IEs_t *ie = NULL;
+    NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
+    NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+    NGAP_NAS_PDU_t *NAS_PDU = NULL;
+    NGAP_UserLocationInformation_t *UserLocationInformation = NULL;
+    NGAP_UserLocationInformationNR_t *userLocationInformationNR = NULL;
+    NGAP_NR_CGI_t *nR_CGI = NULL;
+    NGAP_TAI_t *tAI = NULL;
+
+    ogs_assert(gmmbuf);
+    ogs_assert(test_ue);
+
+    memset(&pdu, 0, sizeof (NGAP_NGAP_PDU_t));
+    pdu.present = NGAP_NGAP_PDU_PR_initiatingMessage;
+    pdu.choice.initiatingMessage =
+        CALLOC(1, sizeof(NGAP_InitiatingMessage_t));
+
+    initiatingMessage = pdu.choice.initiatingMessage;
+    initiatingMessage->procedureCode =
+        NGAP_ProcedureCode_id_UplinkNASTransport;
+    initiatingMessage->criticality = NGAP_Criticality_ignore;
+    initiatingMessage->value.present =
+        NGAP_InitiatingMessage__value_PR_UplinkNASTransport;
+
+    UplinkNASTransport =
+        &initiatingMessage->value.choice.UplinkNASTransport;
+
+    ie = CALLOC(1, sizeof(NGAP_UplinkNASTransport_IEs_t));
+    ASN_SEQUENCE_ADD(&UplinkNASTransport->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present = NGAP_UplinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
+
+    AMF_UE_NGAP_ID = &ie->value.choice.AMF_UE_NGAP_ID;
+
+    ie = CALLOC(1, sizeof(NGAP_UplinkNASTransport_IEs_t));
+    ASN_SEQUENCE_ADD(&UplinkNASTransport->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present = NGAP_UplinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
+
+    RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
+
+    ie = CALLOC(1, sizeof(NGAP_UplinkNASTransport_IEs_t));
+    ASN_SEQUENCE_ADD(&UplinkNASTransport->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_NAS_PDU;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present = NGAP_UplinkNASTransport_IEs__value_PR_NAS_PDU;
+
+    NAS_PDU = &ie->value.choice.NAS_PDU;
+
+    ie = CALLOC(1, sizeof(NGAP_UplinkNASTransport_IEs_t));
+    ASN_SEQUENCE_ADD(&UplinkNASTransport->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_UserLocationInformation;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present =
+        NGAP_UplinkNASTransport_IEs__value_PR_UserLocationInformation;
+
+    UserLocationInformation = &ie->value.choice.UserLocationInformation;
+
+    asn_uint642INTEGER(AMF_UE_NGAP_ID, test_ue->amf_ue_ngap_id);
+    *RAN_UE_NGAP_ID = test_ue->ran_ue_ngap_id;
+
+    NAS_PDU->size = gmmbuf->len;
+    NAS_PDU->buf = CALLOC(NAS_PDU->size, sizeof(uint8_t));
+    memcpy(NAS_PDU->buf, gmmbuf->data, NAS_PDU->size);
+    ogs_pkbuf_free(gmmbuf);
+
+    userLocationInformationNR =
+            CALLOC(1, sizeof(NGAP_UserLocationInformationNR_t));
+
+    nR_CGI = &userLocationInformationNR->nR_CGI;
+    ogs_ngap_nr_cgi_to_ASN(&test_self()->cgi, nR_CGI);
+
+    tAI = &userLocationInformationNR->tAI;
+    ogs_ngap_5gs_tai_to_ASN(&test_self()->tai, tAI);
+
+    UserLocationInformation->present =
+        NGAP_UserLocationInformation_PR_userLocationInformationNR;
+    UserLocationInformation->choice.userLocationInformationNR =
+        userLocationInformationNR;
+
+    return ogs_ngap_encode(&pdu);
+}
