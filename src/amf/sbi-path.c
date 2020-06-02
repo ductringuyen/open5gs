@@ -167,8 +167,14 @@ void amf_nausf_auth_send_authenticate(
     ogs_timer_start(amf_ue->sbi_client_wait.timer,
             amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
-    request = amf_nausf_auth_build_authenticate(amf_ue);
-    ogs_assert(request);
+    if (amf_ue->confirmation_url_for_5g_aka) {
+        request = amf_nausf_auth_build_authenticate_confirmation(amf_ue);
+        ogs_assert(request);
+    } else {
+        request = amf_nausf_auth_build_authenticate(amf_ue);
+        ogs_assert(request);
+    }
+
     ogs_sbi_client_send_request(client, request, amf_ue);
 }
 

@@ -19,34 +19,6 @@
 
 #include "nausf-build.h"
 
-static ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
-        amf_ue_t *amf_ue)
-{
-    ogs_sbi_message_t message;
-    ogs_sbi_request_t *request = NULL;
-
-    OpenAPI_confirmation_data_t *ConfirmationData = NULL;
-
-    ogs_assert(amf_ue);
-    ogs_assert(amf_ue->confirmation_url_for_5g_aka);
-
-    memset(&message, 0, sizeof(message));
-    message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
-    message.h.url = amf_ue->confirmation_url_for_5g_aka;
-
-    ConfirmationData = ogs_calloc(1, sizeof(*ConfirmationData));
-    ogs_assert(ConfirmationData);
-
-    ConfirmationData->res_star = (char *)amf_ue->xres_star;
-
-    request = ogs_sbi_build_request(&message);
-    ogs_assert(request);
-
-    ogs_free(ConfirmationData);
-
-    return request;
-}
-
 ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
 {
     ogs_sbi_message_t message;
@@ -55,10 +27,6 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
     OpenAPI_authentication_info_t *AuthenticationInfo = NULL;
 
     ogs_assert(amf_ue);
-
-    if (amf_ue->confirmation_url_for_5g_aka) {
-        return amf_nausf_auth_build_authenticate_confirmation(amf_ue);
-    }
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
@@ -85,6 +53,34 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
 
     ogs_free(AuthenticationInfo->serving_network_name);
     ogs_free(AuthenticationInfo);
+
+    return request;
+}
+
+ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
+        amf_ue_t *amf_ue)
+{
+    ogs_sbi_message_t message;
+    ogs_sbi_request_t *request = NULL;
+
+    OpenAPI_confirmation_data_t *ConfirmationData = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(amf_ue->confirmation_url_for_5g_aka);
+
+    memset(&message, 0, sizeof(message));
+    message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
+    message.h.url = amf_ue->confirmation_url_for_5g_aka;
+
+    ConfirmationData = ogs_calloc(1, sizeof(*ConfirmationData));
+    ogs_assert(ConfirmationData);
+
+    ConfirmationData->res_star = (char *)amf_ue->xres_star;
+
+    request = ogs_sbi_build_request(&message);
+    ogs_assert(request);
+
+    ogs_free(ConfirmationData);
 
     return request;
 }
