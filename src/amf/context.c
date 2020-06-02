@@ -1178,11 +1178,9 @@ void amf_ue_remove(amf_ue_t *amf_ue)
         ogs_hash_set(self.amf_ueid_hash, amf_ue->id, strlen(amf_ue->id), NULL);
         ogs_free(amf_ue->id);
     }
-    
-#if 0
-    /* Clear the saved PDN Connectivity Request */
-    OGS_NAS_CLEAR_DATA(&amf_ue->pdn_connectivity_request);
-#endif
+
+    if (amf_ue->_5g_aka_confirmation)
+        ogs_free(amf_ue->_5g_aka_confirmation);
 
     /* Clear Service Indicator */
     CLEAR_SERVICE_INDICATOR(amf_ue);

@@ -198,35 +198,34 @@ void nas_5gs_send_identity_request(amf_ue_t *amf_ue)
 
     nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
 }
+#endif
 
-void nas_5gs_send_authentication_request(
-        amf_ue_t *amf_ue, ogs_diam_e_utran_vector_t *e_utran_vector)
+void nas_5gs_send_authentication_request(amf_ue_t *amf_ue)
 {
     int rv;
     ogs_pkbuf_t *gmmbuf = NULL;
 
     ogs_assert(amf_ue);
 
-    ogs_debug("Authentication request");
-    ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+    ogs_debug("[%s] Authentication request", amf_ue->id);
 
     if (amf_ue->t3460.pkbuf) {
         gmmbuf = amf_ue->t3460.pkbuf;
         ogs_expect_or_return(gmmbuf);
     } else {
-        ogs_assert(e_utran_vector);
-        gmmbuf = emm_build_authentication_request(e_utran_vector);
+        gmmbuf = gmm_build_authentication_request(amf_ue);
         ogs_expect_or_return(gmmbuf);
     }
 
     amf_ue->t3460.pkbuf = ogs_pkbuf_copy(gmmbuf);
     ogs_timer_start(amf_ue->t3460.timer, 
-            amf_timer_cfg(MME_TIMER_T3460)->duration);
+            amf_timer_cfg(AMF_TIMER_T3460)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
 }
 
+#if 0
 void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
 {
     int rv;

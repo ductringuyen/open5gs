@@ -159,10 +159,17 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
-    ogs_msleep(300);
+    /* Receive Authentication Request */
+    recvbuf = testgnb_ngap_read(ngap);
+    ABTS_PTR_NOTNULL(tc, recvbuf);
+#if 0
+    ABTS_TRUE(tc, memcmp(recvbuf->data, 
+        OGS_HEX(_authentication_request, strlen(_authentication_request), tmp),
+        recvbuf->len) == 0);
+#endif
+    ogs_pkbuf_free(recvbuf);
 
 #if 0
-    mme_self()->mme_ue_ngap_id = 27263233;
     rv = testngap_build_initial_ue_msg(&sendbuf, msgindex);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
     rv = testgnb_ngap_send(ngap, sendbuf);

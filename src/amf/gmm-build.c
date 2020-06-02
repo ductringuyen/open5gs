@@ -172,30 +172,40 @@ ogs_pkbuf_t *gmm_build_identity_request(amf_ue_t *amf_ue)
 
     return ogs_nas_5gs_plain_encode(&message);
 }
+#endif
 
-ogs_pkbuf_t *gmm_build_authentication_request(
-        ogs_diam_e_utran_vector_t *e_utran_vector)
+ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue)
 {
     ogs_nas_5gs_message_t message;
     ogs_nas_5gs_authentication_request_t *authentication_request = 
         &message.gmm.authentication_request;
 
-    ogs_assert(e_utran_vector);
+    ogs_assert(amf_ue);
 
     memset(&message, 0, sizeof(message));
-    message.gmm.h.protocol_discriminator = OGS_NAS_PROTOCOL_DISCRIMINATOR_EMM;
-    message.gmm.h.message_type = OGS_NAS_EPS_AUTHENTICATION_REQUEST;
+    message.gmm.h.extended_protocol_discriminator =
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+    message.gmm.h.message_type = OGS_NAS_5GS_AUTHENTICATION_REQUEST;
+
+    authentication_request->ngksi.value = 1;
+    authentication_request->abba.length = 2;
+
+    authentication_request->presencemask |=
+    OGS_NAS_5GS_AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT;
+    authentication_request->presencemask |=
+    OGS_NAS_5GS_AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_AUTN_PRESENT;
 
     memcpy(authentication_request->authentication_parameter_rand.rand,
-            e_utran_vector->rand, OGS_RAND_LEN);
+            amf_ue->rand, OGS_RAND_LEN);
     memcpy(authentication_request->authentication_parameter_autn.autn,
-            e_utran_vector->autn, OGS_AUTN_LEN);
+            amf_ue->autn, OGS_AUTN_LEN);
     authentication_request->authentication_parameter_autn.length = 
             OGS_AUTN_LEN;
 
     return ogs_nas_5gs_plain_encode(&message);
 }
 
+#if 0
 ogs_pkbuf_t *gmm_build_authentication_reject(void)
 {
     ogs_nas_5gs_message_t message;

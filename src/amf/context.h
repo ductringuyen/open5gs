@@ -262,6 +262,7 @@ struct amf_ue_s {
     ogs_nas_ue_network_capability_t ue_network_capability;
     ogs_nas_ms_network_capability_t ms_network_capability;
 #endif
+    char            *_5g_aka_confirmation;
     uint8_t         hxres_star[OGS_MAX_RES_LEN];
     uint8_t         rand[OGS_RAND_LEN];
     uint8_t         autn[OGS_AUTN_LEN];

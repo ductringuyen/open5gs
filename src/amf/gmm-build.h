@@ -33,10 +33,7 @@ ogs_pkbuf_t *gmm_build_registration_reject(ogs_nas_5gmm_cause_t gmm_cause);
 ogs_pkbuf_t *gmm_build_identity_request(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue);
 
-#if 0
-ogs_pkbuf_t *gmm_build_authentication_request(
-        ogs_diam_e_utran_vector_t *e_utran_vector);
-#endif
+ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_authentication_reject(void);
 
 ogs_pkbuf_t *gmm_build_detach_accept(amf_ue_t *amf_ue);
