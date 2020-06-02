@@ -59,24 +59,9 @@ struct udm_ue_s {
     char *ausf_instance_id;
     char *ue_id;
 
-#define CLEAR_UDM_UE_ALL_TIMERS(__uDM) \
-    do { \
-        CLEAR_UDM_UE_TIMER((__uDM)->sbi_client_wait); \
-    } while(0);
-#define CLEAR_UDM_UE_TIMER(__uDM_UE_TIMER) \
-    do { \
-        ogs_timer_stop((__uDM_UE_TIMER).timer); \
-        if ((__uDM_UE_TIMER).pkbuf) { \
-            ogs_pkbuf_free((__uDM_UE_TIMER).pkbuf); \
-            (__uDM_UE_TIMER).pkbuf = NULL; \
-        } \
-        (__uDM_UE_TIMER).retry_count = 0; \
-    } while(0);
     struct {
-        ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
-        uint32_t        retry_count;;
-    } sbi_client_wait;
+    } sbi_server_wait, sbi_client_wait;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

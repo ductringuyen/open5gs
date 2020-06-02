@@ -57,24 +57,9 @@ struct ausf_ue_s {
     char *id;
     char *serving_network_name;
 
-#define CLEAR_AUSF_UE_ALL_TIMERS(__aUSF) \
-    do { \
-        CLEAR_AUSF_UE_TIMER((__aUSF)->sbi_client_wait); \
-    } while(0);
-#define CLEAR_AUSF_UE_TIMER(__aUSF_UE_TIMER) \
-    do { \
-        ogs_timer_stop((__aUSF_UE_TIMER).timer); \
-        if ((__aUSF_UE_TIMER).pkbuf) { \
-            ogs_pkbuf_free((__aUSF_UE_TIMER).pkbuf); \
-            (__aUSF_UE_TIMER).pkbuf = NULL; \
-        } \
-        (__aUSF_UE_TIMER).retry_count = 0; \
-    } while(0);
     struct {
-        ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
-        uint32_t        retry_count;;
-    } sbi_client_wait;
+    } sbi_server_wait, sbi_client_wait;
 
 #define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

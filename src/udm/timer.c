@@ -22,6 +22,8 @@
 static udm_timer_cfg_t g_udm_timer_cfg[MAX_NUM_OF_UDM_TIMER] = {
     [UDM_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL] =
         { .duration = ogs_time_from_sec(3) },
+    [UDM_TIMER_SBI_SERVER_WAIT] =
+        { .duration = ogs_time_from_sec(6) },
     [UDM_TIMER_SBI_CLIENT_WAIT] =
         { .duration = ogs_time_from_sec(2) },
 };
@@ -45,6 +47,8 @@ const char *udm_timer_get_name(udm_timer_e id)
         return "UDM_TIMER_NF_INSTANCE_VALIDITY";
     case UDM_TIMER_SUBSCRIPTION_VALIDITY:
         return "UDM_TIMER_SUBSCRIPTION_VALIDITY";
+    case UDM_TIMER_SBI_SERVER_WAIT:
+        return "UDM_TIMER_SBI_SERVER_WAIT";
     case UDM_TIMER_SBI_CLIENT_WAIT:
         return "UDM_TIMER_SBI_CLIENT_WAIT";
     default: 
@@ -66,6 +70,7 @@ static void sbi_timer_send_event(int timer_id, void *data)
     case UDM_TIMER_NF_INSTANCE_HEARTBEAT:
     case UDM_TIMER_NF_INSTANCE_VALIDITY:
     case UDM_TIMER_SUBSCRIPTION_VALIDITY:
+    case UDM_TIMER_SBI_SERVER_WAIT:
     case UDM_TIMER_SBI_CLIENT_WAIT:
         e = udm_event_new(UDM_EVT_SBI_TIMER);
         ogs_assert(e);
@@ -109,6 +114,11 @@ void udm_timer_nf_instance_validity(void *data)
 void udm_timer_subscription_validity(void *data)
 {
     sbi_timer_send_event(UDM_TIMER_SUBSCRIPTION_VALIDITY, data);
+}
+
+void udm_timer_sbi_server_wait_expire(void *data)
+{
+    sbi_timer_send_event(UDM_TIMER_SBI_SERVER_WAIT, data);
 }
 
 void udm_timer_sbi_client_wait_expire(void *data)

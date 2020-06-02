@@ -132,6 +132,8 @@ ausf_ue_t *ausf_ue_add(char *id)
 
     ogs_list_init(&ausf_ue->auth_list);
 
+    ausf_ue->sbi_server_wait.timer = ogs_timer_add(
+            self.timer_mgr, ausf_timer_sbi_server_wait_expire, ausf_ue);
     ausf_ue->sbi_client_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_client_wait_expire, ausf_ue);
 
@@ -157,7 +159,7 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_fsm_fini(&ausf_ue->sm, &e);
     ogs_fsm_delete(&ausf_ue->sm);
 
-    CLEAR_AUSF_UE_ALL_TIMERS(ausf_ue);
+    ogs_timer_delete(ausf_ue->sbi_server_wait.timer);
     ogs_timer_delete(ausf_ue->sbi_client_wait.timer);
 
     ausf_auth_remove_all(ausf_ue);
