@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 void test_5gc_init(void);
-#define test_5gc_final ogs_mongoc_final
+#define test_5gc_final ogs_dbi_final
 
 #ifdef __cplusplus
 }

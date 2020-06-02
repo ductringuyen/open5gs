@@ -170,19 +170,6 @@ static void test1_func(abts_case *tc, void *data)
     ogs_pkbuf_free(recvbuf);
 
 #if 0
-    rv = testngap_build_initial_ue_msg(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-    rv = testgnb_ngap_send(ngap, sendbuf);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-
-    /* Receive Authentication Request */
-    recvbuf = testgnb_ngap_read(ngap);
-    ABTS_PTR_NOTNULL(tc, recvbuf);
-    ABTS_TRUE(tc, memcmp(recvbuf->data, 
-        OGS_HEX(_authentication_request, strlen(_authentication_request), tmp),
-        recvbuf->len) == 0);
-    ogs_pkbuf_free(recvbuf);
-
     /* Send Authentication Response */
     rv = testngap_build_authentication_response(&sendbuf, msgindex);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
