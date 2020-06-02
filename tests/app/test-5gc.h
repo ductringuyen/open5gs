@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 void test_5gc_init(void);
-#define test_5gc_final ogs_dbi_final
+void test_5gc_final(void);
 
 #ifdef __cplusplus
 }
