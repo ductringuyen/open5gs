@@ -57,6 +57,13 @@ typedef struct test_context_s {
     ogs_nr_cgi_t cgi;
 } test_context_t;
 
+typedef struct test_ue_s {
+    uint32_t ran_ue_ngap_id; /* eNB-UE-NGAP-ID received from eNB */
+    uint64_t amf_ue_ngap_id; /* AMF-UE-NGAP-ID received from AMF */
+    uint8_t rand[OGS_RAND_LEN];
+    uint8_t autn[OGS_AUTN_LEN];
+} test_ue_t;
+
 void test_context_init(void);
 void test_context_final(void);
 test_context_t *test_self(void);
