@@ -193,13 +193,12 @@ ausf_ue_t *ausf_ue_find(char *id)
     return (ausf_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
 }
 
-ausf_auth_t *ausf_auth_add(ogs_sbi_session_t *session, ausf_ue_t *ausf_ue)
+ausf_auth_t *ausf_auth_add(ausf_ue_t *ausf_ue)
 {
     ausf_auth_t *auth = NULL;
     ogs_uuid_t uuid;
     char id[OGS_UUID_FORMATTED_LENGTH + 1];
 
-    ogs_assert(session);
     ogs_assert(ausf_ue);
 
     ogs_pool_alloc(&ausf_auth_pool, &auth);
@@ -211,11 +210,6 @@ ausf_auth_t *ausf_auth_add(ogs_sbi_session_t *session, ausf_ue_t *ausf_ue)
 
     auth->id = ogs_strdup(id);
     ogs_assert(auth->id);
-
-    auth->sbi_server_wait.timer = ogs_timer_add(
-            self.timer_mgr, ausf_timer_sbi_auth_server_wait_expire, auth);
-    auth->sbi_client_wait.timer = ogs_timer_add(
-            self.timer_mgr, ausf_timer_sbi_auth_client_wait_expire, auth);
 
     auth->ausf_ue = ausf_ue;
 
@@ -234,11 +228,8 @@ void ausf_auth_remove(ausf_auth_t *auth)
 
     ogs_list_remove(&ausf_ue->auth_list, auth);
 
-    ogs_timer_delete(auth->sbi_server_wait.timer);
-    ogs_timer_delete(auth->sbi_client_wait.timer);
-
-    ogs_assert(ausf_ue->id);
-    ogs_free(ausf_ue->id);
+    ogs_assert(auth->id);
+    ogs_free(auth->id);
 
     ogs_pool_free(&ausf_auth_pool, auth);
 }

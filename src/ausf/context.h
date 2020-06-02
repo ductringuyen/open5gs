@@ -90,10 +90,6 @@ struct ausf_auth_s {
 
     char *id;
 
-    struct {
-        ogs_timer_t *timer;
-    } sbi_server_wait, sbi_client_wait;
-
     ausf_ue_t *ausf_ue;
     ogs_sbi_session_t *session;
 };
@@ -109,7 +105,7 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
 ausf_ue_t *ausf_ue_find(char *id);
 
-ausf_auth_t *ausf_auth_add(ogs_sbi_session_t *session, ausf_ue_t *ausf_ue);
+ausf_auth_t *ausf_auth_add(ausf_ue_t *ausf_ue);
 void ausf_auth_remove(ausf_auth_t *auth);
 void ausf_auth_remove_all(ausf_ue_t *ausf_ue);
 ausf_auth_t *ausf_auth_find(ausf_ue_t *ausf_ue, char *id);
