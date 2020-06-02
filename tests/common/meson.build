@@ -27,7 +27,12 @@ libtestcommon_sources = files('''
     application.c
 
     ngap-build.c
+    ngap-handler.c
+    ngap-path.c
+
     gmm-build.c
+    gmm-handler.c
+    nas-path.c
 '''.split())
 
 libtestcommon_inc = include_directories('.')

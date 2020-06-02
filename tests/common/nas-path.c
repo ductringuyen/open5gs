@@ -17,36 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TEST_COMMON_H
-#define TEST_COMMON_H
+#include "test-common.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void testgmm_recv(test_ue_t *test_ue, ogs_pkbuf_t *pkbuf)
+{
+    int rv;
+    ogs_nas_5gs_message_t message;
 
-#include "ogs-app.h"
-#include "ogs-dbi.h"
-#include "ogs-sctp.h"
-#include "ogs-diameter-common.h"
-#include "ogs-nas-eps.h"
-#include "ogs-nas-5gs.h"
+    ogs_assert(test_ue);
+    ogs_assert(pkbuf);
 
-#include "core/abts.h"
+    rv = ogs_nas_5gmm_decode(&message, pkbuf);
+    ogs_assert(rv == OGS_OK);
 
-#define OGS_TEST_INSIDE
+    switch (message.gmm.h.message_type) {
+    case OGS_NAS_5GS_AUTHENTICATION_REQUEST:
+        testgmm_handle_authentication_request(test_ue, 
+                &message.gmm.authentication_request);
+        break;
+    default:
+        ogs_error("Unknown message[%d]", message.gmm.h.message_type);
+        break;
+    }
 
-#include "common/context.h"
-#include "common/sctp.h"
-#include "common/gtpu.h"
-#include "common/application.h"
-#include "common/gmm-build.h"
-#include "common/gmm-handler.h"
-#include "common/nas-path.h"
-
-#undef OGS_TEST_INSIDE
-
-#ifdef __cplusplus
+    ogs_pkbuf_free(pkbuf);
 }
-#endif
 
-#endif /* TEST_COMMON_H */
+void testgsm_recv(test_ue_t *test_ue, ogs_pkbuf_t *pkbuf)
+{
+    ogs_assert(test_ue);
+    ogs_assert(pkbuf);
+
+    ogs_pkbuf_free(pkbuf);
+}

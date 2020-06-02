@@ -31,6 +31,10 @@ static void test1_func(abts_case *tc, void *data)
     int i;
     int msgindex = 0;
 
+    ogs_nas_5gs_mobile_identity_t mobile_identity;
+    ogs_nas_5gs_mobile_identity_imsi_t mobile_identity_imsi;
+    test_ue_t test_ue;
+
     uint8_t tmp[OGS_MAX_SDU_LEN];
     const char *_ng_setup_request =
         "0015002d00000300 1b00080002f83910 0001020066001500 000000010002f839"
@@ -151,9 +155,6 @@ static void test1_func(abts_case *tc, void *data)
     } while (count == 0);
     bson_destroy(doc);
 
-    ogs_nas_5gs_mobile_identity_t mobile_identity;
-    ogs_nas_5gs_mobile_identity_imsi_t mobile_identity_imsi;
-
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
     mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
     mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
@@ -182,14 +183,16 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
     /* Receive Authentication Request */
+    memset(&test_ue, 0, sizeof(test_ue));
+
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
+    testngap_recv(&test_ue, recvbuf);
 #if 0
     ABTS_TRUE(tc, memcmp(recvbuf->data, 
         OGS_HEX(_authentication_request, strlen(_authentication_request), tmp),
         recvbuf->len) == 0);
 #endif
-    ogs_pkbuf_free(recvbuf);
 
 #if 0
     /* Send Authentication Response */
