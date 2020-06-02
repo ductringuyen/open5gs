@@ -151,8 +151,30 @@ static void test1_func(abts_case *tc, void *data)
     } while (count == 0);
     bson_destroy(doc);
 
+    ogs_nas_5gs_mobile_identity_t mobile_identity;
+    ogs_nas_5gs_mobile_identity_imsi_t mobile_identity_imsi;
+
+    memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
+    mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
+    mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
+    ogs_nas_from_plmn_id(&mobile_identity_imsi.nas_plmn_id,
+            &test_self()->tai.plmn_id);
+    mobile_identity_imsi.routing_indicator1 = 0;
+    mobile_identity_imsi.routing_indicator2 = 0xf;
+    mobile_identity_imsi.routing_indicator3 = 0xf;
+    mobile_identity_imsi.routing_indicator4 = 0xf;
+    mobile_identity_imsi.protection_scheme_id = OGS_NAS_5GS_NULL_SCHEME;
+    mobile_identity_imsi.home_network_pki_value = 0;
+    mobile_identity_imsi.scheme_output[0] = 0;
+    mobile_identity_imsi.scheme_output[1] = 0;
+    mobile_identity_imsi.scheme_output[2] = 0x47;
+    mobile_identity_imsi.scheme_output[3] = 0x78;
+
+    mobile_identity.length = 12;
+    mobile_identity.buffer = &mobile_identity_imsi;
+
     /* Send Registration Request */
-    gmmbuf = testgmm_build_registration_request();
+    gmmbuf = testgmm_build_registration_request(&mobile_identity);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_initial_ue_message(gmmbuf);
     ABTS_PTR_NOTNULL(tc, sendbuf);

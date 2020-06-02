@@ -19,7 +19,8 @@
 
 #include "test-common.h"
 
-ogs_pkbuf_t *testgmm_build_registration_request(void)
+ogs_pkbuf_t *testgmm_build_registration_request(
+        ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
     ogs_nas_5gs_message_t message;
     ogs_pkbuf_t *pkbuf = NULL;
@@ -27,9 +28,6 @@ ogs_pkbuf_t *testgmm_build_registration_request(void)
             &message.gmm.registration_request;
     ogs_nas_5gs_registration_type_t *registration_type =
             &registration_request->registration_type;
-    ogs_nas_5gs_mobile_identity_t *mobile_identity =
-            &registration_request->mobile_identity;
-    ogs_nas_5gs_mobile_identity_imsi_t mobile_identity_imsi;
     ogs_nas_5gmm_capability_t *gmm_capability =
             &registration_request->gmm_capability;
     ogs_nas_ue_security_capability_t *ue_security_capability =
@@ -44,24 +42,9 @@ ogs_pkbuf_t *testgmm_build_registration_request(void)
     registration_type->follow_on_request = 1;
     registration_type->value = 1;
 
-    memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
-    mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
-    mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
-    ogs_nas_from_plmn_id(&mobile_identity_imsi.nas_plmn_id,
-            &test_self()->tai.plmn_id);
-    mobile_identity_imsi.routing_indicator1 = 0;
-    mobile_identity_imsi.routing_indicator2 = 0xf;
-    mobile_identity_imsi.routing_indicator3 = 0xf;
-    mobile_identity_imsi.routing_indicator4 = 0xf;
-    mobile_identity_imsi.protection_scheme_id = OGS_NAS_5GS_NULL_SCHEME;
-    mobile_identity_imsi.home_network_pki_value = 0;
-    mobile_identity_imsi.scheme_output[0] = 0;
-    mobile_identity_imsi.scheme_output[1] = 0;
-    mobile_identity_imsi.scheme_output[2] = 0x47;
-    mobile_identity_imsi.scheme_output[3] = 0x78;
-
-    mobile_identity->length = 12;
-    mobile_identity->buffer = &mobile_identity_imsi;
+    ogs_assert(mobile_identity);
+    registration_request->mobile_identity.length = mobile_identity->length;
+    registration_request->mobile_identity.buffer = mobile_identity->buffer;
 
     registration_request->presencemask |=
             OGS_NAS_5GS_REGISTRATION_REQUEST_5GMM_CAPABILITY_PRESENT;
