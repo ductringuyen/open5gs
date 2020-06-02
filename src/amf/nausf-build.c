@@ -28,16 +28,11 @@ static ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
     OpenAPI_confirmation_data_t *ConfirmationData = NULL;
 
     ogs_assert(amf_ue);
+    ogs_assert(amf_ue->_5g_aka_confirmation);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
-    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH;
-    message.h.api.version = (char *)OGS_SBI_API_VERSION;
-    message.h.resource.component[0] =
-        (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
-    message.h.resource.component[1] = amf_ue->id;
-    message.h.resource.component[2] =
-        (char *)OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION;
+    message.h.url = amf_ue->_5g_aka_confirmation;
 
     ConfirmationData = ogs_calloc(1, sizeof(*ConfirmationData));
     ogs_assert(ConfirmationData);
