@@ -119,8 +119,8 @@ void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
         amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type)
 {
-    bool nrf = false;
-    bool nf = false;
+    bool nrf = true;
+    bool nf = true;
 
     if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, OpenAPI_nf_type_NRF))
         nrf = ogs_sbi_nf_types_associate(
@@ -185,9 +185,4 @@ void amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue)
     if (!nf_instance) return;
 
     amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
-}
-
-void amf_nausf_auth_send_confirm_authentications(
-        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
-{
 }

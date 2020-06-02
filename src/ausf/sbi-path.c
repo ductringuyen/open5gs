@@ -118,8 +118,8 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
         ausf_ue_t *ausf_ue, OpenAPI_nf_type_e nf_type)
 {
     ogs_sbi_session_t *session = NULL;
-    bool nrf = false;
-    bool nf = false;
+    bool nrf = true;
+    bool nf = true;
 
     ogs_assert(ausf_ue);
     session = ausf_ue->session;
