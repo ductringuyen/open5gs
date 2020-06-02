@@ -41,6 +41,7 @@
 #include "model/authentication_subscription.h"
 #include "model/ue_authentication_ctx.h"
 #include "model/confirmation_data.h"
+#include "model/confirmation_data_response.h"
 
 #include "custom/links.h"
 

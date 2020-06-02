@@ -72,6 +72,9 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
         OpenAPI_ue_authentication_ctx_free(message->UeAuthenticationCtx);
     if (message->ConfirmationData)
         OpenAPI_confirmation_data_free(message->ConfirmationData);
+    if (message->ConfirmationDataResponse)
+        OpenAPI_confirmation_data_response_free(
+                message->ConfirmationDataResponse);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -354,6 +357,10 @@ static char *build_content(ogs_sbi_message_t *message)
     } else if (message->ConfirmationData) {
         item = OpenAPI_confirmation_data_convertToJSON(
                 message->ConfirmationData);
+        ogs_assert(item);
+    } else if (message->ConfirmationDataResponse) {
+        item = OpenAPI_confirmation_data_response_convertToJSON(
+                message->ConfirmationDataResponse);
         ogs_assert(item);
     }
 
@@ -644,14 +651,12 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                         break;
                     CASE(OGS_SBI_HTTP_METHOD_PUT)
                         if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-#if 0
-                            message->UeAuthenticationCtx =
-                            OpenAPI_ue_authentication_ctx_parseFromJSON(item);
-                            if (!message->UeAuthenticationCtx) {
+                            message->ConfirmationDataResponse =
+                                OpenAPI_confirmation_data_response_parseFromJSON(item);
+                            if (!message->ConfirmationDataResponse) {
                                 rv = OGS_ERROR;
                                 ogs_error("JSON parse error");
                             }
-#endif
                         } else {
                             message->ConfirmationData =
                                 OpenAPI_confirmation_data_parseFromJSON(item);
