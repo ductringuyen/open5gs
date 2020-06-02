@@ -95,6 +95,8 @@ struct udm_ue_s {
     } while(0)
 
     ogs_sbi_nf_types_t nf_types;
+
+    ogs_sbi_session_t *session;
 };
 
 void udm_context_init(void);
@@ -103,7 +105,7 @@ udm_context_t *udm_self(void);
 
 int udm_context_parse_config(void);
 
-udm_ue_t *udm_ue_add(ogs_sbi_session_t *session, char *id);
+udm_ue_t *udm_ue_add(char *id);
 void udm_ue_remove(udm_ue_t *udm_ue);
 void udm_ue_remove_all(void);
 udm_ue_t *udm_ue_find(char *id);

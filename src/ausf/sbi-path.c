@@ -115,15 +115,15 @@ void ausf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 }
 
 static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
-        ogs_sbi_session_t *session, OpenAPI_nf_type_e nf_type)
+        ausf_ue_t *ausf_ue, OpenAPI_nf_type_e nf_type)
 {
-    ausf_ue_t *ausf_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
     bool nrf = false;
     bool nf = false;
 
-    ogs_assert(session);
-    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
     ogs_assert(nf_type);
 
     if (!OGS_SBI_NF_INSTANCE_GET(ausf_ue->nf_types, OpenAPI_nf_type_NRF))
@@ -150,7 +150,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
         ogs_nnrf_disc_send_nf_discover(
             ausf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
-            nf_type, OpenAPI_nf_type_AUSF, session);
+            nf_type, OpenAPI_nf_type_AUSF, ausf_ue);
 
         return NULL;
     }
@@ -159,15 +159,15 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 }
 
 void ausf_nudm_ueau_send_get(
-        ogs_sbi_session_t *session, ogs_sbi_nf_instance_t *nf_instance)
+        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    ausf_ue_t *ausf_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_client_t *client = NULL;
 
-    ogs_assert(session);
-    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
     ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
@@ -179,23 +179,20 @@ void ausf_nudm_ueau_send_get(
 
     request = ausf_nudm_ueau_build_get(ausf_ue);
     ogs_assert(request);
-    ogs_sbi_client_send_request(client, request, session);
+    ogs_sbi_client_send_request(client, request, ausf_ue);
 }
 
-void ausf_nudm_ueau_discover_and_send_get(ogs_sbi_session_t *session)
+void ausf_nudm_ueau_discover_and_send_get(ausf_ue_t *ausf_ue)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
-    ausf_ue_t *ausf_ue = NULL;
 
-    ogs_assert(session);
-    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
-                            session, OpenAPI_nf_type_UDM);
+                            ausf_ue, OpenAPI_nf_type_UDM);
 
     if (!nf_instance) return;
 
-    ausf_nudm_ueau_send_get(session, nf_instance);
+    ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
 }

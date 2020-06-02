@@ -130,14 +130,14 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
 
             udm_ue = udm_ue_find(ueid);
             if (!udm_ue) {
-                udm_ue = udm_ue_add(session, ueid);
+                udm_ue = udm_ue_add(ueid);
                 ogs_assert(udm_ue);
             }
 
             ogs_assert(udm_ue);
             ogs_assert(OGS_FSM_STATE(&udm_ue->sm));
 
-            ogs_sbi_session_set_data(session, udm_ue);
+            OGS_SETUP_SBI_SESSION(udm_ue, session);
 
             e->udm_ue = udm_ue;
             e->sbi.message = &message;
@@ -240,9 +240,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                session = e->sbi.data;
-                ogs_assert(session);
-                udm_ue = ogs_sbi_session_get_data(session);
+                udm_ue = e->sbi.data;
                 ogs_assert(udm_ue);
 
                 SWITCH(message.h.method)
@@ -250,7 +248,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
-                        udm_nnrf_handle_nf_discover(session, &message);
+                        udm_nnrf_handle_nf_discover(udm_ue, &message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                                 udm_ue->id, message.res_status);
@@ -274,9 +272,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
-                session = e->sbi.data;
-                ogs_assert(session);
-                udm_ue = ogs_sbi_session_get_data(session);
+                udm_ue = e->sbi.data;
                 ogs_assert(udm_ue);
 
                 e->udm_ue = udm_ue;
@@ -335,10 +331,10 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
 
         case UDM_TIMER_SBI_CLIENT_WAIT:
-            session = e->sbi.data;
-            ogs_assert(session);
-            udm_ue = ogs_sbi_session_get_data(session);
+            udm_ue = e->sbi.data;
             ogs_assert(udm_ue);
+            session = udm_ue->session;
+            ogs_assert(session);
 
             ogs_error("[%s] Cannot receive SBI message", udm_ue->id);
             ogs_sbi_server_send_error(session,

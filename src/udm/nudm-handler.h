@@ -26,8 +26,7 @@
 extern "C" {
 #endif
 
-bool udm_nudm_ueau_handle_get(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg);
+bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg);
 
 #ifdef __cplusplus
 }

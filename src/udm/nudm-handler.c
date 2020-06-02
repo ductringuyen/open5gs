@@ -21,18 +21,17 @@
 #include "nnrf-handler.h"
 #include "nudm-handler.h"
 
-bool udm_nudm_ueau_handle_get(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 {
+    ogs_sbi_session_t *session = NULL;
+
     OpenAPI_authentication_info_request_t *AuthenticationInfoRequest = NULL;
     char *serving_network_name = NULL;
     char *ausf_instance_id = NULL;
 
-    udm_ue_t *udm_ue = NULL;
-
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
 
     ogs_assert(recvmsg);
 
@@ -73,7 +72,7 @@ bool udm_nudm_ueau_handle_get(
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
     ogs_assert(udm_ue->ausf_instance_id);
 
-    udm_nudr_dr_discover_and_send_query(session);
+    udm_nudr_dr_discover_and_send_query(udm_ue);
 
     return true;
 }

@@ -115,15 +115,15 @@ void udm_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
 }
 
 static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
-        ogs_sbi_session_t *session, OpenAPI_nf_type_e nf_type)
+        udm_ue_t *udm_ue, OpenAPI_nf_type_e nf_type)
 {
-    udm_ue_t *udm_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
     bool nrf = false;
     bool nf = false;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
     ogs_assert(nf_type);
 
     if (!OGS_SBI_NF_INSTANCE_GET(udm_ue->nf_types, OpenAPI_nf_type_NRF))
@@ -150,7 +150,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
         ogs_nnrf_disc_send_nf_discover(
             udm_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
-            nf_type, OpenAPI_nf_type_UDM, session);
+            nf_type, OpenAPI_nf_type_UDM, udm_ue);
 
         return NULL;
     }
@@ -159,15 +159,11 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 }
 
 void udm_nudr_dr_send_query(
-        ogs_sbi_session_t *session, ogs_sbi_nf_instance_t *nf_instance)
+        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    udm_ue_t *udm_ue = NULL;
-
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_client_t *client = NULL;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
     ogs_assert(nf_instance);
 
@@ -180,23 +176,19 @@ void udm_nudr_dr_send_query(
 
     request = udm_nudr_dr_build_query(udm_ue);
     ogs_assert(request);
-    ogs_sbi_client_send_request(client, request, session);
+    ogs_sbi_client_send_request(client, request, udm_ue);
 }
 
-void udm_nudr_dr_discover_and_send_query(ogs_sbi_session_t *session)
+void udm_nudr_dr_discover_and_send_query(udm_ue_t *udm_ue)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
-    udm_ue_t *udm_ue = NULL;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
 
     if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            session, OpenAPI_nf_type_UDR);
+        nf_instance = find_or_discover_nf_instance(udm_ue, OpenAPI_nf_type_UDR);
 
     if (!nf_instance) return;
 
-    udm_nudr_dr_send_query(session, nf_instance);
+    udm_nudr_dr_send_query(udm_ue, nf_instance);
 }

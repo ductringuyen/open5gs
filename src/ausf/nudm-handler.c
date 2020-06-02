@@ -32,11 +32,10 @@ static const char *links_member_name(OpenAPI_auth_type_e auth_type)
     return NULL;
 }
 
-bool ausf_nudm_ueau_handle_get(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
 {
     ogs_sbi_server_t *server = NULL;
-    ausf_ue_t *ausf_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
 
     ogs_sbi_message_t sendmsg;
     ogs_sbi_header_t header;
@@ -55,9 +54,9 @@ bool ausf_nudm_ueau_handle_get(
     OpenAPI_map_t *LinksValueScheme = NULL;
     OpenAPI_links_value_schema_t LinksValueSchemeValue;
 
-    ogs_assert(session);
-    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
     server = ogs_sbi_session_get_server(session);
     ogs_assert(server);
 

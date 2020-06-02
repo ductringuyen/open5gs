@@ -140,14 +140,14 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             ausf_ue = ausf_ue_find(ueid);
             if (!ausf_ue) {
-                ausf_ue = ausf_ue_add(session, ueid);
+                ausf_ue = ausf_ue_add(ueid);
                 ogs_assert(ausf_ue);
             }
 
             ogs_assert(ausf_ue);
             ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
 
-            ogs_sbi_session_set_data(session, ausf_ue);
+            OGS_SETUP_SBI_SESSION(ausf_ue, session);
 
             e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
@@ -250,9 +250,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
             SWITCH(message.h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                session = e->sbi.data;
-                ogs_assert(session);
-                ausf_ue = ogs_sbi_session_get_data(session);
+                ausf_ue = e->sbi.data;
                 ogs_assert(ausf_ue);
 
                 SWITCH(message.h.method)
@@ -260,7 +258,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
-                        ausf_nnrf_handle_nf_discover(session, &message);
+                        ausf_nnrf_handle_nf_discover(ausf_ue, &message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                                 ausf_ue->id, message.res_status);
@@ -282,9 +280,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-            session = e->sbi.data;
-            ogs_assert(session);
-            ausf_ue = ogs_sbi_session_get_data(session);
+            ausf_ue = e->sbi.data;
             ogs_assert(ausf_ue);
             ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
 
@@ -337,10 +333,10 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             break;
 
         case AUSF_TIMER_SBI_CLIENT_WAIT:
-            session = e->sbi.data;
-            ogs_assert(session);
-            ausf_ue = ogs_sbi_session_get_data(session);
+            ausf_ue = e->sbi.data;
             ogs_assert(ausf_ue);
+            session = ausf_ue->session;
+            ogs_assert(session);
 
             ogs_error("[%s] Cannot receive SBI message", ausf_ue->id);
             ogs_sbi_server_send_error(session,

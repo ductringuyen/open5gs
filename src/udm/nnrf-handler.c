@@ -217,19 +217,18 @@ bool udm_nnrf_handle_nf_status_notify(
     return true;
 }
 
-void udm_nnrf_handle_nf_discover(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *message)
+void udm_nnrf_handle_nf_discover(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
-    udm_ue_t *udm_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
 
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
     bool handled;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
     ogs_assert(message);
 
     SearchResult = message->SearchResult;
@@ -310,7 +309,7 @@ void udm_nnrf_handle_nf_discover(
                     OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                     "(NF discover) No UDR", udm_ue->id);
         } else {
-            udm_nudr_dr_send_query(session, nf_instance);
+            udm_nudr_dr_send_query(udm_ue, nf_instance);
         }
     } else {
         ogs_fatal("Should implement other case");

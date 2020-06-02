@@ -218,18 +218,18 @@ bool ausf_nnrf_handle_nf_status_notify(
 }
 
 void ausf_nnrf_handle_nf_discover(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *message)
+        ausf_ue_t *ausf_ue, ogs_sbi_message_t *message)
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
-    ausf_ue_t *ausf_ue = NULL;
+    ogs_sbi_session_t *session = NULL;
 
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
     bool handled;
 
-    ogs_assert(session);
-    ausf_ue = ogs_sbi_session_get_data(session);
     ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
     ogs_assert(message);
 
     SearchResult = message->SearchResult;
@@ -310,7 +310,7 @@ void ausf_nnrf_handle_nf_discover(
                     OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                     "(NF discover) No UDM", ausf_ue->id);
         } else {
-            ausf_nudm_ueau_send_get(session, nf_instance);
+            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
         }
     } else {
         ogs_fatal("Should implement other case");

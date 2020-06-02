@@ -63,7 +63,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            udm_nudm_ueau_handle_get(session, message);
+            udm_nudm_ueau_handle_get(udm_ue, message);
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
@@ -77,10 +77,10 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
     case UDM_EVT_SBI_CLIENT:
         message = e->sbi.message;
         ogs_assert(message);
-        session = e->sbi.data;
-        ogs_assert(session);
-        udm_ue = ogs_sbi_session_get_data(session);
+        udm_ue = e->sbi.data;
         ogs_assert(udm_ue);
+        session = udm_ue->session;
+        ogs_assert(session);
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
@@ -91,7 +91,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
                     if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                         ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
-                        udm_nudr_dr_handle_query(session, message);
+                        udm_nudr_dr_handle_query(udm_ue, message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->id, message->res_status);

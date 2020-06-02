@@ -95,6 +95,8 @@ struct ausf_ue_s {
     ogs_sbi_nf_types_t nf_types;
 
     ogs_list_t auth_list;
+
+    ogs_sbi_session_t *session;
 };
 
 struct ausf_auth_s {
@@ -112,7 +114,7 @@ ausf_context_t *ausf_self(void);
 
 int ausf_context_parse_config(void);
 
-ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id);
+ausf_ue_t *ausf_ue_add(char *id);
 void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
 ausf_ue_t *ausf_ue_find(char *id);

@@ -83,7 +83,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            ausf_nausf_auth_handle_authenticate(server, session, message);
+            ausf_nausf_auth_handle_authenticate(ausf_ue, message);
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
@@ -97,24 +97,20 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
     case AUSF_EVT_SBI_CLIENT:
         message = e->sbi.message;
         ogs_assert(message);
-        session = e->sbi.data;
-        ogs_assert(session);
-        ausf_ue = ogs_sbi_session_get_data(session);
+        ausf_ue = e->sbi.data;
         ogs_assert(ausf_ue);
+        session = ausf_ue->session;
+        ogs_assert(session);
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-            session = e->sbi.data;
-            ogs_assert(session);
-            ausf_ue = ogs_sbi_session_get_data(session);
-            ogs_assert(ausf_ue);
 
             SWITCH(message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                     ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
-                    ausf_nudm_ueau_handle_get(session, message);
+                    ausf_nudm_ueau_handle_get(ausf_ue, message);
                 } else {
                     ogs_error("[%s] HTTP response error [%d]",
                             ausf_ue->id, message->res_status);

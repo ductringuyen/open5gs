@@ -19,12 +19,10 @@
 
 #include "nudr-handler.h"
 
-bool udm_nudr_dr_handle_query(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 {
-    udm_ue_t *udm_ue = NULL;
-
     ogs_sbi_message_t sendmsg;
+    ogs_sbi_session_t *session = NULL;
     ogs_sbi_response_t *response = NULL;
 
     const char *tmp = "4d45b0eeb8386b629f136968837a7b0b"; /* For test */
@@ -51,9 +49,9 @@ bool udm_nudr_dr_handle_query(
     OpenAPI_authentication_info_result_t AuthenticationInfoResult;
     OpenAPI_authentication_vector_t AuthenticationVector;
 
-    ogs_assert(session);
-    udm_ue = ogs_sbi_session_get_data(session);
     ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
 
     ogs_assert(recvmsg);
 

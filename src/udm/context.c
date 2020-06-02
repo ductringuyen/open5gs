@@ -112,12 +112,11 @@ int udm_context_parse_config(void)
     return OGS_OK;
 }
 
-udm_ue_t *udm_ue_add(ogs_sbi_session_t *session, char *id)
+udm_ue_t *udm_ue_add(char *id)
 {
     udm_event_t e;
     udm_ue_t *udm_ue = NULL;
 
-    ogs_assert(session);
     ogs_assert(id);
 
     ogs_pool_alloc(&udm_ue_pool, &udm_ue);
