@@ -83,7 +83,6 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            ogs_sbi_session_set_data(session, ausf_ue);
             ausf_nausf_auth_handle_authenticate(server, session, message);
             break;
         DEFAULT

@@ -147,6 +147,8 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ogs_assert(ausf_ue);
             ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
 
+            ogs_sbi_session_set_data(session, ausf_ue);
+
             e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);

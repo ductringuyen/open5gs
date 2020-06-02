@@ -137,6 +137,8 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             ogs_assert(udm_ue);
             ogs_assert(OGS_FSM_STATE(&udm_ue->sm));
 
+            ogs_sbi_session_set_data(session, udm_ue);
+
             e->udm_ue = udm_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&udm_ue->sm, e);
