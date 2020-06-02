@@ -40,6 +40,7 @@
 #include "model/authentication_info_result.h"
 #include "model/authentication_subscription.h"
 #include "model/ue_authentication_ctx.h"
+#include "model/confirmation_data.h"
 
 #include "custom/links.h"
 

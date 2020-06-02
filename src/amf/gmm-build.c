@@ -211,8 +211,6 @@ ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue)
 ogs_pkbuf_t *gmm_build_authentication_reject(void)
 {
     ogs_nas_5gs_message_t message;
-    ogs_nas_5gs_authentication_reject_t *authentication_reject = 
-        &message.gmm.authentication_reject;
 
     memset(&message, 0, sizeof(message));
 

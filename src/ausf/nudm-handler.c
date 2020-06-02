@@ -186,9 +186,7 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             header.resource.component[1] = ausf_ue->id;
 
             sendmsg.http.location = ogs_sbi_server_uri(server, &header);
-#if 0
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
-#endif
 
             sendmsg.UeAuthenticationCtx = &UeAuthenticationCtx;
 

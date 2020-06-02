@@ -263,9 +263,10 @@ struct amf_ue_s {
     ogs_nas_ms_network_capability_t ms_network_capability;
 #endif
     char            *_5g_aka_confirmation;
-    uint8_t         hxres_star[OGS_MAX_RES_LEN];
     uint8_t         rand[OGS_RAND_LEN];
     uint8_t         autn[OGS_AUTN_LEN];
+    uint8_t         xres_star[OGS_MAX_RES_LEN];
+    uint8_t         hxres_star[OGS_MAX_RES_LEN];
 
     uint8_t         kasme[OGS_SHA256_DIGEST_SIZE];
     uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2]; 

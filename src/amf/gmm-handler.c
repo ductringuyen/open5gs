@@ -23,6 +23,7 @@
 #include "nas-path.h"
 
 #include "gmm-handler.h"
+#include "sbi-path.h"
 
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __gmm_log_domain
@@ -226,6 +227,11 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         nas_5gs_send_authentication_reject(amf_ue);
         return OGS_ERROR;
     }
+
+    memcpy(amf_ue->xres_star, authentication_response_parameter->res,
+            authentication_response_parameter->length);
+
+    amf_nausf_auth_discover_and_send_authenticate(amf_ue);
 
     return OGS_OK;
 }

@@ -70,6 +70,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
                 message->AuthenticationSubscription);
     if (message->UeAuthenticationCtx)
         OpenAPI_ue_authentication_ctx_free(message->UeAuthenticationCtx);
+    if (message->ConfirmationData)
+        OpenAPI_confirmation_data_free(message->ConfirmationData);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -349,6 +351,10 @@ static char *build_content(ogs_sbi_message_t *message)
         item = OpenAPI_ue_authentication_ctx_convertToJSON(
                 message->UeAuthenticationCtx);
         ogs_assert(item);
+    } else if (message->ConfirmationData) {
+        item = OpenAPI_confirmation_data_convertToJSON(
+                message->ConfirmationData);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -617,21 +623,48 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
             CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
-                        message->UeAuthenticationCtx =
-                        OpenAPI_ue_authentication_ctx_parseFromJSON(item);
-                        if (!message->UeAuthenticationCtx) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
+                    SWITCH(message->h.method)
+                    CASE(OGS_SBI_HTTP_METHOD_POST)
+                        if (message->res_status ==
+                                OGS_SBI_HTTP_STATUS_CREATED) {
+                            message->UeAuthenticationCtx =
+                            OpenAPI_ue_authentication_ctx_parseFromJSON(item);
+                            if (!message->UeAuthenticationCtx) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                        } else {
+                            message->AuthenticationInfo =
+                                OpenAPI_authentication_info_parseFromJSON(item);
+                            if (!message->AuthenticationInfo) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
                         }
-                    } else {
-                        message->AuthenticationInfo =
-                            OpenAPI_authentication_info_parseFromJSON(item);
-                        if (!message->AuthenticationInfo) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
+                        break;
+                    CASE(OGS_SBI_HTTP_METHOD_PUT)
+                        if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+#if 0
+                            message->UeAuthenticationCtx =
+                            OpenAPI_ue_authentication_ctx_parseFromJSON(item);
+                            if (!message->UeAuthenticationCtx) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+#endif
+                        } else {
+                            message->ConfirmationData =
+                                OpenAPI_confirmation_data_parseFromJSON(item);
+                            if (!message->ConfirmationData) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
                         }
-                    }
+                        break;
+                    DEFAULT
+                        rv = OGS_ERROR;
+                        ogs_error("Unknown method [%s]", message->h.method);
+                    END
                     break;
 
                 DEFAULT
