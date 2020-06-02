@@ -127,8 +127,6 @@ ausf_ue_t *ausf_ue_add(ogs_sbi_session_t *session, char *id)
     ogs_assert(ausf_ue);
     memset(ausf_ue, 0, sizeof *ausf_ue);
 
-    ogs_sbi_session_set_data(session, ausf_ue);
-
     ausf_ue->id = ogs_strdup(id);
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);

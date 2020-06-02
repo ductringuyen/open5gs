@@ -124,8 +124,6 @@ udm_ue_t *udm_ue_add(ogs_sbi_session_t *session, char *id)
     ogs_assert(udm_ue);
     memset(udm_ue, 0, sizeof *udm_ue);
 
-    ogs_sbi_session_set_data(session, udm_ue);
-
     udm_ue->id = ogs_strdup(id);
     ogs_assert(udm_ue->id);
     ogs_hash_set(self.ueid_hash, udm_ue->id, strlen(udm_ue->id), udm_ue);
