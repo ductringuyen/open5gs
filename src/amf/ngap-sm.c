@@ -78,10 +78,10 @@ void ngap_state_operational(ogs_fsm_t *s, amf_event_t *e)
             case NGAP_ProcedureCode_id_InitialUEMessage:
                 ngap_handle_initial_ue_message(gnb, pdu);
                 break;
-#if 0
-            case NGAP_ProcedureCode_id_uplinkNASTransport :
+            case NGAP_ProcedureCode_id_UplinkNASTransport:
                 ngap_handle_uplink_nas_transport(gnb, pdu);
                 break;
+#if 0
             case NGAP_ProcedureCode_id_UECapabilityInfoIndication :
                 ngap_handle_ue_capability_info_indication( gnb, pdu);
                 break;

@@ -350,11 +350,11 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
         if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
 #if 0
-            rv = nas_eps_send_emm_to_esm(amf_ue,
+            rv = nas_5gs_send_emm_to_esm(amf_ue,
                     &amf_ue->pdn_connectivity_request);
             if (rv != OGS_OK) {
-                ogs_error("nas_eps_send_emm_to_esm() failed");
-                nas_eps_send_attach_reject(amf_ue,
+                ogs_error("nas_5gs_send_emm_to_esm() failed");
+                nas_5gs_send_attach_reject(amf_ue,
                     EMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
                 OGS_FSM_TRAN(s, &emm_state_exception);
@@ -395,7 +395,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         if (procedureCode == NGAP_ProcedureCode_id_initialUEMessage) {
             ogs_debug("    Iniital UE Message");
-            if (amf_ue->nas_eps.update.active_flag) {
+            if (amf_ue->nas_5gs.update.active_flag) {
                 nas_5gs_send_tau_accept(amf_ue,
                         NGAP_ProcedureCode_id_InitialContextSetup);
             } else {
@@ -440,21 +440,21 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         if (procedureCode == NGAP_ProcedureCode_id_initialUEMessage) {
             ogs_debug("    Initial UE Message");
-            if (amf_ue->nas_eps.service.value ==
+            if (amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_FROM_UE ||
-                amf_ue->nas_eps.service.value ==
+                amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_EMERGENCY_CALL_FROM_UE) {
                 ogs_debug("    MO-CSFB-INDICATION[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 sgsap_send_mo_csfb_indication(amf_ue);
-            } else if (amf_ue->nas_eps.service.value ==
+            } else if (amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_TO_UE) {
                 ogs_debug("    SERVICE_REQUEST[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 sgsap_send_service_request(amf_ue, SGSAP_EMM_IDLE_MODE);
             } else {
                 ogs_warn(" Unknown CSFB Service Type[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 nas_5gs_send_service_reject(amf_ue,
                     EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
@@ -465,21 +465,21 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         } else if (procedureCode == NGAP_ProcedureCode_id_uplinkNASTransport) {
             ogs_debug("    Uplink NAS Transport");
-            if (amf_ue->nas_eps.service.value ==
+            if (amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_FROM_UE ||
-                amf_ue->nas_eps.service.value ==
+                amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_EMERGENCY_CALL_FROM_UE) {
                 ogs_debug("    MO-CSFB-INDICATION[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 sgsap_send_mo_csfb_indication(amf_ue);
-            } else if (amf_ue->nas_eps.service.value ==
+            } else if (amf_ue->nas_5gs.service.value ==
                     OGS_NAS_SERVICE_TYPE_CS_FALLBACK_TO_UE) {
                 ogs_debug("    SERVICE_REQUEST[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 sgsap_send_service_request(amf_ue, SGSAP_EMM_CONNECTED_MODE);
             } else {
                 ogs_warn(" Unknown CSFB Service Type[%d]",
-                        amf_ue->nas_eps.service.value);
+                        amf_ue->nas_5gs.service.value);
                 nas_5gs_send_service_reject(amf_ue,
                     EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
@@ -528,19 +528,18 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_AUTHENTICATION_RESPONSE:
         {
-#if 0
-            ogs_nas_eps_authentication_response_t *authentication_response =
+            ogs_nas_5gs_authentication_response_t *authentication_response =
                 &message->gmm.authentication_response;
             ogs_nas_authentication_response_parameter_t
                 *authentication_response_parameter =
                     &authentication_response->
                         authentication_response_parameter;
 
-            ogs_debug("Authentication response");
-            ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+            ogs_fatal("[%s] Authentication response", amf_ue->id);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
+#if 0
             if (authentication_response_parameter->length == 0 ||
                 memcmp(authentication_response_parameter->res,
                 amf_ue->xres,
@@ -562,7 +561,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_AUTHENTICATION_FAILURE:
         {
 #if 0
-            ogs_nas_eps_authentication_failure_t *authentication_failure =
+            ogs_nas_5gs_authentication_failure_t *authentication_failure =
                 &message->gmm.authentication_failure;
             ogs_nas_authentication_failure_parameter_t
                 *authentication_failure_parameter = 
@@ -794,14 +793,14 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             amf_ue->nhcc = 1;
 
             amf_s6a_send_ulr(amf_ue);
-            if (amf_ue->nas_eps.type == AMF_EPS_TYPE_REGISTRATION_REQUEST) {
+            if (amf_ue->nas_5gs.type == AMF_EPS_TYPE_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
-            } else if (amf_ue->nas_eps.type ==
+            } else if (amf_ue->nas_5gs.type ==
                     AMF_EPS_TYPE_SERVICE_REQUEST ||
-                    amf_ue->nas_eps.type == AMF_EPS_TYPE_TAU_REQUEST) {
+                    amf_ue->nas_5gs.type == AMF_EPS_TYPE_TAU_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_registered);
             } else {
-                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas_eps.type);
+                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas_5gs.type);
             }
             break;
         case OGS_NAS_5GS_SECURITY_MODE_REJECT:
