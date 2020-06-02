@@ -41,10 +41,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
-    uint8_t rand[OGS_RAND_LEN];
-    uint8_t xres_star[OGS_MAX_RES_LEN];
-    uint8_t hxres_star[OGS_MAX_RES_LEN];
-
     char hxres_star_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
 
     OpenAPI_authentication_info_result_t *AuthenticationInfoResult = NULL;
@@ -148,14 +144,15 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             ogs_ascii_to_hex(
                 AuthenticationVector->rand,
                 strlen(AuthenticationVector->rand),
-                rand, sizeof(rand));
+                ausf_ue->rand, sizeof(ausf_ue->rand));
             ogs_ascii_to_hex(
                 AuthenticationVector->xres_star,
                 strlen(AuthenticationVector->xres_star),
-                xres_star, sizeof(xres_star));
+                ausf_ue->xres_star, sizeof(ausf_ue->xres_star));
 
-            ogs_kdf_hxres_star(rand, xres_star, hxres_star);
-            ogs_hex_to_ascii(hxres_star, sizeof(hxres_star),
+            ogs_kdf_hxres_star(ausf_ue->rand, ausf_ue->xres_star,
+                    ausf_ue->hxres_star);
+            ogs_hex_to_ascii(ausf_ue->hxres_star, sizeof(ausf_ue->hxres_star),
                     hxres_star_string, sizeof(hxres_star_string));
             AV5G_AKA.hxres_star = hxres_star_string;
 
