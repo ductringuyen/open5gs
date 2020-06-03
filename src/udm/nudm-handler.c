@@ -59,14 +59,6 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
         return false;
     }
 
-    udm_ue->ue_id = ogs_sbi_ueid_from_suci(udm_ue->suci);
-    if (!udm_ue->ue_id) {
-        ogs_error("[%s] Invalid SUCI", udm_ue->suci);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "Invalid SUCI", udm_ue->suci);
-        return false;
-    }
-
     udm_ue->serving_network_name = ogs_strdup(serving_network_name);
     ogs_assert(udm_ue->serving_network_name);
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);

@@ -47,6 +47,7 @@ typedef struct udm_context_s {
 
     ogs_list_t      udm_ue_list;
     ogs_hash_t      *suci_hash;
+    ogs_hash_t      *supi_hash;
 
 } udm_context_t;
 
@@ -54,10 +55,11 @@ struct udm_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
+    char *ctx_id;
     char *suci;
+    char *supi;
     char *serving_network_name;
     char *ausf_instance_id;
-    char *ue_id;
 
     struct {
         ogs_timer_t *timer;
@@ -94,6 +96,9 @@ udm_ue_t *udm_ue_add(char *suci);
 void udm_ue_remove(udm_ue_t *udm_ue);
 void udm_ue_remove_all(void);
 udm_ue_t *udm_ue_find_by_suci(char *suci);
+udm_ue_t *udm_ue_find_by_supi(char *supi);
+udm_ue_t *udm_ue_find_by_suci_or_supi(char *suci_or_supi);
+udm_ue_t *udm_ue_find_by_ctx_id(char *ctx_id);
 
 #ifdef __cplusplus
 }

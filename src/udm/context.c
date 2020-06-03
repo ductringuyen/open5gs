@@ -41,6 +41,7 @@ void udm_context_init(void)
 
     ogs_list_init(&self.udm_ue_list);
     self.suci_hash = ogs_hash_make();
+    self.supi_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -53,6 +54,8 @@ void udm_context_final(void)
 
     ogs_assert(self.suci_hash);
     ogs_hash_destroy(self.suci_hash);
+    ogs_assert(self.supi_hash);
+    ogs_hash_destroy(self.supi_hash);
 
     ogs_pool_final(&udm_ue_pool);
 
@@ -123,9 +126,16 @@ udm_ue_t *udm_ue_add(char *suci)
     ogs_assert(udm_ue);
     memset(udm_ue, 0, sizeof *udm_ue);
 
+    udm_ue->ctx_id = ogs_msprintf("%ld", ogs_pool_index(&udm_ue_pool, udm_ue));
+    ogs_assert(udm_ue->ctx_id);
+
     udm_ue->suci = ogs_strdup(suci);
     ogs_assert(udm_ue->suci);
     ogs_hash_set(self.suci_hash, udm_ue->suci, strlen(udm_ue->suci), udm_ue);
+
+    udm_ue->supi = ogs_sbi_ueid_from_suci(udm_ue->suci);
+    ogs_assert(udm_ue->supi);
+    ogs_hash_set(self.supi_hash, udm_ue->supi, strlen(udm_ue->supi), udm_ue);
 
     udm_ue->sbi_server_wait.timer = ogs_timer_add(udm_self()->timer_mgr,
             udm_timer_sbi_server_wait_expire, udm_ue);
@@ -157,16 +167,21 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     ogs_timer_delete(udm_ue->sbi_server_wait.timer);
     ogs_timer_delete(udm_ue->sbi_client_wait.timer);
 
+    ogs_assert(udm_ue->ctx_id);
+    ogs_free(udm_ue->ctx_id);
+
     ogs_assert(udm_ue->suci);
     ogs_hash_set(self.suci_hash, udm_ue->suci, strlen(udm_ue->suci), NULL);
     ogs_free(udm_ue->suci);
+
+    ogs_assert(udm_ue->supi);
+    ogs_hash_set(self.supi_hash, udm_ue->supi, strlen(udm_ue->supi), NULL);
+    ogs_free(udm_ue->supi);
 
     if (udm_ue->serving_network_name)
         ogs_free(udm_ue->serving_network_name);
     if (udm_ue->ausf_instance_id)
         ogs_free(udm_ue->ausf_instance_id);
-    if (udm_ue->ue_id)
-        ogs_free(udm_ue->ue_id);
     
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (udm_ue->nf_types[i].nf_instance)
@@ -188,4 +203,25 @@ udm_ue_t *udm_ue_find_by_suci(char *suci)
 {
     ogs_assert(suci);
     return (udm_ue_t *)ogs_hash_get(self.suci_hash, suci, strlen(suci));
+}
+
+udm_ue_t *udm_ue_find_by_supi(char *supi)
+{
+    ogs_assert(supi);
+    return (udm_ue_t *)ogs_hash_get(self.supi_hash, supi, strlen(supi));
+}
+
+udm_ue_t *udm_ue_find_by_suci_or_supi(char *suci_or_supi)
+{
+    ogs_assert(suci_or_supi);
+    if (strncmp(suci_or_supi, "suci-", strlen("suci-")) == 0)
+        return udm_ue_find_by_suci(suci_or_supi);
+    else
+        return udm_ue_find_by_supi(suci_or_supi);
+}
+
+udm_ue_t *udm_ue_find_by_ctx_id(char *ctx_id)
+{
+    ogs_assert(ctx_id);
+    return ogs_pool_find(&udm_ue_pool, atoll(ctx_id));
 }
