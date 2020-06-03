@@ -28,10 +28,10 @@
 #define FC_FOR_KSEAF_DERIVATION                 0x6C
 #define FC_FOR_KAMF_DERIVATION                  0x6D
 #define FC_FOR_KGNB_KN3IWF_DERIVATION           0x6E
-#define FC_FOR_KGNB_NH_DERIVATION               0x6F
+#define FC_FOR_NH_GNB_DERIVATION                0x6F
 
 #define FC_FOR_KENB_DERIVATION                  0x11
-#define FC_FOR_KENB_NH_DERIVATION               0x12
+#define FC_FOR_NH_ENB_DERIVATION                0x12
 #define FC_FOR_EPS_ALGORITHM_KEY_DERIVATION     0x15
 
 typedef struct kdf_param_s {
@@ -202,63 +202,47 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
 }
 
 /* TS33.401 Annex A.3 KeNB derivation function */
-void ogs_kdf_kenb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb)
+void ogs_kdf_kenb(uint8_t *kasme, uint32_t ul_count, uint8_t *kenb)
 {
-    uint8_t s[7];
+    kdf_param_t param;
 
-    s[0] = FC_FOR_KENB_DERIVATION;
-
+    memset(param, 0, sizeof(param));
     ul_count = htobe32(ul_count);
-    memcpy(s+1, &ul_count, 4);
+    param[0].buf = (uint8_t *)&ul_count;
+    param[0].len = 4;
 
-    s[5] = 0x00;
-    s[6] = 0x04;
-
-    ogs_hmac_sha256(kasme, 32, s, 7, kenb, 32);
-
-    ogs_fatal("ENB");
-    ogs_log_hexdump(OGS_LOG_FATAL, kenb, 32);
+    ogs_kdf_common(kasme, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_KENB_DERIVATION, param, kenb);
 }
 
 /* TS33.401 Annex A.4 NH derivation function */
-void ogs_kdf_nh_enb(const uint8_t *kasme,
-        const uint8_t *sync_input, uint8_t *kenb)
+void ogs_kdf_nh_enb(uint8_t *kasme, uint8_t *sync_input, uint8_t *kenb)
 {
-    uint8_t s[35];
+    kdf_param_t param;
 
-    s[0] = FC_FOR_KENB_NH_DERIVATION;
+    memset(param, 0, sizeof(param));
+    param[0].buf = sync_input;
+    param[0].len = OGS_SHA256_DIGEST_SIZE;
 
-    memcpy(s+1, sync_input, 32);
-
-    s[33] = 0x00;
-    s[34] = 0x20;
-
-    ogs_hmac_sha256(kasme, 32, s, 35, kenb, 32);
-    ogs_fatal("NH");
-    ogs_log_hexdump(OGS_LOG_FATAL, kenb, 32);
+    ogs_kdf_common(kasme, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_NH_ENB_DERIVATION, param, kenb);
 }
 
 /* TS33.401 Annex A.7 Algorithm key derivation functions */
 void ogs_kdf_nas_eps(uint8_t algorithm_type_distinguishers,
-    uint8_t algorithm_identity, const uint8_t *kasme, uint8_t *knas)
+    uint8_t algorithm_identity, uint8_t *kasme, uint8_t *knas)
 {
-    uint8_t s[7];
-    uint8_t out[32];
+    kdf_param_t param;
+    uint8_t output[OGS_SHA256_DIGEST_SIZE];
 
-    s[0] = FC_FOR_EPS_ALGORITHM_KEY_DERIVATION;
+    memset(param, 0, sizeof(param));
+    param[0].buf = &algorithm_type_distinguishers;
+    param[0].len = 1;
+    param[1].buf = &algorithm_identity;
+    param[1].len = 1;
 
-    s[1] = algorithm_type_distinguishers;
-    s[2] = 0x00;
-    s[3] = 0x01;
-
-    s[4] = algorithm_identity;
-    s[5] = 0x00;
-    s[6] = 0x01;
-
-    ogs_hmac_sha256(kasme, 32, s, 7, out, 32);
-    memcpy(knas, out+16, 16);
-
-    ogs_fatal("KNAS");
-    ogs_log_hexdump(OGS_LOG_FATAL, knas, 16);
+    ogs_kdf_common(kasme, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_EPS_ALGORITHM_KEY_DERIVATION, param, output);
+    memcpy(knas, output+16, 16);
 }
 

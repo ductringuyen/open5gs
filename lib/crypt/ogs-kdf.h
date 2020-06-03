@@ -63,15 +63,14 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf);
 
 /* TS33.401 Annex A.3 KeNB derivation function */
-void ogs_kdf_kenb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
+void ogs_kdf_kenb(uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
 
 /* TS33.401 Annex A.4 NH derivation function */
-void ogs_kdf_nh_enb(const uint8_t *kasme,
-        const uint8_t *sync_input, uint8_t *kenb);
+void ogs_kdf_nh_enb(uint8_t *kasme, uint8_t *sync_input, uint8_t *kenb);
 
 /* TS33.401 Annex A.7 Algorithm key derivation functions */
 void ogs_kdf_nas_eps(uint8_t algorithm_type_distinguishers,
-    uint8_t algorithm_identity, const uint8_t *kasme, uint8_t *knas);
+    uint8_t algorithm_identity, uint8_t *kasme, uint8_t *knas);
 
 
 #ifdef __cplusplus
