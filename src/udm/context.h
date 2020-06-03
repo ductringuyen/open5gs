@@ -55,6 +55,10 @@ struct udm_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
+    struct {
+        char *component1;
+    } state;
+
     char *ctx_id;
     char *suci;
     char *supi;

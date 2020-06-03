@@ -320,7 +320,7 @@ void ausf_nnrf_handle_nf_discover(
                     ausf_ue, nf_instance);
             break;
         DEFAULT
-            ogs_fatal("[%s] Unknown method [%s]",
+            ogs_fatal("[%s] Unknown state [%s]",
                     ausf_ue->suci, ausf_ue->state.method);
             ogs_assert_if_reached();
         END

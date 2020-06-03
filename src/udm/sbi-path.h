@@ -37,6 +37,10 @@ void udm_nudr_dr_send_query(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
 void udm_nudr_dr_discover_and_send_query(udm_ue_t *udm_ue);
 
+void udm_nudr_dr_send_update(
+        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
+void udm_nudr_dr_discover_and_send_update(udm_ue_t *udm_ue);
+
 #ifdef __cplusplus
 }
 #endif

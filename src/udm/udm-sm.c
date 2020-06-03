@@ -47,7 +47,6 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
     ogs_sbi_message_t message;
 
     udm_ue_t *udm_ue = NULL;
-    char *ueid = NULL;
 
     udm_sm_debug(e);
 
@@ -120,17 +119,26 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-            ueid = message.h.resource.component[0];
-            if (!ueid) {
+            if (!message.h.resource.component[0]) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_NOT_FOUND,
                     &message, "Not found", message.h.method);
+                break;
             }
 
-            udm_ue = udm_ue_find_by_suci_or_supi(ueid);
+            if (!message.h.resource.component[1]) {
+                ogs_error("Invalid resource name [%s]", message.h.method);
+                ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                    &message, "Invalid resource name", message.h.method);
+                break;
+            }
+
+            udm_ue = udm_ue_find_by_suci_or_supi(
+                    message.h.resource.component[0]);
             if (!udm_ue) {
-                udm_ue = udm_ue_add(ueid);
+                udm_ue = udm_ue_add(message.h.resource.component[0]);
                 ogs_assert(udm_ue);
             }
 
@@ -138,6 +146,11 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             ogs_assert(OGS_FSM_STATE(&udm_ue->sm));
 
             OGS_SETUP_SBI_SESSION(udm_ue, session);
+
+            if (udm_ue->state.component1)
+                ogs_free(udm_ue->state.component1);
+            udm_ue->state.component1 = ogs_strdup(
+                    message.h.resource.component[1]);
 
             e->udm_ue = udm_ue;
             e->sbi.message = &message;

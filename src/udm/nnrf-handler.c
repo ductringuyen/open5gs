@@ -308,6 +308,18 @@ void udm_nnrf_handle_nf_discover(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                 "(NF discover) No UDR", udm_ue->suci);
     } else {
-        udm_nudr_dr_send_query(udm_ue, nf_instance);
+        ogs_assert(udm_ue->state.component1);
+        SWITCH(udm_ue->state.component1)
+        CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+            udm_nudr_dr_send_query(udm_ue, nf_instance);
+            break;
+        CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+            udm_nudr_dr_send_update(udm_ue, nf_instance);
+            break;
+        DEFAULT
+            ogs_fatal("[%s] Unknown state [%s]",
+                    udm_ue->suci, udm_ue->state.component1);
+            ogs_assert_if_reached();
+        END
     }
 }
