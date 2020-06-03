@@ -56,10 +56,6 @@ cJSON *OpenAPI_auth_event_convertToJSON(OpenAPI_auth_event_t *auth_event)
         goto end;
     }
 
-    if (!auth_event->success) {
-        ogs_error("OpenAPI_auth_event_convertToJSON() failed [success]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "success", auth_event->success) == NULL) {
         ogs_error("OpenAPI_auth_event_convertToJSON() failed [success]");
         goto end;

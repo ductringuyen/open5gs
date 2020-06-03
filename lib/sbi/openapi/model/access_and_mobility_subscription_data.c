@@ -410,14 +410,14 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->mps_priority) {
+    if (access_and_mobility_subscription_data->mps_priority >= 0) {
         if (cJSON_AddBoolToObject(item, "mpsPriority", access_and_mobility_subscription_data->mps_priority) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mps_priority]");
             goto end;
         }
     }
 
-    if (access_and_mobility_subscription_data->mcs_priority) {
+    if (access_and_mobility_subscription_data->mcs_priority >= 0) {
         if (cJSON_AddBoolToObject(item, "mcsPriority", access_and_mobility_subscription_data->mcs_priority) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mcs_priority]");
             goto end;
@@ -451,14 +451,14 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->sor_info_expect_ind) {
+    if (access_and_mobility_subscription_data->sor_info_expect_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "sorInfoExpectInd", access_and_mobility_subscription_data->sor_info_expect_ind) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [sor_info_expect_ind]");
             goto end;
         }
     }
 
-    if (access_and_mobility_subscription_data->soraf_retrieval) {
+    if (access_and_mobility_subscription_data->soraf_retrieval >= 0) {
         if (cJSON_AddBoolToObject(item, "sorafRetrieval", access_and_mobility_subscription_data->soraf_retrieval) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [soraf_retrieval]");
             goto end;
@@ -493,7 +493,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->mico_allowed) {
+    if (access_and_mobility_subscription_data->mico_allowed >= 0) {
         if (cJSON_AddBoolToObject(item, "micoAllowed", access_and_mobility_subscription_data->mico_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mico_allowed]");
             goto end;
@@ -599,7 +599,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->nssai_inclusion_allowed) {
+    if (access_and_mobility_subscription_data->nssai_inclusion_allowed >= 0) {
         if (cJSON_AddBoolToObject(item, "nssaiInclusionAllowed", access_and_mobility_subscription_data->nssai_inclusion_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [nssai_inclusion_allowed]");
             goto end;
@@ -772,7 +772,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->iab_operation_allowed) {
+    if (access_and_mobility_subscription_data->iab_operation_allowed >= 0) {
         if (cJSON_AddBoolToObject(item, "iabOperationAllowed", access_and_mobility_subscription_data->iab_operation_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [iab_operation_allowed]");
             goto end;

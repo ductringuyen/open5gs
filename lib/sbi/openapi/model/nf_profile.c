@@ -1028,7 +1028,7 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->nf_service_persistence) {
+    if (nf_profile->nf_service_persistence >= 0) {
         if (cJSON_AddBoolToObject(item, "nfServicePersistence", nf_profile->nf_service_persistence) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_service_persistence]");
             goto end;
@@ -1055,14 +1055,14 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->nf_profile_changes_support_ind) {
+    if (nf_profile->nf_profile_changes_support_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "nfProfileChangesSupportInd", nf_profile->nf_profile_changes_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_profile_changes_support_ind]");
             goto end;
         }
     }
 
-    if (nf_profile->nf_profile_changes_ind) {
+    if (nf_profile->nf_profile_changes_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "nfProfileChangesInd", nf_profile->nf_profile_changes_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_profile_changes_ind]");
             goto end;
@@ -1147,14 +1147,14 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->lc_h_support_ind) {
+    if (nf_profile->lc_h_support_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "lcHSupportInd", nf_profile->lc_h_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [lc_h_support_ind]");
             goto end;
         }
     }
 
-    if (nf_profile->olc_h_support_ind) {
+    if (nf_profile->olc_h_support_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "olcHSupportInd", nf_profile->olc_h_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [olc_h_support_ind]");
             goto end;

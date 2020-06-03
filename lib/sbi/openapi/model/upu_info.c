@@ -75,19 +75,11 @@ cJSON *OpenAPI_upu_info_convertToJSON(OpenAPI_upu_info_t *upu_info)
         }
     }
 
-    if (!upu_info->upu_reg_ind) {
-        ogs_error("OpenAPI_upu_info_convertToJSON() failed [upu_reg_ind]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "upuRegInd", upu_info->upu_reg_ind) == NULL) {
         ogs_error("OpenAPI_upu_info_convertToJSON() failed [upu_reg_ind]");
         goto end;
     }
 
-    if (!upu_info->upu_ack_ind) {
-        ogs_error("OpenAPI_upu_info_convertToJSON() failed [upu_ack_ind]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "upuAckInd", upu_info->upu_ack_ind) == NULL) {
         ogs_error("OpenAPI_upu_info_convertToJSON() failed [upu_ack_ind]");
         goto end;

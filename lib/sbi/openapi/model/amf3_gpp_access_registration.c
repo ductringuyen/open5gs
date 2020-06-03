@@ -114,7 +114,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->purge_flag) {
+    if (amf3_gpp_access_registration->purge_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf3_gpp_access_registration->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [purge_flag]");
             goto end;
@@ -171,7 +171,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->initial_registration_ind) {
+    if (amf3_gpp_access_registration->initial_registration_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "initialRegistrationInd", amf3_gpp_access_registration->initial_registration_ind) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [initial_registration_ind]");
             goto end;
@@ -213,7 +213,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->dr_flag) {
+    if (amf3_gpp_access_registration->dr_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "drFlag", amf3_gpp_access_registration->dr_flag) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [dr_flag]");
             goto end;
@@ -235,7 +235,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         goto end;
     }
 
-    if (amf3_gpp_access_registration->urrp_indicator) {
+    if (amf3_gpp_access_registration->urrp_indicator >= 0) {
         if (cJSON_AddBoolToObject(item, "urrpIndicator", amf3_gpp_access_registration->urrp_indicator) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [urrp_indicator]");
             goto end;
@@ -249,7 +249,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->ue_srvcc_capability) {
+    if (amf3_gpp_access_registration->ue_srvcc_capability >= 0) {
         if (cJSON_AddBoolToObject(item, "ueSrvccCapability", amf3_gpp_access_registration->ue_srvcc_capability) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [ue_srvcc_capability]");
             goto end;

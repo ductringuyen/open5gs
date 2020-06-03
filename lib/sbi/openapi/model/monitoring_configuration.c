@@ -63,7 +63,7 @@ cJSON *OpenAPI_monitoring_configuration_convertToJSON(OpenAPI_monitoring_configu
         goto end;
     }
 
-    if (monitoring_configuration->immediate_flag) {
+    if (monitoring_configuration->immediate_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "immediateFlag", monitoring_configuration->immediate_flag) == NULL) {
             ogs_error("OpenAPI_monitoring_configuration_convertToJSON() failed [immediate_flag]");
             goto end;

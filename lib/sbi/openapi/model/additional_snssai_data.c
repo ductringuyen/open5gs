@@ -36,7 +36,7 @@ cJSON *OpenAPI_additional_snssai_data_convertToJSON(OpenAPI_additional_snssai_da
     }
 
     item = cJSON_CreateObject();
-    if (additional_snssai_data->required_authn_authz) {
+    if (additional_snssai_data->required_authn_authz >= 0) {
         if (cJSON_AddBoolToObject(item, "requiredAuthnAuthz", additional_snssai_data->required_authn_authz) == NULL) {
             ogs_error("OpenAPI_additional_snssai_data_convertToJSON() failed [required_authn_authz]");
             goto end;

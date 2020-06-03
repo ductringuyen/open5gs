@@ -119,7 +119,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         goto end;
     }
 
-    if (dnn_configuration->iwk_eps_ind) {
+    if (dnn_configuration->iwk_eps_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", dnn_configuration->iwk_eps_ind) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [iwk_eps_ind]");
             goto end;
@@ -199,7 +199,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->invoke_nef_selection) {
+    if (dnn_configuration->invoke_nef_selection >= 0) {
         if (cJSON_AddBoolToObject(item, "invokeNefSelection", dnn_configuration->invoke_nef_selection) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [invoke_nef_selection]");
             goto end;
@@ -226,7 +226,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->redundant_session_allowed) {
+    if (dnn_configuration->redundant_session_allowed >= 0) {
         if (cJSON_AddBoolToObject(item, "redundantSessionAllowed", dnn_configuration->redundant_session_allowed) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [redundant_session_allowed]");
             goto end;
@@ -286,7 +286,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->atsss_allowed) {
+    if (dnn_configuration->atsss_allowed >= 0) {
         if (cJSON_AddBoolToObject(item, "atsssAllowed", dnn_configuration->atsss_allowed) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [atsss_allowed]");
             goto end;

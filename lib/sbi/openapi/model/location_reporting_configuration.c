@@ -44,16 +44,12 @@ cJSON *OpenAPI_location_reporting_configuration_convertToJSON(OpenAPI_location_r
     }
 
     item = cJSON_CreateObject();
-    if (!location_reporting_configuration->current_location) {
-        ogs_error("OpenAPI_location_reporting_configuration_convertToJSON() failed [current_location]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "currentLocation", location_reporting_configuration->current_location) == NULL) {
         ogs_error("OpenAPI_location_reporting_configuration_convertToJSON() failed [current_location]");
         goto end;
     }
 
-    if (location_reporting_configuration->one_time) {
+    if (location_reporting_configuration->one_time >= 0) {
         if (cJSON_AddBoolToObject(item, "oneTime", location_reporting_configuration->one_time) == NULL) {
             ogs_error("OpenAPI_location_reporting_configuration_convertToJSON() failed [one_time]");
             goto end;

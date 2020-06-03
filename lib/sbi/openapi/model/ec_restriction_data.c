@@ -38,14 +38,14 @@ cJSON *OpenAPI_ec_restriction_data_convertToJSON(OpenAPI_ec_restriction_data_t *
     }
 
     item = cJSON_CreateObject();
-    if (ec_restriction_data->ec_mode_a_restricted) {
+    if (ec_restriction_data->ec_mode_a_restricted >= 0) {
         if (cJSON_AddBoolToObject(item, "ecModeARestricted", ec_restriction_data->ec_mode_a_restricted) == NULL) {
             ogs_error("OpenAPI_ec_restriction_data_convertToJSON() failed [ec_mode_a_restricted]");
             goto end;
         }
     }
 
-    if (ec_restriction_data->ec_mode_b_restricted) {
+    if (ec_restriction_data->ec_mode_b_restricted >= 0) {
         if (cJSON_AddBoolToObject(item, "ecModeBRestricted", ec_restriction_data->ec_mode_b_restricted) == NULL) {
             ogs_error("OpenAPI_ec_restriction_data_convertToJSON() failed [ec_mode_b_restricted]");
             goto end;

@@ -490,7 +490,7 @@ cJSON *OpenAPI_nf_service_convertToJSON(OpenAPI_nf_service_t *nf_service)
         }
     }
 
-    if (nf_service->oauth2_required) {
+    if (nf_service->oauth2_required >= 0) {
         if (cJSON_AddBoolToObject(item, "oauth2Required", nf_service->oauth2_required) == NULL) {
             ogs_error("OpenAPI_nf_service_convertToJSON() failed [oauth2_required]");
             goto end;

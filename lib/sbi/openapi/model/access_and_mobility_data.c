@@ -233,7 +233,7 @@ cJSON *OpenAPI_access_and_mobility_data_convertToJSON(OpenAPI_access_and_mobilit
         }
     }
 
-    if (access_and_mobility_data->roaming_status) {
+    if (access_and_mobility_data->roaming_status >= 0) {
         if (cJSON_AddBoolToObject(item, "roamingStatus", access_and_mobility_data->roaming_status) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_data_convertToJSON() failed [roaming_status]");
             goto end;

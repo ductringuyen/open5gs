@@ -60,7 +60,7 @@ cJSON *OpenAPI_cag_info_convertToJSON(OpenAPI_cag_info_t *cag_info)
         }
     }
 
-    if (cag_info->cag_only_indicator) {
+    if (cag_info->cag_only_indicator >= 0) {
         if (cJSON_AddBoolToObject(item, "cagOnlyIndicator", cag_info->cag_only_indicator) == NULL) {
             ogs_error("OpenAPI_cag_info_convertToJSON() failed [cag_only_indicator]");
             goto end;

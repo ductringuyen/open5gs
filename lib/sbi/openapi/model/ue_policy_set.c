@@ -176,7 +176,7 @@ cJSON *OpenAPI_ue_policy_set_convertToJSON(OpenAPI_ue_policy_set_t *ue_policy_se
         }
     }
 
-    if (ue_policy_set->andsp_ind) {
+    if (ue_policy_set->andsp_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "andspInd", ue_policy_set->andsp_ind) == NULL) {
             ogs_error("OpenAPI_ue_policy_set_convertToJSON() failed [andsp_ind]");
             goto end;

@@ -123,7 +123,7 @@ cJSON *OpenAPI_authentication_subscription_convertToJSON(OpenAPI_authentication_
         }
     }
 
-    if (authentication_subscription->vector_generation_in_hss) {
+    if (authentication_subscription->vector_generation_in_hss >= 0) {
         if (cJSON_AddBoolToObject(item, "vectorGenerationInHss", authentication_subscription->vector_generation_in_hss) == NULL) {
             ogs_error("OpenAPI_authentication_subscription_convertToJSON() failed [vector_generation_in_hss]");
             goto end;

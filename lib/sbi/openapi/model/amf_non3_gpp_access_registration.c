@@ -108,7 +108,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_convertToJSON(OpenAPI_amf_non3_g
         }
     }
 
-    if (amf_non3_gpp_access_registration->purge_flag) {
+    if (amf_non3_gpp_access_registration->purge_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf_non3_gpp_access_registration->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [purge_flag]");
             goto end;
@@ -217,7 +217,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_convertToJSON(OpenAPI_amf_non3_g
         goto end;
     }
 
-    if (amf_non3_gpp_access_registration->urrp_indicator) {
+    if (amf_non3_gpp_access_registration->urrp_indicator >= 0) {
         if (cJSON_AddBoolToObject(item, "urrpIndicator", amf_non3_gpp_access_registration->urrp_indicator) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [urrp_indicator]");
             goto end;

@@ -228,13 +228,20 @@ cJSON *OpenAPI_{{classname}}_convertToJSON(OpenAPI_{{classname}}_t *{{classname}
     item = cJSON_CreateObject();
 {{#vars}}
     {{#required}}
-        if (!{{{classname}}}->{{{name}}}) {
-            ogs_error("OpenAPI_{{classname}}_convertToJSON() failed [{{{name}}}]");
-            goto end;
-        }
+        {{^isBoolean}}
+            if (!{{{classname}}}->{{{name}}}) {
+                ogs_error("OpenAPI_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                goto end;
+            }
+        {{/isBoolean}}
     {{/required}}
     {{^required}}
-        if ({{{classname}}}->{{{name}}}) {
+        {{#isBoolean}}
+            if ({{{classname}}}->{{{name}}} >= 0) {
+        {{/isBoolean}}
+        {{^isBoolean}}
+            if ({{{classname}}}->{{{name}}}) {
+        {{/isBoolean}}
     {{/required}}
     {{^isContainer}}
         {{#isPrimitiveType}}

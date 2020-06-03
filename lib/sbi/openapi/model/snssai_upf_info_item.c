@@ -82,7 +82,7 @@ cJSON *OpenAPI_snssai_upf_info_item_convertToJSON(OpenAPI_snssai_upf_info_item_t
         }
     }
 
-    if (snssai_upf_info_item->redundant_transport) {
+    if (snssai_upf_info_item->redundant_transport >= 0) {
         if (cJSON_AddBoolToObject(item, "redundantTransport", snssai_upf_info_item->redundant_transport) == NULL) {
             ogs_error("OpenAPI_snssai_upf_info_item_convertToJSON() failed [redundant_transport]");
             goto end;

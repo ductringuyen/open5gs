@@ -140,7 +140,7 @@ cJSON *OpenAPI_pcf_info_convertToJSON(OpenAPI_pcf_info_t *pcf_info)
         }
     }
 
-    if (pcf_info->v2x_support_ind) {
+    if (pcf_info->v2x_support_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "v2xSupportInd", pcf_info->v2x_support_ind) == NULL) {
             ogs_error("OpenAPI_pcf_info_convertToJSON() failed [v2x_support_ind]");
             goto end;

@@ -96,7 +96,7 @@ cJSON *OpenAPI_parameter_over_pc5_convertToJSON(OpenAPI_parameter_over_pc5_t *pa
         }
     }
 
-    if (parameter_over_pc5->auth_not_served) {
+    if (parameter_over_pc5->auth_not_served >= 0) {
         if (cJSON_AddBoolToObject(item, "authNotServed", parameter_over_pc5->auth_not_served) == NULL) {
             ogs_error("OpenAPI_parameter_over_pc5_convertToJSON() failed [auth_not_served]");
             goto end;

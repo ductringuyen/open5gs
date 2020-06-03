@@ -89,7 +89,7 @@ cJSON *OpenAPI_eutra_location_convertToJSON(OpenAPI_eutra_location_t *eutra_loca
         goto end;
     }
 
-    if (eutra_location->ignore_ecgi) {
+    if (eutra_location->ignore_ecgi >= 0) {
         if (cJSON_AddBoolToObject(item, "ignoreEcgi", eutra_location->ignore_ecgi) == NULL) {
             ogs_error("OpenAPI_eutra_location_convertToJSON() failed [ignore_ecgi]");
             goto end;

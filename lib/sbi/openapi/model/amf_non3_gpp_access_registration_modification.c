@@ -66,7 +66,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_modification_convertToJSON(OpenA
         goto end;
     }
 
-    if (amf_non3_gpp_access_registration_modification->purge_flag) {
+    if (amf_non3_gpp_access_registration_modification->purge_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf_non3_gpp_access_registration_modification->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_modification_convertToJSON() failed [purge_flag]");
             goto end;

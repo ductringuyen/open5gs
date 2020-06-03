@@ -142,7 +142,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->iwk_eps_ind) {
+    if (upf_info->iwk_eps_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", upf_info->iwk_eps_ind) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [iwk_eps_ind]");
             goto end;
@@ -182,7 +182,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->ue_ip_addr_ind) {
+    if (upf_info->ue_ip_addr_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "ueIpAddrInd", upf_info->ue_ip_addr_ind) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [ue_ip_addr_ind]");
             goto end;
@@ -255,7 +255,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->redundant_gtpu) {
+    if (upf_info->redundant_gtpu >= 0) {
         if (cJSON_AddBoolToObject(item, "redundantGtpu", upf_info->redundant_gtpu) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [redundant_gtpu]");
             goto end;

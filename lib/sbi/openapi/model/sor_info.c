@@ -61,10 +61,6 @@ cJSON *OpenAPI_sor_info_convertToJSON(OpenAPI_sor_info_t *sor_info)
         }
     }
 
-    if (!sor_info->ack_ind) {
-        ogs_error("OpenAPI_sor_info_convertToJSON() failed [ack_ind]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "ackInd", sor_info->ack_ind) == NULL) {
         ogs_error("OpenAPI_sor_info_convertToJSON() failed [ack_ind]");
         goto end;

@@ -80,7 +80,7 @@ cJSON *OpenAPI_sdm_subscription_convertToJSON(OpenAPI_sdm_subscription_t *sdm_su
         goto end;
     }
 
-    if (sdm_subscription->implicit_unsubscribe) {
+    if (sdm_subscription->implicit_unsubscribe >= 0) {
         if (cJSON_AddBoolToObject(item, "implicitUnsubscribe", sdm_subscription->implicit_unsubscribe) == NULL) {
             ogs_error("OpenAPI_sdm_subscription_convertToJSON() failed [implicit_unsubscribe]");
             goto end;
@@ -168,7 +168,7 @@ cJSON *OpenAPI_sdm_subscription_convertToJSON(OpenAPI_sdm_subscription_t *sdm_su
         }
     }
 
-    if (sdm_subscription->immediate_report) {
+    if (sdm_subscription->immediate_report >= 0) {
         if (cJSON_AddBoolToObject(item, "immediateReport", sdm_subscription->immediate_report) == NULL) {
             ogs_error("OpenAPI_sdm_subscription_convertToJSON() failed [immediate_report]");
             goto end;

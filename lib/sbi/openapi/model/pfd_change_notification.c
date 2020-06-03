@@ -56,14 +56,14 @@ cJSON *OpenAPI_pfd_change_notification_convertToJSON(OpenAPI_pfd_change_notifica
         goto end;
     }
 
-    if (pfd_change_notification->removal_flag) {
+    if (pfd_change_notification->removal_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "removalFlag", pfd_change_notification->removal_flag) == NULL) {
             ogs_error("OpenAPI_pfd_change_notification_convertToJSON() failed [removal_flag]");
             goto end;
         }
     }
 
-    if (pfd_change_notification->partial_flag) {
+    if (pfd_change_notification->partial_flag >= 0) {
         if (cJSON_AddBoolToObject(item, "partialFlag", pfd_change_notification->partial_flag) == NULL) {
             ogs_error("OpenAPI_pfd_change_notification_convertToJSON() failed [partial_flag]");
             goto end;

@@ -127,7 +127,7 @@ cJSON *OpenAPI_smf_registration_convertToJSON(OpenAPI_smf_registration_t *smf_re
         }
     }
 
-    if (smf_registration->emergency_services) {
+    if (smf_registration->emergency_services >= 0) {
         if (cJSON_AddBoolToObject(item, "emergencyServices", smf_registration->emergency_services) == NULL) {
             ogs_error("OpenAPI_smf_registration_convertToJSON() failed [emergency_services]");
             goto end;
@@ -163,7 +163,7 @@ cJSON *OpenAPI_smf_registration_convertToJSON(OpenAPI_smf_registration_t *smf_re
         }
     }
 
-    if (smf_registration->epdg_ind) {
+    if (smf_registration->epdg_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "epdgInd", smf_registration->epdg_ind) == NULL) {
             ogs_error("OpenAPI_smf_registration_convertToJSON() failed [epdg_ind]");
             goto end;

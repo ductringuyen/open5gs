@@ -48,10 +48,6 @@ cJSON *OpenAPI_rg_authentication_info_convertToJSON(OpenAPI_rg_authentication_in
         goto end;
     }
 
-    if (!rg_authentication_info->authenticated_ind) {
-        ogs_error("OpenAPI_rg_authentication_info_convertToJSON() failed [authenticated_ind]");
-        goto end;
-    }
     if (cJSON_AddBoolToObject(item, "authenticatedInd", rg_authentication_info->authenticated_ind) == NULL) {
         ogs_error("OpenAPI_rg_authentication_info_convertToJSON() failed [authenticated_ind]");
         goto end;

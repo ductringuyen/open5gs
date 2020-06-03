@@ -57,7 +57,7 @@ cJSON *OpenAPI_rg_auth_ctx_convertToJSON(OpenAPI_rg_auth_ctx_t *rg_auth_ctx)
         }
     }
 
-    if (rg_auth_ctx->auth_ind) {
+    if (rg_auth_ctx->auth_ind >= 0) {
         if (cJSON_AddBoolToObject(item, "authInd", rg_auth_ctx->auth_ind) == NULL) {
             ogs_error("OpenAPI_rg_auth_ctx_convertToJSON() failed [auth_ind]");
             goto end;
