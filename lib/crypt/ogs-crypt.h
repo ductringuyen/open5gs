@@ -54,7 +54,7 @@ extern "C" {
 #define OGS_SQN_XOR_AK_LEN              6
 #define OGS_AK_LEN                      6
 #define OGS_SQN_LEN                     6
-#define OGS_MAX_SQN                     0x7ffffffffff
+#define OGS_MAX_SQN                     0xffffffffffff
 
 #define OGS_KEYSTRLEN(x)                ((x*2)+1)
 
