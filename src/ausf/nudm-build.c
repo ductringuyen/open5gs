@@ -88,7 +88,10 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
     AuthEvent->time_stamp = buf;
 
     AuthEvent->nf_instance_id = ogs_sbi_self()->nf_instance_id;
-    AuthEvent->success = ausf_ue->auth_success;
+    if (ausf_ue->auth_result == OpenAPI_auth_result_AUTHENTICATION_SUCCESS)
+        AuthEvent->success = true;
+    else
+        AuthEvent->success = false;
     AuthEvent->auth_type = ausf_ue->auth_type;
     AuthEvent->serving_network_name = ausf_ue->serving_network_name;
 

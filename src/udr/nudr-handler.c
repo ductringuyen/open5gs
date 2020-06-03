@@ -42,6 +42,7 @@ bool udr_nudr_dr_handle_subscription_authentication(
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
     OpenAPI_sequence_number_t SequenceNumber;
+    OpenAPI_auth_event_t *AuthEvent = NULL;
 
     ogs_assert(session);
     ogs_assert(recvmsg);
@@ -132,6 +133,16 @@ bool udr_nudr_dr_handle_subscription_authentication(
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
         SWITCH(recvmsg->h.method)
         CASE(OGS_SBI_HTTP_METHOD_PUT)
+            AuthEvent = recvmsg->AuthEvent;
+            if (!AuthEvent) {
+                ogs_error("[%s-%s] No AuthEvent", id_type, ue_id);
+                ogs_sbi_server_send_error(
+                        session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                        recvmsg, "No AuthEvent", ue_id);
+                return false;
+            }
+
+            memset(&sendmsg, 0, sizeof(sendmsg));
             rv = ogs_dbi_increment_sqn(id_type, ue_id);
             if (rv != OGS_OK) {
                 ogs_fatal("Cannot increment SQN : %s-%s", id_type, ue_id);
@@ -140,8 +151,6 @@ bool udr_nudr_dr_handle_subscription_authentication(
                         recvmsg, "Cannot increment SQN", ue_id);
                 return false;
             }
-
-            memset(&sendmsg, 0, sizeof(sendmsg));
 
             response = ogs_sbi_build_response(
                     &sendmsg, OGS_SBI_HTTP_STATUS_NO_CONTENT);

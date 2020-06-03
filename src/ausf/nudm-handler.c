@@ -225,18 +225,18 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
 
     ogs_assert(recvmsg);
 
-    if (!recvmsg->http.location) {
-        ogs_error("[%s] No Location", ausf_ue->suci);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No Location", ausf_ue->suci);
-        return false;
-    }
-
     AuthEvent = recvmsg->AuthEvent;
     if (!AuthEvent) {
         ogs_error("[%s] No AuthEvent", ausf_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 recvmsg, "No AuthEvent", ausf_ue->suci);
+        return false;
+    }
+
+    if (!recvmsg->http.location) {
+        ogs_error("[%s] No Location", ausf_ue->suci);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No Location", ausf_ue->suci);
         return false;
     }
 
@@ -247,12 +247,11 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
     memset(&ConfirmationDataResponse, 0, sizeof(ConfirmationDataResponse));
 
     if (AuthEvent->success == true)
-        ConfirmationDataResponse.auth_result =
-            OpenAPI_auth_result_AUTHENTICATION_SUCCESS;
+        ausf_ue->auth_result = OpenAPI_auth_result_AUTHENTICATION_SUCCESS;
     else
-        ConfirmationDataResponse.auth_result =
-            OpenAPI_auth_result_AUTHENTICATION_FAILURE;
+        ausf_ue->auth_result = OpenAPI_auth_result_AUTHENTICATION_FAILURE;
 
+    ConfirmationDataResponse.auth_result = ausf_ue->auth_result;
     ConfirmationDataResponse.supi = ausf_ue->supi;
 
     ogs_kdf_kseaf(ausf_ue->serving_network_name,

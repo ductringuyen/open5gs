@@ -95,9 +95,9 @@ bool ausf_nausf_auth_handle_authenticate_confirmation(
         ogs_log_hexdump(OGS_LOG_WARN, res_star, OGS_MAX_RES_LEN);
         ogs_log_hexdump(OGS_LOG_WARN, ausf_ue->xres_star, OGS_MAX_RES_LEN);
 
-        ausf_ue->auth_success = false;
+        ausf_ue->auth_result = OpenAPI_auth_result_AUTHENTICATION_FAILURE;
     } else {
-        ausf_ue->auth_success = true;
+        ausf_ue->auth_result = OpenAPI_auth_result_AUTHENTICATION_SUCCESS;
     }
 
     ausf_nudm_ueau_discover_and_send_result_confirmation_inform(ausf_ue);

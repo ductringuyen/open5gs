@@ -35,52 +35,38 @@ int amf_nausf_auth_handle_authenticate(
     UeAuthenticationCtx = message->UeAuthenticationCtx;
     if (!UeAuthenticationCtx) {
         ogs_error("[%s] No UeAuthenticationCtx", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (UeAuthenticationCtx->auth_type != OpenAPI_auth_type_5G_AKA) {
         ogs_error("[%s] Not supported Auth Method [%d]",
             amf_ue->suci, UeAuthenticationCtx->auth_type);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_FORBIDDEN);
         return OGS_ERROR;
     }
 
     AV5G_AKA = UeAuthenticationCtx->_5g_auth_data;
     if (!AV5G_AKA) {
         ogs_error("[%s] No Av5gAka", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (!AV5G_AKA->rand) {
         ogs_error("[%s] No Av5gAka.rand", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (!AV5G_AKA->hxres_star) {
         ogs_error("[%s] No Av5gAka.hxresStar", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (!AV5G_AKA->autn) {
         ogs_error("[%s] No Av5gAka.autn", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (!UeAuthenticationCtx->_links) {
         ogs_error("[%s] No _links", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
@@ -97,15 +83,11 @@ int amf_nausf_auth_handle_authenticate(
 
     if (!LinksValueSchemeValue) {
         ogs_error("[%s] No _links.5g-aka", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
     if (!LinksValueSchemeValue->href) {
         ogs_error("[%s] No _links.5g-aka.href", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
@@ -138,21 +120,24 @@ int amf_nausf_auth_handle_authenticate_confirmation(
     ConfirmationDataResponse = message->ConfirmationDataResponse;
     if (!ConfirmationDataResponse) {
         ogs_error("[%s] No ConfirmationDataResponse", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return OGS_ERROR;
     }
 
-    if (!ConfirmationDataResponse->kseaf) {
-        ogs_error("[%s] No Kseaf", amf_ue->suci);
-        nas_5gs_send_nas_reject_from_sbi(
-                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
+    amf_ue->auth_result = ConfirmationDataResponse->auth_result;
+    if (amf_ue->auth_result == OpenAPI_auth_result_AUTHENTICATION_SUCCESS) {
+        if (!ConfirmationDataResponse->kseaf) {
+            ogs_error("[%s] No Kseaf", amf_ue->suci);
+            return OGS_ERROR;
+        }
+
+        ogs_ascii_to_hex(ConfirmationDataResponse->kseaf,
+                strlen(ConfirmationDataResponse->kseaf),
+                amf_ue->kseaf, sizeof(amf_ue->kseaf));
+        return OGS_OK;
+
+    } else {
+
+        ogs_error("[%s] Authentication failed", amf_ue->suci);
         return OGS_ERROR;
     }
-
-    ogs_ascii_to_hex(ConfirmationDataResponse->kseaf,
-            strlen(ConfirmationDataResponse->kseaf),
-            amf_ue->kseaf, sizeof(amf_ue->kseaf));
-
-    return OGS_OK;
 }

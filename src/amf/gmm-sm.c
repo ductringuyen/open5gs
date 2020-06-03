@@ -666,8 +666,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
                 ogs_error("[%s] HTTP response error [%d]",
                         amf_ue->suci, sbi_message->res_status);
-                nas_5gs_send_nas_reject_from_sbi(amf_ue,
-                        sbi_message->res_status);
+                nas_5gs_send_authentication_reject(amf_ue);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 break;
             }
@@ -677,6 +676,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 rv = amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
                 if (rv != OGS_OK) {
                     ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    nas_5gs_send_authentication_reject(amf_ue);
                     OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 }
                 break;
@@ -685,6 +685,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                         amf_ue, sbi_message);
                 if (rv != OGS_OK) {
                     ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    nas_5gs_send_authentication_reject(amf_ue);
                     OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 } else {
                     OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);

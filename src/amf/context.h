@@ -268,6 +268,7 @@ struct amf_ue_s {
     uint8_t         xres_star[OGS_MAX_RES_LEN];
     uint8_t         hxres_star[OGS_MAX_RES_LEN];
     uint8_t         kseaf[OGS_SHA256_DIGEST_SIZE];
+    OpenAPI_auth_result_e auth_result;
 
     uint8_t         kasme[OGS_SHA256_DIGEST_SIZE];
     uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2]; 
