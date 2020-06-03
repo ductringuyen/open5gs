@@ -100,10 +100,7 @@ bool ausf_nausf_auth_handle_authenticate_confirmation(
         ausf_ue->auth_success = true;
     }
 
-    ogs_fatal("success = %d", ausf_ue->auth_success);
-#if 0
-    ausf_nudm_ueau_discover_and_send_get(ausf_ue);
-#endif
+    ausf_nudm_ueau_discover_and_send_result_confirmation_inform(ausf_ue);
 
     return true;
 }

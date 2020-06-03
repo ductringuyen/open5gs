@@ -316,7 +316,8 @@ void ausf_nnrf_handle_nf_discover(
             ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
             break;
         CASE(OGS_SBI_HTTP_METHOD_PUT)
-            ogs_fatal("PUT");
+            ausf_nudm_ueau_send_result_confirmation_inform(
+                    ausf_ue, nf_instance);
             break;
         DEFAULT
             ogs_fatal("[%s] Unknown method [%s]", ausf_ue->id, ausf_ue->method);

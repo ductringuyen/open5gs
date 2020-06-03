@@ -56,3 +56,39 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_get(ausf_ue_t *ausf_ue)
 
     return request;
 }
+
+ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
+        ausf_ue_t *ausf_ue)
+{
+    ogs_sbi_message_t message;
+    ogs_sbi_request_t *request = NULL;
+
+    OpenAPI_auth_event_t *AuthEvent = NULL;
+
+    ogs_assert(ausf_ue);
+
+    memset(&message, 0, sizeof(message));
+    message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
+    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
+    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.resource.component[0] = ausf_ue->id;
+    message.h.resource.component[1] = (char *)OGS_SBI_RESOURCE_NAME_AUTH_EVENTS;
+
+    AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
+    ogs_assert(AuthEvent);
+
+    AuthEvent->nf_instance_id = ogs_sbi_self()->nf_instance_id;
+    AuthEvent->success = ausf_ue->auth_success;
+    AuthEvent->time_stamp = (char *)"asdfasdfasdf";
+    AuthEvent->auth_type = OpenAPI_auth_type_5G_AKA;
+    AuthEvent->serving_network_name = ausf_ue->serving_network_name;
+
+    message.AuthEvent = AuthEvent;
+
+    request = ogs_sbi_build_request(&message);
+    ogs_assert(request);
+
+    ogs_free(AuthEvent);
+
+    return request;
+}

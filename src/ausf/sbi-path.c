@@ -196,3 +196,43 @@ void ausf_nudm_ueau_discover_and_send_get(ausf_ue_t *ausf_ue)
 
     ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
 }
+
+void ausf_nudm_ueau_send_result_confirmation_inform(
+        ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_session_t *session = NULL;
+    ogs_sbi_request_t *request = NULL;
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
+    ogs_assert(nf_instance);
+
+    client = ogs_sbi_client_find_by_service_name(
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+    ogs_assert(client);
+
+    ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+            ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+    request = ausf_nudm_ueau_build_result_confirmation_inform(ausf_ue);
+    ogs_assert(request);
+    ogs_sbi_client_send_request(client, request, ausf_ue);
+}
+
+void ausf_nudm_ueau_discover_and_send_result_confirmation_inform(
+        ausf_ue_t *ausf_ue)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(ausf_ue);
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(
+                            ausf_ue, OpenAPI_nf_type_UDM);
+
+    if (!nf_instance) return;
+
+    ausf_nudm_ueau_send_result_confirmation_inform(ausf_ue, nf_instance);
+}

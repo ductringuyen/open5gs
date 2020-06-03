@@ -75,6 +75,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->ConfirmationDataResponse)
         OpenAPI_confirmation_data_response_free(
                 message->ConfirmationDataResponse);
+    if (message->AuthEvent)
+        OpenAPI_auth_event_free(message->AuthEvent);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -361,6 +363,9 @@ static char *build_content(ogs_sbi_message_t *message)
     } else if (message->ConfirmationDataResponse) {
         item = OpenAPI_confirmation_data_response_convertToJSON(
                 message->ConfirmationDataResponse);
+        ogs_assert(item);
+    } else if (message->AuthEvent) {
+        item = OpenAPI_auth_event_convertToJSON(message->AuthEvent);
         ogs_assert(item);
     }
 
@@ -709,6 +714,14 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                     END
                     break;
 
+                CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                    message->AuthEvent = OpenAPI_auth_event_parseFromJSON(item);
+                    if (!message->AuthEvent) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                    break;
+
                 DEFAULT
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
@@ -723,11 +736,13 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
                         SWITCH(message->h.resource.component[3])
                         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
-                            message->AuthenticationSubscription =
-                                OpenAPI_authentication_subscription_parseFromJSON(item);
-                            if (!message->AuthenticationSubscription) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
+                            if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                                message->AuthenticationSubscription =
+                                    OpenAPI_authentication_subscription_parseFromJSON(item);
+                                if (!message->AuthenticationSubscription) {
+                                    rv = OGS_ERROR;
+                                    ogs_error("JSON parse error");
+                                }
                             }
                             break;
                         DEFAULT
