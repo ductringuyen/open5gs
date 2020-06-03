@@ -307,7 +307,7 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
                     ogs_amf_id_hexdump(&nas_guti.amf_id), nas_guti.m_tmsi);
             } else {
                 ogs_debug("[%s]    5G-S_TMSI[AMF_ID:0x%x,M_TMSI:0x%x]",
-                        AMF_UE_HAVE_ID(amf_ue) ? amf_ue->id : "Unknown ID",
+                        AMF_UE_HAVE_SUCI(amf_ue) ? amf_ue->suci : "Unknown ID",
                         ogs_amf_id_hexdump(&amf_ue->guti.amf_id),
                         amf_ue->guti.m_tmsi);
                 /* If NAS(amf_ue_t) has already been associated with

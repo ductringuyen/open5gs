@@ -372,7 +372,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 #else
             rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
             if (rv == OGS_ERROR) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->id);
+                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
                 nas_5gs_send_registration_reject(
                         amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
@@ -679,7 +679,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                     
                 } else {
                     ogs_error("[%s] HTTP response error [%d]",
-                            amf_ue->id, sbi_message->res_status);
+                            amf_ue->suci, sbi_message->res_status);
                     nas_5gs_send_nas_reject_from_sbi(amf_ue,
                             sbi_message->res_status);
                 }
@@ -695,7 +695,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
                 } else {
                     ogs_error("[%s] HTTP response error [%d]",
-                            amf_ue->id, sbi_message->res_status);
+                            amf_ue->suci, sbi_message->res_status);
                     nas_5gs_send_nas_reject_from_sbi(amf_ue,
                             sbi_message->res_status);
                 }
@@ -703,7 +703,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
             DEFAULT
                 ogs_error("[%s] Invalid HTTP method [%s]",
-                        amf_ue->id, sbi_message->h.method);
+                        amf_ue->suci, sbi_message->h.method);
                 ogs_assert_if_reached();
             END
             break;

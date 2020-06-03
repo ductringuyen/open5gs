@@ -243,7 +243,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
-                                amf_ue->id, sbi_message.res_status);
+                                amf_ue->suci, sbi_message.res_status);
                     }
                     break;
 
@@ -287,7 +287,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                         ogs_fatal("TODO");
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
-                                amf_ue->id, sbi_message.res_status);
+                                amf_ue->suci, sbi_message.res_status);
                         nas_5gs_send_nas_reject_from_sbi(amf_ue,
                                 sbi_message.res_status);
                     }
@@ -295,7 +295,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
                 DEFAULT
                     ogs_error("[%s] Invalid HTTP method [%s]",
-                            amf_ue->id, sbi_message.h.method);
+                            amf_ue->suci, sbi_message.h.method);
                     ogs_assert_if_reached();
                 END
                 break;
@@ -350,7 +350,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             amf_ue = e->sbi.data;
             ogs_assert(amf_ue);
 
-            ogs_error("[%s] Cannot receive SBI message", amf_ue->id);
+            ogs_error("[%s] Cannot receive SBI message", amf_ue->suci);
             nas_5gs_send_nas_reject_from_sbi(amf_ue,
                     OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT);
             break;
@@ -498,7 +498,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                     h.ciphered = 0;
                     if (nas_5gs_security_decode(amf_ue, h, pkbuf) != OGS_OK) {
                         ogs_error("[%s] nas_security_decode() failed",
-                                amf_ue->id);
+                                amf_ue->suci);
                         ogs_pkbuf_free(pkbuf);
                         return;
                     }
@@ -509,9 +509,9 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
              * older NG(ran_ue_t) context */
             if (ECM_CONNECTED(amf_ue)) {
                /* Implcit NG release */
-                ogs_debug("[%s] Implicit NG release", amf_ue->id);
+                ogs_debug("[%s] Implicit NG release", amf_ue->suci);
                 ogs_debug("[%s]    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
-                        amf_ue->id, amf_ue->ran_ue->ran_ue_ngap_id,
+                        amf_ue->suci, amf_ue->ran_ue->ran_ue_ngap_id,
                         (long long)amf_ue->ran_ue->amf_ue_ngap_id);
                 ran_ue_remove(amf_ue->ran_ue);
             }

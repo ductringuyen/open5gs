@@ -130,14 +130,14 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             amf_ue->nf_types, nf_type, amf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover AUSF", amf_ue->id);
+        ogs_error("[%s] Cannot discover AUSF", amf_ue->suci);
         nas_5gs_send_nas_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover AUSF", amf_ue->id);
+        ogs_warn("[%s] Try to discover AUSF", amf_ue->suci);
         ogs_timer_start(amf_ue->sbi_client_wait.timer,
                 amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
@@ -165,13 +165,13 @@ int amf_nausf_auth_send_authenticate(
     if (amf_ue->confirmation_url_for_5g_aka) {
         addr = ogs_sbi_getaddr_from_uri(amf_ue->confirmation_url_for_5g_aka);
         if (!addr) {
-            ogs_error("[%s] Invalid confirmation URL [%s]", amf_ue->id,
+            ogs_error("[%s] Invalid confirmation URL [%s]", amf_ue->suci,
                 amf_ue->confirmation_url_for_5g_aka);
             return OGS_ERROR;
         }
         client = ogs_sbi_client_find(addr);
         if (!client) {
-            ogs_error("[%s] Cannot find client [%s:%d]", amf_ue->id,
+            ogs_error("[%s] Cannot find client [%s:%d]", amf_ue->suci,
                     OGS_ADDR(addr, buf), OGS_PORT(addr));
             ogs_freeaddrinfo(addr);
             return OGS_ERROR;
@@ -184,7 +184,7 @@ int amf_nausf_auth_send_authenticate(
         client = ogs_sbi_client_find_by_service_name(
                 nf_instance, (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
         if (!client) {
-            ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->id,
+            ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->suci,
                     nf_instance->id, OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
             return OGS_ERROR;
         }

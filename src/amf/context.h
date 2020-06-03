@@ -113,7 +113,7 @@ typedef struct amf_context_s {
     ogs_hash_t      *amf_ue_ngap_id_hash;   /* hash table for AMF-UE-NGAP-ID */
     ogs_hash_t      *imsi_ue_hash;          /* hash table (IMSI : AMF_UE) */
     ogs_hash_t      *guti_ue_hash;          /* hash table (GUTI : AMF_UE) */
-    ogs_hash_t      *amf_ueid_hash; /* hash table (UE_ID) */
+    ogs_hash_t      *amf_suci_hash; /* hash table (UE_ID) */
 
     OGS_POOL(m_tmsi, amf_m_tmsi_t); /* M-TMSI Pool */
 
@@ -207,10 +207,10 @@ struct amf_ue_s {
     } nas;
 
     /* UE identity */
-    char            *id; /* TS33.501 : SUCI */
+    char            *suci; /* TS33.501 : SUCI */
 
-#define AMF_UE_HAVE_ID(__aMF) \
-    ((__aMF) && ((__aMF)->id))
+#define AMF_UE_HAVE_SUCI(__aMF) \
+    ((__aMF) && ((__aMF)->suci))
     uint8_t         imsi[OGS_MAX_IMSI_LEN];
     int             imsi_len;
     char            imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
@@ -551,7 +551,7 @@ amf_ue_t *amf_ue_find_by_imsi(uint8_t *imsi, int imsi_len);
 amf_ue_t *amf_ue_find_by_imsi_bcd(char *imsi_bcd);
 amf_ue_t *amf_ue_find_by_guti(ogs_nas_5gs_guti_t *nas_guti);
 amf_ue_t *amf_ue_find_by_teid(uint32_t teid);
-amf_ue_t *amf_ue_find_by_id(char *id);
+amf_ue_t *amf_ue_find_by_suci(char *suci);
 
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message);
 int amf_ue_set_id(amf_ue_t *amf_ue,

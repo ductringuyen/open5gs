@@ -66,7 +66,7 @@ void amf_context_init(void)
     self.amf_ue_ngap_id_hash = ogs_hash_make();
     self.imsi_ue_hash = ogs_hash_make();
     self.guti_ue_hash = ogs_hash_make();
-    self.amf_ueid_hash = ogs_hash_make();
+    self.amf_suci_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -89,8 +89,8 @@ void amf_context_final(void)
     ogs_hash_destroy(self.imsi_ue_hash);
     ogs_assert(self.guti_ue_hash);
     ogs_hash_destroy(self.guti_ue_hash);
-    ogs_assert(self.amf_ueid_hash);
-    ogs_hash_destroy(self.amf_ueid_hash);
+    ogs_assert(self.amf_suci_hash);
+    ogs_hash_destroy(self.amf_suci_hash);
 
     ogs_pool_final(&self.m_tmsi);
     ogs_pool_final(&amf_bearer_pool);
@@ -1174,9 +1174,9 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     }
     if (amf_ue->imsi_len != 0)
         ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, NULL);
-    if (amf_ue->id) {
-        ogs_hash_set(self.amf_ueid_hash, amf_ue->id, strlen(amf_ue->id), NULL);
-        ogs_free(amf_ue->id);
+    if (amf_ue->suci) {
+        ogs_hash_set(self.amf_suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
+        ogs_free(amf_ue->suci);
     }
 
     if (amf_ue->confirmation_url_for_5g_aka)
@@ -1250,11 +1250,11 @@ amf_ue_t *amf_ue_find_by_teid(uint32_t teid)
     return ogs_pool_find(&amf_ue_pool, teid);
 }
 
-amf_ue_t *amf_ue_find_by_id(char *id)
+amf_ue_t *amf_ue_find_by_suci(char *suci)
 {
-    ogs_assert(id);
+    ogs_assert(suci);
 
-    return (amf_ue_t *)ogs_hash_get(self.amf_ueid_hash, id, strlen(id));
+    return (amf_ue_t *)ogs_hash_get(self.amf_suci_hash, suci, strlen(suci));
 }
 
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
@@ -1425,9 +1425,10 @@ int amf_ue_set_id(amf_ue_t *amf_ue,
 
     ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, amf_ue);
 
-    amf_ue->id = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
-    ogs_assert(amf_ue->id);
-    ogs_hash_set(self.amf_ueid_hash, amf_ue->id, strlen(amf_ue->id), amf_ue);
+    amf_ue->suci = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
+    ogs_assert(amf_ue->suci);
+    ogs_hash_set(self.amf_suci_hash,
+            amf_ue->suci, strlen(amf_ue->suci), amf_ue);
 
     amf_ue->guti_present = 1;
 

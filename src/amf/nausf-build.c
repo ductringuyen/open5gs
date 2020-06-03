@@ -41,8 +41,8 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
     AuthenticationInfo = ogs_calloc(1, sizeof(*AuthenticationInfo));
     ogs_assert(AuthenticationInfo);
 
-    ogs_assert(amf_ue->id);
-    AuthenticationInfo->supi_or_suci = amf_ue->id;
+    ogs_assert(amf_ue->suci);
+    AuthenticationInfo->supi_or_suci = amf_ue->suci;
     AuthenticationInfo->serving_network_name =
         ogs_plmn_id_string(&amf_ue->tai.plmn_id);
 

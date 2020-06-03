@@ -170,7 +170,7 @@ void nas_5gs_send_registration_reject(
 
     ogs_assert(amf_ue);
 
-    ogs_warn("[%s] Registration reject [%d]", amf_ue->id, gmm_cause);
+    ogs_warn("[%s] Registration reject [%d]", amf_ue->suci, gmm_cause);
 
     gmmbuf = gmm_build_registration_reject(gmm_cause);
     ogs_expect_or_return(gmmbuf);
@@ -210,7 +210,7 @@ void nas_5gs_send_authentication_request(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue);
 
-    ogs_debug("[%s] Authentication request", amf_ue->id);
+    ogs_debug("[%s] Authentication request", amf_ue->suci);
 
     if (amf_ue->t3560.pkbuf) {
         gmmbuf = amf_ue->t3560.pkbuf;
@@ -235,7 +235,7 @@ void nas_5gs_send_authentication_reject(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue);
 
-    ogs_debug("[%s] Authentication reject", amf_ue->id);
+    ogs_debug("[%s] Authentication reject", amf_ue->suci);
 
     gmmbuf = gmm_build_authentication_reject();
     ogs_expect_or_return(gmmbuf);
