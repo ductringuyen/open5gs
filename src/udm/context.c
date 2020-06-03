@@ -185,6 +185,8 @@ void udm_ue_remove(udm_ue_t *udm_ue)
         ogs_free(udm_ue->serving_network_name);
     if (udm_ue->ausf_instance_id)
         ogs_free(udm_ue->ausf_instance_id);
+    if (udm_ue->auth_timestamp)
+        ogs_free(udm_ue->auth_timestamp);
     
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (udm_ue->nf_types[i].nf_instance)

@@ -127,10 +127,12 @@ bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
                 return false;
             }
 
+            udm_ue->auth_type = OpenAPI_auth_type_5G_AKA;
+
             memset(&AuthenticationInfoResult,
                     0, sizeof(AuthenticationInfoResult));
 
-            AuthenticationInfoResult.auth_type = OpenAPI_auth_type_5G_AKA;
+            AuthenticationInfoResult.auth_type = udm_ue->auth_type;
 
             /* FIX IT! TODO! NEW! */
             ogs_random(rand, OGS_RAND_LEN);

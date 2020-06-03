@@ -63,13 +63,13 @@ struct ausf_ue_s {
     char *suci;
     char *supi;
     char *serving_network_name;
+
     OpenAPI_auth_type_e auth_type;
+    bool auth_success;
 
     uint8_t hxres_star[OGS_MAX_RES_LEN];
     uint8_t xres_star[OGS_MAX_RES_LEN];
     uint8_t rand[OGS_RAND_LEN];
-
-    bool auth_success;
 
     struct {
         ogs_timer_t *timer;

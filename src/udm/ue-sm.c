@@ -63,7 +63,21 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            udm_nudm_ueau_handle_get(udm_ue, message);
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                udm_nudm_ueau_handle_get(udm_ue, message);
+                break;
+            CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                udm_nudm_ueau_handle_result_confirmation_inform(
+                        udm_ue, message);
+                break;
+            DEFAULT
+                ogs_error("[%s] Invalid resource name  [%s]",
+                        udm_ue->suci, message->h.resource.component[1]);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                        "Invalid HTTP method", message->h.method);
+            END
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
@@ -92,6 +106,22 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                         ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
                         udm_nudr_dr_handle_query(udm_ue, message);
+                    } else {
+                        ogs_error("[%s] HTTP response error [%d]",
+                            udm_ue->suci, message->res_status);
+                        ogs_sbi_server_send_error(
+                            session, message->res_status,
+                            NULL, "HTTP response error", udm_ue->suci);
+                    }
+                    break;
+                CASE(OGS_SBI_HTTP_METHOD_PUT)
+                    if (message->res_status == OGS_SBI_HTTP_STATUS_NO_CONTENT) {
+                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
+
+                        ogs_fatal("asdfkljasdfsadf");
+#if 0
+                        udm_nudr_dr_handle_query(udm_ue, message);
+#endif
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->suci, message->res_status);

@@ -65,6 +65,10 @@ struct udm_ue_s {
     char *serving_network_name;
     char *ausf_instance_id;
 
+    OpenAPI_auth_type_e auth_type;
+    int auth_success;
+    char *auth_timestamp;
+
     struct {
         ogs_timer_t *timer;
     } sbi_server_wait, sbi_client_wait;

@@ -49,6 +49,8 @@ ogs_sbi_request_t *udm_nudr_dr_build_update(udm_ue_t *udm_ue)
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
 
+    OpenAPI_auth_event_t *AuthEvent = NULL;
+
     ogs_assert(udm_ue);
 
     memset(&message, 0, sizeof(message));
@@ -63,8 +65,21 @@ ogs_sbi_request_t *udm_nudr_dr_build_update(udm_ue_t *udm_ue)
     message.h.resource.component[3] =
         (char *)OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS;
 
+    AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
+    ogs_assert(AuthEvent);
+
+    AuthEvent->nf_instance_id = udm_ue->ausf_instance_id;
+    AuthEvent->success = udm_ue->auth_success;
+    AuthEvent->auth_type = udm_ue->auth_type;
+    AuthEvent->serving_network_name = udm_ue->serving_network_name;
+    AuthEvent->time_stamp = udm_ue->auth_timestamp;
+
+    message.AuthEvent = AuthEvent;
+
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
+
+    ogs_free(AuthEvent);
 
     return request;
 }
