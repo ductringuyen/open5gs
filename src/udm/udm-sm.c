@@ -128,7 +128,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     &message, "Not found", message.h.method);
             }
 
-            udm_ue = udm_ue_find_by_suci(ueid);
+            udm_ue = udm_ue_find_by_suci_or_supi(ueid);
             if (!udm_ue) {
                 udm_ue = udm_ue_add(ueid);
                 ogs_assert(udm_ue);

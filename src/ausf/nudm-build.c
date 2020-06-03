@@ -75,7 +75,7 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
     message.h.api.version = (char *)OGS_SBI_API_VERSION;
-    message.h.resource.component[0] = ausf_ue->suci;
+    message.h.resource.component[0] = ausf_ue->supi;
     message.h.resource.component[1] = (char *)OGS_SBI_RESOURCE_NAME_AUTH_EVENTS;
 
     AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
