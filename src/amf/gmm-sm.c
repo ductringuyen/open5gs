@@ -786,9 +786,10 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 return;
             }
 
-            amf_kdf_gnb(amf_ue->kasme, amf_ue->ul_count.i32, 
-                    amf_ue->kgnb);
-            amf_kdf_nh(amf_ue->kasme, amf_ue->kgnb, amf_ue->nh);
+            ogs_kdf_kgnb_and_kn3iwf(
+                    amf_ue->kamf, amf_ue->ul_count.i32,
+                    OGS_KDF_ACCESS_TYPE_3GPP, amf_ue->kgnb);
+            ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
             amf_s6a_send_ulr(amf_ue);

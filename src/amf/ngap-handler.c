@@ -1149,7 +1149,7 @@ void ngap_handle_path_switch_request(
 
     if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
         amf_ue->nhcc++;
-        amf_kdf_nh(amf_ue->kasme, amf_ue->nh, amf_ue->nh);
+        amf_kdf_nh_gnb(amf_ue->kamf, amf_ue->nh, amf_ue->nh);
     } else {
         ngapbuf = ngap_build_path_switch_failure(
                 *RAN_UE_NGAP_ID, *AMF_UE_NGAP_ID,
@@ -1414,7 +1414,7 @@ void ngap_handle_handover_required(amf_gnb_t *gnb, ogs_ngap_message_t *message)
 
     if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
         amf_ue->nhcc++;
-        amf_kdf_nh(amf_ue->kasme, amf_ue->nh, amf_ue->nh);
+        amf_kdf_nh_gnb(amf_ue->kamf, amf_ue->nh, amf_ue->nh);
     } else {
         ogs_assert(Cause);
 

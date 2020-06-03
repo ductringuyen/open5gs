@@ -276,7 +276,6 @@ struct amf_ue_s {
     uint8_t         kamf[OGS_SHA256_DIGEST_SIZE];
     OpenAPI_auth_result_e auth_result;
 
-    uint8_t         kasme[OGS_SHA256_DIGEST_SIZE];
     uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2]; 
     uint8_t         knas_enc[OGS_SHA256_DIGEST_SIZE/2];
     uint32_t        dl_count;
@@ -296,17 +295,17 @@ struct amf_ue_s {
     };
     uint8_t         nh[OGS_SHA256_DIGEST_SIZE]; /* NH Security Key */
 
-    /* defined in 'nas_ies.h'
-     * #define NAS_SECURITY_ALGORITHMS_EIA0        0
-     * #define NAS_SECURITY_ALGORITHMS_128_EEA1    1
-     * #define NAS_SECURITY_ALGORITHMS_128_EEA2    2
-     * #define NAS_SECURITY_ALGORITHMS_128_EEA3    3 */
+    /* defined in 'lib/nas/common/types.h'
+     * #define OGS_NAS_SECURITY_ALGORITHMS_NEA0        0
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NEA1    1
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NEA2    2
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NEA3    3 */
     uint8_t         selected_enc_algorithm;
-    /* defined in 'nas_ies.h'
-     * #define NAS_SECURITY_ALGORITHMS_EIA0        0
-     * #define NAS_SECURITY_ALGORITHMS_128_EIA1    1
-     * #define NAS_SECURITY_ALGORITHMS_128_EIA1    2
-     * #define NAS_SECURITY_ALGORITHMS_128_EIA3    3 */
+    /* defined in 'lib/nas/common/types.h'
+     * #define OGS_NAS_SECURITY_ALGORITHMS_NIA0        0
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NIA1    1
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NIA1    2
+     * #define OGS_NAS_SECURITY_ALGORITHMS_128_NIA3    3 */
     uint8_t         selected_int_algorithm;
 
     /* ESM Info */

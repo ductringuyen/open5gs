@@ -307,10 +307,10 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
         return NULL;
     }
 
-    amf_kdf_nas(MME_KDF_NAS_INT_ALG, amf_ue->selected_int_algorithm,
-            amf_ue->kasme, amf_ue->knas_int);
-    amf_kdf_nas(MME_KDF_NAS_ENC_ALG, amf_ue->selected_enc_algorithm,
-            amf_ue->kasme, amf_ue->knas_enc);
+    ogs_kdf_nas_5gs(OGS_KDF_NAS_INT_ALG, amf_ue->selected_int_algorithm,
+            amf_ue->kamf, amf_ue->knas_int);
+    ogs_kdf_nas_5gs(OGS_KDF_NAS_ENC_ALG, amf_ue->selected_enc_algorithm,
+            amf_ue->kamf, amf_ue->knas_enc);
 
     return nas_5gs_security_encode(amf_ue, &message);
 }
