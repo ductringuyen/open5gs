@@ -42,9 +42,10 @@ void ogs_kdf_xres_star(
         uint8_t *xres_star);
 
 /* TS33.501 Annex A.5 : HRES* and HXRES* derivation function */
-void ogs_kdf_hxres_star(
-        uint8_t *rand, uint8_t *xres_star,
-        uint8_t *hxres_star);
+void ogs_kdf_hxres_star(uint8_t *rand, uint8_t *xres_star, uint8_t *hxres_star);
+
+/* TS33.501 Annex A.6 : K SEAF derivation function */
+void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf);
 
 #ifdef __cplusplus
 }

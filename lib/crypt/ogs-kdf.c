@@ -141,9 +141,7 @@ void ogs_kdf_xres_star(
 }
 
 /* TS33.501 Annex A.5 : HRES* and HXRES* derivation function */
-void ogs_kdf_hxres_star(
-        uint8_t *rand, uint8_t *xres_star,
-        uint8_t *hxres_star)
+void ogs_kdf_hxres_star(uint8_t *rand, uint8_t *xres_star, uint8_t *hxres_star)
 {
     uint8_t message[OGS_RAND_LEN + OGS_KEY_LEN];
     uint8_t output[OGS_SHA256_DIGEST_SIZE];
@@ -158,4 +156,21 @@ void ogs_kdf_hxres_star(
     ogs_sha256(message, OGS_RAND_LEN+OGS_KEY_LEN, output);
 
     memcpy(hxres_star, output+OGS_KEY_LEN, OGS_KEY_LEN);
+}
+
+/* TS33.501 Annex A.6 : K SEAF derivation function */
+void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf)
+{
+    kdf_param_t param;
+
+    ogs_assert(serving_network_name);
+    ogs_assert(kausf);
+    ogs_assert(kseaf);
+
+    memset(param, 0, sizeof(param));
+    param[0].buf = (uint8_t *)serving_network_name;
+    param[0].len = strlen(serving_network_name);
+
+    ogs_kdf_common(kausf, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_KSEAF_DERIVATION, param, kseaf);
 }

@@ -131,14 +131,6 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
 
     ausf_ue->auth_type = AuthenticationInfoResult->auth_type;
 
-    memset(&UeAuthenticationCtx, 0, sizeof(UeAuthenticationCtx));
-
-    UeAuthenticationCtx.auth_type = ausf_ue->auth_type;
-
-    memset(&AV5G_AKA, 0, sizeof(AV5G_AKA));
-    AV5G_AKA.rand = AuthenticationVector->rand;
-    AV5G_AKA.autn = AuthenticationVector->autn;
-
     ogs_ascii_to_hex(
         AuthenticationVector->rand,
         strlen(AuthenticationVector->rand),
@@ -147,6 +139,18 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
         AuthenticationVector->xres_star,
         strlen(AuthenticationVector->xres_star),
         ausf_ue->xres_star, sizeof(ausf_ue->xres_star));
+    ogs_ascii_to_hex(
+        AuthenticationVector->kausf,
+        strlen(AuthenticationVector->kausf),
+        ausf_ue->kausf, sizeof(ausf_ue->kausf));
+
+    memset(&UeAuthenticationCtx, 0, sizeof(UeAuthenticationCtx));
+
+    UeAuthenticationCtx.auth_type = ausf_ue->auth_type;
+
+    memset(&AV5G_AKA, 0, sizeof(AV5G_AKA));
+    AV5G_AKA.rand = AuthenticationVector->rand;
+    AV5G_AKA.autn = AuthenticationVector->autn;
 
     ogs_kdf_hxres_star(ausf_ue->rand, ausf_ue->xres_star,
             ausf_ue->hxres_star);
@@ -210,6 +214,8 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
 
+    char kseaf_string[OGS_KEYSTRLEN(OGS_SHA256_DIGEST_SIZE)];
+
     OpenAPI_confirmation_data_response_t ConfirmationDataResponse;
     OpenAPI_auth_event_t *AuthEvent = NULL;
 
@@ -237,6 +243,12 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
             OpenAPI_auth_result_AUTHENTICATION_FAILURE;
 
     ConfirmationDataResponse.supi = ausf_ue->supi;
+
+    ogs_kdf_kseaf(ausf_ue->serving_network_name,
+            ausf_ue->kausf, ausf_ue->kseaf);
+    ogs_hex_to_ascii(ausf_ue->kseaf, sizeof(ausf_ue->kseaf),
+            kseaf_string, sizeof(kseaf_string));
+    ConfirmationDataResponse.kseaf = kseaf_string;
 
     memset(&sendmsg, 0, sizeof(sendmsg));
 

@@ -67,9 +67,11 @@ struct ausf_ue_s {
     OpenAPI_auth_type_e auth_type;
     bool auth_success;
 
-    uint8_t hxres_star[OGS_MAX_RES_LEN];
-    uint8_t xres_star[OGS_MAX_RES_LEN];
     uint8_t rand[OGS_RAND_LEN];
+    uint8_t xres_star[OGS_MAX_RES_LEN];
+    uint8_t hxres_star[OGS_MAX_RES_LEN];
+    uint8_t kausf[OGS_SHA256_DIGEST_SIZE];
+    uint8_t kseaf[OGS_SHA256_DIGEST_SIZE];
 
     struct {
         ogs_timer_t *timer;
