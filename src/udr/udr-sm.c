@@ -49,8 +49,6 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
     ogs_sbi_response_t *response = NULL;
     ogs_sbi_message_t message;
 
-    udr_ue_t *udr_ue = NULL;
-
     udr_sm_debug(e);
 
     ogs_assert(s);
@@ -229,40 +227,6 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                 END
                 break;
             
-            DEFAULT
-                ogs_error("Invalid resource name [%s]",
-                        message.h.resource.component[0]);
-                ogs_assert_if_reached();
-            END
-            break;
-
-        CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
-            SWITCH(message.h.resource.component[0])
-            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                session = e->sbi.data;
-                ogs_assert(session);
-                udr_ue = ogs_sbi_session_get_data(session);
-                ogs_assert(udr_ue);
-
-                SWITCH(message.h.method)
-                CASE(OGS_SBI_HTTP_METHOD_GET)
-                    if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(udr_ue->sbi_message_wait.timer);
-
-                        udr_nnrf_handle_nf_discover(session, &message);
-                    } else {
-                        ogs_error("[%s] HTTP response error [%d]",
-                                udr_ue->id, message.res_status);
-                    }
-                    break;
-
-                DEFAULT
-                    ogs_error("[%s] Invalid HTTP method [%s]",
-                            udr_ue->id, message.h.method);
-                    ogs_assert_if_reached();
-                END
-                break;
-
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
                         message.h.resource.component[0]);

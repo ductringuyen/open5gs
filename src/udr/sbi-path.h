@@ -26,8 +26,6 @@
 extern "C" {
 #endif
 
-#include "nudr-build.h"
-
 int udr_sbi_open(void);
 void udr_sbi_close(void);
 

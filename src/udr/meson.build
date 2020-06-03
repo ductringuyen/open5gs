@@ -24,7 +24,6 @@ libudr_sources = files('''
     nf-sm.c
 
     nudr-handler.c
-    nudr-build.c
 
     sbi-path.c
     udr-sm.c

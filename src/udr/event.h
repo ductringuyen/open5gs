@@ -34,8 +34,6 @@ typedef struct ogs_sbi_message_s ogs_sbi_message_t;
 typedef struct ogs_sbi_nf_instance_s ogs_sbi_nf_instance_t;
 typedef struct ogs_sbi_subscription_s ogs_sbi_subscription_t;
 
-typedef struct udr_ue_s udr_ue_t;
-
 typedef enum {
     UDR_EVT_BASE = OGS_FSM_USER_SIG,
 
@@ -63,8 +61,6 @@ typedef struct udr_event_s {
 
         ogs_sbi_message_t *message;
     } sbi;
-
-    udr_ue_t *udr_ue;
 
     ogs_timer_t *timer;
 } udr_event_t;

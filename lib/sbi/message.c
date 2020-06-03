@@ -745,6 +745,14 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                                 }
                             }
                             break;
+                        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
+                            message->AuthEvent =
+                                OpenAPI_auth_event_parseFromJSON(item);
+                            if (!message->AuthEvent) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                            break;
                         DEFAULT
                             rv = OGS_ERROR;
                             ogs_error("Unknown resource name [%s]",

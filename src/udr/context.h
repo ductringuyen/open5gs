@@ -47,32 +47,6 @@ typedef struct udr_context_s {
 
 } udr_context_t;
 
-struct udr_ue_s {
-    ogs_lnode_t     lnode;
-    ogs_fsm_t       sm;     /* A state machine */
-
-    char *id;
-    char *serving_network_name;
-    char *ausf_instance_id;
-
-#define CLEAR_UDR_UE_ALL_TIMERS(__aUSF) \
-    do { \
-        CLEAR_UDR_UE_TIMER((__aUSF)->sbi_message_wait); \
-    } while(0);
-#define CLEAR_UDR_UE_TIMER(__aUSF_UE_TIMER) \
-    do { \
-        ogs_timer_stop((__aUSF_UE_TIMER).timer); \
-        if ((__aUSF_UE_TIMER).pkbuf) { \
-            ogs_pkbuf_free((__aUSF_UE_TIMER).pkbuf); \
-            (__aUSF_UE_TIMER).pkbuf = NULL; \
-        } \
-        (__aUSF_UE_TIMER).retry_count = 0; \
-    } while(0);
-    struct {
-        ogs_timer_t     *timer;
-        uint32_t        retry_count;;
-    } sbi_message_wait;
-
 #define UDR_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \
         ogs_assert(_nFInstance); \
@@ -88,9 +62,6 @@ struct udr_ue_s {
         } \
         ogs_sbi_nf_instance_remove(_nFInstance); \
     } while(0)
-
-    ogs_sbi_nf_types_t nf_types;
-};
 
 void udr_context_init(void);
 void udr_context_final(void);

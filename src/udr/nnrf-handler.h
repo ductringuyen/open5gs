@@ -34,9 +34,6 @@ void udr_nnrf_handle_nf_status_subscribe(
 bool udr_nnrf_handle_nf_status_notify(
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
-void udr_nnrf_handle_nf_discover(
-        ogs_sbi_session_t *session, ogs_sbi_message_t *message);
-
 #ifdef __cplusplus
 }
 #endif
