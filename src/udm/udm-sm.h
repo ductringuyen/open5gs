@@ -42,8 +42,7 @@ void udm_nf_state_exception(ogs_fsm_t *s, udm_event_t *e);
 
 void udm_ue_state_initial(ogs_fsm_t *s, udm_event_t *e);
 void udm_ue_state_final(ogs_fsm_t *s, udm_event_t *e);
-void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e);
-void udm_ue_state_authenticated(ogs_fsm_t *s, udm_event_t *e);
+void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e);
 void udm_ue_state_exception(ogs_fsm_t *s, udm_event_t *e);
 
 #define udm_sm_debug(__pe) \

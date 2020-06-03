@@ -300,19 +300,14 @@ void udm_nnrf_handle_nf_discover(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
         }
     }
 
-    if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_will_authenticate)) {
-        nf_instance = OGS_SBI_NF_INSTANCE_GET(
-                udm_ue->nf_types, OpenAPI_nf_type_UDR);
-        if (!nf_instance) {
-            ogs_error("[%s] (NF discover) No UDR", udm_ue->suci);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                    "(NF discover) No UDR", udm_ue->suci);
-        } else {
-            udm_nudr_dr_send_query(udm_ue, nf_instance);
-        }
+    nf_instance = OGS_SBI_NF_INSTANCE_GET(
+            udm_ue->nf_types, OpenAPI_nf_type_UDR);
+    if (!nf_instance) {
+        ogs_error("[%s] (NF discover) No UDR", udm_ue->suci);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                "(NF discover) No UDR", udm_ue->suci);
     } else {
-        ogs_fatal("Should implement other case");
-        ogs_assert_if_reached();
+        udm_nudr_dr_send_query(udm_ue, nf_instance);
     }
 }

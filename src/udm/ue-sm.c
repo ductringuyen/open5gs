@@ -26,14 +26,14 @@ void udm_ue_state_initial(ogs_fsm_t *s, udm_event_t *e)
 {
     ogs_assert(s);
 
-    OGS_FSM_TRAN(s, &udm_ue_state_will_authenticate);
+    OGS_FSM_TRAN(s, &udm_ue_state_operational);
 }
 
 void udm_ue_state_final(ogs_fsm_t *s, udm_event_t *e)
 {
 }
 
-void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
+void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
 {
     udm_ue_t *udm_ue = NULL;
 
@@ -117,37 +117,6 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
             ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_assert_if_reached();
         END
-        break;
-
-    default:
-        ogs_error("[%s] Unknown event %s", udm_ue->suci, udm_event_get_name(e));
-        break;
-    }
-}
-
-void udm_ue_state_authenticated(ogs_fsm_t *s, udm_event_t *e)
-{
-    udm_ue_t *udm_ue = NULL;
-
-    ogs_assert(s);
-    ogs_assert(e);
-
-    udm_sm_debug(e);
-
-    udm_ue = e->udm_ue;
-    ogs_assert(udm_ue);
-
-    switch (e->id) {
-    case OGS_FSM_ENTRY_SIG:
-        break;
-
-    case OGS_FSM_EXIT_SIG:
-        break;
-
-    case UDM_EVT_SBI_CLIENT:
-        break;
-
-    case UDM_EVT_SBI_TIMER:
         break;
 
     default:
