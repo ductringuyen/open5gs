@@ -55,19 +55,24 @@ void ogs_kdf_xres_star(
 /* TS33.501 Annex A.5 : HRES* and HXRES* derivation function */
 void ogs_kdf_hxres_star(uint8_t *rand, uint8_t *xres_star, uint8_t *hxres_star);
 
-/* TS33.501 Annex A.6 : K SEAF derivation function */
+/* TS33.501 Annex A.6 : Kseaf derivation function */
 void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf);
 
-/* TS33.501 Annex A.7 : K AMF derivation function */
+/* TS33.501 Annex A.7 : Kamf derivation function */
 void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf);
 
-void mme_kdf_nas(uint8_t algorithm_type_distinguishers,
+/* TS33.401 Annex A.3 KeNB derivation function */
+void ogs_kdf_kenb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
+
+/* TS33.401 Annex A.4 NH derivation function */
+void ogs_kdf_nh_enb(const uint8_t *kasme,
+        const uint8_t *sync_input, uint8_t *kenb);
+
+/* TS33.401 Annex A.7 Algorithm key derivation functions */
+void ogs_kdf_nas_eps(uint8_t algorithm_type_distinguishers,
     uint8_t algorithm_identity, const uint8_t *kasme, uint8_t *knas);
 
-void mme_kdf_enb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
-
-void mme_kdf_nh(const uint8_t *kasme, const uint8_t *sync_input, uint8_t *kenb);
 
 #ifdef __cplusplus
 }

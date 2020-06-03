@@ -22,13 +22,17 @@
 #define MAX_NUM_OF_KDF_PARAM                    16
 
 #define FC_FOR_CK_PRIME_IK_PRIME_DERIVATION     0x20
-#define FC_FOR_ALGORITHM_KEY_DERIVATION         0x69
+#define FC_FOR_5GS_ALGORITHM_KEY_DERIVATION     0x69
 #define FC_FOR_KAUSF_DERIVATION                 0x6A
 #define FC_FOR_RES_STAR_XRES_STAR_DERIVATION    0x6B
 #define FC_FOR_KSEAF_DERIVATION                 0x6C
 #define FC_FOR_KAMF_DERIVATION                  0x6D
 #define FC_FOR_KGNB_KN3IWF_DERIVATION           0x6E
-#define FC_FOR_NH_DERIVATION                    0x6F
+#define FC_FOR_KGNB_NH_DERIVATION               0x6F
+
+#define FC_FOR_KENB_DERIVATION                  0x11
+#define FC_FOR_KENB_NH_DERIVATION               0x12
+#define FC_FOR_EPS_ALGORITHM_KEY_DERIVATION     0x15
 
 typedef struct kdf_param_s {
     uint8_t *buf;
@@ -158,7 +162,7 @@ void ogs_kdf_hxres_star(uint8_t *rand, uint8_t *xres_star, uint8_t *hxres_star)
     memcpy(hxres_star, output+OGS_KEY_LEN, OGS_KEY_LEN);
 }
 
-/* TS33.501 Annex A.6 : K SEAF derivation function */
+/* TS33.501 Annex A.6 : Kseaf derivation function */
 void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf)
 {
     kdf_param_t param;
@@ -175,7 +179,7 @@ void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf)
             FC_FOR_KSEAF_DERIVATION, param, kseaf);
 }
 
-/* TS33.501 Annex A.7 : K AMF derivation function */
+/* TS33.501 Annex A.7 : Kamf derivation function */
 void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf)
 {
@@ -197,13 +201,51 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
             FC_FOR_KAMF_DERIVATION, param, kamf);
 }
 
-void mme_kdf_nas(uint8_t algorithm_type_distinguishers,
+/* TS33.401 Annex A.3 KeNB derivation function */
+void ogs_kdf_kenb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb)
+{
+    uint8_t s[7];
+
+    s[0] = FC_FOR_KENB_DERIVATION;
+
+    ul_count = htobe32(ul_count);
+    memcpy(s+1, &ul_count, 4);
+
+    s[5] = 0x00;
+    s[6] = 0x04;
+
+    ogs_hmac_sha256(kasme, 32, s, 7, kenb, 32);
+
+    ogs_fatal("ENB");
+    ogs_log_hexdump(OGS_LOG_FATAL, kenb, 32);
+}
+
+/* TS33.401 Annex A.4 NH derivation function */
+void ogs_kdf_nh_enb(const uint8_t *kasme,
+        const uint8_t *sync_input, uint8_t *kenb)
+{
+    uint8_t s[35];
+
+    s[0] = FC_FOR_KENB_NH_DERIVATION;
+
+    memcpy(s+1, sync_input, 32);
+
+    s[33] = 0x00;
+    s[34] = 0x20;
+
+    ogs_hmac_sha256(kasme, 32, s, 35, kenb, 32);
+    ogs_fatal("NH");
+    ogs_log_hexdump(OGS_LOG_FATAL, kenb, 32);
+}
+
+/* TS33.401 Annex A.7 Algorithm key derivation functions */
+void ogs_kdf_nas_eps(uint8_t algorithm_type_distinguishers,
     uint8_t algorithm_identity, const uint8_t *kasme, uint8_t *knas)
 {
     uint8_t s[7];
     uint8_t out[32];
 
-    s[0] = 0x15; /* FC Value */
+    s[0] = FC_FOR_EPS_ALGORITHM_KEY_DERIVATION;
 
     s[1] = algorithm_type_distinguishers;
     s[2] = 0x00;
@@ -215,33 +257,8 @@ void mme_kdf_nas(uint8_t algorithm_type_distinguishers,
 
     ogs_hmac_sha256(kasme, 32, s, 7, out, 32);
     memcpy(knas, out+16, 16);
+
+    ogs_fatal("KNAS");
+    ogs_log_hexdump(OGS_LOG_FATAL, knas, 16);
 }
 
-void mme_kdf_enb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb)
-{
-    uint8_t s[7];
-
-    s[0] = 0x11; /* FC Value */
-
-    ul_count = htobe32(ul_count);
-    memcpy(s+1, &ul_count, 4);
-
-    s[5] = 0x00;
-    s[6] = 0x04;
-
-    ogs_hmac_sha256(kasme, 32, s, 7, kenb, 32);
-}
-
-void mme_kdf_nh(const uint8_t *kasme, const uint8_t *sync_input, uint8_t *kenb)
-{
-    uint8_t s[35];
-
-    s[0] = 0x12; /* FC Value */
-
-    memcpy(s+1, sync_input, 32);
-
-    s[33] = 0x00;
-    s[34] = 0x20;
-
-    ogs_hmac_sha256(kasme, 32, s, 35, kenb, 32);
-}
