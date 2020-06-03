@@ -132,7 +132,8 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     served_tai_index = amf_find_served_tai(&amf_ue->tai);
     if (served_tai_index < 0) {
         /* Send Registration Reject */
-        ogs_warn("[%s] Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->suci,
+        ogs_warn("[%s] Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]",
+            amf_ue->suci,
             ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
         nas_5gs_send_registration_reject(amf_ue,
             OGS_5GMM_CAUSE_TRACKING_AREA_NOT_ALLOWED);

@@ -545,7 +545,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_AUTHENTICATION_FAILURE:
         {
-            ogs_fatal("Not implemented = %s", amf_ue->suci);
+            ogs_fatal("[%s] Not implemented", amf_ue->suci);
             ogs_assert_if_reached();
 #if 0
             ogs_nas_5gs_authentication_failure_t *authentication_failure =
@@ -594,29 +594,26 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             if (rv != OGS_OK) {
                 ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
-                return;
+                break;
             }
 
-#if 0
-            if (!amf_ue->nf_type[OpenAPI_nf_type_AUSF].nf_instance) {
-                ogs_sbi_send_nf_discover(
-                    amf_ue->nf_type[OpenAPI_nf_type_NRF].nf_instance,
-                    OpenAPI_nf_type_AUSF, OpenAPI_nf_type_AMF, amf_ue);
-            } else {
-                ogs_fatal("send auth");
+            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            if (rv == OGS_ERROR) {
+                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(s, &gmm_state_exception);
+                break;
             }
-#endif
-            OGS_FSM_TRAN(s, &gmm_state_authentication);
+
             break;
         case OGS_NAS_5GS_5GMM_STATUS:
-            ogs_warn("5GMM STATUS : IMSI[%s] Cause[%d]",
-                    amf_ue->imsi_bcd,
-                    message->gmm.gmm_status.gmm_cause);
+            ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
+                    amf_ue->suci, message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
-            ogs_debug("Deregistration request");
-            ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+            ogs_debug("[%s] Deregistration request", amf_ue->suci);
 #if 0
             rv = gmm_handle_deregistration_request(
                     amf_ue, &message->gmm.deregistration_request_from_ue);
@@ -640,9 +637,8 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
         case AMF_TIMER_T3560:
             if (amf_ue->t3560.retry_count >=
                     amf_timer_cfg(AMF_TIMER_T3560)->max_count) {
-                ogs_warn("Retransmission of IMSI[%s] failed. "
-                        "Stop retransmission",
-                        amf_ue->imsi_bcd);
+                ogs_warn("[%s] Retransmission failed. Stop retransmission",
+                        amf_ue->suci);
                 nas_5gs_send_authentication_reject(amf_ue);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             } else {
@@ -651,7 +647,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             }
             break;
         default:
-            ogs_error("Unknown timer[%s:%d]",
+            ogs_error("[%s] Unknown timer[%s:%d]", amf_ue->suci,
                     amf_timer_get_name(e->timer_id), e->timer_id);
             break;
         }
