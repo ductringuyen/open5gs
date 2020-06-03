@@ -22,8 +22,11 @@
 bool udm_nudr_dr_handle_subscription_authentication(
         udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 {
-    ogs_sbi_message_t sendmsg;
+    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
     const char *tmp = "4d45b0eeb8386b629f136968837a7b0b"; /* For test */
@@ -49,10 +52,13 @@ bool udm_nudr_dr_handle_subscription_authentication(
     OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
     OpenAPI_authentication_info_result_t AuthenticationInfoResult;
     OpenAPI_authentication_vector_t AuthenticationVector;
+    OpenAPI_auth_event_t *AuthEvent = NULL;
 
     ogs_assert(udm_ue);
     session = udm_ue->session;
     ogs_assert(session);
+    server = ogs_sbi_session_get_server(session);
+    ogs_assert(server);
 
     ogs_assert(recvmsg);
 
@@ -203,7 +209,36 @@ bool udm_nudr_dr_handle_subscription_authentication(
 
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
 
-        ogs_fatal("asdfkljasdfasdF");
+        memset(&sendmsg, 0, sizeof(sendmsg));
+
+        AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
+        ogs_assert(AuthEvent);
+
+        AuthEvent->nf_instance_id = udm_ue->ausf_instance_id;
+        AuthEvent->success = udm_ue->auth_success;
+        AuthEvent->auth_type = udm_ue->auth_type;
+        AuthEvent->serving_network_name = udm_ue->serving_network_name;
+        AuthEvent->time_stamp = udm_ue->auth_timestamp;
+
+        sendmsg.AuthEvent = AuthEvent;
+
+        memset(&header, 0, sizeof(header));
+        header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
+        header.api.version = (char *)OGS_SBI_API_VERSION;
+        header.resource.component[0] = udm_ue->supi;
+        header.resource.component[1] =
+            (char *)OGS_SBI_RESOURCE_NAME_AUTH_EVENTS;
+        header.resource.component[2] = udm_ue->ctx_id;
+
+        sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+
+        response = ogs_sbi_build_response(&sendmsg,
+                OGS_SBI_HTTP_STATUS_CREATED);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+
+        ogs_free(AuthEvent);
+        ogs_free(sendmsg.http.location);
 
         return true;
 
