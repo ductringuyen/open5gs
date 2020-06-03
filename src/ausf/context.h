@@ -61,6 +61,8 @@ struct ausf_ue_s {
     uint8_t xres_star[OGS_MAX_RES_LEN];
     uint8_t rand[OGS_RAND_LEN];
 
+    bool auth_success;
+
     struct {
         ogs_timer_t *timer;
     } sbi_client_wait;

@@ -63,6 +63,8 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
 
+    char xres_star_string[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
+
     OpenAPI_confirmation_data_t *ConfirmationData = NULL;
 
     ogs_assert(amf_ue);
@@ -75,7 +77,12 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
     ConfirmationData = ogs_calloc(1, sizeof(*ConfirmationData));
     ogs_assert(ConfirmationData);
 
-    ConfirmationData->res_star = (char *)amf_ue->xres_star;
+    ogs_hex_to_ascii(amf_ue->xres_star, sizeof(amf_ue->xres_star),
+            xres_star_string, sizeof(xres_star_string));
+
+    ConfirmationData->res_star = xres_star_string;
+
+    message.ConfirmationData = ConfirmationData;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);

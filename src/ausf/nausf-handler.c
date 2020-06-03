@@ -43,7 +43,7 @@ bool ausf_nausf_auth_handle_authenticate(
     }
 
     serving_network_name = AuthenticationInfo->serving_network_name;
-    if (!AuthenticationInfo) {
+    if (!serving_network_name) {
         ogs_error("[%s] No servingNetworkName", ausf_ue->id);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 recvmsg, "[%s] No servingNetworkName", ausf_ue->id);
@@ -54,6 +54,56 @@ bool ausf_nausf_auth_handle_authenticate(
     ogs_assert(ausf_ue->serving_network_name);
 
     ausf_nudm_ueau_discover_and_send_get(ausf_ue);
+
+    return true;
+}
+
+bool ausf_nausf_auth_handle_authenticate_confirmation(
+        ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
+{
+    ogs_sbi_session_t *session = NULL;
+
+    OpenAPI_confirmation_data_t *ConfirmationData = NULL;
+    char *res_star_string = NULL;
+    uint8_t res_star[OGS_KEYSTRLEN(OGS_MAX_RES_LEN)];
+
+    ogs_assert(ausf_ue);
+    session = ausf_ue->session;
+    ogs_assert(session);
+    ogs_assert(recvmsg);
+
+    ConfirmationData = recvmsg->ConfirmationData;
+    if (!ConfirmationData) {
+        ogs_error("[%s] No ConfirmationData", ausf_ue->id);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "[%s] No ConfirmationData", ausf_ue->id);
+        return false;
+    }
+
+    res_star_string = ConfirmationData->res_star;
+    if (!res_star_string) {
+        ogs_error("[%s] No ConfirmationData.resStar", ausf_ue->id);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "[%s] No ConfirmationData.resStar", ausf_ue->id);
+        return false;
+    }
+
+    ogs_ascii_to_hex(res_star_string, strlen(res_star_string),
+            res_star, sizeof(res_star));
+
+    if (memcmp(res_star, ausf_ue->xres_star, OGS_MAX_RES_LEN) != 0) {
+        ogs_log_hexdump(OGS_LOG_WARN, res_star, OGS_MAX_RES_LEN);
+        ogs_log_hexdump(OGS_LOG_WARN, ausf_ue->xres_star, OGS_MAX_RES_LEN);
+
+        ausf_ue->auth_success = false;
+    } else {
+        ausf_ue->auth_success = true;
+    }
+
+    ogs_fatal("success = %d", ausf_ue->auth_success);
+#if 0
+    ausf_nudm_ueau_discover_and_send_get(ausf_ue);
+#endif
 
     return true;
 }

@@ -52,6 +52,7 @@ void ausf_ue_state_final(ogs_fsm_t *s, ausf_event_t *e)
 
 void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 {
+    bool handled;
     ausf_ue_t *ausf_ue = NULL;
 
     ogs_sbi_server_t *server = NULL;
@@ -83,7 +84,22 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
-            ausf_nausf_auth_handle_authenticate(ausf_ue, message);
+            handled = ausf_nausf_auth_handle_authenticate(
+                    ausf_ue, message);
+            if (!handled) {
+                ogs_error("[%s] Cannot handle SBI message",
+                        ausf_ue->id);
+                OGS_FSM_TRAN(s, ausf_ue_state_exception);
+            }
+            break;
+        CASE(OGS_SBI_HTTP_METHOD_PUT)
+            handled = ausf_nausf_auth_handle_authenticate_confirmation(
+                    ausf_ue, message);
+            if (!handled) {
+                ogs_error("[%s] Cannot handle SBI message",
+                        ausf_ue->id);
+                OGS_FSM_TRAN(s, ausf_ue_state_exception);
+            }
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
@@ -92,6 +108,7 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
                     "Invalid HTTP method", message->h.method);
         END
+
         break;
 
     case AUSF_EVT_SBI_CLIENT:
@@ -110,7 +127,12 @@ void ausf_ue_state_will_authenticate(ogs_fsm_t *s, ausf_event_t *e)
                 if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                     ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
-                    ausf_nudm_ueau_handle_get(ausf_ue, message);
+                    handled = ausf_nudm_ueau_handle_get(ausf_ue, message);
+                    if (!handled) {
+                        ogs_error("[%s] Cannot handle SBI message",
+                                ausf_ue->id);
+                        OGS_FSM_TRAN(s, ausf_ue_state_exception);
+                    }
                 } else {
                     ogs_error("[%s] HTTP response error [%d]",
                             ausf_ue->id, message->res_status);
