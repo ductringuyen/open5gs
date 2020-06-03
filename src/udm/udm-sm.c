@@ -135,14 +135,29 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 break;
             }
 
-            udm_ue = udm_ue_find_by_suci_or_supi(
-                    message.h.resource.component[0]);
+            SWITCH(message.h.resource.component[2])
+            CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                udm_ue = udm_ue_find_by_ctx_id(
+                        message.h.resource.component[2]);
+                break;
+
+            DEFAULT
+                udm_ue = udm_ue_find_by_suci_or_supi(
+                        message.h.resource.component[0]);
+                if (!udm_ue) {
+                    udm_ue = udm_ue_add(message.h.resource.component[0]);
+                    ogs_assert(udm_ue);
+                }
+            END
+
             if (!udm_ue) {
-                udm_ue = udm_ue_add(message.h.resource.component[0]);
-                ogs_assert(udm_ue);
+                ogs_error("Not found [%s]", message.h.method);
+                ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                    &message, "Not found", message.h.method);
+                break;
             }
 
-            ogs_assert(udm_ue);
             ogs_assert(OGS_FSM_STATE(&udm_ue->sm));
 
             OGS_SETUP_SBI_SESSION(udm_ue, session);
