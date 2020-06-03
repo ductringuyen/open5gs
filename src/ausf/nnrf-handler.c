@@ -310,8 +310,8 @@ void ausf_nnrf_handle_nf_discover(
                 "(NF discover) No UDM", ausf_ue->id);
         ausf_ue_remove(ausf_ue);
     } else {
-        ogs_assert(ausf_ue->method);
-        SWITCH(ausf_ue->method)
+        ogs_assert(ausf_ue->state.method);
+        SWITCH(ausf_ue->state.method)
         CASE(OGS_SBI_HTTP_METHOD_POST)
             ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
             break;
@@ -320,7 +320,8 @@ void ausf_nnrf_handle_nf_discover(
                     ausf_ue, nf_instance);
             break;
         DEFAULT
-            ogs_fatal("[%s] Unknown method [%s]", ausf_ue->id, ausf_ue->method);
+            ogs_fatal("[%s] Unknown method [%s]",
+                    ausf_ue->id, ausf_ue->state.method);
             ogs_assert_if_reached();
         END
     }

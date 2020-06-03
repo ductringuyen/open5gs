@@ -167,7 +167,7 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             header.api.version = (char *)OGS_SBI_API_VERSION;
             header.resource.component[0] =
                     (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
-            header.resource.component[1] = ausf_ue->id;
+            header.resource.component[1] = ausf_ue->ctx_id;
             header.resource.component[2] =
                     (char *)OGS_SBI_RESOURCE_NAME_5G_AKA_CONFIRMATION;
             LinksValueSchemeValue.href = ogs_sbi_server_uri(server, &header);
@@ -185,7 +185,7 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
             header.api.version = (char *)OGS_SBI_API_VERSION;
             header.resource.component[0] =
                     (char *)OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS;
-            header.resource.component[1] = ausf_ue->id;
+            header.resource.component[1] = ausf_ue->ctx_id;
 
             sendmsg.http.location = ogs_sbi_server_uri(server, &header);
             sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;

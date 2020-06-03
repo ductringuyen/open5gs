@@ -123,6 +123,10 @@ ausf_ue_t *ausf_ue_add(char *id)
     ogs_assert(ausf_ue);
     memset(ausf_ue, 0, sizeof *ausf_ue);
 
+    ausf_ue->ctx_id = ogs_msprintf("%ld",
+        ogs_pool_index(&ausf_ue_pool, ausf_ue));
+    ogs_assert(ausf_ue->ctx_id);
+
     ausf_ue->id = ogs_strdup(id);
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
@@ -154,12 +158,15 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
 
     ogs_timer_delete(ausf_ue->sbi_client_wait.timer);
 
+    ogs_assert(ausf_ue->ctx_id);
+    ogs_free(ausf_ue->ctx_id);
+
     ogs_assert(ausf_ue->id);
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
     ogs_free(ausf_ue->id);
 
-    if (ausf_ue->method)
-        ogs_free(ausf_ue->method);
+    if (ausf_ue->state.method)
+        ogs_free(ausf_ue->state.method);
 
     if (ausf_ue->serving_network_name)
         ogs_free(ausf_ue->serving_network_name);
@@ -184,4 +191,10 @@ ausf_ue_t *ausf_ue_find(char *id)
 {
     ogs_assert(id);
     return (ausf_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
+}
+
+ausf_ue_t *ausf_ue_find_by_ctx_id(char *ctx_id)
+{
+    ogs_assert(ctx_id);
+    return ogs_pool_find(&ausf_ue_pool, atoll(ctx_id));
 }

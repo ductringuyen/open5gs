@@ -54,8 +54,11 @@ struct ausf_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
-    char *method;
+    struct {
+        char *method;
+    } state;
 
+    char *ctx_id;
     char *id;
     char *serving_network_name;
     OpenAPI_auth_type_e auth_type;
@@ -101,6 +104,7 @@ ausf_ue_t *ausf_ue_add(char *id);
 void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
 ausf_ue_t *ausf_ue_find(char *id);
+ausf_ue_t *ausf_ue_find_by_ctx_id(char *ctx_id);
 
 #ifdef __cplusplus
 }

@@ -47,7 +47,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
     ogs_sbi_message_t message;
 
     ausf_ue_t *ausf_ue = NULL;
-    char *ueid = NULL;
 
     ausf_sm_debug(e);
 
@@ -122,36 +121,41 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
             SWITCH(message.h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
-                if (message.AuthenticationInfo)
-                    ueid = message.AuthenticationInfo->supi_or_suci;
+                if (message.AuthenticationInfo &&
+                    message.AuthenticationInfo->supi_or_suci) {
+                    ausf_ue = ausf_ue_find(
+                            message.AuthenticationInfo->supi_or_suci);
+                    if (!ausf_ue) {
+                        ausf_ue = ausf_ue_add(
+                                message.AuthenticationInfo->supi_or_suci);
+                        ogs_assert(ausf_ue);
+                    }
+                }
                 break;
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                ueid = message.h.resource.component[1];
+                if (message.h.resource.component[1]) {
+                    ausf_ue = ausf_ue_find_by_ctx_id(
+                            message.h.resource.component[1]);
+                }
                 break;
             DEFAULT
             END
 
-            if (!ueid) {
+            if (!ausf_ue) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_NOT_FOUND,
                     &message, "Not found", message.h.method);
+                break;
             }
 
-            ausf_ue = ausf_ue_find(ueid);
-            if (!ausf_ue) {
-                ausf_ue = ausf_ue_add(ueid);
-                ogs_assert(ausf_ue);
-            }
-
-            ogs_assert(ausf_ue);
             ogs_assert(OGS_FSM_STATE(&ausf_ue->sm));
 
             OGS_SETUP_SBI_SESSION(ausf_ue, session);
 
-            if (ausf_ue->method)
-                ogs_free(ausf_ue->method);
-            ausf_ue->method = ogs_strdup(message.h.method);
+            if (ausf_ue->state.method)
+                ogs_free(ausf_ue->state.method);
+            ausf_ue->state.method = ogs_strdup(message.h.method);
 
             e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
