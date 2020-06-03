@@ -201,6 +201,63 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
             FC_FOR_KAMF_DERIVATION, param, kamf);
 }
 
+/* TS33.501 Annex A.8 : Algorithm key derivation functions */
+void ogs_kdf_nas_5gs(uint8_t algorithm_type_distinguishers,
+    uint8_t algorithm_identity, uint8_t *kamf, uint8_t *knas)
+{
+    kdf_param_t param;
+    uint8_t output[OGS_SHA256_DIGEST_SIZE];
+
+    ogs_assert(kamf);
+    ogs_assert(knas);
+
+    memset(param, 0, sizeof(param));
+    param[0].buf = &algorithm_type_distinguishers;
+    param[0].len = 1;
+    param[1].buf = &algorithm_identity;
+    param[1].len = 1;
+
+    ogs_kdf_common(kamf, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_5GS_ALGORITHM_KEY_DERIVATION, param, output);
+    memcpy(knas, output+16, 16);
+}
+
+/* TS33.501 Annex A.9 KgNB and Kn3iwf derivation function */
+void ogs_kdf_kgnb_and_kn3iwf(uint8_t *kamf, uint32_t ul_count,
+        uint8_t access_type_distinguisher, uint8_t *kgnb)
+{
+    kdf_param_t param;
+
+    ogs_assert(kamf);
+    ogs_assert(kgnb);
+
+    memset(param, 0, sizeof(param));
+    ul_count = htobe32(ul_count);
+    param[0].buf = (uint8_t *)&ul_count;
+    param[0].len = 4;
+    param[0].buf = &access_type_distinguisher;
+    param[0].len = 1;
+
+    ogs_kdf_common(kamf, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_KGNB_KN3IWF_DERIVATION, param, kgnb);
+}
+
+/* TS33.501 Annex A.10 NH derivation function */
+void ogs_kdf_nh_gnb(uint8_t *kamf, uint8_t *sync_input, uint8_t *kgnb)
+{
+    kdf_param_t param;
+
+    ogs_assert(kamf);
+    ogs_assert(kgnb);
+
+    memset(param, 0, sizeof(param));
+    param[0].buf = sync_input;
+    param[0].len = OGS_SHA256_DIGEST_SIZE;
+
+    ogs_kdf_common(kamf, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_NH_GNB_DERIVATION, param, kgnb);
+}
+
 /* TS33.401 Annex A.3 KeNB derivation function */
 void ogs_kdf_kenb(uint8_t *kasme, uint32_t ul_count, uint8_t *kenb)
 {

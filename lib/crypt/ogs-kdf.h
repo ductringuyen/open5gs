@@ -28,17 +28,6 @@
 extern "C" {
 #endif
 
-/* Algorithm Type Distinguishers */
-#define MME_KDF_NAS_ENC_ALG 0x01
-#define MME_KDF_NAS_INT_ALG 0x02
-
-/* Algorithm Identity defined in nas_ies.h 
-#define NAS_SECURITY_ALGORITHMS_EIA0_EEA0 0
-#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA1 1
-#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA2 2
-#define NAS_SECURITY_ALGORITHMS_128_EIA3_EEA3 3
-*/
-
 /* TS33.501 Annex A.2 : Kausf derviation function */
 void ogs_kdf_kausf(
         uint8_t *ck, uint8_t *ik,
@@ -61,6 +50,36 @@ void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf);
 /* TS33.501 Annex A.7 : Kamf derivation function */
 void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf);
+
+/* Algorithm Type Distinguishers */
+#define OGS_KDF_NAS_ENC_ALG 0x01
+#define OGS_KDF_NAS_INT_ALG 0x02
+
+/* Algorithm Identity defined in lib/nas/common/types.h
+#define OGS_NAS_SECURITY_ALGORITHMS_NIA0 0
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NIA1 1
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NIA1 2
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NIA3 3
+#define OGS_NAS_SECURITY_ALGORITHMS_NEA0 0
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NEA1 1
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NEA2 2
+#define OGS_NAS_SECURITY_ALGORITHMS_128_NEA3 3
+*/
+
+/* TS33.501 Annex A.8 : Algorithm key derivation functions */
+void ogs_kdf_nas_5gs(uint8_t algorithm_type_distinguishers,
+    uint8_t algorithm_identity, uint8_t *kamf, uint8_t *knas);
+
+/* Access Type Distinguishers */
+#define OGS_KDF_ACCESS_TYPE_3GPP 0x01
+#define OGS_KDF_ACCESS_TYPE_NON_3GPP 0x02
+
+/* TS33.501 Annex A.9 KgNB and Kn3iwf derivation function */
+void ogs_kdf_kgnb_and_kn3iwf(uint8_t *kamf, uint32_t ul_count,
+        uint8_t access_type_distinguisher, uint8_t *kgnb);
+
+/* TS33.501 Annex A.10 NH derivation function */
+void ogs_kdf_nh_gnb(uint8_t *kamf, uint8_t *sync_input, uint8_t *kgnb);
 
 /* TS33.401 Annex A.3 KeNB derivation function */
 void ogs_kdf_kenb(uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
