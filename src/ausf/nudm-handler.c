@@ -133,9 +133,11 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
                 return false;
             }
 
+            ausf_ue->auth_type = AuthenticationInfoResult->auth_type;
+
             memset(&UeAuthenticationCtx, 0, sizeof(UeAuthenticationCtx));
 
-            UeAuthenticationCtx.auth_type = OpenAPI_auth_type_5G_AKA;
+            UeAuthenticationCtx.auth_type = ausf_ue->auth_type;
 
             memset(&AV5G_AKA, 0, sizeof(AV5G_AKA));
             AV5G_AKA.rand = AuthenticationVector->rand;

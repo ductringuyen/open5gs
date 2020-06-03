@@ -63,6 +63,10 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
 
+    char buf[OGS_TIME_ISO8601_FORMATTED_LENGTH];
+    struct timeval tv;
+    struct tm local;
+
     OpenAPI_auth_event_t *AuthEvent = NULL;
 
     ogs_assert(ausf_ue);
@@ -77,10 +81,15 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
     AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
     ogs_assert(AuthEvent);
 
+    ogs_gettimeofday(&tv);
+    ogs_localtime(tv.tv_sec, &local);
+    ogs_strftime(buf, OGS_TIME_ISO8601_FORMATTED_LENGTH,
+            OGS_TIME_ISO8601_FORMAT, &local);
+    AuthEvent->time_stamp = buf;
+
     AuthEvent->nf_instance_id = ogs_sbi_self()->nf_instance_id;
     AuthEvent->success = ausf_ue->auth_success;
-    AuthEvent->time_stamp = (char *)"asdfasdfasdf";
-    AuthEvent->auth_type = OpenAPI_auth_type_5G_AKA;
+    AuthEvent->auth_type = ausf_ue->auth_type;
     AuthEvent->serving_network_name = ausf_ue->serving_network_name;
 
     message.AuthEvent = AuthEvent;
