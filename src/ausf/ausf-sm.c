@@ -149,6 +149,10 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             OGS_SETUP_SBI_SESSION(ausf_ue, session);
 
+            if (ausf_ue->method)
+                ogs_free(ausf_ue->method);
+            ausf_ue->method = ogs_strdup(message.h.method);
+
             e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);

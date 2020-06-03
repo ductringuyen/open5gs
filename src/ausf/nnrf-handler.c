@@ -310,6 +310,17 @@ void ausf_nnrf_handle_nf_discover(
                 "(NF discover) No UDM", ausf_ue->id);
         ausf_ue_remove(ausf_ue);
     } else {
-        ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
+        ogs_assert(ausf_ue->method);
+        SWITCH(ausf_ue->method)
+        CASE(OGS_SBI_HTTP_METHOD_POST)
+            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
+            break;
+        CASE(OGS_SBI_HTTP_METHOD_PUT)
+            ogs_fatal("PUT");
+            break;
+        DEFAULT
+            ogs_fatal("[%s] Unknown method [%s]", ausf_ue->id, ausf_ue->method);
+            ogs_assert_if_reached();
+        END
     }
 }

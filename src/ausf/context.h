@@ -54,6 +54,8 @@ struct ausf_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
+    char *method;
+
     char *id;
     char *serving_network_name;
 

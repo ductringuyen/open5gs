@@ -158,6 +158,9 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
     ogs_free(ausf_ue->id);
 
+    if (ausf_ue->method)
+        ogs_free(ausf_ue->method);
+
     if (ausf_ue->serving_network_name)
         ogs_free(ausf_ue->serving_network_name);
     
