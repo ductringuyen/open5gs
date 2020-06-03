@@ -174,3 +174,25 @@ void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf)
     ogs_kdf_common(kausf, OGS_SHA256_DIGEST_SIZE,
             FC_FOR_KSEAF_DERIVATION, param, kseaf);
 }
+
+/* TS33.501 Annex A.7 : K AMF derivation function */
+void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
+        uint8_t *kseaf, uint8_t *kamf)
+{
+    kdf_param_t param;
+
+    ogs_assert(supi);
+    ogs_assert(abba);
+    ogs_assert(abba_len);
+    ogs_assert(kseaf);
+    ogs_assert(kamf);
+
+    memset(param, 0, sizeof(param));
+    param[0].buf = (uint8_t *)supi;
+    param[0].len = strlen(supi);
+    param[1].buf = abba;
+    param[1].len = abba_len;
+
+    ogs_kdf_common(kseaf, OGS_SHA256_DIGEST_SIZE,
+            FC_FOR_KAMF_DERIVATION, param, kamf);
+}

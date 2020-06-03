@@ -47,6 +47,10 @@ void ogs_kdf_hxres_star(uint8_t *rand, uint8_t *xres_star, uint8_t *hxres_star);
 /* TS33.501 Annex A.6 : K SEAF derivation function */
 void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf);
 
+/* TS33.501 Annex A.7 : K AMF derivation function */
+void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
+        uint8_t *kseaf, uint8_t *kamf);
+
 #ifdef __cplusplus
 }
 #endif

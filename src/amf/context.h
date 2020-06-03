@@ -113,7 +113,8 @@ typedef struct amf_context_s {
     ogs_hash_t      *amf_ue_ngap_id_hash;   /* hash table for AMF-UE-NGAP-ID */
     ogs_hash_t      *imsi_ue_hash;          /* hash table (IMSI : AMF_UE) */
     ogs_hash_t      *guti_ue_hash;          /* hash table (GUTI : AMF_UE) */
-    ogs_hash_t      *amf_suci_hash; /* hash table (UE_ID) */
+    ogs_hash_t      *suci_hash;     /* hash table (SUCI) */
+    ogs_hash_t      *supi_hash;     /* hash table (SUPI) */
 
     OGS_POOL(m_tmsi, amf_m_tmsi_t); /* M-TMSI Pool */
 
@@ -208,6 +209,7 @@ struct amf_ue_s {
 
     /* UE identity */
     char            *suci; /* TS33.501 : SUCI */
+    char            *supi; /* TS33.501 : SUPI */
 
 #define AMF_UE_HAVE_SUCI(__aMF) \
     ((__aMF) && ((__aMF)->suci))
@@ -266,8 +268,12 @@ struct amf_ue_s {
     uint8_t         rand[OGS_RAND_LEN];
     uint8_t         autn[OGS_AUTN_LEN];
     uint8_t         xres_star[OGS_MAX_RES_LEN];
+
+    uint8_t         abba[OGS_NAS_MAX_ABBA_LEN];
+    uint8_t         abba_len;
+
     uint8_t         hxres_star[OGS_MAX_RES_LEN];
-    uint8_t         kseaf[OGS_SHA256_DIGEST_SIZE];
+    uint8_t         kamf[OGS_SHA256_DIGEST_SIZE];
     OpenAPI_auth_result_e auth_result;
 
     uint8_t         kasme[OGS_SHA256_DIGEST_SIZE];
@@ -554,10 +560,12 @@ amf_ue_t *amf_ue_find_by_imsi_bcd(char *imsi_bcd);
 amf_ue_t *amf_ue_find_by_guti(ogs_nas_5gs_guti_t *nas_guti);
 amf_ue_t *amf_ue_find_by_teid(uint32_t teid);
 amf_ue_t *amf_ue_find_by_suci(char *suci);
+amf_ue_t *amf_ue_find_by_supi(char *supi);
 
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message);
-int amf_ue_set_id(amf_ue_t *amf_ue,
+void amf_ue_set_suci(amf_ue_t *amf_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity);
+void amf_ue_set_supi(amf_ue_t *amf_ue, char *supi);
 
 int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue);
 int amf_ue_clear_indirect_tunnel(amf_ue_t *amf_ue);

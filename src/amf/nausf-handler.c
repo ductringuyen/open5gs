@@ -112,6 +112,8 @@ int amf_nausf_auth_handle_authenticate(
 int amf_nausf_auth_handle_authenticate_confirmation(
         amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 {
+    uint8_t kseaf[OGS_SHA256_DIGEST_SIZE];
+
     OpenAPI_confirmation_data_response_t *ConfirmationDataResponse;
 
     ogs_assert(amf_ue);
@@ -123,16 +125,26 @@ int amf_nausf_auth_handle_authenticate_confirmation(
         return OGS_ERROR;
     }
 
+    if (!ConfirmationDataResponse->supi) {
+        ogs_error("[%s] No supi", amf_ue->suci);
+        return OGS_ERROR;
+    }
+
+    if (!ConfirmationDataResponse->kseaf) {
+        ogs_error("[%s] No Kseaf", amf_ue->suci);
+        return OGS_ERROR;
+    }
+
     amf_ue->auth_result = ConfirmationDataResponse->auth_result;
     if (amf_ue->auth_result == OpenAPI_auth_result_AUTHENTICATION_SUCCESS) {
-        if (!ConfirmationDataResponse->kseaf) {
-            ogs_error("[%s] No Kseaf", amf_ue->suci);
-            return OGS_ERROR;
-        }
 
+        amf_ue_set_supi(amf_ue, ConfirmationDataResponse->supi);
         ogs_ascii_to_hex(ConfirmationDataResponse->kseaf,
-                strlen(ConfirmationDataResponse->kseaf),
-                amf_ue->kseaf, sizeof(amf_ue->kseaf));
+                strlen(ConfirmationDataResponse->kseaf), kseaf, sizeof(kseaf));
+
+        ogs_kdf_kamf(amf_ue->supi, amf_ue->abba, amf_ue->abba_len,
+                kseaf, amf_ue->kamf);
+
         return OGS_OK;
 
     } else {

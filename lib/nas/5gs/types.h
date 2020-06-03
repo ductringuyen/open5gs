@@ -284,10 +284,10 @@ ED6(uint8_t spare:2;,
 
 /* 9.11.3.10 ABBA
  * M LV 3-n */
-#define OGS_NAS_ABBA_LEN 255
+#define OGS_NAS_MAX_ABBA_LEN 255
 typedef struct ogs_nas_abba_s {
     uint8_t length;
-    uint8_t abba[OGS_NAS_ABBA_LEN];
+    uint8_t abba[OGS_NAS_MAX_ABBA_LEN];
 } ogs_nas_abba_t;
 
 /* 9.11.3.11 Access Type

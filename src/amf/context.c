@@ -66,7 +66,8 @@ void amf_context_init(void)
     self.amf_ue_ngap_id_hash = ogs_hash_make();
     self.imsi_ue_hash = ogs_hash_make();
     self.guti_ue_hash = ogs_hash_make();
-    self.amf_suci_hash = ogs_hash_make();
+    self.suci_hash = ogs_hash_make();
+    self.supi_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -89,8 +90,10 @@ void amf_context_final(void)
     ogs_hash_destroy(self.imsi_ue_hash);
     ogs_assert(self.guti_ue_hash);
     ogs_hash_destroy(self.guti_ue_hash);
-    ogs_assert(self.amf_suci_hash);
-    ogs_hash_destroy(self.amf_suci_hash);
+    ogs_assert(self.suci_hash);
+    ogs_hash_destroy(self.suci_hash);
+    ogs_assert(self.supi_hash);
+    ogs_hash_destroy(self.supi_hash);
 
     ogs_pool_final(&self.m_tmsi);
     ogs_pool_final(&amf_bearer_pool);
@@ -1114,6 +1117,9 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
+    /* Initialize Abba */
+    amf_ue->abba_len = 2;
+
     /* Create New GUTI */
     amf_ue_new_guti(amf_ue);
 
@@ -1175,8 +1181,12 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     if (amf_ue->imsi_len != 0)
         ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, NULL);
     if (amf_ue->suci) {
-        ogs_hash_set(self.amf_suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
+        ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
         ogs_free(amf_ue->suci);
+    }
+    if (amf_ue->supi) {
+        ogs_hash_set(self.supi_hash, amf_ue->supi, strlen(amf_ue->supi), NULL);
+        ogs_free(amf_ue->supi);
     }
 
     if (amf_ue->confirmation_url_for_5g_aka)
@@ -1253,8 +1263,13 @@ amf_ue_t *amf_ue_find_by_teid(uint32_t teid)
 amf_ue_t *amf_ue_find_by_suci(char *suci)
 {
     ogs_assert(suci);
+    return (amf_ue_t *)ogs_hash_get(self.suci_hash, suci, strlen(suci));
+}
 
-    return (amf_ue_t *)ogs_hash_get(self.amf_suci_hash, suci, strlen(suci));
+amf_ue_t *amf_ue_find_by_supi(char *supi)
+{
+    ogs_assert(supi);
+    return (amf_ue_t *)ogs_hash_get(self.supi_hash, supi, strlen(supi));
 }
 
 amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
@@ -1396,7 +1411,7 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
     return amf_ue;
 }
 
-int amf_ue_set_id(amf_ue_t *amf_ue,
+void amf_ue_set_suci(amf_ue_t *amf_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
     char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
@@ -1425,14 +1440,28 @@ int amf_ue_set_id(amf_ue_t *amf_ue,
 
     ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, amf_ue);
 
+    if (amf_ue->suci) {
+        ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
+        ogs_free(amf_ue->suci);
+    }
     amf_ue->suci = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
     ogs_assert(amf_ue->suci);
-    ogs_hash_set(self.amf_suci_hash,
-            amf_ue->suci, strlen(amf_ue->suci), amf_ue);
+    ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), amf_ue);
 
     amf_ue->guti_present = 1;
+}
 
-    return OGS_OK;
+void amf_ue_set_supi(amf_ue_t *amf_ue, char *supi)
+{
+    ogs_assert(supi);
+
+    if (amf_ue->supi) {
+        ogs_hash_set(self.supi_hash, amf_ue->supi, strlen(amf_ue->supi), NULL);
+        ogs_free(amf_ue->supi);
+    }
+    amf_ue->supi = ogs_strdup(supi);
+    ogs_assert(amf_ue->supi);
+    ogs_hash_set(self.supi_hash, amf_ue->supi, strlen(amf_ue->supi), amf_ue);
 }
 
 int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue)

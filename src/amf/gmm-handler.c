@@ -55,9 +55,8 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
 
     switch (mobile_identity_header->type) {
     case OGS_NAS_5GS_MOBILE_IDENTITY_SUCI:
-        amf_ue_set_id(amf_ue, mobile_identity);
-
-        ogs_debug("[%s]    UE_ID", amf_ue->suci);
+        amf_ue_set_suci(amf_ue, mobile_identity);
+        ogs_debug("[%s]    SUCI", amf_ue->suci);
         break;
     case OGS_NAS_5GS_MOBILE_IDENTITY_GUTI:
         mobile_identity_guti =
