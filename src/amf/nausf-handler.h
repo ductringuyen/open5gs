@@ -26,7 +26,9 @@ extern "C" {
 
 #include "context.h"
 
-bool amf_nausf_auth_handle_authenticate(
+int amf_nausf_auth_handle_authenticate(
+        amf_ue_t *amf_ue, ogs_sbi_message_t *message);
+int amf_nausf_auth_handle_authenticate_confirmation(
         amf_ue_t *amf_ue, ogs_sbi_message_t *message);
 
 #ifdef __cplusplus

@@ -541,15 +541,12 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 nas_5gs_send_authentication_reject(amf_ue);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             }
-#if 0 /* FIX IT */
-            else {
-                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);
-            }
-#endif
             break;
 
         case OGS_NAS_5GS_AUTHENTICATION_FAILURE:
         {
+            ogs_fatal("Not implemented = %s", amf_ue->suci);
+            ogs_assert_if_reached();
 #if 0
             ogs_nas_5gs_authentication_failure_t *authentication_failure =
                 &message->gmm.authentication_failure;
@@ -591,11 +588,11 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
-            ogs_warn("Registration request[%s]", amf_ue->imsi_bcd);
+            ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
                     amf_ue, &message->gmm.registration_request);
             if (rv != OGS_OK) {
-                ogs_error("gmm_handle_registration_request() failed");
+                ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 return;
             }
@@ -646,11 +643,8 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 ogs_warn("Retransmission of IMSI[%s] failed. "
                         "Stop retransmission",
                         amf_ue->imsi_bcd);
-                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-
-#if 0
                 nas_5gs_send_authentication_reject(amf_ue);
-#endif
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             } else {
                 amf_ue->t3560.retry_count++;
                 nas_5gs_send_authentication_request(amf_ue);
@@ -670,37 +664,36 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
         SWITCH(sbi_message->h.resource.component[0])
         CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
+            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
+                sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->suci, sbi_message->res_status);
+                nas_5gs_send_nas_reject_from_sbi(amf_ue,
+                        sbi_message->res_status);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
-                if (sbi_message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
-                    ogs_timer_stop(amf_ue->sbi_client_wait.timer);
-
-                    amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
-                    
-                } else {
-                    ogs_error("[%s] HTTP response error [%d]",
-                            amf_ue->suci, sbi_message->res_status);
-                    nas_5gs_send_nas_reject_from_sbi(amf_ue,
-                            sbi_message->res_status);
+                rv = amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
+                if (rv != OGS_OK) {
+                    ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 }
                 break;
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                if (sbi_message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                    ogs_timer_stop(amf_ue->sbi_client_wait.timer);
-
-                    ogs_fatal("TODO");
-#if 0
-                    amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
-#endif
-
+                rv = amf_nausf_auth_handle_authenticate_confirmation(
+                        amf_ue, sbi_message);
+                if (rv != OGS_OK) {
+                    ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 } else {
-                    ogs_error("[%s] HTTP response error [%d]",
-                            amf_ue->suci, sbi_message->res_status);
-                    nas_5gs_send_nas_reject_from_sbi(amf_ue,
-                            sbi_message->res_status);
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);
                 }
                 break;
-
             DEFAULT
                 ogs_error("[%s] Invalid HTTP method [%s]",
                         amf_ue->suci, sbi_message->h.method);
@@ -722,7 +715,6 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
 void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 {
-#if 0
     int rv;
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
@@ -738,12 +730,16 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
+#if 0
         CLEAR_AMF_UE_TIMER(amf_ue->t3560);
         nas_5gs_send_security_mode_command(amf_ue);
+#endif
         break;
     case OGS_FSM_EXIT_SIG:
         break;
     case AMF_EVT_5GMM_MESSAGE:
+        break;
+#if 0
         message = e->nas.message;
         ogs_assert(message);
 
@@ -884,11 +880,11 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
         break;
+#endif
     default:
         ogs_error("Unknown event[%s]", amf_event_get_name(e));
         break;
     }
-#endif
 }
 
 #if 0

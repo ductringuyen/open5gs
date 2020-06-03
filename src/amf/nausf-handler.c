@@ -20,7 +20,7 @@
 #include "nausf-handler.h"
 #include "nas-path.h"
 
-bool amf_nausf_auth_handle_authenticate(
+int amf_nausf_auth_handle_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 {
     OpenAPI_ue_authentication_ctx_t *UeAuthenticationCtx = NULL;
@@ -37,7 +37,7 @@ bool amf_nausf_auth_handle_authenticate(
         ogs_error("[%s] No UeAuthenticationCtx", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (UeAuthenticationCtx->auth_type != OpenAPI_auth_type_5G_AKA) {
@@ -45,7 +45,7 @@ bool amf_nausf_auth_handle_authenticate(
             amf_ue->suci, UeAuthenticationCtx->auth_type);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_FORBIDDEN);
-        return false;
+        return OGS_ERROR;
     }
 
     AV5G_AKA = UeAuthenticationCtx->_5g_auth_data;
@@ -53,35 +53,35 @@ bool amf_nausf_auth_handle_authenticate(
         ogs_error("[%s] No Av5gAka", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (!AV5G_AKA->rand) {
         ogs_error("[%s] No Av5gAka.rand", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (!AV5G_AKA->hxres_star) {
         ogs_error("[%s] No Av5gAka.hxresStar", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (!AV5G_AKA->autn) {
         ogs_error("[%s] No Av5gAka.autn", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (!UeAuthenticationCtx->_links) {
         ogs_error("[%s] No _links", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     OpenAPI_list_for_each(UeAuthenticationCtx->_links, node) {
@@ -99,14 +99,14 @@ bool amf_nausf_auth_handle_authenticate(
         ogs_error("[%s] No _links.5g-aka", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (!LinksValueSchemeValue->href) {
         ogs_error("[%s] No _links.5g-aka.href", amf_ue->suci);
         nas_5gs_send_nas_reject_from_sbi(
                 amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
-        return false;
+        return OGS_ERROR;
     }
 
     if (amf_ue->confirmation_url_for_5g_aka)
@@ -124,5 +124,35 @@ bool amf_nausf_auth_handle_authenticate(
 
     nas_5gs_send_authentication_request(amf_ue);
 
-    return true;
+    return OGS_OK;
+}
+
+int amf_nausf_auth_handle_authenticate_confirmation(
+        amf_ue_t *amf_ue, ogs_sbi_message_t *message)
+{
+    OpenAPI_confirmation_data_response_t *ConfirmationDataResponse;
+
+    ogs_assert(amf_ue);
+    ogs_assert(message);
+
+    ConfirmationDataResponse = message->ConfirmationDataResponse;
+    if (!ConfirmationDataResponse) {
+        ogs_error("[%s] No ConfirmationDataResponse", amf_ue->suci);
+        nas_5gs_send_nas_reject_from_sbi(
+                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        return OGS_ERROR;
+    }
+
+    if (!ConfirmationDataResponse->kseaf) {
+        ogs_error("[%s] No Kseaf", amf_ue->suci);
+        nas_5gs_send_nas_reject_from_sbi(
+                amf_ue, OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        return OGS_ERROR;
+    }
+
+    ogs_ascii_to_hex(ConfirmationDataResponse->kseaf,
+            strlen(ConfirmationDataResponse->kseaf),
+            amf_ue->kseaf, sizeof(amf_ue->kseaf));
+
+    return OGS_OK;
 }
