@@ -100,28 +100,14 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
             SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
-                SWITCH(message->h.method)
-                CASE(OGS_SBI_HTTP_METHOD_GET)
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
+                SWITCH(message->h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+                    ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
-                        udm_nudr_dr_handle_query(udm_ue, message);
-                    } else {
-                        ogs_error("[%s] HTTP response error [%d]",
-                            udm_ue->suci, message->res_status);
-                        ogs_sbi_server_send_error(
-                            session, message->res_status,
-                            NULL, "HTTP response error", udm_ue->suci);
-                    }
-                    break;
-                CASE(OGS_SBI_HTTP_METHOD_PUT)
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_NO_CONTENT) {
-                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
-
-                        ogs_fatal("asdfkljasdfsadf");
-#if 0
-                        udm_nudr_dr_handle_query(udm_ue, message);
-#endif
+                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK ||
+                        message->res_status == OGS_SBI_HTTP_STATUS_NO_CONTENT) {
+                        udm_nudr_dr_handle_subscription_authentication(
+                                udm_ue, message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->suci, message->res_status);
@@ -132,8 +118,8 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     break;
 
                 DEFAULT
-                    ogs_error("[%s] Invalid HTTP method [%s]",
-                            udm_ue->suci, message->h.method);
+                    ogs_error("Invalid resource name [%s]",
+                            message->h.resource.component[2]);
                     ogs_assert_if_reached();
                 END
                 break;
@@ -143,9 +129,12 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 ogs_assert_if_reached();
             END
             break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", message->h.service.name);
-            ogs_assert_if_reached();
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                    "Invalid API name", message->h.resource.component[0]);
         END
         break;
 

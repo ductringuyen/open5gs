@@ -26,7 +26,8 @@
 extern "C" {
 #endif
 
-bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg);
+bool udm_nudr_dr_handle_subscription_authentication(
+        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg);
 
 #ifdef __cplusplus
 }

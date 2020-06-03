@@ -19,7 +19,8 @@
 
 #include "nudr-handler.h"
 
-bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+bool udm_nudr_dr_handle_subscription_authentication(
+        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 {
     ogs_sbi_message_t sendmsg;
     ogs_sbi_session_t *session = NULL;
@@ -55,167 +56,161 @@ bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 
     ogs_assert(recvmsg);
 
-    SWITCH(recvmsg->h.resource.component[2])
-    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
-        SWITCH(recvmsg->h.resource.component[3])
-        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
+    SWITCH(recvmsg->h.resource.component[3])
+    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
 
-            AuthenticationSubscription = recvmsg->AuthenticationSubscription;
-            if (!AuthenticationSubscription) {
-                ogs_error("[%s] No AuthenticationSubscription", udm_ue->suci);
-                ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "No AuthenticationSubscription", udm_ue->suci);
-                return false;
-            }
+        AuthenticationSubscription = recvmsg->AuthenticationSubscription;
+        if (!AuthenticationSubscription) {
+            ogs_error("[%s] No AuthenticationSubscription", udm_ue->suci);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                    recvmsg, "No AuthenticationSubscription", udm_ue->suci);
+            return false;
+        }
 
-            if (AuthenticationSubscription->authentication_method !=
-                    OpenAPI_auth_method_5G_AKA) {
-                ogs_error("[%s] Not supported Auth Method [%d]",
-                        udm_ue->suci,
-                        AuthenticationSubscription->authentication_method);
-                ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                        recvmsg, "Not supported Auth Method", udm_ue->suci);
-                return false;
+        if (AuthenticationSubscription->authentication_method !=
+                OpenAPI_auth_method_5G_AKA) {
+            ogs_error("[%s] Not supported Auth Method [%d]",
+                    udm_ue->suci,
+                    AuthenticationSubscription->authentication_method);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
+                    recvmsg, "Not supported Auth Method", udm_ue->suci);
+            return false;
 
-            }
+        }
 
-            if (!AuthenticationSubscription->enc_permanent_key) {
-                ogs_error("[%s] No encPermanentKey", udm_ue->suci);
-                ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "No encPermanentKey", udm_ue->suci);
-                return false;
-            }
-            if (!AuthenticationSubscription->enc_opc_key) {
-                ogs_error("[%s] No encPermanentKey", udm_ue->suci);
-                ogs_sbi_server_send_error(session,
+        if (!AuthenticationSubscription->enc_permanent_key) {
+            ogs_error("[%s] No encPermanentKey", udm_ue->suci);
+            ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
                     recvmsg, "No encPermanentKey", udm_ue->suci);
-                return false;
-            }
-            if (!AuthenticationSubscription->authentication_management_field) {
-                ogs_error("[%s] No authenticationManagementField",
-                        udm_ue->suci);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No authenticationManagementField", udm_ue->suci);
-                return false;
-            }
-            if (!AuthenticationSubscription->sequence_number) {
-                ogs_error("[%s] No SequenceNumber", udm_ue->suci);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No SequenceNumber", udm_ue->suci);
-                return false;
-            }
-            if (AuthenticationSubscription->sequence_number->sqn_scheme !=
-                    OpenAPI_sqn_scheme_NON_TIME_BASED) {
-                ogs_error("[%s] No SequenceNumber.sqnScheme [%d]", udm_ue->suci,
-                    AuthenticationSubscription->sequence_number->sqn_scheme);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                    recvmsg, "No SequenceNumber.sqnScheme", udm_ue->suci);
-                return false;
-            }
-            if (!AuthenticationSubscription->sequence_number->sqn) {
-                ogs_error("[%s] No SequenceNumber.sqn", udm_ue->suci);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No SequenceNumber.sqn", udm_ue->suci);
-                return false;
-            }
+            return false;
+        }
+        if (!AuthenticationSubscription->enc_opc_key) {
+            ogs_error("[%s] No encPermanentKey", udm_ue->suci);
+            ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                recvmsg, "No encPermanentKey", udm_ue->suci);
+            return false;
+        }
+        if (!AuthenticationSubscription->authentication_management_field) {
+            ogs_error("[%s] No authenticationManagementField",
+                    udm_ue->suci);
+            ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                recvmsg, "No authenticationManagementField", udm_ue->suci);
+            return false;
+        }
+        if (!AuthenticationSubscription->sequence_number) {
+            ogs_error("[%s] No SequenceNumber", udm_ue->suci);
+            ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                recvmsg, "No SequenceNumber", udm_ue->suci);
+            return false;
+        }
+        if (AuthenticationSubscription->sequence_number->sqn_scheme !=
+                OpenAPI_sqn_scheme_NON_TIME_BASED) {
+            ogs_error("[%s] No SequenceNumber.sqnScheme [%d]", udm_ue->suci,
+                AuthenticationSubscription->sequence_number->sqn_scheme);
+            ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_FORBIDDEN,
+                recvmsg, "No SequenceNumber.sqnScheme", udm_ue->suci);
+            return false;
+        }
+        if (!AuthenticationSubscription->sequence_number->sqn) {
+            ogs_error("[%s] No SequenceNumber.sqn", udm_ue->suci);
+            ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                recvmsg, "No SequenceNumber.sqn", udm_ue->suci);
+            return false;
+        }
 
-            udm_ue->auth_type = OpenAPI_auth_type_5G_AKA;
+        udm_ue->auth_type = OpenAPI_auth_type_5G_AKA;
 
-            memset(&AuthenticationInfoResult,
-                    0, sizeof(AuthenticationInfoResult));
+        memset(&AuthenticationInfoResult,
+                0, sizeof(AuthenticationInfoResult));
 
-            AuthenticationInfoResult.auth_type = udm_ue->auth_type;
+        AuthenticationInfoResult.auth_type = udm_ue->auth_type;
 
-            /* FIX IT! TODO! NEW! */
-            ogs_random(rand, OGS_RAND_LEN);
-            OGS_HEX(tmp, strlen(tmp), rand);
+        /* FIX IT! TODO! NEW! */
+        ogs_random(rand, OGS_RAND_LEN);
+        OGS_HEX(tmp, strlen(tmp), rand);
 
-            ogs_ascii_to_hex(
-                AuthenticationSubscription->enc_opc_key,
-                strlen(AuthenticationSubscription->enc_opc_key),
-                opc, sizeof(opc));
-            ogs_ascii_to_hex(
-                AuthenticationSubscription->authentication_management_field,
-                strlen(AuthenticationSubscription->
-                    authentication_management_field),
-                amf, sizeof(amf));
-            ogs_ascii_to_hex(
-                AuthenticationSubscription->enc_permanent_key,
-                strlen(AuthenticationSubscription->enc_permanent_key),
-                k, sizeof(k));
-            ogs_ascii_to_hex(
-                AuthenticationSubscription->sequence_number->sqn,
-                strlen(AuthenticationSubscription->sequence_number->sqn),
-                sqn, sizeof(sqn));
-            milenage_generate(opc, amf, k, sqn, rand, autn, ik, ck, ak,
-                xres, &xres_len);
+        ogs_ascii_to_hex(
+            AuthenticationSubscription->enc_opc_key,
+            strlen(AuthenticationSubscription->enc_opc_key),
+            opc, sizeof(opc));
+        ogs_ascii_to_hex(
+            AuthenticationSubscription->authentication_management_field,
+            strlen(AuthenticationSubscription->
+                authentication_management_field),
+            amf, sizeof(amf));
+        ogs_ascii_to_hex(
+            AuthenticationSubscription->enc_permanent_key,
+            strlen(AuthenticationSubscription->enc_permanent_key),
+            k, sizeof(k));
+        ogs_ascii_to_hex(
+            AuthenticationSubscription->sequence_number->sqn,
+            strlen(AuthenticationSubscription->sequence_number->sqn),
+            sqn, sizeof(sqn));
+        milenage_generate(opc, amf, k, sqn, rand, autn, ik, ck, ak,
+            xres, &xres_len);
 
-            ogs_assert(udm_ue->serving_network_name);
+        ogs_assert(udm_ue->serving_network_name);
 
-            /* TS33.501 Annex A.2 : Kausf derviation function */
-            ogs_kdf_kausf(
-                    ck, ik,
-                    udm_ue->serving_network_name, autn,
-                    kausf);
+        /* TS33.501 Annex A.2 : Kausf derviation function */
+        ogs_kdf_kausf(
+                ck, ik,
+                udm_ue->serving_network_name, autn,
+                kausf);
 
-            /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
-            ogs_kdf_xres_star(
-                    ck, ik,
-                    udm_ue->serving_network_name, rand, xres, xres_len,
-                    xres_star);
+        /* TS33.501 Annex A.4 : RES* and XRES* derivation function */
+        ogs_kdf_xres_star(
+                ck, ik,
+                udm_ue->serving_network_name, rand, xres, xres_len,
+                xres_star);
 
-            memset(&AuthenticationVector, 0, sizeof(AuthenticationVector));
-            AuthenticationVector.av_type = OpenAPI_av_type_5G_HE_AKA;
+        memset(&AuthenticationVector, 0, sizeof(AuthenticationVector));
+        AuthenticationVector.av_type = OpenAPI_av_type_5G_HE_AKA;
 
-            ogs_hex_to_ascii(rand, sizeof(rand),
-                    rand_string, sizeof(rand_string));
-            AuthenticationVector.rand = rand_string;
-            ogs_hex_to_ascii(xres_star, sizeof(xres_star),
-                    xres_star_string, sizeof(xres_star_string));
-            AuthenticationVector.xres_star = xres_star_string;
-            ogs_hex_to_ascii(autn, sizeof(autn),
-                    autn_string, sizeof(autn_string));
-            AuthenticationVector.autn = autn_string;
-            ogs_hex_to_ascii(kausf, sizeof(kausf),
-                    kausf_string, sizeof(kausf_string));
-            AuthenticationVector.kausf = kausf_string;
+        ogs_hex_to_ascii(rand, sizeof(rand),
+                rand_string, sizeof(rand_string));
+        AuthenticationVector.rand = rand_string;
+        ogs_hex_to_ascii(xres_star, sizeof(xres_star),
+                xres_star_string, sizeof(xres_star_string));
+        AuthenticationVector.xres_star = xres_star_string;
+        ogs_hex_to_ascii(autn, sizeof(autn),
+                autn_string, sizeof(autn_string));
+        AuthenticationVector.autn = autn_string;
+        ogs_hex_to_ascii(kausf, sizeof(kausf),
+                kausf_string, sizeof(kausf_string));
+        AuthenticationVector.kausf = kausf_string;
 
-            AuthenticationInfoResult.authentication_vector =
-                &AuthenticationVector;
+        AuthenticationInfoResult.authentication_vector =
+            &AuthenticationVector;
 
-            memset(&sendmsg, 0, sizeof(sendmsg));
+        memset(&sendmsg, 0, sizeof(sendmsg));
 
-            ogs_assert(AuthenticationInfoResult.auth_type);
-            sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
+        ogs_assert(AuthenticationInfoResult.auth_type);
+        sendmsg.AuthenticationInfoResult = &AuthenticationInfoResult;
 
-            ogs_timer_start(udm_ue->sbi_server_wait.timer,
-                    udm_timer_cfg(UDM_TIMER_SBI_SERVER_WAIT)->duration);
+        response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
 
-            response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
-            ogs_assert(response);
-            ogs_sbi_server_send_response(session, response);
+        return true;
 
-            return true;
+    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
 
-        DEFAULT
-            ogs_error("Invalid resource name [%s]",
-                    recvmsg->h.resource.component[3]);
-        END
-        break;
+        ogs_fatal("asdfkljasdfasdF");
+
+        return true;
 
     DEFAULT
         ogs_error("Invalid resource name [%s]",
-                recvmsg->h.resource.component[2]);
+                recvmsg->h.resource.component[3]);
     END
 
-    ogs_assert_if_reached();
     return false;
 }

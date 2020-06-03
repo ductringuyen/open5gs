@@ -71,7 +71,7 @@ struct udm_ue_s {
 
     struct {
         ogs_timer_t *timer;
-    } sbi_server_wait, sbi_client_wait;
+    } sbi_client_wait;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

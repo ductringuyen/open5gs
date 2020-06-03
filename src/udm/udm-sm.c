@@ -341,14 +341,6 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     udm_self()->nf_type, subscription->nf_instance_id);
             break;
 
-        case UDM_TIMER_SBI_SERVER_WAIT:
-            udm_ue = e->sbi.data;
-            ogs_assert(udm_ue);
-
-            ogs_error("[%s] No expected HTTP request message", udm_ue->suci);
-            udm_ue_remove(udm_ue);
-            break;
-
         case UDM_TIMER_SBI_CLIENT_WAIT:
             udm_ue = e->sbi.data;
             ogs_assert(udm_ue);

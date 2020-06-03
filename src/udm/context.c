@@ -137,8 +137,6 @@ udm_ue_t *udm_ue_add(char *suci)
     ogs_assert(udm_ue->supi);
     ogs_hash_set(self.supi_hash, udm_ue->supi, strlen(udm_ue->supi), udm_ue);
 
-    udm_ue->sbi_server_wait.timer = ogs_timer_add(udm_self()->timer_mgr,
-            udm_timer_sbi_server_wait_expire, udm_ue);
     udm_ue->sbi_client_wait.timer = ogs_timer_add(udm_self()->timer_mgr,
             udm_timer_sbi_client_wait_expire, udm_ue);
 
@@ -164,7 +162,6 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     ogs_fsm_fini(&udm_ue->sm, &e);
     ogs_fsm_delete(&udm_ue->sm);
 
-    ogs_timer_delete(udm_ue->sbi_server_wait.timer);
     ogs_timer_delete(udm_ue->sbi_client_wait.timer);
 
     ogs_assert(udm_ue->ctx_id);
