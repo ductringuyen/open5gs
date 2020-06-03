@@ -68,8 +68,7 @@ typedef struct ogs_dbi_auth_info_s {
 
 int ogs_dbi_auth_info(const char *id_type, const char *ue_id,
         ogs_dbi_auth_info_t *auth_info);
-int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
-        uint8_t *rand, uint64_t sqn);
+int ogs_dbi_update_sqn(const char *id_type, const char *ue_id, uint64_t sqn);
 int ogs_dbi_increment_sqn(const char *id_type, const char *ue_id);
 
 int ogs_dbi_subscription_data(const char *id_type, const char *ue_id,

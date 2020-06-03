@@ -100,8 +100,7 @@ out:
     return rv;
 }
 
-int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
-        uint8_t *rand, uint64_t sqn)
+int ogs_dbi_update_sqn(const char *id_type, const char *ue_id, uint64_t sqn)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -111,14 +110,12 @@ int ogs_dbi_update_rand_and_sqn(const char *id_type, const char *ue_id,
 
     ogs_assert(id_type);
     ogs_assert(ue_id);
-    ogs_assert(rand);
     ogs_hex_to_ascii(rand,
             OGS_RAND_LEN, printable_rand, sizeof(printable_rand));
 
     query = BCON_NEW(id_type, BCON_UTF8(ue_id));
     update = BCON_NEW("$set",
             "{",
-                "security.rand", printable_rand,
                 "security.sqn", BCON_INT64(sqn),
             "}");
 

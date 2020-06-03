@@ -148,6 +148,15 @@ bool udr_nudr_dr_handle_subscription_data(
         SWITCH(recvmsg->h.resource.component[3])
         CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
 
+            rv = ogs_dbi_increment_sqn(id_type, ue_id);
+            if (rv != OGS_OK) {
+                ogs_fatal("Cannot increment SQN : %s-%s", id_type, ue_id);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                        recvmsg, "Cannot increment SQN", ue_id);
+                break;
+            }
+
             memset(&sendmsg, 0, sizeof(sendmsg));
 
             response = ogs_sbi_build_response(
