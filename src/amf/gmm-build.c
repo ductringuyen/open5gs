@@ -155,7 +155,6 @@ ogs_pkbuf_t *gmm_build_registration_reject(ogs_nas_5gmm_cause_t gmm_cause)
     return ogs_nas_5gs_plain_encode(&message);
 }
 
-#if 0
 ogs_pkbuf_t *gmm_build_identity_request(amf_ue_t *amf_ue)
 {
     ogs_nas_5gs_message_t message;
@@ -170,12 +169,11 @@ ogs_pkbuf_t *gmm_build_identity_request(amf_ue_t *amf_ue)
     message.gmm.h.message_type = OGS_NAS_5GS_IDENTITY_REQUEST;
 
     /* Request IMSI */
-    ogs_debug("    Identity Type 2 : IMSI");
-    identity_request->identity_type.type = OGS_NAS_IDENTITY_TYPE_2_IMSI;
+    ogs_debug("    Identity Type 2 : SUCI");
+    identity_request->identity_type.value = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
 
     return ogs_nas_5gs_plain_encode(&message);
 }
-#endif
 
 ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue)
 {
@@ -190,8 +188,9 @@ ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue)
             OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_AUTHENTICATION_REQUEST;
 
-    authentication_request->ngksi.value = 1;
-    authentication_request->abba.length = 2;
+    authentication_request->ngksi.value = amf_ue->nas.ksi;
+    authentication_request->abba.length = amf_ue->abba_len;
+    memcpy(authentication_request->abba.value, amf_ue->abba, amf_ue->abba_len);
 
     authentication_request->presencemask |=
     OGS_NAS_5GS_AUTHENTICATION_REQUEST_AUTHENTICATION_PARAMETER_RAND_PRESENT;
@@ -221,7 +220,6 @@ ogs_pkbuf_t *gmm_build_authentication_reject(void)
     return ogs_nas_5gs_plain_encode(&message);
 }
 
-#if 0
 ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
 {
     ogs_nas_5gs_message_t message;
@@ -229,8 +227,7 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
         &message.gmm.security_mode_command;
     ogs_nas_security_algorithms_t *selected_nas_security_algorithms =
         &security_mode_command->selected_nas_security_algorithms;
-    ogs_nas_key_set_identifier_t *nas_key_set_identifier =
-        &security_mode_command->nas_key_set_identifier;
+    ogs_nas_key_set_identifier_t *ngksi = &security_mode_command->ngksi;
     ogs_nas_ue_security_capability_t *replayed_ue_security_capabilities = 
         &security_mode_command->replayed_ue_security_capabilities;
     ogs_nas_imeisv_request_t *imeisv_request =
@@ -256,42 +253,32 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
     selected_nas_security_algorithms->type_of_ciphering_algorithm =
         amf_ue->selected_enc_algorithm;
 
-    nas_key_set_identifier->tsc = 0;
-    nas_key_set_identifier->value = 0;
+    ngksi->tsc = 0;
+    ngksi->value = amf_ue->nas.ksi;
 
-    replayed_ue_security_capabilities->eea = amf_ue->ue_network_capability.eea;
-    replayed_ue_security_capabilities->eia = amf_ue->ue_network_capability.eia;
-    replayed_ue_security_capabilities->uea = amf_ue->ue_network_capability.uea;
-    replayed_ue_security_capabilities->uia = 
-        amf_ue->ue_network_capability.uia & 0x7f;
-    replayed_ue_security_capabilities->gea = 
-        (amf_ue->ms_network_capability.gea1 << 6) | 
-        amf_ue->ms_network_capability.extended_gea;
+    replayed_ue_security_capabilities->nea = amf_ue->ue_security_capability.nea;
+    replayed_ue_security_capabilities->nia = amf_ue->ue_security_capability.nia;
+    replayed_ue_security_capabilities->eps_ea =
+        amf_ue->ue_security_capability.eps_ea;
+    replayed_ue_security_capabilities->eps_ia =
+        amf_ue->ue_security_capability.eps_ia;
 
     replayed_ue_security_capabilities->length =
-        sizeof(replayed_ue_security_capabilities->eea) +
-        sizeof(replayed_ue_security_capabilities->eia);
-    if (replayed_ue_security_capabilities->uea ||
-        replayed_ue_security_capabilities->uia)
+        sizeof(replayed_ue_security_capabilities->nea) +
+        sizeof(replayed_ue_security_capabilities->nia);
+    if (replayed_ue_security_capabilities->eps_ea ||
+        replayed_ue_security_capabilities->eps_ia)
         replayed_ue_security_capabilities->length =
-            sizeof(replayed_ue_security_capabilities->eea) +
-            sizeof(replayed_ue_security_capabilities->eia) +
-            sizeof(replayed_ue_security_capabilities->uea) +
-            sizeof(replayed_ue_security_capabilities->uia);
-    if (replayed_ue_security_capabilities->gea)
-        replayed_ue_security_capabilities->length =
-            sizeof(replayed_ue_security_capabilities->eea) +
-            sizeof(replayed_ue_security_capabilities->eia) +
-            sizeof(replayed_ue_security_capabilities->uea) +
-            sizeof(replayed_ue_security_capabilities->uia) +
-            sizeof(replayed_ue_security_capabilities->gea);
-    ogs_debug("    Replayed UE SEC[LEN:%d EEA:0x%x EIA:0x%x UEA:0x%x UIA:0x%x GEA:0x%x]",
+            sizeof(replayed_ue_security_capabilities->nea) +
+            sizeof(replayed_ue_security_capabilities->nia) +
+            sizeof(replayed_ue_security_capabilities->eps_ea) +
+            sizeof(replayed_ue_security_capabilities->eps_ia);
+    ogs_debug("    Replayed UE SEC[LEN:%d NEA:0x%x NIA:0x%x EEA:0x%x EIA:0x%x",
             replayed_ue_security_capabilities->length,
-            replayed_ue_security_capabilities->eea,
-            replayed_ue_security_capabilities->eia,
-            replayed_ue_security_capabilities->uea,
-            replayed_ue_security_capabilities->uia,
-            replayed_ue_security_capabilities->gea);
+            replayed_ue_security_capabilities->nea,
+            replayed_ue_security_capabilities->nia,
+            replayed_ue_security_capabilities->eps_ea,
+            replayed_ue_security_capabilities->eps_ia);
     ogs_debug("    Selected[Integrity:0x%x Encrypt:0x%x]",
             amf_ue->selected_int_algorithm, amf_ue->selected_enc_algorithm);
 
@@ -301,8 +288,8 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
     imeisv_request->imeisv_request_value = OGS_NAS_IMEISV_REQUESTED;
 
     if (amf_ue->selected_int_algorithm == OGS_NAS_SECURITY_ALGORITHMS_EIA0) {
-        ogs_error("Encrypt[0x%x] can be skipped with EEA0, "
-            "but Integrity[0x%x] cannot be bypassed with EIA0",
+        ogs_error("Encrypt[0x%x] can be skipped with NEA0, "
+            "but Integrity[0x%x] cannot be bypassed with NIA0",
             amf_ue->selected_enc_algorithm, amf_ue->selected_int_algorithm);
         return NULL;
     }
@@ -315,6 +302,7 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
     return nas_5gs_security_encode(amf_ue, &message);
 }
 
+#if 0
 ogs_pkbuf_t *gmm_build_detach_accept(amf_ue_t *amf_ue)
 {
     ogs_nas_5gs_message_t message;

@@ -1117,6 +1117,9 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
+    /* Initialize KSI */
+    amf_ue->nas.ksi = 1;
+
     /* Initialize Abba */
     amf_ue->abba_len = 2;
 

@@ -173,7 +173,8 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
             OGS_NAS_5GS_REGISTRATION_REQUEST_UE_SECURITY_CAPABILITY_PRESENT) {
         memcpy(&amf_ue->ue_security_capability, 
                 &registration_request->ue_security_capability,
-                sizeof(registration_request->ue_security_capability));
+                ogs_min(sizeof(amf_ue->ue_security_capability),
+                    registration_request->ue_security_capability.length));
     }
 
     if (amf_selected_int_algorithm(amf_ue) ==
