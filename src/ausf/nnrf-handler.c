@@ -301,20 +301,15 @@ void ausf_nnrf_handle_nf_discover(
         }
     }
 
-    if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_will_authenticate)) {
-        nf_instance = OGS_SBI_NF_INSTANCE_GET(
-                ausf_ue->nf_types, OpenAPI_nf_type_UDM);
-        if (!nf_instance) {
-            ogs_error("[%s] (NF discover) No UDM", ausf_ue->id);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                    "(NF discover) No UDM", ausf_ue->id);
-            ausf_ue_remove(ausf_ue);
-        } else {
-            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
-        }
+    nf_instance = OGS_SBI_NF_INSTANCE_GET(
+            ausf_ue->nf_types, OpenAPI_nf_type_UDM);
+    if (!nf_instance) {
+        ogs_error("[%s] (NF discover) No UDM", ausf_ue->id);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                "(NF discover) No UDM", ausf_ue->id);
+        ausf_ue_remove(ausf_ue);
     } else {
-        ogs_fatal("Should implement other case");
-        ogs_assert_if_reached();
+        ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
     }
 }
