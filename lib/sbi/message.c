@@ -452,9 +452,10 @@ int ogs_sbi_parse_response(
 
     for (hi = ogs_hash_first(response->http.headers);
             hi; hi = ogs_hash_next(hi)) {
-        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE)) {
+        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE))
             message->http.content_type = ogs_hash_this_val(hi);
-        }
+        else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_LOCATION))
+            message->http.location = ogs_hash_this_val(hi);
     }
 
     message->res_status = response->status;

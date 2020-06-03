@@ -45,6 +45,8 @@ typedef struct connection_s {
     char *memory;
     size_t size;
 
+    char *location;
+
     ogs_timer_t *timer;
     CURL *easy;
     char error[CURL_ERROR_SIZE];
@@ -57,6 +59,7 @@ static OGS_POOL(sockinfo_pool, sockinfo_t);
 static OGS_POOL(connection_pool, connection_t);
 
 static size_t write_cb(void *contents, size_t size, size_t nmemb, void *data);
+static size_t header_cb(void *ptr, size_t size, size_t nmemb, void *data);
 static int sock_cb(CURL *e, curl_socket_t s, int what, void *cbp, void *sockp);
 static int multi_timer_cb(CURLM *multi, long timeout_ms, void *cbp);
 static void multi_timer_expired(void *data);
@@ -293,6 +296,8 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     curl_easy_setopt(conn->easy, CURLOPT_PRIVATE, conn);
     curl_easy_setopt(conn->easy, CURLOPT_WRITEFUNCTION, write_cb);
     curl_easy_setopt(conn->easy, CURLOPT_WRITEDATA, conn);
+    curl_easy_setopt(conn->easy, CURLOPT_HEADERFUNCTION, header_cb);
+    curl_easy_setopt(conn->easy, CURLOPT_HEADERDATA, conn);
     curl_easy_setopt(conn->easy, CURLOPT_ERRORBUFFER, conn->error);
 
     ogs_assert(client->multi);
@@ -328,6 +333,9 @@ static void connection_remove(connection_t *conn)
 
     ogs_assert(conn->method);
     ogs_free(conn->method);
+
+    if (conn->location)
+        ogs_free(conn->location);
 
     if (conn->num_of_header) {
         for (i = 0; i < conn->num_of_header; i++)
@@ -412,7 +420,10 @@ static void check_multi_info(ogs_sbi_client_t *client)
 
                 if (content_type)
                     ogs_sbi_header_set(response->http.headers,
-                            "Content-Type", content_type);
+                            OGS_SBI_CONTENT_TYPE, content_type);
+                if (conn->location)
+                    ogs_sbi_header_set(response->http.headers,
+                            OGS_SBI_LOCATION, conn->location);
 
                 if (client->cb) 
                     client->cb(response, conn->data);
@@ -472,6 +483,19 @@ static size_t write_cb(void *contents, size_t size, size_t nmemb, void *data)
     conn->memory[conn->size] = 0;
 
     return realsize;
+}
+
+static size_t header_cb(void *ptr, size_t size, size_t nmemb, void *data)
+{
+    connection_t *conn = NULL;
+
+    conn = data;
+    ogs_assert(conn);
+
+    if (strncmp(ptr, OGS_SBI_LOCATION, strlen(OGS_SBI_LOCATION)) == 0)
+        conn->location = ogs_strdup((char *)ptr + strlen(OGS_SBI_LOCATION) + 2);
+
+    return (nmemb*size);
 }
 
 static void event_cb(short when, ogs_socket_t fd, void *data)

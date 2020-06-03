@@ -225,6 +225,13 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
 
     ogs_assert(recvmsg);
 
+    if (!recvmsg->http.location) {
+        ogs_error("[%s] No Location", ausf_ue->suci);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No Location", ausf_ue->suci);
+        return false;
+    }
+
     AuthEvent = recvmsg->AuthEvent;
     if (!AuthEvent) {
         ogs_error("[%s] No AuthEvent", ausf_ue->suci);
@@ -232,6 +239,10 @@ bool ausf_nudm_ueau_handle_result_confirmation_inform(
                 recvmsg, "No AuthEvent", ausf_ue->suci);
         return false;
     }
+
+    if (ausf_ue->auth_events_url)
+        ogs_free(ausf_ue->auth_events_url);
+    ausf_ue->auth_events_url = ogs_strdup(recvmsg->http.location);
 
     memset(&ConfirmationDataResponse, 0, sizeof(ConfirmationDataResponse));
 

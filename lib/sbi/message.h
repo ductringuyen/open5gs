@@ -115,6 +115,7 @@ extern "C" {
 #define OGS_SBI_ACCEPT                              "Accept"
 #define OGS_SBI_ACCEPT_ENCODING                     "Accept-Encoding"
 #define OGS_SBI_CONTENT_TYPE                        "Content-Type"
+#define OGS_SBI_LOCATION                            "Location"
 #define OGS_SBI_CONTENT_JSON_TYPE                   "application/json"
 #define OGS_SBI_CONTENT_PROBLEM_TYPE                "application/problem+json"
 #define OGS_SBI_CONTENT_PATCH_TYPE                  \

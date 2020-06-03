@@ -179,6 +179,9 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     if (ausf_ue->state.method)
         ogs_free(ausf_ue->state.method);
 
+    if (ausf_ue->auth_events_url)
+        ogs_free(ausf_ue->auth_events_url);
+
     if (ausf_ue->serving_network_name)
         ogs_free(ausf_ue->serving_network_name);
     
