@@ -107,7 +107,8 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
     ret = fd_msg_search_avp(qry, ogs_diam_s6a_req_eutran_auth_info, &avp);
     ogs_assert(ret == 0);
     if (avp) {
-        ret = fd_avp_search_avp(avp, ogs_diam_s6a_re_synchronization_info, &avpch);
+        ret = fd_avp_search_avp(
+                avp, ogs_diam_s6a_re_synchronization_info, &avpch);
         ogs_assert(ret == 0);
         if (avpch) {
             ret = fd_msg_avp_hdr(avpch, &hdr);
@@ -223,7 +224,8 @@ static int hss_ogs_diam_s6a_air_cb( struct msg **msg, struct avp *avp,
     ogs_assert(ret == 0);
 
     /* Set Vendor-Specific-Application-Id AVP */
-    ret = ogs_diam_message_vendor_specific_appid_set(ans, OGS_DIAM_S6A_APPLICATION_ID);
+    ret = ogs_diam_message_vendor_specific_appid_set(
+            ans, OGS_DIAM_S6A_APPLICATION_ID);
     ogs_assert(ret == 0);
 
 	/* Send the answer */
@@ -253,7 +255,8 @@ out:
     ogs_assert(ret == 0);
 
     /* Set Vendor-Specific-Application-Id AVP */
-    ret = ogs_diam_message_vendor_specific_appid_set(ans, OGS_DIAM_S6A_APPLICATION_ID);
+    ret = ogs_diam_message_vendor_specific_appid_set(
+            ans, OGS_DIAM_S6A_APPLICATION_ID);
     ogs_assert(ret == 0);
 
 	ret = fd_msg_send(msg, NULL, NULL);
@@ -361,7 +364,8 @@ static int hss_ogs_diam_s6a_ulr_cb( struct msg **msg, struct avp *avp,
             ogs_assert(ret == 0);
         }
 
-        ret = fd_msg_avp_new(ogs_diam_s6a_subscriber_status, 0, &avp_subscriber_status);
+        ret = fd_msg_avp_new(
+                ogs_diam_s6a_subscriber_status, 0, &avp_subscriber_status);
         ogs_assert(ret == 0);
         val.i32 = subscription_data.subscriber_status;
         ret = fd_msg_avp_setvalue(avp_subscriber_status, &val);
@@ -381,7 +385,8 @@ static int hss_ogs_diam_s6a_ulr_cb( struct msg **msg, struct avp *avp,
             /* Set the AMBR */
         ret = fd_msg_avp_new(ogs_diam_s6a_ambr, 0, &avp_ambr);
         ogs_assert(ret == 0);
-        ret = fd_msg_avp_new(ogs_diam_s6a_max_bandwidth_ul, 0, &avp_max_bandwidth_ul);
+        ret = fd_msg_avp_new(
+                ogs_diam_s6a_max_bandwidth_ul, 0, &avp_max_bandwidth_ul);
         ogs_assert(ret == 0);
         val.u32 = subscription_data.ambr.uplink;
         ret = fd_msg_avp_setvalue(avp_max_bandwidth_ul, &val);
@@ -389,7 +394,8 @@ static int hss_ogs_diam_s6a_ulr_cb( struct msg **msg, struct avp *avp,
         ret = fd_msg_avp_add(
                 avp_ambr, MSG_BRW_LAST_CHILD, avp_max_bandwidth_ul);
         ogs_assert(ret == 0);
-        ret = fd_msg_avp_new(ogs_diam_s6a_max_bandwidth_dl, 0, &avp_max_bandwidth_dl);
+        ret = fd_msg_avp_new(
+                ogs_diam_s6a_max_bandwidth_dl, 0, &avp_max_bandwidth_dl);
         ogs_assert(ret == 0);
         val.u32 = subscription_data.ambr.downlink;
         ret = fd_msg_avp_setvalue(avp_max_bandwidth_dl, &val);
@@ -545,11 +551,13 @@ static int hss_ogs_diam_s6a_ulr_cb( struct msg **msg, struct avp *avp,
                 ogs_assert(ret == 0);
 
                         /* Set Allocation retention priority */
-                ret = fd_msg_avp_new(ogs_diam_s6a_allocation_retention_priority, 0, 
+                ret = fd_msg_avp_new(
+                        ogs_diam_s6a_allocation_retention_priority, 0, 
                         &allocation_retention_priority);
                 ogs_assert(ret == 0);
 
-                ret = fd_msg_avp_new(ogs_diam_s6a_priority_level, 0, &priority_level);
+                ret = fd_msg_avp_new(
+                        ogs_diam_s6a_priority_level, 0, &priority_level);
                 ogs_assert(ret == 0);
                 val.u32 = pdn->qos.arp.priority_level;
                 ret = fd_msg_avp_setvalue(priority_level, &val);
@@ -668,7 +676,8 @@ static int hss_ogs_diam_s6a_ulr_cb( struct msg **msg, struct avp *avp,
     }
 
     /* Set Vendor-Specific-Application-Id AVP */
-    ret = ogs_diam_message_vendor_specific_appid_set(ans, OGS_DIAM_S6A_APPLICATION_ID);
+    ret = ogs_diam_message_vendor_specific_appid_set(
+            ans, OGS_DIAM_S6A_APPLICATION_ID);
     ogs_assert(ret == 0);
 
 	/* Send the answer */
@@ -698,7 +707,8 @@ out:
     ogs_assert(ret == 0);
 
     /* Set Vendor-Specific-Application-Id AVP */
-    ret = ogs_diam_message_vendor_specific_appid_set(ans, OGS_DIAM_S6A_APPLICATION_ID);
+    ret = ogs_diam_message_vendor_specific_appid_set(
+            ans, OGS_DIAM_S6A_APPLICATION_ID);
     ogs_assert(ret == 0);
 
 	ret = fd_msg_send(msg, NULL, NULL);
