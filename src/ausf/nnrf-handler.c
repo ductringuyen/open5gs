@@ -304,10 +304,10 @@ void ausf_nnrf_handle_nf_discover(
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
             ausf_ue->nf_types, OpenAPI_nf_type_UDM);
     if (!nf_instance) {
-        ogs_error("[%s] (NF discover) No UDM", ausf_ue->id);
+        ogs_error("[%s] (NF discover) No UDM", ausf_ue->suci);
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "(NF discover) No UDM", ausf_ue->id);
+                "(NF discover) No UDM", ausf_ue->suci);
         ausf_ue_remove(ausf_ue);
     } else {
         ogs_assert(ausf_ue->state.method);
@@ -321,7 +321,7 @@ void ausf_nnrf_handle_nf_discover(
             break;
         DEFAULT
             ogs_fatal("[%s] Unknown method [%s]",
-                    ausf_ue->id, ausf_ue->state.method);
+                    ausf_ue->suci, ausf_ue->state.method);
             ogs_assert_if_reached();
         END
     }

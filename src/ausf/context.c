@@ -40,7 +40,7 @@ void ausf_context_init(void)
     ogs_pool_init(&ausf_ue_pool, ogs_config()->pool.ue);
 
     ogs_list_init(&self.ausf_ue_list);
-    self.ueid_hash = ogs_hash_make();
+    self.suci_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -51,8 +51,8 @@ void ausf_context_final(void)
 
     ausf_ue_remove_all();
 
-    ogs_assert(self.ueid_hash);
-    ogs_hash_destroy(self.ueid_hash);
+    ogs_assert(self.suci_hash);
+    ogs_hash_destroy(self.suci_hash);
 
     ogs_pool_final(&ausf_ue_pool);
 
@@ -112,24 +112,24 @@ int ausf_context_parse_config(void)
     return OGS_OK;
 }
 
-ausf_ue_t *ausf_ue_add(char *id)
+ausf_ue_t *ausf_ue_add(char *suci)
 {
     ausf_event_t e;
     ausf_ue_t *ausf_ue = NULL;
 
-    ogs_assert(id);
+    ogs_assert(suci);
 
     ogs_pool_alloc(&ausf_ue_pool, &ausf_ue);
     ogs_assert(ausf_ue);
     memset(ausf_ue, 0, sizeof *ausf_ue);
 
-    ausf_ue->ctx_id = ogs_msprintf("%ld",
-        ogs_pool_index(&ausf_ue_pool, ausf_ue));
+    ausf_ue->ctx_id =
+        ogs_msprintf("%ld", ogs_pool_index(&ausf_ue_pool, ausf_ue));
     ogs_assert(ausf_ue->ctx_id);
 
-    ausf_ue->id = ogs_strdup(id);
-    ogs_assert(ausf_ue->id);
-    ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), ausf_ue);
+    ausf_ue->suci = ogs_strdup(suci);
+    ogs_assert(ausf_ue->suci);
+    ogs_hash_set(self.suci_hash, ausf_ue->suci, strlen(ausf_ue->suci), ausf_ue);
 
     ausf_ue->sbi_client_wait.timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_client_wait_expire, ausf_ue);
@@ -161,9 +161,9 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_assert(ausf_ue->ctx_id);
     ogs_free(ausf_ue->ctx_id);
 
-    ogs_assert(ausf_ue->id);
-    ogs_hash_set(self.ueid_hash, ausf_ue->id, strlen(ausf_ue->id), NULL);
-    ogs_free(ausf_ue->id);
+    ogs_assert(ausf_ue->suci);
+    ogs_hash_set(self.suci_hash, ausf_ue->suci, strlen(ausf_ue->suci), NULL);
+    ogs_free(ausf_ue->suci);
 
     if (ausf_ue->state.method)
         ogs_free(ausf_ue->state.method);
@@ -187,10 +187,10 @@ void ausf_ue_remove_all()
         ausf_ue_remove(ausf_ue);
 }
 
-ausf_ue_t *ausf_ue_find(char *id)
+ausf_ue_t *ausf_ue_find_by_suci(char *suci)
 {
-    ogs_assert(id);
-    return (ausf_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
+    ogs_assert(suci);
+    return (ausf_ue_t *)ogs_hash_get(self.suci_hash, suci, strlen(suci));
 }
 
 ausf_ue_t *ausf_ue_find_by_ctx_id(char *ctx_id)

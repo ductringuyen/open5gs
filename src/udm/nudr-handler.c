@@ -62,67 +62,68 @@ bool udm_nudr_dr_handle_query(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 
             AuthenticationSubscription = recvmsg->AuthenticationSubscription;
             if (!AuthenticationSubscription) {
-                ogs_error("[%s] No AuthenticationSubscription", udm_ue->id);
+                ogs_error("[%s] No AuthenticationSubscription", udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "No AuthenticationSubscription", udm_ue->id);
+                        recvmsg, "No AuthenticationSubscription", udm_ue->suci);
                 return false;
             }
 
             if (AuthenticationSubscription->authentication_method !=
                     OpenAPI_auth_method_5G_AKA) {
                 ogs_error("[%s] Not supported Auth Method [%d]",
-                        udm_ue->id,
+                        udm_ue->suci,
                         AuthenticationSubscription->authentication_method);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                        recvmsg, "Not supported Auth Method", udm_ue->id);
+                        recvmsg, "Not supported Auth Method", udm_ue->suci);
                 return false;
 
             }
 
             if (!AuthenticationSubscription->enc_permanent_key) {
-                ogs_error("[%s] No encPermanentKey", udm_ue->id);
+                ogs_error("[%s] No encPermanentKey", udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "No encPermanentKey", udm_ue->id);
+                        recvmsg, "No encPermanentKey", udm_ue->suci);
                 return false;
             }
             if (!AuthenticationSubscription->enc_opc_key) {
-                ogs_error("[%s] No encPermanentKey", udm_ue->id);
+                ogs_error("[%s] No encPermanentKey", udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No encPermanentKey", udm_ue->id);
+                    recvmsg, "No encPermanentKey", udm_ue->suci);
                 return false;
             }
             if (!AuthenticationSubscription->authentication_management_field) {
-                ogs_error("[%s] No authenticationManagementField", udm_ue->id);
+                ogs_error("[%s] No authenticationManagementField",
+                        udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No authenticationManagementField", udm_ue->id);
+                    recvmsg, "No authenticationManagementField", udm_ue->suci);
                 return false;
             }
             if (!AuthenticationSubscription->sequence_number) {
-                ogs_error("[%s] No SequenceNumber", udm_ue->id);
+                ogs_error("[%s] No SequenceNumber", udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No SequenceNumber", udm_ue->id);
+                    recvmsg, "No SequenceNumber", udm_ue->suci);
                 return false;
             }
             if (AuthenticationSubscription->sequence_number->sqn_scheme !=
                     OpenAPI_sqn_scheme_NON_TIME_BASED) {
-                ogs_error("[%s] No SequenceNumber.sqnScheme [%d]", udm_ue->id,
+                ogs_error("[%s] No SequenceNumber.sqnScheme [%d]", udm_ue->suci,
                     AuthenticationSubscription->sequence_number->sqn_scheme);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                    recvmsg, "No SequenceNumber.sqnScheme", udm_ue->id);
+                    recvmsg, "No SequenceNumber.sqnScheme", udm_ue->suci);
                 return false;
             }
             if (!AuthenticationSubscription->sequence_number->sqn) {
-                ogs_error("[%s] No SequenceNumber.sqn", udm_ue->id);
+                ogs_error("[%s] No SequenceNumber.sqn", udm_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No SequenceNumber.sqn", udm_ue->id);
+                    recvmsg, "No SequenceNumber.sqn", udm_ue->suci);
                 return false;
             }
 

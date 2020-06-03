@@ -46,7 +46,7 @@ typedef struct ausf_context_s {
     OpenAPI_nf_type_e   nf_type;
 
     ogs_list_t      ausf_ue_list;
-    ogs_hash_t      *ueid_hash;
+    ogs_hash_t      *suci_hash;
 
 } ausf_context_t;
 
@@ -59,7 +59,7 @@ struct ausf_ue_s {
     } state;
 
     char *ctx_id;
-    char *id;
+    char *suci;
     char *serving_network_name;
     OpenAPI_auth_type_e auth_type;
 
@@ -100,10 +100,10 @@ ausf_context_t *ausf_self(void);
 
 int ausf_context_parse_config(void);
 
-ausf_ue_t *ausf_ue_add(char *id);
+ausf_ue_t *ausf_ue_add(char *suci);
 void ausf_ue_remove(ausf_ue_t *ausf_ue);
 void ausf_ue_remove_all(void);
-ausf_ue_t *ausf_ue_find(char *id);
+ausf_ue_t *ausf_ue_find_by_suci(char *suci);
 ausf_ue_t *ausf_ue_find_by_ctx_id(char *ctx_id);
 
 #ifdef __cplusplus

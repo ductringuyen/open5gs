@@ -134,17 +134,17 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             ausf_ue->nf_types, nf_type, ausf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover UDM", ausf_ue->id);
+        ogs_error("[%s] Cannot discover UDM", ausf_ue->suci);
 
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "Cannot discover UDM", ausf_ue->id);
+                "Cannot discover UDM", ausf_ue->suci);
 
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover UDM", ausf_ue->id);
+        ogs_warn("[%s] Try to discover UDM", ausf_ue->suci);
         ogs_timer_start(ausf_ue->sbi_client_wait.timer,
                 ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 

@@ -128,7 +128,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     &message, "Not found", message.h.method);
             }
 
-            udm_ue = udm_ue_find(ueid);
+            udm_ue = udm_ue_find_by_suci(ueid);
             if (!udm_ue) {
                 udm_ue = udm_ue_add(ueid);
                 ogs_assert(udm_ue);
@@ -143,7 +143,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             e->sbi.message = &message;
             ogs_fsm_dispatch(&udm_ue->sm, e);
             if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_exception)) {
-                ogs_error("[%s] State machine exception", udm_ue->id);
+                ogs_error("[%s] State machine exception", udm_ue->suci);
                 udm_ue_remove(udm_ue);
             }
             break;
@@ -250,13 +250,13 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                         udm_nnrf_handle_nf_discover(udm_ue, &message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
-                                udm_ue->id, message.res_status);
+                                udm_ue->suci, message.res_status);
                     }
                     break;
 
                 DEFAULT
                     ogs_error("[%s] Invalid HTTP method [%s]",
-                            udm_ue->id, message.h.method);
+                            udm_ue->suci, message.h.method);
                     ogs_assert_if_reached();
                 END
                 break;
@@ -278,7 +278,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 e->sbi.message = &message;
                 ogs_fsm_dispatch(&udm_ue->sm, e);
                 if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_exception)) {
-                    ogs_error("[%s] State machine exception", udm_ue->id);
+                    ogs_error("[%s] State machine exception", udm_ue->suci);
                     udm_ue_remove(udm_ue);
                 }
                 break;
@@ -332,7 +332,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             udm_ue = e->sbi.data;
             ogs_assert(udm_ue);
 
-            ogs_error("[%s] No expected HTTP request message", udm_ue->id);
+            ogs_error("[%s] No expected HTTP request message", udm_ue->suci);
             udm_ue_remove(udm_ue);
             break;
 
@@ -342,10 +342,10 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             session = udm_ue->session;
             ogs_assert(session);
 
-            ogs_error("[%s] Cannot receive SBI message", udm_ue->id);
+            ogs_error("[%s] Cannot receive SBI message", udm_ue->suci);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT, NULL,
-                    "Cannot receive SBI message", udm_ue->id);
+                    "Cannot receive SBI message", udm_ue->suci);
             break;
 
         default:

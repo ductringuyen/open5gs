@@ -46,7 +46,7 @@ typedef struct udm_context_s {
     OpenAPI_nf_type_e   nf_type;
 
     ogs_list_t      udm_ue_list;
-    ogs_hash_t      *ueid_hash;
+    ogs_hash_t      *suci_hash;
 
 } udm_context_t;
 
@@ -54,7 +54,7 @@ struct udm_ue_s {
     ogs_lnode_t     lnode;
     ogs_fsm_t       sm;     /* A state machine */
 
-    char *id;
+    char *suci;
     char *serving_network_name;
     char *ausf_instance_id;
     char *ue_id;
@@ -90,10 +90,10 @@ udm_context_t *udm_self(void);
 
 int udm_context_parse_config(void);
 
-udm_ue_t *udm_ue_add(char *id);
+udm_ue_t *udm_ue_add(char *suci);
 void udm_ue_remove(udm_ue_t *udm_ue);
 void udm_ue_remove_all(void);
-udm_ue_t *udm_ue_find(char *id);
+udm_ue_t *udm_ue_find_by_suci(char *suci);
 
 #ifdef __cplusplus
 }

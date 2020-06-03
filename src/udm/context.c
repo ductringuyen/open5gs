@@ -40,7 +40,7 @@ void udm_context_init(void)
     ogs_pool_init(&udm_ue_pool, ogs_config()->pool.ue);
 
     ogs_list_init(&self.udm_ue_list);
-    self.ueid_hash = ogs_hash_make();
+    self.suci_hash = ogs_hash_make();
 
     context_initialized = 1;
 }
@@ -51,8 +51,8 @@ void udm_context_final(void)
 
     udm_ue_remove_all();
 
-    ogs_assert(self.ueid_hash);
-    ogs_hash_destroy(self.ueid_hash);
+    ogs_assert(self.suci_hash);
+    ogs_hash_destroy(self.suci_hash);
 
     ogs_pool_final(&udm_ue_pool);
 
@@ -112,20 +112,20 @@ int udm_context_parse_config(void)
     return OGS_OK;
 }
 
-udm_ue_t *udm_ue_add(char *id)
+udm_ue_t *udm_ue_add(char *suci)
 {
     udm_event_t e;
     udm_ue_t *udm_ue = NULL;
 
-    ogs_assert(id);
+    ogs_assert(suci);
 
     ogs_pool_alloc(&udm_ue_pool, &udm_ue);
     ogs_assert(udm_ue);
     memset(udm_ue, 0, sizeof *udm_ue);
 
-    udm_ue->id = ogs_strdup(id);
-    ogs_assert(udm_ue->id);
-    ogs_hash_set(self.ueid_hash, udm_ue->id, strlen(udm_ue->id), udm_ue);
+    udm_ue->suci = ogs_strdup(suci);
+    ogs_assert(udm_ue->suci);
+    ogs_hash_set(self.suci_hash, udm_ue->suci, strlen(udm_ue->suci), udm_ue);
 
     udm_ue->sbi_server_wait.timer = ogs_timer_add(udm_self()->timer_mgr,
             udm_timer_sbi_server_wait_expire, udm_ue);
@@ -157,9 +157,9 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     ogs_timer_delete(udm_ue->sbi_server_wait.timer);
     ogs_timer_delete(udm_ue->sbi_client_wait.timer);
 
-    ogs_assert(udm_ue->id);
-    ogs_hash_set(self.ueid_hash, udm_ue->id, strlen(udm_ue->id), NULL);
-    ogs_free(udm_ue->id);
+    ogs_assert(udm_ue->suci);
+    ogs_hash_set(self.suci_hash, udm_ue->suci, strlen(udm_ue->suci), NULL);
+    ogs_free(udm_ue->suci);
 
     if (udm_ue->serving_network_name)
         ogs_free(udm_ue->serving_network_name);
@@ -184,8 +184,8 @@ void udm_ue_remove_all()
         udm_ue_remove(udm_ue);
 }
 
-udm_ue_t *udm_ue_find(char *id)
+udm_ue_t *udm_ue_find_by_suci(char *suci)
 {
-    ogs_assert(id);
-    return (udm_ue_t *)ogs_hash_get(self.ueid_hash, id, strlen(id));
+    ogs_assert(suci);
+    return (udm_ue_t *)ogs_hash_get(self.suci_hash, suci, strlen(suci));
 }

@@ -67,7 +67,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
             break;
         DEFAULT
             ogs_error("[%s] Invalid HTTP method [%s]",
-                    udm_ue->id, message->h.method);
+                    udm_ue->suci, message->h.method);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
                     "Invalid HTTP method", message->h.method);
@@ -94,16 +94,16 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
                         udm_nudr_dr_handle_query(udm_ue, message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
-                            udm_ue->id, message->res_status);
+                            udm_ue->suci, message->res_status);
                         ogs_sbi_server_send_error(
                             session, message->res_status,
-                            NULL, "HTTP response error", udm_ue->id);
+                            NULL, "HTTP response error", udm_ue->suci);
                     }
                     break;
 
                 DEFAULT
                     ogs_error("[%s] Invalid HTTP method [%s]",
-                            udm_ue->id, message->h.method);
+                            udm_ue->suci, message->h.method);
                     ogs_assert_if_reached();
                 END
                 break;
@@ -120,7 +120,7 @@ void udm_ue_state_will_authenticate(ogs_fsm_t *s, udm_event_t *e)
         break;
 
     default:
-        ogs_error("[%s] Unknown event %s", udm_ue->id, udm_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", udm_ue->suci, udm_event_get_name(e));
         break;
     }
 }
@@ -151,7 +151,7 @@ void udm_ue_state_authenticated(ogs_fsm_t *s, udm_event_t *e)
         break;
 
     default:
-        ogs_error("[%s] Unknown event %s", udm_ue->id, udm_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", udm_ue->suci, udm_event_get_name(e));
         break;
     }
 }
@@ -175,7 +175,7 @@ void udm_ue_state_exception(ogs_fsm_t *s, udm_event_t *e)
         break;
 
     default:
-        ogs_error("[%s] Unknown event %s", udm_ue->id, udm_event_get_name(e));
+        ogs_error("[%s] Unknown event %s", udm_ue->suci, udm_event_get_name(e));
         break;
     }
 }

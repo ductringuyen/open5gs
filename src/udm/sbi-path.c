@@ -134,17 +134,17 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             udm_ue->nf_types, nf_type, udm_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover UDR", udm_ue->id);
+        ogs_error("[%s] Cannot discover UDR", udm_ue->suci);
 
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "Cannot discover UDR", udm_ue->id);
+                "Cannot discover UDR", udm_ue->suci);
 
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover UDR", udm_ue->id);
+        ogs_warn("[%s] Try to discover UDR", udm_ue->suci);
         ogs_timer_start(udm_ue->sbi_client_wait.timer,
                 udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 

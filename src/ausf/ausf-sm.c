@@ -123,7 +123,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 if (message.AuthenticationInfo &&
                     message.AuthenticationInfo->supi_or_suci) {
-                    ausf_ue = ausf_ue_find(
+                    ausf_ue = ausf_ue_find_by_suci(
                             message.AuthenticationInfo->supi_or_suci);
                     if (!ausf_ue) {
                         ausf_ue = ausf_ue_add(
@@ -161,7 +161,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
-                ogs_error("[%s] State machine exception", ausf_ue->id);
+                ogs_error("[%s] State machine exception", ausf_ue->suci);
                 ausf_ue_remove(ausf_ue);
             }
             break;
@@ -268,13 +268,13 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                         ausf_nnrf_handle_nf_discover(ausf_ue, &message);
                     } else {
                         ogs_error("[%s] HTTP response error [%d]",
-                                ausf_ue->id, message.res_status);
+                                ausf_ue->suci, message.res_status);
                     }
                     break;
 
                 DEFAULT
                     ogs_error("[%s] Invalid HTTP method [%s]",
-                            ausf_ue->id, message.h.method);
+                            ausf_ue->suci, message.h.method);
                     ogs_assert_if_reached();
                 END
                 break;
@@ -295,7 +295,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);
             if (OGS_FSM_CHECK(&ausf_ue->sm, ausf_ue_state_exception)) {
-                ogs_error("[%s] State machine exception", ausf_ue->id);
+                ogs_error("[%s] State machine exception", ausf_ue->suci);
                 ausf_ue_remove(ausf_ue);
             }
             break;
@@ -344,10 +344,10 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             session = ausf_ue->session;
             ogs_assert(session);
 
-            ogs_error("[%s] Cannot receive SBI message", ausf_ue->id);
+            ogs_error("[%s] Cannot receive SBI message", ausf_ue->suci);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT, NULL,
-                    "Cannot receive SBI message", ausf_ue->id);
+                    "Cannot receive SBI message", ausf_ue->suci);
             break;
         default:
             ogs_error("Unknown timer[%s:%d]",

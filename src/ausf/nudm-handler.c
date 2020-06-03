@@ -65,71 +65,72 @@ bool ausf_nudm_ueau_handle_get(ausf_ue_t *ausf_ue, ogs_sbi_message_t *recvmsg)
 
             AuthenticationInfoResult = recvmsg->AuthenticationInfoResult;
             if (!AuthenticationInfoResult) {
-                ogs_error("[%s] No AuthenticationInfoResult", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationInfoResult", ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "No AuthenticationInfoResult", ausf_ue->id);
+                        recvmsg, "No AuthenticationInfoResult", ausf_ue->suci);
                 return false;
             }
 
             if (AuthenticationInfoResult->auth_type !=
                     OpenAPI_auth_type_5G_AKA) {
                 ogs_error("[%s] Not supported Auth Method [%d]",
-                    ausf_ue->id, AuthenticationInfoResult->auth_type);
+                    ausf_ue->suci, AuthenticationInfoResult->auth_type);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                    recvmsg, "Not supported Auth Method", ausf_ue->id);
+                    recvmsg, "Not supported Auth Method", ausf_ue->suci);
                 return false;
             }
 
             AuthenticationVector =
                 AuthenticationInfoResult->authentication_vector;
             if (!AuthenticationVector) {
-                ogs_error("[%s] No AuthenticationVector", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationVector", ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No AuthenticationVector", ausf_ue->id);
+                    recvmsg, "No AuthenticationVector", ausf_ue->suci);
                 return false;
             }
 
             if (AuthenticationVector->av_type != OpenAPI_av_type_5G_HE_AKA) {
                 ogs_error("[%s] Not supported Auth Method [%d]",
-                    ausf_ue->id, AuthenticationVector->av_type);
+                    ausf_ue->suci, AuthenticationVector->av_type);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                    recvmsg, "Not supported Auth Method", ausf_ue->id);
+                    recvmsg, "Not supported Auth Method", ausf_ue->suci);
                 return false;
             }
 
             if (!AuthenticationVector->rand) {
-                ogs_error("[%s] No AuthenticationVector.rand", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationVector.rand", ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No AuthenticationVector.rand", ausf_ue->id);
+                    recvmsg, "No AuthenticationVector.rand", ausf_ue->suci);
                 return false;
             }
 
             if (!AuthenticationVector->xres_star) {
-                ogs_error("[%s] No AuthenticationVector.xresStar", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationVector.xresStar",
+                        ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No AuthenticationVector.xresStar", ausf_ue->id);
+                    recvmsg, "No AuthenticationVector.xresStar", ausf_ue->suci);
                 return false;
             }
 
             if (!AuthenticationVector->autn) {
-                ogs_error("[%s] No AuthenticationVector.autn", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationVector.autn", ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No AuthenticationVector.autn", ausf_ue->id);
+                    recvmsg, "No AuthenticationVector.autn", ausf_ue->suci);
                 return false;
             }
 
             if (!AuthenticationVector->kausf) {
-                ogs_error("[%s] No AuthenticationVector.kausf", ausf_ue->id);
+                ogs_error("[%s] No AuthenticationVector.kausf", ausf_ue->suci);
                 ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                    recvmsg, "No AuthenticationVector.kausf", ausf_ue->id);
+                    recvmsg, "No AuthenticationVector.kausf", ausf_ue->suci);
                 return false;
             }
 
