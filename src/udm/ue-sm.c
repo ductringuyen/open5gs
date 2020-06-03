@@ -104,17 +104,18 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
                     ogs_timer_stop(udm_ue->sbi_client_wait.timer);
 
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK ||
-                        message->res_status == OGS_SBI_HTTP_STATUS_NO_CONTENT) {
-                        udm_nudr_dr_handle_subscription_authentication(
-                                udm_ue, message);
-                    } else {
+                    if (message->res_status != OGS_SBI_HTTP_STATUS_OK &&
+                        message->res_status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
                         ogs_error("[%s] HTTP response error [%d]",
                             udm_ue->suci, message->res_status);
                         ogs_sbi_server_send_error(
                             session, message->res_status,
                             NULL, "HTTP response error", udm_ue->suci);
+                        break;
                     }
+
+                    udm_nudr_dr_handle_subscription_authentication(
+                            udm_ue, message);
                     break;
 
                 DEFAULT

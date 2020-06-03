@@ -121,25 +121,26 @@ void ausf_ue_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
 
-            SWITCH(message->h.method)
-            CASE(OGS_SBI_HTTP_METHOD_POST)
-                if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                    ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
+            if (message->res_status != OGS_SBI_HTTP_STATUS_OK &&
+                message->res_status != OGS_SBI_HTTP_STATUS_CREATED) {
+                ogs_error("[%s] HTTP response error [%d]",
+                    ausf_ue->suci, message->res_status);
+                ogs_sbi_server_send_error(
+                    session, message->res_status,
+                    NULL, "HTTP response error", ausf_ue->suci);
+                break;
+            }
 
-                    handled = ausf_nudm_ueau_handle_get(ausf_ue, message);
-                    if (!handled) {
-                        ogs_error("[%s] Cannot handle SBI message",
-                                ausf_ue->suci);
-                        OGS_FSM_TRAN(s, ausf_ue_state_exception);
-                    }
-                } else {
-                    ogs_error("[%s] HTTP response error [%d]",
-                            ausf_ue->suci, message->res_status);
-                    ogs_sbi_server_send_error(
-                            session, message->res_status,
-                            NULL, "HTTP response error", ausf_ue->suci);
-                }
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                ausf_nudm_ueau_handle_get(ausf_ue, message);
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                ausf_nudm_ueau_handle_result_confirmation_inform(
+                        ausf_ue, message);
                 break;
 
             DEFAULT
