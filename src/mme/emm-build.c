@@ -18,7 +18,6 @@
  */
 
 #include "nas-security.h"
-#include "mme-kdf.h"
 #include "emm-build.h"
 #include "mme-sm.h"
 

@@ -19,7 +19,6 @@
 
 #include "mme-event.h"
 
-#include "mme-kdf.h"
 #include "s1ap-path.h"
 #include "nas-path.h"
 #include "mme-gtp-path.h"

@@ -28,6 +28,17 @@
 extern "C" {
 #endif
 
+/* Algorithm Type Distinguishers */
+#define MME_KDF_NAS_ENC_ALG 0x01
+#define MME_KDF_NAS_INT_ALG 0x02
+
+/* Algorithm Identity defined in nas_ies.h 
+#define NAS_SECURITY_ALGORITHMS_EIA0_EEA0 0
+#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA1 1
+#define NAS_SECURITY_ALGORITHMS_128_EIA1_EEA2 2
+#define NAS_SECURITY_ALGORITHMS_128_EIA3_EEA3 3
+*/
+
 /* TS33.501 Annex A.2 : Kausf derviation function */
 void ogs_kdf_kausf(
         uint8_t *ck, uint8_t *ik,
@@ -50,6 +61,13 @@ void ogs_kdf_kseaf(char *serving_network_name, uint8_t *kausf, uint8_t *kseaf);
 /* TS33.501 Annex A.7 : K AMF derivation function */
 void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf);
+
+void mme_kdf_nas(uint8_t algorithm_type_distinguishers,
+    uint8_t algorithm_identity, const uint8_t *kasme, uint8_t *knas);
+
+void mme_kdf_enb(const uint8_t *kasme, uint32_t ul_count, uint8_t *kenb);
+
+void mme_kdf_nh(const uint8_t *kasme, const uint8_t *sync_input, uint8_t *kenb);
 
 #ifdef __cplusplus
 }

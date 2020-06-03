@@ -20,7 +20,6 @@
 #include "mme-event.h"
 #include "mme-sm.h"
 
-#include "mme-kdf.h"
 #include "nas-security.h"
 
 #include "s1ap-path.h"

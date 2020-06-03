@@ -19,7 +19,6 @@
 
 #include "mme-event.h"
 #include "mme-timer.h"
-#include "mme-kdf.h"
 #include "s1ap-handler.h"
 #include "mme-fd-path.h"
 #include "emm-handler.h"
