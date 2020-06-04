@@ -142,6 +142,49 @@ ogs_amf_id_t *ogs_amf_id_build(ogs_amf_id_t *amf_id,
     return amf_id;
 }
 
+char *ogs_supi_from_suci(char *suci)
+{
+#define MAX_SUCI_TOKEN 16
+    char *array[MAX_SUCI_TOKEN];
+    char *saveptr = NULL;
+    char *p, *tmp;
+    int i;
+    char *ueid = NULL;
+
+    ogs_assert(suci);
+    tmp = ogs_strdup(suci);
+
+    p = strtok_r(tmp, "-", &saveptr);
+
+    memset(array, 0, sizeof(array));
+    for (i = 0; i < MAX_SUCI_TOKEN && p; i++) {
+        array[i] = p;
+        p = strtok_r(NULL, "-", &saveptr);
+    }
+
+    SWITCH(array[0])
+    CASE("suci")
+        SWITCH(array[1])
+        CASE("0")   /* SUPI format : IMSI */
+            if (array[2] && array[3] && array[7])
+                ueid = ogs_msprintf("imsi-%s%s%s",
+                        array[2], array[3], array[7]);
+
+            break;
+        DEFAULT
+            ogs_error("Not implemented [%s]", array[1]);
+            break;
+        END
+        break;
+    DEFAULT
+        ogs_error("Not implemented [%s]", array[0]);
+        break;
+    END
+
+    ogs_free(tmp);
+    return ueid;
+}
+
 int ogs_fqdn_build(char *dst, char *src, int length)
 {
     int i = 0, j = 0;

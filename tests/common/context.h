@@ -62,6 +62,8 @@ typedef struct test_ue_s {
     uint64_t amf_ue_ngap_id; /* AMF-UE-NGAP-ID received from AMF */
 
     char *imsi;
+    char *suci; /* TS33.501 : SUCI */
+    char *supi; /* TS33.501 : SUPI */
 
     uint8_t k[OGS_KEY_LEN];
     uint8_t opc[OGS_KEY_LEN];
@@ -116,6 +118,10 @@ void test_context_final(void);
 test_context_t *test_self(void);
 
 int test_context_parse_config(void);
+
+void test_ue_set_mobile_identity(test_ue_t *test_ue,
+        ogs_nas_5gs_mobile_identity_t *mobile_identity);
+void test_ue_remove(test_ue_t *test_ue);
 
 #ifdef __cplusplus
 }

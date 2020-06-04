@@ -134,7 +134,7 @@ ausf_ue_t *ausf_ue_add(char *suci)
     ogs_assert(ausf_ue->suci);
     ogs_hash_set(self.suci_hash, ausf_ue->suci, strlen(ausf_ue->suci), ausf_ue);
 
-    ausf_ue->supi = ogs_sbi_ueid_from_suci(ausf_ue->suci);
+    ausf_ue->supi = ogs_supi_from_suci(ausf_ue->suci);
     ogs_assert(ausf_ue->supi);
     ogs_hash_set(self.supi_hash, ausf_ue->supi, strlen(ausf_ue->supi), ausf_ue);
 

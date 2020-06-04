@@ -463,3 +463,27 @@ int test_context_parse_config(void)
 
     return OGS_OK;
 }
+
+void test_ue_set_mobile_identity(test_ue_t *test_ue,
+        ogs_nas_5gs_mobile_identity_t *mobile_identity)
+{
+    ogs_assert(test_ue);
+    ogs_assert(mobile_identity);
+
+    if (test_ue->suci)
+        ogs_free(test_ue->suci);
+    test_ue->suci = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
+    if (test_ue->supi)
+        ogs_free(test_ue->supi);
+    test_ue->supi = ogs_supi_from_suci(test_ue->suci);
+}
+
+void test_ue_remove(test_ue_t *test_ue)
+{
+    if (test_ue->suci) {
+        ogs_free(test_ue->suci);
+    }
+    if (test_ue->supi) {
+        ogs_free(test_ue->supi);
+    }
+}

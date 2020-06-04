@@ -168,6 +168,10 @@ static void test1_func(abts_case *tc, void *data)
     mobile_identity.length = 12;
     mobile_identity.buffer = &mobile_identity_imsi;
 
+    test_ue_set_mobile_identity(&test_ue, &mobile_identity);
+    ogs_fatal("suci = %s", test_ue.suci);
+    ogs_fatal("supi = %s", test_ue.supi);
+
     /********** Insert Subscriber in Database */
     collection = mongoc_client_get_collection(
         ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
@@ -319,6 +323,9 @@ static void test1_func(abts_case *tc, void *data)
     bson_destroy(doc);
 
     mongoc_collection_destroy(collection);
+
+    /* Clear Test UE Context */
+    test_ue_remove(&test_ue);
 
 #if 0
     /* eNB disonncect from SGW */
