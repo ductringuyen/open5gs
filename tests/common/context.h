@@ -62,6 +62,9 @@ typedef struct test_ue_s {
     uint64_t amf_ue_ngap_id; /* AMF-UE-NGAP-ID received from AMF */
     uint8_t rand[OGS_RAND_LEN];
     uint8_t autn[OGS_AUTN_LEN];
+    uint8_t abba[OGS_NAS_MAX_ABBA_LEN];
+    uint8_t abba_len;
+    uint8_t kamf[OGS_SHA256_DIGEST_SIZE];
 
     struct {
 #define OGS_NAS_SECURITY_BEARER_3GPP 1

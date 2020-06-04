@@ -79,7 +79,9 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
     uint8_t ck[OGS_KEY_LEN];
     uint8_t ak[OGS_AK_LEN];
     uint8_t res[OGS_MAX_RES_LEN];
-    uint8_t xres_star[OGS_MAX_RES_LEN];
+    uint8_t res_star[OGS_MAX_RES_LEN];
+    uint8_t kausf[OGS_SHA256_DIGEST_SIZE];
+    uint8_t kseaf[OGS_SHA256_DIGEST_SIZE];
     char *serving_network_name;
 
     ogs_assert(test_ue);
@@ -102,6 +104,15 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
             authentication_response_parameter->res);
 
     authentication_response_parameter->length = 16;
+
+    memcpy(res_star, authentication_response_parameter->res,
+            authentication_response_parameter->length);
+    ogs_kdf_kausf(ck, ik, serving_network_name, test_ue->autn, kausf);
+    ogs_kdf_kseaf(serving_network_name, kausf, kseaf);
+    test_ue->abba_len = 2;
+    ogs_kdf_kamf("imsi-2089300007487", test_ue->abba, test_ue->abba_len,
+                kseaf, test_ue->kamf);
+
     ogs_free(serving_network_name);
 
     return ogs_nas_5gs_plain_encode(&message);
