@@ -66,8 +66,7 @@ ogs_pkbuf_t *testgmm_build_registration_request(test_ue_t *test_ue,
     return ogs_nas_5gs_plain_encode(&message);
 }
 
-ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
-        uint8_t *k, uint8_t *opc)
+ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue)
 {
     ogs_nas_5gs_message_t message;
     ogs_pkbuf_t *pkbuf = NULL;
@@ -85,8 +84,6 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
     char *serving_network_name;
 
     ogs_assert(test_ue);
-    ogs_assert(k);
-    ogs_assert(opc);
 
     memset(&message, 0, sizeof(message));
     message.gmm.h.extended_protocol_discriminator =
@@ -96,7 +93,8 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue,
     authentication_response->presencemask |=
         OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
 
-    milenage_f2345(opc, k, test_ue->rand, res, ck, ik, ak, NULL);
+    milenage_f2345(test_ue->opc, test_ue->k, test_ue->rand,
+            res, ck, ik, ak, NULL);
     serving_network_name = ogs_plmn_id_string(&test_self()->tai.plmn_id);
     ogs_kdf_xres_star(
             ck, ik,

@@ -141,29 +141,14 @@ static void test1_func(abts_case *tc, void *data)
         recvbuf->len) == 0);
     ogs_pkbuf_free(recvbuf);
 
-    /********** Insert Subscriber in Database */
-    collection = mongoc_client_get_collection(
-        ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
-    ABTS_PTR_NOTNULL(tc, collection);
-
-    doc = bson_new_from_json((const uint8_t *)json, -1, &error);;
-    ABTS_PTR_NOTNULL(tc, doc);
-    ABTS_TRUE(tc, mongoc_collection_insert(collection, 
-                MONGOC_INSERT_NONE, doc, NULL, &error));
-    bson_destroy(doc);
-
-    doc = BCON_NEW("imsi", BCON_UTF8("2089300007487"));
-    ABTS_PTR_NOTNULL(tc, doc);
-    do {
-        count = mongoc_collection_count (
-            collection, MONGOC_QUERY_NONE, doc, 0, 0, NULL, &error);
-    } while (count == 0);
-    bson_destroy(doc);
-
-    /* Clear Test UE Context */
+    /* Setup Test UE Context */
     memset(&test_ue, 0, sizeof(test_ue));
 
-    /* Setup Mobile Identity */
+    test_ue.imsi = (char *)"2089300007487";
+
+    OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
+    OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);
+
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
     mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
     mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
@@ -182,6 +167,25 @@ static void test1_func(abts_case *tc, void *data)
 
     mobile_identity.length = 12;
     mobile_identity.buffer = &mobile_identity_imsi;
+
+    /********** Insert Subscriber in Database */
+    collection = mongoc_client_get_collection(
+        ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
+    ABTS_PTR_NOTNULL(tc, collection);
+
+    doc = bson_new_from_json((const uint8_t *)json, -1, &error);;
+    ABTS_PTR_NOTNULL(tc, doc);
+    ABTS_TRUE(tc, mongoc_collection_insert(collection,
+                MONGOC_INSERT_NONE, doc, NULL, &error));
+    bson_destroy(doc);
+
+    doc = BCON_NEW("imsi", BCON_UTF8(test_ue.imsi));
+    ABTS_PTR_NOTNULL(tc, doc);
+    do {
+        count = mongoc_collection_count (
+            collection, MONGOC_QUERY_NONE, doc, 0, 0, NULL, &error);
+    } while (count == 0);
+    bson_destroy(doc);
 
     /* Send Registration Request */
     gmmbuf = testgmm_build_registration_request(&test_ue, &mobile_identity);
@@ -202,9 +206,7 @@ static void test1_func(abts_case *tc, void *data)
 #endif
 
     /* Send Authentication Response */
-    gmmbuf = testgmm_build_authentication_response(
-            &test_ue, OGS_HEX(_k_string, strlen(_k_string), k),
-            OGS_HEX(_opc_string, strlen(_opc_string), opc));
+    gmmbuf = testgmm_build_authentication_response(&test_ue);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
     ABTS_PTR_NOTNULL(tc, sendbuf);
@@ -310,9 +312,9 @@ static void test1_func(abts_case *tc, void *data)
 #endif
 
     /********** Remove Subscriber in Database */
-    doc = BCON_NEW("imsi", BCON_UTF8("2089300007487"));
+    doc = BCON_NEW("imsi", BCON_UTF8(test_ue.imsi));
     ABTS_PTR_NOTNULL(tc, doc);
-    ABTS_TRUE(tc, mongoc_collection_remove(collection, 
+    ABTS_TRUE(tc, mongoc_collection_remove(collection,
             MONGOC_REMOVE_SINGLE_REMOVE, doc, NULL, &error)) 
     bson_destroy(doc);
 

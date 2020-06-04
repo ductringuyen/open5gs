@@ -60,6 +60,12 @@ typedef struct test_context_s {
 typedef struct test_ue_s {
     uint32_t ran_ue_ngap_id; /* eNB-UE-NGAP-ID received from eNB */
     uint64_t amf_ue_ngap_id; /* AMF-UE-NGAP-ID received from AMF */
+
+    char *imsi;
+
+    uint8_t k[OGS_KEY_LEN];
+    uint8_t opc[OGS_KEY_LEN];
+
     uint8_t rand[OGS_RAND_LEN];
     uint8_t autn[OGS_AUTN_LEN];
     uint8_t abba[OGS_NAS_MAX_ABBA_LEN];
