@@ -115,12 +115,19 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue)
     return ogs_nas_5gs_plain_encode(&message);
 }
 
-ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue)
+ogs_pkbuf_t *testgmm_build_security_mode_complete(
+        test_ue_t *test_ue, ogs_pkbuf_t *nasbuf)
 {
     ogs_nas_5gs_message_t message;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_nas_5gs_security_mode_complete_t *security_mode_complete =
             &message.gmm.security_mode_complete;
+    ogs_nas_message_container_t *nas_message_container =
+            &security_mode_complete->nas_message_container;
+    ogs_nas_5gs_mobile_identity_t *imeisv =
+            &security_mode_complete->imeisv;
+
+    ogs_nas_mobile_identity_imeisv_t mobile_identity_imeisv;
 
     ogs_assert(test_ue);
 
@@ -134,10 +141,24 @@ ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue)
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_SECURITY_MODE_COMPLETE;
 
-#if 0
     security_mode_complete->presencemask |=
-        OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
-#endif
+        OGS_NAS_5GS_SECURITY_MODE_COMPLETE_IMEISV_PRESENT;
+    memset(&mobile_identity_imeisv, 0, sizeof(mobile_identity_imeisv));
+    imeisv->length = sizeof(mobile_identity_imeisv);
+    imeisv->buffer = &mobile_identity_imeisv;
+
+    mobile_identity_imeisv.type = OGS_NAS_5GS_MOBILE_IDENTITY_IMEISV;
+    mobile_identity_imeisv.odd_even = OGS_NAS_MOBILE_IDENTITY_EVEN;
+    mobile_identity_imeisv.digit1 = 1;
+    mobile_identity_imeisv.digit2 = 1;
+    mobile_identity_imeisv.digit3 = 1;
+
+    if (nasbuf) {
+        security_mode_complete->presencemask |=
+            OGS_NAS_5GS_SECURITY_MODE_COMPLETE_NAS_MESSAGE_CONTAINER_PRESENT;
+        nas_message_container->length = nasbuf->len;
+        nas_message_container->buffer = nasbuf->data;
+    }
 
     return test_nas_5gs_security_encode(test_ue, &message);
 }

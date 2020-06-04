@@ -749,7 +749,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_SECURITY_MODE_COMPLETE:
-            ogs_fatal("[%s] Security mode complete", amf_ue->supi);
+            ogs_debug("[%s] Security mode complete", amf_ue->supi);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
@@ -769,7 +769,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             }
 
             if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
-                ogs_warn("No Security Context : IMSI[%s]", amf_ue->imsi_bcd);
+                ogs_warn("[%s] No Security Context", amf_ue->supi);
 #if 0
                 nas_5gs_send_registration_reject(amf_ue,
                     EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,

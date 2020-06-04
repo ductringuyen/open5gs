@@ -27,7 +27,8 @@ extern "C" {
 ogs_pkbuf_t *testgmm_build_registration_request(test_ue_t *test_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity);
 ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue);
-ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue);
+ogs_pkbuf_t *testgmm_build_security_mode_complete(
+        test_ue_t *test_ue, ogs_pkbuf_t *nasbuf);
 
 #ifdef __cplusplus
 }

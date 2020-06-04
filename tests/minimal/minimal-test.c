@@ -25,6 +25,7 @@ static void test1_func(abts_case *tc, void *data)
     ogs_socknode_t *ngap;
     ogs_socknode_t *gtpu;
     ogs_pkbuf_t *gmmbuf;
+    ogs_pkbuf_t *nasbuf;
     ogs_pkbuf_t *sendbuf;
     ogs_pkbuf_t *recvbuf;
     ogs_ngap_message_t message;
@@ -145,6 +146,9 @@ static void test1_func(abts_case *tc, void *data)
     memset(&test_ue, 0, sizeof(test_ue));
 
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
+    mobile_identity.length = 12;
+    mobile_identity.buffer = &mobile_identity_imsi;
+
     mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
     mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
     ogs_nas_from_plmn_id(&mobile_identity_imsi.nas_plmn_id,
@@ -159,9 +163,6 @@ static void test1_func(abts_case *tc, void *data)
     mobile_identity_imsi.scheme_output[1] = 0;
     mobile_identity_imsi.scheme_output[2] = 0x47;
     mobile_identity_imsi.scheme_output[3] = 0x78;
-
-    mobile_identity.length = 12;
-    mobile_identity.buffer = &mobile_identity_imsi;
 
     test_ue_set_mobile_identity(&test_ue, &mobile_identity);
 
@@ -227,12 +228,15 @@ static void test1_func(abts_case *tc, void *data)
 #endif
 
     /* Send Security mode complete */
-    gmmbuf = testgmm_build_security_mode_complete(&test_ue);
+    nasbuf = testgmm_build_registration_request(&test_ue, &mobile_identity);
+    ABTS_PTR_NOTNULL(tc, nasbuf);
+    gmmbuf = testgmm_build_security_mode_complete(&test_ue, nasbuf);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
     ABTS_PTR_NOTNULL(tc, sendbuf);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
+    ogs_pkbuf_free(nasbuf);
 
     ogs_msleep(300);
 #if 0
