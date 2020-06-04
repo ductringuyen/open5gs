@@ -68,4 +68,6 @@ void testgmm_handle_security_mode_command(test_ue_t *test_ue,
         test_ue->kamf, test_ue->knas_enc);
 
     test_ue->nas.ksi = ngksi->value;
+
+    test_ue->security_context_available = 1;
 }

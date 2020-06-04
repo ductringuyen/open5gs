@@ -83,7 +83,7 @@ typedef struct test_ue_s {
 
     uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2];
     uint8_t         knas_enc[OGS_SHA256_DIGEST_SIZE/2];
-    uint32_t        dl_count;
+    uint32_t        ul_count;
     union {
         struct {
         ED3(uint8_t spare;,
@@ -91,7 +91,7 @@ typedef struct test_ue_s {
             uint8_t sqn;)
         } __attribute__ ((packed));
         uint32_t i32;
-    } ul_count;
+    } dl_count;
     uint8_t         kgnb[OGS_SHA256_DIGEST_SIZE];
 
     uint8_t selected_enc_algorithm;

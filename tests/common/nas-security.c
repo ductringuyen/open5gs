@@ -62,8 +62,8 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
     }
 
     if (new_security_context) {
-        test_ue->dl_count = 0;
-        test_ue->ul_count.i32 = 0;
+        test_ue->ul_count = 0;
+        test_ue->dl_count.i32 = 0;
     }
 
     if (test_ue->selected_enc_algorithm == 0)
@@ -75,7 +75,7 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
     h.security_header_type = message->h.security_header_type;
     h.extended_protocol_discriminator =
         message->h.extended_protocol_discriminator;
-    h.sequence_number = (test_ue->dl_count & 0xff);
+    h.sequence_number = (test_ue->ul_count & 0xff);
 
     new = ogs_nas_5gs_plain_encode(message);
     if (!new) {
@@ -86,7 +86,7 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
     if (ciphered) {
         /* encrypt NAS message */
         ogs_nas_encrypt(test_ue->selected_enc_algorithm,
-            test_ue->knas_enc, test_ue->dl_count,
+            test_ue->knas_enc, test_ue->ul_count,
             test_ue->nas.connection_identifier,
             NAS_SECURITY_DOWNLINK_DIRECTION, new);
     }
@@ -100,20 +100,18 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
 
         /* calculate NAS MAC(message authentication code) */
         ogs_nas_mac_calculate(test_ue->selected_int_algorithm,
-            test_ue->knas_int, test_ue->dl_count,
+            test_ue->knas_int, test_ue->ul_count,
             test_ue->nas.connection_identifier,
             NAS_SECURITY_DOWNLINK_DIRECTION, new, mac);
         memcpy(&h.message_authentication_code, mac, sizeof(mac));
     }
 
-    /* increase dl_count */
-    test_ue->dl_count = (test_ue->dl_count + 1) & 0xffffff; /* Use 24bit */
+    /* increase ul_count */
+    test_ue->ul_count = (test_ue->ul_count + 1) & 0xffffff; /* Use 24bit */
 
     /* encode all security header */
     ogs_assert(ogs_pkbuf_push(new, 6));
     memcpy(new->data, &h, sizeof(ogs_nas_5gs_security_header_t));
-
-    test_ue->security_context_available = 1;
 
     return new;
 }
@@ -132,7 +130,7 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
     }
 
     if (security_header_type.new_security_context) {
-        test_ue->ul_count.i32 = 0;
+        test_ue->dl_count.i32 = 0;
     }
 
     if (test_ue->selected_enc_algorithm == 0)
@@ -151,10 +149,10 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
         /* NAS Security Header.Sequence_Number */
         ogs_assert(ogs_pkbuf_pull(pkbuf, 6));
 
-        /* calculate ul_count */
-        if (test_ue->ul_count.sqn > h->sequence_number)
-            test_ue->ul_count.overflow++;
-        test_ue->ul_count.sqn = h->sequence_number;
+        /* calculate dl_count */
+        if (test_ue->dl_count.sqn > h->sequence_number)
+            test_ue->dl_count.overflow++;
+        test_ue->dl_count.sqn = h->sequence_number;
 
         if (security_header_type.integrity_protected) {
             uint8_t mac[NAS_SECURITY_MAC_SIZE];
@@ -163,9 +161,9 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
 
             /* calculate NAS MAC(message authentication code) */
             ogs_nas_mac_calculate(test_ue->selected_int_algorithm,
-                test_ue->knas_int, test_ue->ul_count.i32,
+                test_ue->knas_int, test_ue->dl_count.i32,
                 test_ue->nas.connection_identifier,
-                NAS_SECURITY_UPLINK_DIRECTION, pkbuf, mac);
+                NAS_SECURITY_DOWNLINK_DIRECTION, pkbuf, mac);
             h->message_authentication_code = original_mac;
 
             memcpy(&mac32, mac, NAS_SECURITY_MAC_SIZE);
@@ -182,7 +180,7 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
         if (security_header_type.ciphered) {
             /* decrypt NAS message */
             ogs_nas_encrypt(test_ue->selected_enc_algorithm,
-                test_ue->knas_enc, test_ue->ul_count.i32,
+                test_ue->knas_enc, test_ue->dl_count.i32,
                 test_ue->nas.connection_identifier,
                 NAS_SECURITY_UPLINK_DIRECTION, pkbuf);
         }

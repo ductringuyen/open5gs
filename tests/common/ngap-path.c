@@ -137,12 +137,21 @@ void testngap_send_to_nas(test_ue_t *test_ue, NGAP_NAS_PDU_t *nasPdu)
     h = (ogs_nas_5gmm_header_t *)nasbuf->data;
     ogs_assert(h);
 
-    if (h->message_type != OGS_NAS_5GS_SECURITY_MODE_COMMAND) {
-        if (test_nas_5gs_security_decode(test_ue,
-                security_header_type, nasbuf) != OGS_OK) {
-            ogs_error("nas_eps_security_decode failed()");
-            ogs_assert_if_reached();
-        }
+    if (h->message_type == OGS_NAS_5GS_SECURITY_MODE_COMMAND) {
+        ogs_nas_5gs_message_t message;
+        int rv;
+
+        rv = ogs_nas_5gmm_decode(&message, nasbuf);
+        ogs_assert(rv == OGS_OK);
+
+        testgmm_handle_security_mode_command(test_ue,
+                &message.gmm.security_mode_command);
+    }
+
+    if (test_nas_5gs_security_decode(test_ue,
+            security_header_type, nasbuf) != OGS_OK) {
+        ogs_error("nas_eps_security_decode failed()");
+        ogs_assert_if_reached();
     }
 
     if (h->extended_protocol_discriminator ==
