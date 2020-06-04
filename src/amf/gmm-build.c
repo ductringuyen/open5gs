@@ -232,6 +232,9 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
         &security_mode_command->replayed_ue_security_capabilities;
     ogs_nas_imeisv_request_t *imeisv_request =
         &security_mode_command->imeisv_request;
+    ogs_nas_additional_5g_security_information_t
+        *additional_security_information =
+            &security_mode_command->additional_security_information;
 
     ogs_assert(amf_ue);
 
@@ -273,6 +276,7 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
             sizeof(replayed_ue_security_capabilities->nia) +
             sizeof(replayed_ue_security_capabilities->eps_ea) +
             sizeof(replayed_ue_security_capabilities->eps_ia);
+    replayed_ue_security_capabilities->length = 8;
     ogs_debug("    Replayed UE SEC[LEN:%d NEA:0x%x NIA:0x%x EEA:0x%x EIA:0x%x",
             replayed_ue_security_capabilities->length,
             replayed_ue_security_capabilities->nea,
@@ -286,6 +290,10 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
         OGS_NAS_5GS_SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT;
     imeisv_request->type = OGS_NAS_IMEISV_TYPE;
     imeisv_request->imeisv_request_value = OGS_NAS_IMEISV_REQUESTED;
+
+    security_mode_command->presencemask |=
+        OGS_NAS_5GS_SECURITY_MODE_COMMAND_ADDITIONAL_5G_SECURITY_INFORMATION_PRESENT;
+    additional_security_information->length = 1;
 
     if (amf_ue->selected_int_algorithm == OGS_NAS_SECURITY_ALGORITHMS_EIA0) {
         ogs_error("Encrypt[0x%x] can be skipped with NEA0, "

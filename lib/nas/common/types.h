@@ -664,6 +664,7 @@ typedef struct ogs_nas_ue_security_capability_s {
         };
         uint8_t gea;
     };
+    char spare[3];
 } __attribute__ ((packed)) ogs_nas_ue_security_capability_t;
 
 /* 9.9.3.62 WUS assistance information
