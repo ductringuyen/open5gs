@@ -184,6 +184,8 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
         uint8_t *kseaf, uint8_t *kamf)
 {
     kdf_param_t param;
+    char *saveptr = NULL;
+    char *p, *tmp;
 
     ogs_assert(supi);
     ogs_assert(abba);
@@ -191,14 +193,24 @@ void ogs_kdf_kamf(char *supi, uint8_t *abba, uint8_t abba_len,
     ogs_assert(kseaf);
     ogs_assert(kamf);
 
+    tmp = ogs_strdup(supi);
+
+    p = strtok_r(tmp, "-", &saveptr);
+    ogs_assert(p);
+
+    p = strtok_r(NULL, "-", &saveptr);
+    ogs_assert(p);
+
     memset(param, 0, sizeof(param));
-    param[0].buf = (uint8_t *)supi+5;
-    param[0].len = strlen(supi)-5;
+    param[0].buf = (uint8_t *)p;
+    param[0].len = strlen(p);
     param[1].buf = abba;
     param[1].len = abba_len;
 
     ogs_kdf_common(kseaf, OGS_SHA256_DIGEST_SIZE,
             FC_FOR_KAMF_DERIVATION, param, kamf);
+
+    ogs_free(tmp);
 }
 
 /* TS33.501 Annex A.8 : Algorithm key derivation functions */
