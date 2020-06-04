@@ -144,9 +144,6 @@ static void test1_func(abts_case *tc, void *data)
     /* Setup Test UE Context */
     memset(&test_ue, 0, sizeof(test_ue));
 
-    OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
-    OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);
-
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
     mobile_identity_imsi.h.supi_format = OGS_NAS_5GS_SUPI_FORMAT_IMSI;
     mobile_identity_imsi.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_SUCI;
@@ -167,6 +164,12 @@ static void test1_func(abts_case *tc, void *data)
     mobile_identity.buffer = &mobile_identity_imsi;
 
     test_ue_set_mobile_identity(&test_ue, &mobile_identity);
+
+    test_ue.abba_len = 2;
+    test_ue.nas.connection_identifier = OGS_NAS_SECURITY_BEARER_3GPP;
+
+    OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
+    OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);
 
     /********** Insert Subscriber in Database */
     collection = mongoc_client_get_collection(

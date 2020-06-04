@@ -67,6 +67,5 @@ void testgmm_handle_security_mode_command(test_ue_t *test_ue,
     ogs_kdf_nas_5gs(OGS_KDF_NAS_ENC_ALG, test_ue->selected_enc_algorithm,
         test_ue->kamf, test_ue->knas_enc);
 
-    test_ue->nas.connection_identifier = OGS_NAS_SECURITY_BEARER_3GPP;
     test_ue->nas.ksi = ngksi->value;
 }

@@ -107,8 +107,7 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue)
             authentication_response_parameter->length);
     ogs_kdf_kausf(ck, ik, serving_network_name, test_ue->autn, kausf);
     ogs_kdf_kseaf(serving_network_name, kausf, kseaf);
-    test_ue->abba_len = 2;
-    ogs_kdf_kamf("imsi-2089300007487", test_ue->abba, test_ue->abba_len,
+    ogs_kdf_kamf(test_ue->supi, test_ue->abba, test_ue->abba_len,
                 kseaf, test_ue->kamf);
 
     ogs_free(serving_network_name);
