@@ -109,7 +109,7 @@ ogs_pkbuf_t *nas_5gs_security_encode(
     amf_ue->dl_count = (amf_ue->dl_count + 1) & 0xffffff; /* Use 24bit */
 
     /* encode all security header */
-    ogs_assert(ogs_pkbuf_push(new, 5));
+    ogs_assert(ogs_pkbuf_push(new, 6));
     memcpy(new->data, &h, sizeof(ogs_nas_5gs_security_header_t));
 
     amf_ue->security_context_available = 1;
@@ -144,11 +144,11 @@ int nas_5gs_security_decode(amf_ue_t *amf_ue,
         ogs_nas_5gs_security_header_t *h = NULL;
 
         /* NAS Security Header */
-        ogs_assert(ogs_pkbuf_push(pkbuf, 6));
+        ogs_assert(ogs_pkbuf_push(pkbuf, 7));
         h = (ogs_nas_5gs_security_header_t *)pkbuf->data;
 
         /* NAS Security Header.Sequence_Number */
-        ogs_assert(ogs_pkbuf_pull(pkbuf, 5));
+        ogs_assert(ogs_pkbuf_pull(pkbuf, 6));
 
         /* calculate ul_count */
         if (amf_ue->ul_count.sqn > h->sequence_number)
