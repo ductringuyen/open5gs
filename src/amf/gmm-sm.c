@@ -133,7 +133,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (!AMF_UE_HAVE_IMSI(amf_ue)) {
                 ogs_warn("Service request : Unknown UE");
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -141,7 +141,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
                 ogs_warn("No Security Context : IMSI[%s]", amf_ue->imsi_bcd);
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -149,7 +149,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (!SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
                 ogs_warn("No Session Context : IMSI[%s]", amf_ue->imsi_bcd);
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -206,7 +206,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (!AMF_UE_HAVE_IMSI(amf_ue)) {
                 ogs_warn("TAU request : Unknown UE");
                 nas_5gs_send_tau_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -229,7 +229,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (!AMF_UE_HAVE_IMSI(amf_ue)) {
                 ogs_warn("Extended Service request : Unknown UE");
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -355,8 +355,8 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (rv != OGS_OK) {
                 ogs_error("nas_5gs_send_emm_to_esm() failed");
                 nas_5gs_send_attach_reject(amf_ue,
-                    EMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED,
-                    ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+                    GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED,
+                    GSM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
             } else {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
@@ -389,7 +389,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         if (!SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
             ogs_warn("No PDN Connection : UE[%s]", amf_ue->imsi_bcd);
             nas_5gs_send_tau_reject(amf_ue,
-                EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
             OGS_FSM_TRAN(s, gmm_state_exception);
             break;
         }
@@ -424,7 +424,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         if (!AMF_P_TMSI_IS_AVAILABLE(amf_ue)) {
             ogs_warn("No P-TMSI : UE[%s]", amf_ue->imsi_bcd);
             nas_5gs_send_service_reject(amf_ue,
-                EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
             OGS_FSM_TRAN(s, gmm_state_exception);
             break;
         }
@@ -432,7 +432,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         if (!SESSION_CONTEXT_IS_AVAILABLE(amf_ue)) {
             ogs_warn("No PDN Connection : UE[%s]", amf_ue->imsi_bcd);
             nas_5gs_send_service_reject(amf_ue,
-                EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
             OGS_FSM_TRAN(s, gmm_state_exception);
             break;
         }
@@ -440,7 +440,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
             ogs_warn("No Security Context : IMSI[%s]", amf_ue->imsi_bcd);
             nas_5gs_send_service_reject(amf_ue,
-                EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             return;
         }
@@ -463,7 +463,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 ogs_warn(" Unknown CSFB Service Type[%d]",
                         amf_ue->nas_5gs.service.value);
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -488,7 +488,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 ogs_warn(" Unknown CSFB Service Type[%d]",
                         amf_ue->nas_5gs.service.value);
                 nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
+                    GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED_BY_THE_NETWORK);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 return;
             }
@@ -556,26 +556,26 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                         authentication_failure_parameter;
 
             ogs_debug("Authentication failure");
-            ogs_debug("    IMSI[%s] EMM_CAUSE[%d]", amf_ue->imsi_bcd,
+            ogs_debug("    IMSI[%s] GMM_CAUSE[%d]", amf_ue->imsi_bcd,
                     authentication_failure->gmm_cause);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
             switch (authentication_failure->gmm_cause) {
-            case EMM_CAUSE_MAC_FAILURE:
+            case GMM_CAUSE_MAC_FAILURE:
                 ogs_warn("Authentication failure(MAC failure)");
                 break;
-            case EMM_CAUSE_NON_EPS_AUTHENTICATION_UNACCEPTABLE:
+            case GMM_CAUSE_NON_EPS_AUTHENTICATION_UNACCEPTABLE:
                 ogs_error("Authentication failure"
                         "(Non-EPS authentication unacceptable)");
                 break;
-            case EMM_CAUSE_SYNCH_FAILURE:
+            case GMM_CAUSE_SYNCH_FAILURE:
                 ogs_warn("Authentication failure(Synch failure)");
                 amf_s6a_send_air(amf_ue,
                         authentication_failure_parameter);
                 return;
             default:
-                ogs_error("Unknown EMM_CAUSE{%d] in Authentication"
+                ogs_error("Unknown GMM_CAUSE{%d] in Authentication"
                         " failure",
                         authentication_failure->gmm_cause);
                 break;
@@ -741,7 +741,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 == OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE) {
             ogs_debug("Service request");
             nas_5gs_send_service_reject(amf_ue,
-                    EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
+                    GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             return;
         }
@@ -759,22 +759,16 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 ogs_error("[%s] Security-mode : No Integrity Protected",
                         amf_ue->supi);
 
-#if 0
                 nas_5gs_send_registration_reject(amf_ue,
-                    EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
-                    ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+                    OGS_5GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 break;
             }
 
             if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
                 ogs_warn("[%s] No Security Context", amf_ue->supi);
-#if 0
                 nas_5gs_send_registration_reject(amf_ue,
-                    EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
-                    ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+                    OGS_5GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 break;
             }
@@ -787,6 +781,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 return;
             }
+#endif
 
             ogs_kdf_kgnb_and_kn3iwf(
                     amf_ue->kamf, amf_ue->ul_count.i32,
@@ -794,17 +789,20 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
+#if 0
             amf_s6a_send_ulr(amf_ue);
-            if (amf_ue->nas_5gs.type == AMF_EPS_TYPE_REGISTRATION_REQUEST) {
+#endif
+            if (amf_ue->nas.type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
-            } else if (amf_ue->nas_5gs.type ==
+#if 0
+            } else if (amf_ue->nas.type ==
                     AMF_EPS_TYPE_SERVICE_REQUEST ||
-                    amf_ue->nas_5gs.type == AMF_EPS_TYPE_TAU_REQUEST) {
+                    amf_ue->nas.type == AMF_EPS_TYPE_TAU_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_registered);
             } else {
-                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas_5gs.type);
-            }
+                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas.type);
 #endif
+            }
             break;
         case OGS_NAS_5GS_SECURITY_MODE_REJECT:
             ogs_warn("[%s] Security mode reject : Cause[%d]",
@@ -832,7 +830,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_TRACKING_AREA_UPDATE_REQUEST:
             ogs_debug("Tracking area update request");
             nas_5gs_send_tau_reject(amf_ue,
-                EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
+                GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
 #endif
@@ -874,8 +872,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
 #if 0
                 nas_5gs_send_registration_reject(amf_ue,
-                    EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
-                    ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+                    GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
+                    GSM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
 #endif
             } else {
                 amf_ue->t3560.retry_count++;
@@ -894,7 +892,6 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
     }
 }
 
-#if 0
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
@@ -911,6 +908,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
+        ogs_fatal("Under development");
         break;
     case OGS_FSM_EXIT_SIG:
         break;
@@ -918,6 +916,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         message = e->nas.message;
         ogs_assert(message);
 
+#if 0
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:
             ogs_debug("Registration complete");
@@ -974,6 +973,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                     message->gmm.h.message_type);
             break;
         }
+#endif
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {
@@ -988,7 +988,6 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         break;
     }
 }
-#endif
 
 void gmm_state_exception(ogs_fsm_t *s, amf_event_t *e)
 {
