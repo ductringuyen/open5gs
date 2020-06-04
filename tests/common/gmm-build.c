@@ -125,8 +125,13 @@ ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue)
     ogs_assert(test_ue);
 
     memset(&message, 0, sizeof(message));
+    message.h.security_header_type =
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT;
+    message.h.extended_protocol_discriminator =
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+
     message.gmm.h.extended_protocol_discriminator =
-            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_SECURITY_MODE_COMPLETE;
 
 #if 0
@@ -134,5 +139,5 @@ ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue)
         OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
 #endif
 
-    return ogs_nas_5gs_plain_encode(&message);
+    return test_nas_5gs_security_encode(test_ue, &message);
 }

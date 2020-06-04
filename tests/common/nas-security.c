@@ -88,7 +88,7 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
         ogs_nas_encrypt(test_ue->selected_enc_algorithm,
             test_ue->knas_enc, test_ue->ul_count,
             test_ue->nas.connection_identifier,
-            NAS_SECURITY_DOWNLINK_DIRECTION, new);
+            NAS_SECURITY_UPLINK_DIRECTION, new);
     }
 
     /* encode sequence number */
@@ -102,7 +102,7 @@ ogs_pkbuf_t *test_nas_5gs_security_encode(
         ogs_nas_mac_calculate(test_ue->selected_int_algorithm,
             test_ue->knas_int, test_ue->ul_count,
             test_ue->nas.connection_identifier,
-            NAS_SECURITY_DOWNLINK_DIRECTION, new, mac);
+            NAS_SECURITY_UPLINK_DIRECTION, new, mac);
         memcpy(&h.message_authentication_code, mac, sizeof(mac));
     }
 
@@ -182,7 +182,7 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
             ogs_nas_encrypt(test_ue->selected_enc_algorithm,
                 test_ue->knas_enc, test_ue->dl_count.i32,
                 test_ue->nas.connection_identifier,
-                NAS_SECURITY_UPLINK_DIRECTION, pkbuf);
+                NAS_SECURITY_DOWNLINK_DIRECTION, pkbuf);
         }
     }
 

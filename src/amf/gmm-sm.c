@@ -733,7 +733,6 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
     case OGS_FSM_EXIT_SIG:
         break;
     case AMF_EVT_5GMM_MESSAGE:
-        break;
         message = e->nas.message;
         ogs_assert(message);
 
@@ -750,7 +749,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_SECURITY_MODE_COMPLETE:
-            ogs_debug("[%s] Security mode complete", amf_ue->supi);
+            ogs_fatal("[%s] Security mode complete", amf_ue->supi);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
