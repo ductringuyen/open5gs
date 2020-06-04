@@ -149,7 +149,7 @@ char *ogs_supi_from_suci(char *suci)
     char *saveptr = NULL;
     char *p, *tmp;
     int i;
-    char *ueid = NULL;
+    char *supi = NULL;
 
     ogs_assert(suci);
     tmp = ogs_strdup(suci);
@@ -167,7 +167,7 @@ char *ogs_supi_from_suci(char *suci)
         SWITCH(array[1])
         CASE("0")   /* SUPI format : IMSI */
             if (array[2] && array[3] && array[7])
-                ueid = ogs_msprintf("imsi-%s%s%s",
+                supi = ogs_msprintf("imsi-%s%s%s",
                         array[2], array[3], array[7]);
 
             break;
@@ -180,6 +180,25 @@ char *ogs_supi_from_suci(char *suci)
         ogs_error("Not implemented [%s]", array[0]);
         break;
     END
+
+    ogs_free(tmp);
+    return supi;
+}
+
+char *ogs_ueid_from_supi(char *supi)
+{
+    char *saveptr = NULL;
+    char *p, *tmp;
+    char *ueid = NULL;
+
+    ogs_assert(supi);
+    tmp = ogs_strdup(supi);
+
+    p = strtok_r(tmp, "-", &saveptr);
+    ogs_assert(p);
+    p = strtok_r(NULL, "-", &saveptr);
+    ogs_assert(p);
+    ueid = ogs_strdup(p);
 
     ogs_free(tmp);
     return ueid;

@@ -144,8 +144,6 @@ static void test1_func(abts_case *tc, void *data)
     /* Setup Test UE Context */
     memset(&test_ue, 0, sizeof(test_ue));
 
-    test_ue.imsi = (char *)"2089300007487";
-
     OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
     OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);
 
@@ -169,8 +167,6 @@ static void test1_func(abts_case *tc, void *data)
     mobile_identity.buffer = &mobile_identity_imsi;
 
     test_ue_set_mobile_identity(&test_ue, &mobile_identity);
-    ogs_fatal("suci = %s", test_ue.suci);
-    ogs_fatal("supi = %s", test_ue.supi);
 
     /********** Insert Subscriber in Database */
     collection = mongoc_client_get_collection(

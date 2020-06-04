@@ -151,7 +151,10 @@ uint8_t ogs_amf_pointer(ogs_amf_id_t *amf_id);
 ogs_amf_id_t *ogs_amf_id_build(ogs_amf_id_t *amf_id,
         uint8_t region, uint16_t set, uint8_t pointer);
 
+/************************************
+ * SUPI/SUCI                       */
 char *ogs_supi_from_suci(char *suci);
+char *ogs_ueid_from_supi(char *supi);
 
 /************************************
  * TAI Structure                    */
