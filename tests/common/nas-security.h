@@ -17,37 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TEST_COMMON_H
-#define TEST_COMMON_H
+#ifndef TEST_NAS_5GS_SECURITY_H
+#define TEST_NAS_5GS_SECURITY_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "ogs-app.h"
-#include "ogs-dbi.h"
-#include "ogs-sctp.h"
-#include "ogs-diameter-common.h"
-#include "ogs-nas-eps.h"
-#include "ogs-nas-5gs.h"
-
-#include "core/abts.h"
-
-#define OGS_TEST_INSIDE
-
-#include "common/context.h"
-#include "common/sctp.h"
-#include "common/gtpu.h"
-#include "common/application.h"
-#include "common/gmm-build.h"
-#include "common/gmm-handler.h"
-#include "common/nas-path.h"
-#include "common/nas-security.h"
-
-#undef OGS_TEST_INSIDE
+ogs_pkbuf_t *test_nas_5gs_security_encode(
+    test_ue_t *test_ue, ogs_nas_5gs_message_t *message);
+int test_nas_5gs_security_decode(test_ue_t *test_ue, 
+    ogs_nas_security_header_type_t security_header_type, ogs_pkbuf_t *pkbuf);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TEST_COMMON_H */
+#endif /* TEST_NAS_5GS_SECURITY_H */
+

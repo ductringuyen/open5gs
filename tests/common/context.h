@@ -62,6 +62,44 @@ typedef struct test_ue_s {
     uint64_t amf_ue_ngap_id; /* AMF-UE-NGAP-ID received from AMF */
     uint8_t rand[OGS_RAND_LEN];
     uint8_t autn[OGS_AUTN_LEN];
+
+    struct {
+#define OGS_NAS_SECURITY_BEARER_3GPP 1
+#define OGS_NAS_SECURITY_BEARER_NON_3GPP 2
+        uint8_t     connection_identifier;
+        uint8_t     ksi;
+    } nas;
+
+    uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2];
+    uint8_t         knas_enc[OGS_SHA256_DIGEST_SIZE/2];
+    uint32_t        dl_count;
+    union {
+        struct {
+        ED3(uint8_t spare;,
+            uint16_t overflow;,
+            uint8_t sqn;)
+        } __attribute__ ((packed));
+        uint32_t i32;
+    } ul_count;
+    uint8_t         kgnb[OGS_SHA256_DIGEST_SIZE];
+
+    uint8_t selected_enc_algorithm;
+    uint8_t selected_int_algorithm;
+
+#define TEST_SECURITY_CONTEXT_IS_VALID(__tEST) \
+    ((__tEST) && \
+    ((__tEST)->security_context_available == 1) && \
+     ((__tEST)->mac_failed == 0) && \
+     ((__tEST)->nas.ksi != OGS_NAS_KSI_NO_KEY_IS_AVAILABLE))
+#define TEST_CLEAR_SECURITY_CONTEXT(__tEST) \
+    do { \
+        ogs_assert((__tEST)); \
+        (__tEST)->security_context_available = 0; \
+        (__tEST)->mac_failed = 0; \
+        (__tEST)->nas.ksi = 0; \
+    } while(0)
+    int             security_context_available;
+    int             mac_failed;
 } test_ue_t;
 
 void test_context_init(void);

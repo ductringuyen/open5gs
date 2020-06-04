@@ -39,3 +39,30 @@ void testgmm_handle_authentication_request(test_ue_t *test_ue,
     memcpy(test_ue->autn, authentication_parameter_autn->autn, OGS_AUTN_LEN);
 
 }
+
+void testgmm_handle_security_mode_command(test_ue_t *test_ue,
+        ogs_nas_5gs_security_mode_command_t *security_mode_command)
+{
+    ogs_nas_security_algorithms_t *selected_nas_security_algorithms = NULL;
+    ogs_nas_key_set_identifier_t *ngksi = NULL;
+
+    ogs_assert(test_ue);
+    ogs_assert(security_mode_command);
+
+    selected_nas_security_algorithms =
+        &security_mode_command->selected_nas_security_algorithms;
+    ngksi = &security_mode_command->ngksi;
+
+    test_ue->selected_enc_algorithm =
+        selected_nas_security_algorithms->type_of_ciphering_algorithm;
+    test_ue->selected_int_algorithm =
+        selected_nas_security_algorithms->
+            type_of_integrity_protection_algorithm;
+    test_ue->nas.connection_identifier = OGS_NAS_SECURITY_BEARER_3GPP;
+    test_ue->nas.ksi = ngksi->value;
+
+    ogs_fatal("%d, %d, %d",
+    test_ue->selected_enc_algorithm,
+    test_ue->selected_int_algorithm,
+    test_ue->nas.ksi);
+}

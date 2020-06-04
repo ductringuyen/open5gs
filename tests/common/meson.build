@@ -33,6 +33,7 @@ libtestcommon_sources = files('''
     gmm-build.c
     gmm-handler.c
     nas-path.c
+    nas-security.c
 '''.split())
 
 libtestcommon_inc = include_directories('.')

@@ -194,8 +194,8 @@ struct amf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-#define NAS_SECURITY_BEARER_3GPP 1
-#define NAS_SECURITY_BEARER_NON_3GPP 2
+#define OGS_NAS_SECURITY_BEARER_3GPP 1
+#define OGS_NAS_SECURITY_BEARER_NON_3GPP 2
         uint8_t     connection_identifier;
         uint8_t     type;
         uint8_t     ksi;
@@ -279,7 +279,7 @@ struct amf_ue_s {
     uint8_t         kamf[OGS_SHA256_DIGEST_SIZE];
     OpenAPI_auth_result_e auth_result;
 
-    uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2]; 
+    uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2];
     uint8_t         knas_enc[OGS_SHA256_DIGEST_SIZE/2];
     uint32_t        dl_count;
     union {
