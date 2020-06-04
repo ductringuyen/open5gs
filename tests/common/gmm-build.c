@@ -114,3 +114,25 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue)
 
     return ogs_nas_5gs_plain_encode(&message);
 }
+
+ogs_pkbuf_t *testgmm_build_security_mode_complete(test_ue_t *test_ue)
+{
+    ogs_nas_5gs_message_t message;
+    ogs_pkbuf_t *pkbuf = NULL;
+    ogs_nas_5gs_security_mode_complete_t *security_mode_complete =
+            &message.gmm.security_mode_complete;
+
+    ogs_assert(test_ue);
+
+    memset(&message, 0, sizeof(message));
+    message.gmm.h.extended_protocol_discriminator =
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+    message.gmm.h.message_type = OGS_NAS_5GS_SECURITY_MODE_COMPLETE;
+
+#if 0
+    security_mode_complete->presencemask |=
+        OGS_NAS_5GS_AUTHENTICATION_RESPONSE_AUTHENTICATION_RESPONSE_PARAMETER_PRESENT;
+#endif
+
+    return ogs_nas_5gs_plain_encode(&message);
+}

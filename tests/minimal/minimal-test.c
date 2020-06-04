@@ -190,7 +190,7 @@ static void test1_func(abts_case *tc, void *data)
     } while (count == 0);
     bson_destroy(doc);
 
-    /* Send Registration Request */
+    /* Send Registration request */
     gmmbuf = testgmm_build_registration_request(&test_ue, &mobile_identity);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_initial_ue_message(gmmbuf);
@@ -198,7 +198,7 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
-    /* Receive Authentication Request */
+    /* Receive Authentication request */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);
@@ -208,7 +208,7 @@ static void test1_func(abts_case *tc, void *data)
         recvbuf->len) == 0);
 #endif
 
-    /* Send Authentication Response */
+    /* Send Authentication response */
     gmmbuf = testgmm_build_authentication_response(&test_ue);
     ABTS_PTR_NOTNULL(tc, gmmbuf);
     sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
@@ -216,7 +216,7 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
-    /* Receive Security mode Command */
+    /* Receive Security mode command */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);
@@ -226,18 +226,16 @@ static void test1_func(abts_case *tc, void *data)
         recvbuf->len) == 0);
 #endif
 
+    /* Send Security mode complete */
+    gmmbuf = testgmm_build_security_mode_complete(&test_ue);
+    ABTS_PTR_NOTNULL(tc, gmmbuf);
+    sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
+    ABTS_PTR_NOTNULL(tc, sendbuf);
+    rv = testgnb_ngap_send(ngap, sendbuf);
+    ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
     ogs_msleep(300);
-
 #if 0
-
-    /* Receive Security mode Command */
-    recvbuf = testgnb_ngap_read(ngap);
-    ABTS_PTR_NOTNULL(tc, recvbuf);
-    ABTS_TRUE(tc, memcmp(recvbuf->data,
-        OGS_HEX(_security_mode_command, strlen(_security_mode_command), tmp),
-        recvbuf->len) == 0);
-    ogs_pkbuf_free(recvbuf);
 
     /* Send Security mode Complete */
     rv = testngap_build_security_mode_complete(&sendbuf, msgindex);
