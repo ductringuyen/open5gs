@@ -698,21 +698,21 @@ int amf_context_parse_config(void)
                                 if (v) {
                                     int integrity_index = 
                                         self.num_of_integrity_order;
-                                    if (strcmp(v, "EIA0") == 0) {
+                                    if (strcmp(v, "NIA0") == 0) {
                                         self.integrity_order[integrity_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_EIA0;
+                                        OGS_NAS_SECURITY_ALGORITHMS_NIA0;
                                         self.num_of_integrity_order++;
-                                    } else if (strcmp(v, "EIA1") == 0) {
+                                    } else if (strcmp(v, "NIA1") == 0) {
                                         self.integrity_order[integrity_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EIA1;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NIA1;
                                         self.num_of_integrity_order++;
-                                    } else if (strcmp(v, "EIA2") == 0) {
+                                    } else if (strcmp(v, "NIA2") == 0) {
                                         self.integrity_order[integrity_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EIA2;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NIA2;
                                         self.num_of_integrity_order++;
-                                    } else if (strcmp(v, "EIA3") == 0) {
+                                    } else if (strcmp(v, "NIA3") == 0) {
                                         self.integrity_order[integrity_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EIA3;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NIA3;
                                         self.num_of_integrity_order++;
                                     }
                                 }
@@ -740,21 +740,21 @@ int amf_context_parse_config(void)
                                 if (v) {
                                     int ciphering_index = 
                                         self.num_of_ciphering_order;
-                                    if (strcmp(v, "EEA0") == 0) {
+                                    if (strcmp(v, "NEA0") == 0) {
                                         self.ciphering_order[ciphering_index] = 
-                                            OGS_NAS_SECURITY_ALGORITHMS_EEA0;
+                                            OGS_NAS_SECURITY_ALGORITHMS_NEA0;
                                         self.num_of_ciphering_order++;
-                                    } else if (strcmp(v, "EEA1") == 0) {
+                                    } else if (strcmp(v, "NEA1") == 0) {
                                         self.ciphering_order[ciphering_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EEA1;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NEA1;
                                         self.num_of_ciphering_order++;
-                                    } else if (strcmp(v, "EEA2") == 0) {
+                                    } else if (strcmp(v, "NEA2") == 0) {
                                         self.ciphering_order[ciphering_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EEA2;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NEA2;
                                         self.num_of_ciphering_order++;
-                                    } else if (strcmp(v, "EEA3") == 0) {
+                                    } else if (strcmp(v, "NEA3") == 0) {
                                         self.ciphering_order[ciphering_index] = 
-                                        OGS_NAS_SECURITY_ALGORITHMS_128_EEA3;
+                                        OGS_NAS_SECURITY_ALGORITHMS_128_NEA3;
                                         self.num_of_ciphering_order++;
                                     }
                                 }
