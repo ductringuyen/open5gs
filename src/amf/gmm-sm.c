@@ -773,15 +773,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-#if 0
-            rv = gmm_handle_security_mode_complete(
+            gmm_handle_security_mode_complete(
                     amf_ue, &message->gmm.security_mode_complete);
-            if (rv != OGS_OK) {
-                ogs_error("gmm_handle_security_mode_complete() failed");
-                OGS_FSM_TRAN(s, gmm_state_exception);
-                return;
-            }
-#endif
 
             ogs_kdf_kgnb_and_kn3iwf(
                     amf_ue->kamf, amf_ue->ul_count.i32,
@@ -894,7 +887,9 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
+#if 0
     int rv;
+#endif
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
@@ -908,7 +903,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        ogs_fatal("Under development");
+        ogs_fatal("Under Development");
         break;
     case OGS_FSM_EXIT_SIG:
         break;

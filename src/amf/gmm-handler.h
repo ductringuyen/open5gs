@@ -48,10 +48,10 @@ int gmm_handle_tau_request(amf_ue_t *amf_ue,
 
 int gmm_handle_extended_service_request(amf_ue_t *amf_ue,
         ogs_nas_5gs_extended_service_request_t *extended_service_request);
+#endif
 
 int gmm_handle_security_mode_complete(amf_ue_t *amf_ue,
         ogs_nas_5gs_security_mode_complete_t *security_mode_complete);
-#endif
 
 #ifdef __cplusplus
 }

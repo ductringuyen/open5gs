@@ -688,34 +688,43 @@ int gmm_handle_extended_service_request(amf_ue_t *amf_ue,
 
     return OGS_OK;
 }
+#endif
 
 int gmm_handle_security_mode_complete(amf_ue_t *amf_ue,
     ogs_nas_5gs_security_mode_complete_t *security_mode_complete)
 {
-    ogs_nas_mobile_identity_t *imeisv = &security_mode_complete->imeisv;
+    ogs_nas_5gs_mobile_identity_t *imeisv = NULL;
+    ogs_nas_mobile_identity_imeisv_t *mobile_identity_imeisv = NULL;
 
     ogs_assert(amf_ue);
+    ogs_assert(security_mode_complete);
 
     if (security_mode_complete->presencemask &
         OGS_NAS_5GS_SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT) {
-        switch (imeisv->imeisv.type) {
-        case OGS_NAS_MOBILE_IDENTITY_IMEISV:
+
+        imeisv = &security_mode_complete->imeisv;
+        ogs_assert(imeisv);
+        mobile_identity_imeisv =
+            (ogs_nas_mobile_identity_imeisv_t *)imeisv->buffer;
+        ogs_assert(mobile_identity_imeisv);
+
+        switch (mobile_identity_imeisv->type) {
+        case OGS_NAS_5GS_MOBILE_IDENTITY_IMEISV:
             memcpy(&amf_ue->nas_mobile_identity_imeisv,
-                &imeisv->imeisv, imeisv->length);
-            ogs_nas_imeisv_to_bcd(&imeisv->imeisv, imeisv->length,
+                mobile_identity_imeisv, imeisv->length);
+            ogs_nas_imeisv_to_bcd(mobile_identity_imeisv, imeisv->length,
                     amf_ue->imeisv_bcd);
             ogs_bcd_to_buffer(amf_ue->imeisv_bcd,
                     amf_ue->imeisv, &amf_ue->imeisv_len);
             amf_ue->imeisv_presence = true;
             break;
         default:
-            ogs_warn("Invalid IMEISV Type[%d]", imeisv->imeisv.type);
+            ogs_warn("[%s] Invalid IMEISV Type [%d]",
+                    amf_ue->supi, mobile_identity_imeisv->type);
             break;
 
         }
-
     }
 
     return OGS_OK;
 }
-#endif
