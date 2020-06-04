@@ -178,7 +178,6 @@ void nas_5gs_send_registration_reject(
     ogs_expect_or_return(rv == OGS_OK);
 }
 
-#if 0
 void nas_5gs_send_identity_request(amf_ue_t *amf_ue)
 {
     ogs_pkbuf_t *gmmbuf = NULL;
@@ -197,11 +196,10 @@ void nas_5gs_send_identity_request(amf_ue_t *amf_ue)
 
     amf_ue->t3570.pkbuf = ogs_pkbuf_copy(gmmbuf);
     ogs_timer_start(amf_ue->t3570.timer,
-            amf_timer_cfg(MME_TIMER_T3570)->duration);
+            amf_timer_cfg(AMF_TIMER_T3570)->duration);
 
     nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
 }
-#endif
 
 void nas_5gs_send_authentication_request(amf_ue_t *amf_ue)
 {
@@ -244,7 +242,6 @@ void nas_5gs_send_authentication_reject(amf_ue_t *amf_ue)
     ogs_expect(rv == OGS_OK);
 }
 
-#if 0
 void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
 {
     int rv;
@@ -252,8 +249,7 @@ void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue);
 
-    ogs_debug("Security mode command");
-    ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+    ogs_debug("[%s] Security mode command", amf_ue->supi);
 
     if (amf_ue->t3560.pkbuf) {
         gmmbuf = amf_ue->t3560.pkbuf;
@@ -265,12 +261,13 @@ void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
 
     amf_ue->t3560.pkbuf = ogs_pkbuf_copy(gmmbuf);
     ogs_timer_start(amf_ue->t3560.timer,
-            amf_timer_cfg(MME_TIMER_T3560)->duration);
+            amf_timer_cfg(AMF_TIMER_T3560)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
     ogs_expect(rv == OGS_OK);
 }
 
+#if 0
 void nas_5gs_send_detach_accept(amf_ue_t *amf_ue)
 {
     ran_ue_t *ran_ue = NULL;
@@ -341,7 +338,7 @@ void nas_5gs_send_esm_information_request(amf_bearer_t *bearer)
 
     bearer->t3589.pkbuf = ogs_pkbuf_copy(gsmbuf);
     ogs_timer_start(bearer->t3589.timer,
-            amf_timer_cfg(MME_TIMER_T3589)->duration);
+            amf_timer_cfg(AMF_TIMER_T3589)->duration);
 
     rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gsmbuf);
     ogs_expect(rv == OGS_OK);

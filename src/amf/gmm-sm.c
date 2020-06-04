@@ -727,19 +727,17 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-#if 0
         CLEAR_AMF_UE_TIMER(amf_ue->t3560);
         nas_5gs_send_security_mode_command(amf_ue);
-#endif
         break;
     case OGS_FSM_EXIT_SIG:
         break;
     case AMF_EVT_5GMM_MESSAGE:
         break;
-#if 0
         message = e->nas.message;
         ogs_assert(message);
 
+#if 0
         if (message->gmm.h.security_header_type
                 == OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE) {
             ogs_debug("Service request");
@@ -748,36 +746,41 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             OGS_FSM_TRAN(s, &gmm_state_exception);
             return;
         }
+#endif
 
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_SECURITY_MODE_COMPLETE:
-            ogs_debug("Security mode complete");
-            ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+            ogs_debug("[%s] Security mode complete", amf_ue->supi);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
 
             /* Now, We will check the MAC in the NAS message*/
-            h.type = e->nas_type;
+            h.type = e->nas.type;
             if (h.integrity_protected == 0) {
-                ogs_error("Security-mode : No Integrity Protected in IMSI[%s]",
-                        amf_ue->imsi_bcd);
+                ogs_error("[%s] Security-mode : No Integrity Protected",
+                        amf_ue->supi);
 
+#if 0
                 nas_5gs_send_registration_reject(amf_ue,
                     EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 break;
             }
 
             if (!SECURITY_CONTEXT_IS_VALID(amf_ue)) {
                 ogs_warn("No Security Context : IMSI[%s]", amf_ue->imsi_bcd);
+#if 0
                 nas_5gs_send_registration_reject(amf_ue,
                     EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
                 OGS_FSM_TRAN(s, &gmm_state_exception);
                 break;
             }
 
+#if 0
             rv = gmm_handle_security_mode_complete(
                     amf_ue, &message->gmm.security_mode_complete);
             if (rv != OGS_OK) {
@@ -802,40 +805,45 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             } else {
                 ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas_5gs.type);
             }
+#endif
             break;
         case OGS_NAS_5GS_SECURITY_MODE_REJECT:
-            ogs_warn("Security mode reject : IMSI[%s] Cause[%d]",
-                    amf_ue->imsi_bcd,
+            ogs_warn("[%s] Security mode reject : Cause[%d]",
+                    amf_ue->supi,
                     message->gmm.security_mode_reject.gmm_cause);
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
-            ogs_warn("Registration request[%s]", amf_ue->imsi_bcd);
+            ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
                     amf_ue, &message->gmm.registration_request);
             if (rv != OGS_OK) {
-                ogs_error("gmm_handle_registration_request() failed");
+                ogs_error("[%s] Cannot handle NAS message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 break;
             }
 
+#if 0
             amf_s6a_send_air(amf_ue, NULL);
             OGS_FSM_TRAN(s, &gmm_state_authentication);
+#endif
             break;
+#if 0
         case OGS_NAS_5GS_TRACKING_AREA_UPDATE_REQUEST:
             ogs_debug("Tracking area update request");
             nas_5gs_send_tau_reject(amf_ue,
                 EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
+#endif
         case OGS_NAS_5GS_5GMM_STATUS:
-            ogs_warn("5GMM STATUS : IMSI[%s] Cause[%d]",
-                    amf_ue->imsi_bcd,
-                    message->gmm.gmm_status.gmm_cause);
+            ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
+                    amf_ue->supi, message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
+#if 0
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
             rv = gmm_handle_deregistration_request(
@@ -848,6 +856,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
             amf_send_delete_session_or_deregistration(amf_ue);
             OGS_FSM_TRAN(s, &gmm_state_de_registered);
+#endif
             break;
         default:
             ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
@@ -864,9 +873,11 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                         amf_ue->imsi_bcd);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
 
+#if 0
                 nas_5gs_send_registration_reject(amf_ue,
                     EMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
                     ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+#endif
             } else {
                 amf_ue->t3560.retry_count++;
                 nas_5gs_send_security_mode_command(amf_ue);
@@ -878,7 +889,6 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
         break;
-#endif
     default:
         ogs_error("Unknown event[%s]", amf_event_get_name(e));
         break;
