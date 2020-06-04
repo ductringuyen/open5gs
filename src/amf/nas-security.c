@@ -19,7 +19,6 @@
 
 #include "nas-security.h"
 
-#define NAS_SECURITY_BEARER 0
 #define NAS_SECURITY_DOWNLINK_DIRECTION 1
 #define NAS_SECURITY_UPLINK_DIRECTION 0
 
@@ -87,7 +86,8 @@ ogs_pkbuf_t *nas_5gs_security_encode(
     if (ciphered) {
         /* encrypt NAS message */
         ogs_nas_encrypt(amf_ue->selected_enc_algorithm,
-            amf_ue->knas_enc, amf_ue->dl_count, NAS_SECURITY_BEARER,
+            amf_ue->knas_enc, amf_ue->dl_count,
+            amf_ue->nas.connection_identifier,
             NAS_SECURITY_DOWNLINK_DIRECTION, new);
     }
 
@@ -100,7 +100,8 @@ ogs_pkbuf_t *nas_5gs_security_encode(
 
         /* calculate NAS MAC(message authentication code) */
         ogs_nas_mac_calculate(amf_ue->selected_int_algorithm,
-            amf_ue->knas_int, amf_ue->dl_count, NAS_SECURITY_BEARER, 
+            amf_ue->knas_int, amf_ue->dl_count,
+            amf_ue->nas.connection_identifier,
             NAS_SECURITY_DOWNLINK_DIRECTION, new, mac);
         memcpy(&h.message_authentication_code, mac, sizeof(mac));
     }
@@ -162,7 +163,8 @@ int nas_5gs_security_decode(amf_ue_t *amf_ue,
 
             /* calculate NAS MAC(message authentication code) */
             ogs_nas_mac_calculate(amf_ue->selected_int_algorithm,
-                amf_ue->knas_int, amf_ue->ul_count.i32, NAS_SECURITY_BEARER, 
+                amf_ue->knas_int, amf_ue->ul_count.i32,
+                amf_ue->nas.connection_identifier,
                 NAS_SECURITY_UPLINK_DIRECTION, pkbuf, mac);
             h->message_authentication_code = original_mac;
 
@@ -180,7 +182,8 @@ int nas_5gs_security_decode(amf_ue_t *amf_ue,
         if (security_header_type.ciphered) {
             /* decrypt NAS message */
             ogs_nas_encrypt(amf_ue->selected_enc_algorithm,
-                amf_ue->knas_enc, amf_ue->ul_count.i32, NAS_SECURITY_BEARER,
+                amf_ue->knas_enc, amf_ue->ul_count.i32,
+                amf_ue->nas.connection_identifier,
                 NAS_SECURITY_UPLINK_DIRECTION, pkbuf);
         }
     }

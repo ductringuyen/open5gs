@@ -194,6 +194,9 @@ struct amf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
+#define NAS_SECURITY_BEARER_3GPP 1
+#define NAS_SECURITY_BEARER_NON_3GPP 2
+        uint8_t     connection_identifier;
         uint8_t     type;
         uint8_t     ksi;
         union {
