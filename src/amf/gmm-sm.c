@@ -814,10 +814,16 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-#if 0
-            amf_s6a_send_air(amf_ue, NULL);
+            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            if (rv == OGS_ERROR) {
+                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(s, &gmm_state_exception);
+                break;
+            }
+
             OGS_FSM_TRAN(s, &gmm_state_authentication);
-#endif
             break;
 #if 0
         case OGS_NAS_5GS_TRACKING_AREA_UPDATE_REQUEST:
@@ -861,13 +867,9 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 ogs_warn("Retransmission of IMSI[%s] failed. "
                         "Stop retransmission",
                         amf_ue->imsi_bcd);
-                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-
-#if 0
                 nas_5gs_send_registration_reject(amf_ue,
-                    GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED,
-                    GSM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-#endif
+                    OGS_5GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
             } else {
                 amf_ue->t3560.retry_count++;
                 nas_5gs_send_security_mode_command(amf_ue);
