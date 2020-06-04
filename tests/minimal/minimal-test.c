@@ -211,14 +211,20 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
+    /* Receive Security mode Command */
+    recvbuf = testgnb_ngap_read(ngap);
+    ABTS_PTR_NOTNULL(tc, recvbuf);
+    testngap_recv(&test_ue, recvbuf);
+#if 0
+    ABTS_TRUE(tc, memcmp(recvbuf->data,
+        OGS_HEX(_security_mode_command, strlen(_security_mode_command), tmp),
+        recvbuf->len) == 0);
+#endif
+
+
     ogs_msleep(300);
 
 #if 0
-    /* Send Authentication Response */
-    rv = testngap_build_authentication_response(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-    rv = testgnb_ngap_send(ngap, sendbuf);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
     /* Receive Security mode Command */
     recvbuf = testgnb_ngap_read(ngap);

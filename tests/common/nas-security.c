@@ -170,7 +170,7 @@ int test_nas_5gs_security_decode(test_ue_t *test_ue,
 
             memcpy(&mac32, mac, NAS_SECURITY_MAC_SIZE);
             if (h->message_authentication_code != mac32) {
-                ogs_warn("NAS MAC verification failed(0x%x != 0x%x)",
+                ogs_error("NAS MAC verification failed(0x%x != 0x%x)",
                         ntohl(h->message_authentication_code), ntohl(mac32));
                 test_ue->mac_failed = 1;
             }

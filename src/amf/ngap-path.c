@@ -179,23 +179,23 @@ int ngap_send_to_nas(ran_ue_t *ran_ue,
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED:
         security_header_type.integrity_protected = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED:
         security_header_type.integrity_protected = 1;
         security_header_type.ciphered = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_NEW_SECURITY_CONTEXT:
         security_header_type.integrity_protected = 1;
         security_header_type.new_security_context = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT:
         security_header_type.integrity_protected = 1;
         security_header_type.ciphered = 1;
         security_header_type.new_security_context = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     default:
         ogs_error("Not implemented(security header type:0x%x)",

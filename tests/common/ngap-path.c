@@ -110,23 +110,23 @@ void testngap_send_to_nas(test_ue_t *test_ue, NGAP_NAS_PDU_t *nasPdu)
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED:
         security_header_type.integrity_protected = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED:
         security_header_type.integrity_protected = 1;
         security_header_type.ciphered = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_NEW_SECURITY_CONTEXT:
         security_header_type.integrity_protected = 1;
         security_header_type.new_security_context = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     case OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT:
         security_header_type.integrity_protected = 1;
         security_header_type.ciphered = 1;
         security_header_type.new_security_context = 1;
-        ogs_pkbuf_pull(nasbuf, 6);
+        ogs_pkbuf_pull(nasbuf, 7);
         break;
     default:
         ogs_error("Not implemented(security header type:0x%x)",
@@ -136,6 +136,15 @@ void testngap_send_to_nas(test_ue_t *test_ue, NGAP_NAS_PDU_t *nasPdu)
 
     h = (ogs_nas_5gmm_header_t *)nasbuf->data;
     ogs_assert(h);
+
+    if (h->message_type != OGS_NAS_5GS_SECURITY_MODE_COMMAND) {
+        if (test_nas_5gs_security_decode(test_ue,
+                security_header_type, nasbuf) != OGS_OK) {
+            ogs_error("nas_eps_security_decode failed()");
+            ogs_assert_if_reached();
+        }
+    }
+
     if (h->extended_protocol_discriminator ==
             OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM) {
         testgmm_recv(test_ue, nasbuf);
