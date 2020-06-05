@@ -145,7 +145,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
 
     if (nf == false) {
         ogs_warn("[%s] Try to discover UDM", ausf_ue->suci);
-        ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+        ogs_timer_start(ausf_ue->sbi.client_wait_timer,
                 ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
@@ -174,7 +174,7 @@ void ausf_nudm_ueau_send_get(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
     ogs_assert(client);
 
-    ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+    ogs_timer_start(ausf_ue->sbi.client_wait_timer,
             ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
     request = ausf_nudm_ueau_build_get(ausf_ue);
@@ -188,13 +188,15 @@ void ausf_nudm_ueau_discover_and_send_get(ausf_ue_t *ausf_ue)
 
     ogs_assert(ausf_ue);
 
+    ausf_ue->sbi.discover_handler = ausf_nudm_ueau_send_get;
+
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
                             ausf_ue, OpenAPI_nf_type_UDM);
 
     if (!nf_instance) return;
 
-    ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
+    return (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
 }
 
 void ausf_nudm_ueau_send_result_confirmation_inform(
@@ -213,7 +215,7 @@ void ausf_nudm_ueau_send_result_confirmation_inform(
             nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
     ogs_assert(client);
 
-    ogs_timer_start(ausf_ue->sbi_client_wait.timer,
+    ogs_timer_start(ausf_ue->sbi.client_wait_timer,
             ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
     request = ausf_nudm_ueau_build_result_confirmation_inform(ausf_ue);
@@ -228,11 +230,14 @@ void ausf_nudm_ueau_discover_and_send_result_confirmation_inform(
 
     ogs_assert(ausf_ue);
 
+    ausf_ue->sbi.discover_handler =
+        ausf_nudm_ueau_send_result_confirmation_inform;
+
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
                             ausf_ue, OpenAPI_nf_type_UDM);
 
     if (!nf_instance) return;
 
-    ausf_nudm_ueau_send_result_confirmation_inform(ausf_ue, nf_instance);
+    return (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
 }

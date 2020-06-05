@@ -310,19 +310,7 @@ void ausf_nnrf_handle_nf_discover(
                 "(NF discover) No UDM", ausf_ue->suci);
         ausf_ue_remove(ausf_ue);
     } else {
-        ogs_assert(ausf_ue->state.method);
-        SWITCH(ausf_ue->state.method)
-        CASE(OGS_SBI_HTTP_METHOD_POST)
-            ausf_nudm_ueau_send_get(ausf_ue, nf_instance);
-            break;
-        CASE(OGS_SBI_HTTP_METHOD_PUT)
-            ausf_nudm_ueau_send_result_confirmation_inform(
-                    ausf_ue, nf_instance);
-            break;
-        DEFAULT
-            ogs_fatal("[%s] Unknown state [%s]",
-                    ausf_ue->suci, ausf_ue->state.method);
-            ogs_assert_if_reached();
-        END
+        ogs_assert(ausf_ue->sbi.discover_handler);
+        (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
     }
 }

@@ -138,7 +138,7 @@ ausf_ue_t *ausf_ue_add(char *suci)
     ogs_assert(ausf_ue->supi);
     ogs_hash_set(self.supi_hash, ausf_ue->supi, strlen(ausf_ue->supi), ausf_ue);
 
-    ausf_ue->sbi_client_wait.timer = ogs_timer_add(
+    ausf_ue->sbi.client_wait_timer = ogs_timer_add(
             self.timer_mgr, ausf_timer_sbi_client_wait_expire, ausf_ue);
 
     e.ausf_ue = ausf_ue;
@@ -163,7 +163,7 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_fsm_fini(&ausf_ue->sm, &e);
     ogs_fsm_delete(&ausf_ue->sm);
 
-    ogs_timer_delete(ausf_ue->sbi_client_wait.timer);
+    ogs_timer_delete(ausf_ue->sbi.client_wait_timer);
 
     ogs_assert(ausf_ue->ctx_id);
     ogs_free(ausf_ue->ctx_id);
@@ -175,9 +175,6 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_assert(ausf_ue->supi);
     ogs_hash_set(self.supi_hash, ausf_ue->supi, strlen(ausf_ue->supi), NULL);
     ogs_free(ausf_ue->supi);
-
-    if (ausf_ue->state.method)
-        ogs_free(ausf_ue->state.method);
 
     if (ausf_ue->auth_events_url)
         ogs_free(ausf_ue->auth_events_url);

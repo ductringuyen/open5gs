@@ -121,7 +121,7 @@ void ausf_ue_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
         SWITCH(message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-            ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
+            ogs_timer_stop(ausf_ue->sbi.client_wait_timer);
 
             if (message->res_status != OGS_SBI_HTTP_STATUS_OK &&
                 message->res_status != OGS_SBI_HTTP_STATUS_CREATED) {

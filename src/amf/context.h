@@ -215,6 +215,11 @@ struct amf_ue_s {
         bool non_3gpp;
     } __attribute__ ((packed)) nas;
 
+    struct {
+        int (*discover_handler)(
+            amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
+    } sbi;
+
     /* UE identity */
     char            *suci; /* TS33.501 : SUCI */
     char            *supi; /* TS33.501 : SUPI */

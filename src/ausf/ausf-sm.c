@@ -153,10 +153,6 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
 
             OGS_SETUP_SBI_SESSION(ausf_ue, session);
 
-            if (ausf_ue->state.method)
-                ogs_free(ausf_ue->state.method);
-            ausf_ue->state.method = ogs_strdup(message.h.method);
-
             e->ausf_ue = ausf_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&ausf_ue->sm, e);
@@ -263,7 +259,7 @@ void ausf_state_operational(ogs_fsm_t *s, ausf_event_t *e)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(ausf_ue->sbi_client_wait.timer);
+                        ogs_timer_stop(ausf_ue->sbi.client_wait_timer);
 
                         ausf_nnrf_handle_nf_discover(ausf_ue, &message);
                     } else {

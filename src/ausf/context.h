@@ -56,8 +56,10 @@ struct ausf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-        char *method;
-    } state;
+        void (*discover_handler)(
+            ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance);
+        ogs_timer_t *client_wait_timer;
+    } sbi;
 
     char *ctx_id;
     char *suci;
@@ -73,10 +75,6 @@ struct ausf_ue_s {
     uint8_t hxres_star[OGS_MAX_RES_LEN];
     uint8_t kausf[OGS_SHA256_DIGEST_SIZE];
     uint8_t kseaf[OGS_SHA256_DIGEST_SIZE];
-
-    struct {
-        ogs_timer_t *timer;
-    } sbi_client_wait;
 
 #define AUSF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

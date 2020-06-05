@@ -162,11 +162,6 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
 
             OGS_SETUP_SBI_SESSION(udm_ue, session);
 
-            if (udm_ue->state.component1)
-                ogs_free(udm_ue->state.component1);
-            udm_ue->state.component1 = ogs_strdup(
-                    message.h.resource.component[1]);
-
             e->udm_ue = udm_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&udm_ue->sm, e);
@@ -273,7 +268,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 SWITCH(message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(udm_ue->sbi_client_wait.timer);
+                        ogs_timer_stop(udm_ue->sbi.client_wait_timer);
 
                         udm_nnrf_handle_nf_discover(udm_ue, &message);
                     } else {

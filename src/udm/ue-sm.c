@@ -102,7 +102,7 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
                 SWITCH(message->h.resource.component[2])
                 CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
-                    ogs_timer_stop(udm_ue->sbi_client_wait.timer);
+                    ogs_timer_stop(udm_ue->sbi.client_wait_timer);
 
                     if (message->res_status != OGS_SBI_HTTP_STATUS_OK &&
                         message->res_status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {

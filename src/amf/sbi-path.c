@@ -207,11 +207,13 @@ int amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue);
 
+    amf_ue->sbi.discover_handler = amf_nausf_auth_send_authenticate;
+
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(
                             amf_ue, OpenAPI_nf_type_AUSF);
 
     if (!nf_instance) return OGS_RETRY;
 
-    return amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
+    return (*amf_ue->sbi.discover_handler)(amf_ue, nf_instance);
 }

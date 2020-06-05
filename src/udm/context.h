@@ -56,8 +56,10 @@ struct udm_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-        char *component1;
-    } state;
+        void (*discover_handler)(
+            udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
+        ogs_timer_t *client_wait_timer;
+    } sbi;
 
     char *ctx_id;
     char *suci;
@@ -68,10 +70,6 @@ struct udm_ue_s {
     OpenAPI_auth_type_e auth_type;
     int auth_success;
     char *auth_timestamp;
-
-    struct {
-        ogs_timer_t *timer;
-    } sbi_client_wait;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

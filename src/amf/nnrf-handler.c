@@ -299,25 +299,21 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
         }
     }
 
-    if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_authentication)) {
-        nf_instance = OGS_SBI_NF_INSTANCE_GET(
-                amf_ue->nf_types, OpenAPI_nf_type_AUSF);
-        if (!nf_instance) {
-            ogs_error("[%s] (NF discover) No AUSF", amf_ue->suci);
+    nf_instance = OGS_SBI_NF_INSTANCE_GET(
+            amf_ue->nf_types, OpenAPI_nf_type_AUSF);
+    if (!nf_instance) {
+        ogs_error("[%s] (NF discover) No AUSF", amf_ue->suci);
+        nas_5gs_send_nas_reject(
+                amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        amf_ue_remove(amf_ue);
+    } else {
+        ogs_assert(amf_ue->sbi.discover_handler);
+        rv = (*amf_ue->sbi.discover_handler)(amf_ue, nf_instance);
+        if (rv != OGS_OK) {
+            ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
             nas_5gs_send_nas_reject(
                     amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
             amf_ue_remove(amf_ue);
-        } else {
-            rv = amf_nausf_auth_send_authenticate(amf_ue, nf_instance);
-            if (rv != OGS_OK) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-                nas_5gs_send_nas_reject(
-                        amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-                amf_ue_remove(amf_ue);
-            }
         }
-    } else {
-        ogs_fatal("Should implement other case");
-        ogs_assert_if_reached();
     }
 }
