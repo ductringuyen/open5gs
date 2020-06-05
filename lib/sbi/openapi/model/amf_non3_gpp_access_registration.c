@@ -16,7 +16,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
     char *amf_service_name_pcscf_rest,
     OpenAPI_guami_t *guami,
     OpenAPI_list_t *backup_amf_info,
-    OpenAPI_rat_type_t *rat_type,
+    OpenAPI_rat_type_e rat_type,
     int urrp_indicator,
     char *amf_ee_subscription_id,
     char *nid,
@@ -72,7 +72,6 @@ void OpenAPI_amf_non3_gpp_access_registration_free(OpenAPI_amf_non3_gpp_access_r
         OpenAPI_backup_amf_info_free(node->data);
     }
     OpenAPI_list_free(amf_non3_gpp_access_registration->backup_amf_info);
-    OpenAPI_rat_type_free(amf_non3_gpp_access_registration->rat_type);
     ogs_free(amf_non3_gpp_access_registration->amf_ee_subscription_id);
     ogs_free(amf_non3_gpp_access_registration->nid);
     ogs_free(amf_non3_gpp_access_registration->registration_time);
@@ -206,13 +205,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_convertToJSON(OpenAPI_amf_non3_g
         ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [rat_type]");
         goto end;
     }
-    cJSON *rat_type_local_JSON = OpenAPI_rat_type_convertToJSON(amf_non3_gpp_access_registration->rat_type);
-    if (rat_type_local_JSON == NULL) {
-        ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [rat_type]");
-        goto end;
-    }
-    cJSON_AddItemToObject(item, "ratType", rat_type_local_JSON);
-    if (item->child == NULL) {
+    if (cJSON_AddStringToObject(item, "ratType", OpenAPI_rat_type_ToString(amf_non3_gpp_access_registration->rat_type)) == NULL) {
         ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [rat_type]");
         goto end;
     }
@@ -400,9 +393,13 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
         goto end;
     }
 
-    OpenAPI_rat_type_t *rat_type_local_nonprim = NULL;
+    OpenAPI_rat_type_e rat_typeVariable;
 
-    rat_type_local_nonprim = OpenAPI_rat_type_parseFromJSON(rat_type);
+    if (!cJSON_IsString(rat_type)) {
+        ogs_error("OpenAPI_amf_non3_gpp_access_registration_parseFromJSON() failed [rat_type]");
+        goto end;
+    }
+    rat_typeVariable = OpenAPI_rat_type_FromString(rat_type->valuestring);
 
     cJSON *urrp_indicator = cJSON_GetObjectItemCaseSensitive(amf_non3_gpp_access_registrationJSON, "urrpIndicator");
 
@@ -479,7 +476,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
         amf_service_name_pcscf_rest ? ogs_strdup(amf_service_name_pcscf_rest->valuestring) : NULL,
         guami_local_nonprim,
         backup_amf_info ? backup_amf_infoList : NULL,
-        rat_type_local_nonprim,
+        rat_typeVariable,
         urrp_indicator ? urrp_indicator->valueint : 0,
         amf_ee_subscription_id ? ogs_strdup(amf_ee_subscription_id->valuestring) : NULL,
         nid ? ogs_strdup(nid->valuestring) : NULL,

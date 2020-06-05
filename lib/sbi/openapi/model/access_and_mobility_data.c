@@ -80,9 +80,6 @@ void OpenAPI_access_and_mobility_data_free(OpenAPI_access_and_mobility_data_t *a
     ogs_free(access_and_mobility_data->roaming_status_ts);
     OpenAPI_plmn_id_free(access_and_mobility_data->current_plmn);
     ogs_free(access_and_mobility_data->current_plmn_ts);
-    OpenAPI_list_for_each(access_and_mobility_data->rat_type, node) {
-        OpenAPI_rat_type_free(node->data);
-    }
     OpenAPI_list_free(access_and_mobility_data->rat_type);
     ogs_free(access_and_mobility_data->rat_types_ts);
     ogs_free(access_and_mobility_data);
@@ -268,21 +265,16 @@ cJSON *OpenAPI_access_and_mobility_data_convertToJSON(OpenAPI_access_and_mobilit
     }
 
     if (access_and_mobility_data->rat_type) {
-        cJSON *rat_typeList = cJSON_AddArrayToObject(item, "ratType");
-        if (rat_typeList == NULL) {
+        cJSON *rat_type = cJSON_AddArrayToObject(item, "ratType");
+        if (rat_type == NULL) {
             ogs_error("OpenAPI_access_and_mobility_data_convertToJSON() failed [rat_type]");
             goto end;
         }
-
         OpenAPI_lnode_t *rat_type_node;
-        if (access_and_mobility_data->rat_type) {
-            OpenAPI_list_for_each(access_and_mobility_data->rat_type, rat_type_node) {
-                cJSON *itemLocal = OpenAPI_rat_type_convertToJSON(rat_type_node->data);
-                if (itemLocal == NULL) {
-                    ogs_error("OpenAPI_access_and_mobility_data_convertToJSON() failed [rat_type]");
-                    goto end;
-                }
-                cJSON_AddItemToArray(rat_typeList, itemLocal);
+        OpenAPI_list_for_each(access_and_mobility_data->rat_type, rat_type_node) {
+            if (cJSON_AddStringToObject(rat_type, "", OpenAPI_rat_type_ToString((OpenAPI_rat_type_e)rat_type_node->data)) == NULL) {
+                ogs_error("OpenAPI_access_and_mobility_data_convertToJSON() failed [rat_type]");
+                goto end;
             }
         }
     }
@@ -489,13 +481,12 @@ OpenAPI_access_and_mobility_data_t *OpenAPI_access_and_mobility_data_parseFromJS
         rat_typeList = OpenAPI_list_create();
 
         cJSON_ArrayForEach(rat_type_local_nonprimitive, rat_type ) {
-            if (!cJSON_IsObject(rat_type_local_nonprimitive)) {
+            if (!cJSON_IsString(rat_type_local_nonprimitive)) {
                 ogs_error("OpenAPI_access_and_mobility_data_parseFromJSON() failed [rat_type]");
                 goto end;
             }
-            OpenAPI_rat_type_t *rat_typeItem = OpenAPI_rat_type_parseFromJSON(rat_type_local_nonprimitive);
 
-            OpenAPI_list_add(rat_typeList, rat_typeItem);
+            OpenAPI_list_add(rat_typeList, (void *)OpenAPI_rat_type_FromString(rat_type_local_nonprimitive->valuestring));
         }
     }
 

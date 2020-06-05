@@ -34,7 +34,7 @@ typedef struct OpenAPI_amf_non3_gpp_access_registration_s {
     char *amf_service_name_pcscf_rest;
     struct OpenAPI_guami_s *guami;
     OpenAPI_list_t *backup_amf_info;
-    struct OpenAPI_rat_type_s *rat_type;
+    OpenAPI_rat_type_e rat_type;
     int urrp_indicator;
     char *amf_ee_subscription_id;
     char *nid;
@@ -56,7 +56,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
     char *amf_service_name_pcscf_rest,
     OpenAPI_guami_t *guami,
     OpenAPI_list_t *backup_amf_info,
-    OpenAPI_rat_type_t *rat_type,
+    OpenAPI_rat_type_e rat_type,
     int urrp_indicator,
     char *amf_ee_subscription_id,
     char *nid,

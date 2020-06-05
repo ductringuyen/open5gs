@@ -20,12 +20,12 @@ extern "C" {
 
 typedef struct OpenAPI_edrx_parameters_s OpenAPI_edrx_parameters_t;
 typedef struct OpenAPI_edrx_parameters_s {
-    struct OpenAPI_rat_type_s *rat_type;
+    OpenAPI_rat_type_e rat_type;
     char *edrx_value;
 } OpenAPI_edrx_parameters_t;
 
 OpenAPI_edrx_parameters_t *OpenAPI_edrx_parameters_create(
-    OpenAPI_rat_type_t *rat_type,
+    OpenAPI_rat_type_e rat_type,
     char *edrx_value
     );
 void OpenAPI_edrx_parameters_free(OpenAPI_edrx_parameters_t *edrx_parameters);

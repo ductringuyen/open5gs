@@ -36,7 +36,7 @@ typedef struct OpenAPI_amf3_gpp_access_registration_s {
     struct OpenAPI_guami_s *guami;
     OpenAPI_list_t *backup_amf_info;
     int dr_flag;
-    struct OpenAPI_rat_type_s *rat_type;
+    OpenAPI_rat_type_e rat_type;
     int urrp_indicator;
     char *amf_ee_subscription_id;
     int ue_srvcc_capability;
@@ -61,7 +61,7 @@ OpenAPI_amf3_gpp_access_registration_t *OpenAPI_amf3_gpp_access_registration_cre
     OpenAPI_guami_t *guami,
     OpenAPI_list_t *backup_amf_info,
     int dr_flag,
-    OpenAPI_rat_type_t *rat_type,
+    OpenAPI_rat_type_e rat_type,
     int urrp_indicator,
     char *amf_ee_subscription_id,
     int ue_srvcc_capability,

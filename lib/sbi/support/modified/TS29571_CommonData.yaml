@@ -711,8 +711,8 @@ components:
         - $ref: '#/components/schemas/AccessType'
         - $ref: '#/components/schemas/NullValue'
     RatType:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - NR
             - EUTRA
@@ -730,7 +730,7 @@ components:
             - TRUSTED_WLAN
             - UTRA
             - GERA
-        - type: string
+          type: string
     RatTypeRm:
       allOf:
         - $ref: '#/components/schemas/RatType'
