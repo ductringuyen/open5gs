@@ -185,7 +185,24 @@ char *ogs_supi_from_suci(char *suci)
     return supi;
 }
 
-char *ogs_ueid_from_supi(char *supi)
+char *ogs_supi_get_type(char *supi)
+{
+    char *saveptr = NULL;
+    char *p, *tmp;
+    char *type = NULL;
+
+    ogs_assert(supi);
+    tmp = ogs_strdup(supi);
+
+    p = strtok_r(tmp, "-", &saveptr);
+    ogs_assert(p);
+    type = ogs_strdup(p);
+
+    ogs_free(tmp);
+    return type;
+}
+
+char *ogs_supi_get_id(char *supi)
 {
     char *saveptr = NULL;
     char *p, *tmp;

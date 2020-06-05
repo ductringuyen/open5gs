@@ -478,7 +478,7 @@ void test_ue_set_mobile_identity(test_ue_t *test_ue,
     test_ue->supi = ogs_supi_from_suci(test_ue->suci);
     if (test_ue->imsi)
         ogs_free(test_ue->imsi);
-    test_ue->imsi = ogs_ueid_from_supi(test_ue->supi);
+    test_ue->imsi = ogs_supi_get_id(test_ue->supi);
 }
 
 void test_ue_remove(test_ue_t *test_ue)

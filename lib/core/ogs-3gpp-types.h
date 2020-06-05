@@ -154,7 +154,8 @@ ogs_amf_id_t *ogs_amf_id_build(ogs_amf_id_t *amf_id,
 /************************************
  * SUPI/SUCI                       */
 char *ogs_supi_from_suci(char *suci);
-char *ogs_ueid_from_supi(char *supi);
+char *ogs_supi_get_type(char *supi);
+char *ogs_supi_get_id(char *supi);
 
 /************************************
  * TAI Structure                    */
