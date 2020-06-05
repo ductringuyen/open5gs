@@ -41,9 +41,7 @@ ogs_pkbuf_t *testgmm_build_registration_request(test_ue_t *test_ue,
             OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_REGISTRATION_REQUEST;
 
-    registration_type->type = 1;
-    registration_type->follow_on_request = 1;
-    registration_type->value = 1;
+    registration_type->data = test_ue->nas.data;
 
     registration_request->mobile_identity.length = mobile_identity->length;
     registration_request->mobile_identity.buffer = mobile_identity->buffer;

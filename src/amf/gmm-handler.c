@@ -83,9 +83,9 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     memcpy(&amf_ue->nas.registration, registration_type,
             sizeof(ogs_nas_5gs_registration_type_t));
     amf_ue->nas.type = OGS_NAS_5GS_REGISTRATION_REQUEST;
-    amf_ue->nas.ksi = registration_type->type;
-    ogs_debug("[%s]    OGS_NAS_5GS TYPE[%d] KSI[%d] REGISTRATION[0x%x]",
-            amf_ue->suci, amf_ue->nas.type, amf_ue->nas.ksi, amf_ue->nas.data);
+    ogs_debug("[%s]    OGS_NAS_5GS TYPE[%d] TSC[%d] KSI[%d] REGISTRATION[0x%x]",
+            amf_ue->suci, amf_ue->nas.type,
+            amf_ue->nas.tsc, amf_ue->nas.ksi, amf_ue->nas.data);
     /*
      * REGISTRATION_REQUEST
      *   Clear EBI generator
@@ -395,8 +395,8 @@ int gmm_handle_deregistration_request(amf_ue_t *amf_ue,
     memcpy(&amf_ue->nas.deregistration, deregistration_type, sizeof(ogs_nas_deregistration_type_t));
     amf_ue->nas.type = AMF_5GS_TYPE_DETACH_REQUEST_FROM_UE;
     amf_ue->nas.ksi = deregistration_type->nas_key_set_identifier;
-    ogs_debug("    OGS_NAS_5GS TYPE[%d] KSI[%d] DETACH[0x%x]",
-            amf_ue->nas.type, amf_ue->nas.ksi, amf_ue->nas.data);
+    ogs_debug("    OGS_NAS_5GS TYPE[%d] TSC[%d] KSI[%d] DETACH[0x%x]",
+        amf_ue->nas.type, amf_ue->nas.tsc, amf_ue->nas.ksi, amf_ue->nas.data);
 
     switch (deregistration_request->deregistration_type.value) {
     /* 0 0 1 : 5GS deregistration */

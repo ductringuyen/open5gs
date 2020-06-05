@@ -194,21 +194,27 @@ struct amf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-#define OGS_NAS_SECURITY_BEARER_3GPP 1
-#define OGS_NAS_SECURITY_BEARER_NON_3GPP 2
-        uint8_t     connection_identifier;
-        uint8_t     type;
-        uint8_t     ksi;
         union {
+            struct {
+            ED3(uint8_t tsc:1;,
+                uint8_t ksi:3;,
+                uint8_t spare:4;)
+            };
             ogs_nas_5gs_registration_type_t registration;
 #if 0
             ogs_5gs_update_type_t update;
             ogs_5gs_service_type_t service;
             ogs_5gs_detach_type_t detach;
 #endif
+
             uint8_t data;
         };
-    } nas;
+
+#define OGS_NAS_SECURITY_BEARER_3GPP 1
+#define OGS_NAS_SECURITY_BEARER_NON_3GPP 2
+        uint8_t     connection_identifier;
+        uint8_t     type;
+    } __attribute__ ((packed)) nas;
 
     /* UE identity */
     char            *suci; /* TS33.501 : SUCI */
@@ -256,6 +262,7 @@ struct amf_ue_s {
         ogs_assert((__aMF)); \
         (__aMF)->security_context_available = 0; \
         (__aMF)->mac_failed = 0; \
+        (__aMF)->nas.tsc = 0; \
         (__aMF)->nas.ksi = 0; \
     } while(0)
     int             security_context_available;

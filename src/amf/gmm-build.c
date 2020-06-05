@@ -188,6 +188,7 @@ ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue)
             OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_AUTHENTICATION_REQUEST;
 
+    authentication_request->ngksi.tsc = amf_ue->nas.tsc;
     authentication_request->ngksi.value = amf_ue->nas.ksi;
     authentication_request->abba.length = amf_ue->abba_len;
     memcpy(authentication_request->abba.value, amf_ue->abba, amf_ue->abba_len);
@@ -256,7 +257,7 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
     selected_nas_security_algorithms->type_of_ciphering_algorithm =
         amf_ue->selected_enc_algorithm;
 
-    ngksi->tsc = 0;
+    ngksi->tsc = amf_ue->nas.tsc;
     ngksi->value = amf_ue->nas.ksi;
 
     replayed_ue_security_capabilities->nea = amf_ue->ue_security_capability.nea;

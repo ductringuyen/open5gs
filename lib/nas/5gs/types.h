@@ -214,9 +214,14 @@ ED3(uint8_t spare:4;,
 #define OGS_NAS_5GS_REGISTRATION_TYPE_PERIODIC_UPDATING 3
 #define OGS_NAS_5GS_REGISTRATION_TYPE_EMERGENCY 4
 typedef struct ogs_nas_5gs_registration_type_s {
-ED3(uint8_t type:4;,
-    uint8_t follow_on_request:1;,
-    uint8_t value:3;)
+    union {
+        struct {
+        ED3(uint8_t type:4;,
+            uint8_t follow_on_request:1;,
+            uint8_t value:3;)
+        };
+        uint8_t data;
+    };
 } ogs_nas_5gs_registration_type_t;
 
 /* 9.11.3.8 5GS tracking area identity

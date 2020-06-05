@@ -145,6 +145,10 @@ static void test1_func(abts_case *tc, void *data)
     /* Setup Test UE Context */
     memset(&test_ue, 0, sizeof(test_ue));
 
+    test_ue.nas.registration.type = 1; /* TSC[0], KSI[1] */
+    test_ue.nas.registration.follow_on_request = 1;
+    test_ue.nas.registration.value = 1; /* Initial Registration */
+
     memset(&mobile_identity_imsi, 0, sizeof(mobile_identity_imsi));
     mobile_identity.length = 12;
     mobile_identity.buffer = &mobile_identity_imsi;
