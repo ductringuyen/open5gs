@@ -30,15 +30,13 @@ bool udr_nudr_dr_handle_subscription_authentication(
     ogs_sbi_response_t *response = NULL;
     ogs_dbi_auth_info_t auth_info;
 
-    const char *id_type = NULL;
-    const char *ue_id = NULL;
-
     char k_string[OGS_KEYSTRLEN(OGS_KEY_LEN)];
     char opc_string[OGS_KEYSTRLEN(OGS_KEY_LEN)];
     char amf_string[OGS_KEYSTRLEN(OGS_AMF_LEN)];
     char sqn_string[OGS_KEYSTRLEN(OGS_SQN_LEN)];
 
     char sqn[OGS_SQN_LEN];
+    char *supi = NULL;
 
     OpenAPI_authentication_subscription_t AuthenticationSubscription;
     OpenAPI_sequence_number_t SequenceNumber;
@@ -47,31 +45,27 @@ bool udr_nudr_dr_handle_subscription_authentication(
     ogs_assert(session);
     ogs_assert(recvmsg);
 
-    if (!recvmsg->h.resource.component[1]) {
-        ogs_error("No ueId");
+    supi = recvmsg->h.resource.component[1];
+    if (!supi) {
+        ogs_error("No SUPI");
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No ueId", NULL);
+                recvmsg, "No SUPI", NULL);
         return false;
     }
 
-    if (strncmp(recvmsg->h.resource.component[1],
-            OGS_DBI_UE_ID_TYPE_IMSI, strlen(OGS_DBI_UE_ID_TYPE_IMSI)) == 0) {
-        id_type = OGS_DBI_UE_ID_TYPE_IMSI;
-        ue_id = recvmsg->h.resource.component[1] +
-            strlen(OGS_DBI_UE_ID_TYPE_IMSI) + 1;
-    } else {
-        ogs_error("Unknown ueId Type");
+    if (strncmp(supi,
+            OGS_DBI_SUPI_TYPE_IMSI, strlen(OGS_DBI_SUPI_TYPE_IMSI)) != 0) {
+        ogs_error("[%s] Unknown SUPI Type", supi);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                recvmsg, "Unknwon ueId Type", NULL);
+                recvmsg, "Unknwon SUPI Type", supi);
         return false;
     }
 
-    rv = ogs_dbi_auth_info(id_type, ue_id, &auth_info);
+    rv = ogs_dbi_auth_info(supi, &auth_info);
     if (rv != OGS_OK) {
-        ogs_fatal("Cannot find IMSI in DB : %s-%s", id_type, ue_id);
-        ogs_sbi_server_send_error(session,
-                OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                recvmsg, "Unknwon ueId Type", ue_id);
+        ogs_fatal("[%s] Cannot find SUPI in DB", supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                recvmsg, "Cannot find SUPI Type", supi);
         return false;
     }
 
@@ -135,20 +129,20 @@ bool udr_nudr_dr_handle_subscription_authentication(
         CASE(OGS_SBI_HTTP_METHOD_PUT)
             AuthEvent = recvmsg->AuthEvent;
             if (!AuthEvent) {
-                ogs_error("[%s-%s] No AuthEvent", id_type, ue_id);
+                ogs_error("[%s] No AuthEvent", supi);
                 ogs_sbi_server_send_error(
                         session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                        recvmsg, "No AuthEvent", ue_id);
+                        recvmsg, "No AuthEvent", supi);
                 return false;
             }
 
             memset(&sendmsg, 0, sizeof(sendmsg));
-            rv = ogs_dbi_increment_sqn(id_type, ue_id);
+            rv = ogs_dbi_increment_sqn(supi);
             if (rv != OGS_OK) {
-                ogs_fatal("Cannot increment SQN : %s-%s", id_type, ue_id);
+                ogs_fatal("[%s] Cannot increment SQN", supi);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                        recvmsg, "Cannot increment SQN", ue_id);
+                        recvmsg, "Cannot increment SQN", supi);
                 return false;
             }
 
