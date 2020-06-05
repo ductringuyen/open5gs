@@ -171,7 +171,6 @@ static void test1_func(abts_case *tc, void *data)
     test_ue_set_mobile_identity(&test_ue, &mobile_identity);
 
     test_ue.abba_len = 2;
-    test_ue.nas.connection_identifier = OGS_NAS_SECURITY_BEARER_3GPP;
 
     OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
     OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);

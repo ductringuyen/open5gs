@@ -1117,9 +1117,6 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
-    /* Initialize NAS Context */
-    amf_ue->nas.connection_identifier = OGS_NAS_SECURITY_BEARER_3GPP;
-
     /* Initialize Abba */
     amf_ue->abba_len = 2;
 
