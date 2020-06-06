@@ -172,3 +172,113 @@ bool udr_nudr_dr_handle_subscription_authentication(
 
     return false;
 }
+
+bool udr_nudr_dr_handle_subscription_context(
+        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+{
+    int rv;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_response_t *response = NULL;
+
+    char *supi = NULL;
+
+    ogs_assert(session);
+    ogs_assert(recvmsg);
+
+    supi = recvmsg->h.resource.component[1];
+    if (!supi) {
+        ogs_error("No SUPI");
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No SUPI", NULL);
+        return false;
+    }
+
+    if (strncmp(supi,
+            OGS_DBI_SUPI_TYPE_IMSI, strlen(OGS_DBI_SUPI_TYPE_IMSI)) != 0) {
+        ogs_error("[%s] Unknown SUPI Type", supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_FORBIDDEN,
+                recvmsg, "Unknwon SUPI Type", supi);
+        return false;
+    }
+
+#if 0
+    rv = ogs_dbi_auth_info(supi, &auth_info);
+    if (rv != OGS_OK) {
+        ogs_fatal("[%s] Cannot find SUPI in DB", supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                recvmsg, "Cannot find SUPI Type", supi);
+        return false;
+    }
+#endif
+
+    SWITCH(recvmsg->h.resource.component[3])
+    CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
+        SWITCH(recvmsg->h.method)
+        CASE(OGS_SBI_HTTP_METHOD_PUT)
+
+            ogs_fatal("asdfkljaskldfasdf");
+#if 0
+            memset(&AuthenticationSubscription, 0,
+                    sizeof(AuthenticationSubscription));
+
+            AuthenticationSubscription.authentication_method =
+                OpenAPI_auth_method_5G_AKA;
+
+            ogs_hex_to_ascii(auth_info.k, sizeof(auth_info.k),
+                    k_string, sizeof(k_string));
+            AuthenticationSubscription.enc_permanent_key = k_string;
+
+            ogs_hex_to_ascii(auth_info.amf, sizeof(auth_info.amf),
+                    amf_string, sizeof(amf_string));
+            AuthenticationSubscription.authentication_management_field =
+                    amf_string;
+
+            if (!auth_info.use_opc)
+                milenage_opc(auth_info.k, auth_info.op, auth_info.opc);
+
+            ogs_hex_to_ascii(auth_info.opc, sizeof(auth_info.opc),
+                    opc_string, sizeof(opc_string));
+            AuthenticationSubscription.enc_opc_key = opc_string;
+
+            ogs_uint64_to_buffer(auth_info.sqn, OGS_SQN_LEN, sqn);
+            ogs_hex_to_ascii(sqn, sizeof(sqn), sqn_string, sizeof(sqn_string));
+
+            memset(&SequenceNumber, 0, sizeof(SequenceNumber));
+            SequenceNumber.sqn_scheme = OpenAPI_sqn_scheme_NON_TIME_BASED;
+            SequenceNumber.sqn = sqn_string;
+            AuthenticationSubscription.sequence_number = &SequenceNumber;
+
+            memset(&sendmsg, 0, sizeof(sendmsg));
+
+            ogs_assert(AuthenticationSubscription.authentication_method);
+            sendmsg.AuthenticationSubscription =
+                &AuthenticationSubscription;
+
+            response = ogs_sbi_build_response(
+                    &sendmsg, OGS_SBI_HTTP_STATUS_OK);
+            ogs_assert(response);
+            ogs_sbi_server_send_response(session, response);
+#endif
+
+            return true;
+
+        DEFAULT
+            ogs_error("Invalid HTTP method [%s]", recvmsg->h.method);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                    recvmsg, "Invalid HTTP method", recvmsg->h.method);
+        END
+        break;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[3]);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                recvmsg, "Unknown resource name",
+                recvmsg->h.resource.component[3]);
+    END
+
+    return false;
+}

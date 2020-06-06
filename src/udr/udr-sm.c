@@ -127,6 +127,10 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                             session, &message);
                     break;
 
+                CASE(OGS_SBI_RESOURCE_NAME_CONTEXT_DATA)
+                    udr_nudr_dr_handle_subscription_context(session, &message);
+                    break;
+
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
                             message.h.resource.component[2]);
