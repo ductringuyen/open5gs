@@ -29,6 +29,8 @@ bool udm_nudr_dr_handle_subscription_authentication(
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
+    cJSON *item = NULL;
+
     const char *tmp = "de8ca9df474091fe4e9263c5daa907e9"; /* For test */
     uint8_t k[OGS_KEY_LEN];
     uint8_t opc[OGS_KEY_LEN];
@@ -52,7 +54,6 @@ bool udm_nudr_dr_handle_subscription_authentication(
     OpenAPI_authentication_subscription_t *AuthenticationSubscription = NULL;
     OpenAPI_authentication_info_result_t AuthenticationInfoResult;
     OpenAPI_authentication_vector_t AuthenticationVector;
-    OpenAPI_auth_event_t *AuthEvent = NULL;
 
     ogs_assert(udm_ue);
     session = udm_ue->session;
@@ -211,16 +212,12 @@ bool udm_nudr_dr_handle_subscription_authentication(
 
         memset(&sendmsg, 0, sizeof(sendmsg));
 
-        AuthEvent = ogs_calloc(1, sizeof(*AuthEvent));
-        ogs_assert(AuthEvent);
-
-        AuthEvent->nf_instance_id = udm_ue->ausf_instance_id;
-        AuthEvent->success = udm_ue->auth_success;
-        AuthEvent->auth_type = udm_ue->auth_type;
-        AuthEvent->serving_network_name = udm_ue->serving_network_name;
-        AuthEvent->time_stamp = udm_ue->auth_timestamp;
-
-        sendmsg.AuthEvent = AuthEvent;
+        ogs_assert(udm_ue->auth_event);
+        item = cJSON_Parse(udm_ue->auth_event);
+        if (item) {
+            sendmsg.AuthEvent = OpenAPI_auth_event_parseFromJSON(item);
+            cJSON_Delete(item);
+        }
 
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
@@ -237,8 +234,9 @@ bool udm_nudr_dr_handle_subscription_authentication(
         ogs_assert(response);
         ogs_sbi_server_send_response(session, response);
 
-        ogs_free(AuthEvent);
         ogs_free(sendmsg.http.location);
+        if (sendmsg.AuthEvent)
+            OpenAPI_auth_event_free(sendmsg.AuthEvent);
 
         return true;
 

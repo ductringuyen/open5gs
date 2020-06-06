@@ -92,6 +92,8 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
         return false;
     }
 
+    if (udm_ue->auth_event)
+        ogs_free(udm_ue->auth_event);
     udm_ue->auth_event = ogs_sbi_build_content(message);
     ogs_assert(udm_ue->auth_event);
 
@@ -102,10 +104,6 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
                 message, "No timeStamp", udm_ue->suci);
         return false;
     }
-
-    udm_ue->auth_success = AuthEvent->success;
-    udm_ue->auth_timestamp = ogs_strdup(timestamp);
-    ogs_assert(udm_ue->auth_timestamp);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
             udm_nudr_dr_send_update_authentication_data);
@@ -134,6 +132,8 @@ bool udm_nudm_uecm_handle_registration(
         return false;
     }
 
+    if (udm_ue->amf_3gpp_access_registration)
+        ogs_free(udm_ue->amf_3gpp_access_registration);
     udm_ue->amf_3gpp_access_registration = ogs_sbi_build_content(message);
     ogs_assert(udm_ue->amf_3gpp_access_registration);
 
