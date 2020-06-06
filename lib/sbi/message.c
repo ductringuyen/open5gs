@@ -36,6 +36,25 @@ void ogs_sbi_message_final(void)
     ogs_pool_final(&response_pool);
 }
 
+void ogs_sbi_message_copy(ogs_sbi_message_t *dst, ogs_sbi_message_t *src)
+{
+    char *content = NULL;
+
+    ogs_assert(src);
+    ogs_assert(dst);
+
+    memcpy(dst, src, sizeof(ogs_sbi_message_t));
+
+    content = ogs_sbi_build_content(src);
+    if (content == NULL) {
+        ogs_error("ogs_sbi_build_content() failed");
+        return;
+    }
+
+    ogs_sbi_parse_content(dst, content);
+    ogs_free(content);
+}
+
 void ogs_sbi_message_free(ogs_sbi_message_t *message)
 {
     ogs_assert(message);

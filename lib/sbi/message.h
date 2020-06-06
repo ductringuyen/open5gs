@@ -191,6 +191,7 @@ typedef struct ogs_sbi_message_s {
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool);
 void ogs_sbi_message_final(void);
 
+void ogs_sbi_message_copy(ogs_sbi_message_t *dst, ogs_sbi_message_t *src);
 void ogs_sbi_message_free(ogs_sbi_message_t *message);
 
 ogs_sbi_request_t *ogs_sbi_request_new(void);
