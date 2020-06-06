@@ -910,20 +910,25 @@ ogs_sbi_client_t *ogs_sbi_client_find_by_service_name(
         ogs_sbi_nf_instance_t *nf_instance, char *name, char *version)
 {
     ogs_sbi_nf_service_t *nf_service = NULL;
+    int i;
 
     ogs_assert(nf_instance);
     ogs_assert(name);
+    ogs_assert(version);
 
     ogs_list_for_each(&nf_instance->nf_service_list, nf_service) {
         ogs_assert(nf_service->name);
-        if (strcmp(nf_service->name, name) == 0)
-            break;
+        if (strcmp(nf_service->name, name) == 0) {
+            for (i = 0; i < nf_service->num_of_version; i++) {
+                if (strcmp(nf_service->versions[i].in_uri, version) == 0) {
+                    return nf_service->client;
+                }
+            }
+        }
     }
 
-    if (nf_service)
-        return nf_service->client;
-    else
-        return nf_instance->client;
+    ogs_error("[Fallback] Cannot find NF service[%s:%s]", name, version);
+    return nf_instance->client;
 }
 
 ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find_by_nf_type(
