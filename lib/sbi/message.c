@@ -178,8 +178,6 @@ static void http_message_free(http_message_t *http)
     if (http->content) ogs_free(http->content);
 }
 
-static char *build_content(ogs_sbi_message_t *message);
-
 ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 {
     ogs_sbi_request_t *request = NULL;
@@ -233,7 +231,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     /* HTTP Message */
-    request->http.content = build_content(message);
+    request->http.content = ogs_sbi_build_content(message);
     if (request->http.content) {
         if (message->http.content_type)
             ogs_sbi_header_set(request->http.headers,
@@ -280,7 +278,7 @@ ogs_sbi_response_t *ogs_sbi_build_response(
 
     /* HTTP Message */
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
-        response->http.content = build_content(message);
+        response->http.content = ogs_sbi_build_content(message);
         if (response->http.content) {
             if (message->http.content_type)
                 ogs_sbi_header_set(response->http.headers,
@@ -302,7 +300,96 @@ ogs_sbi_response_t *ogs_sbi_build_response(
     return response;
 }
 
-static char *build_content(ogs_sbi_message_t *message)
+static int parse_sbi_header(
+        ogs_sbi_message_t *message, ogs_sbi_header_t *header);
+
+int ogs_sbi_parse_request(
+        ogs_sbi_message_t *message, ogs_sbi_request_t *request)
+{
+    int rv;
+    ogs_hash_index_t *hi;
+
+    ogs_assert(request);
+    ogs_assert(message);
+
+    rv = parse_sbi_header(message, &request->h);
+    if (rv != OGS_OK) {
+        ogs_error("sbi_parse_header() failed");
+        return OGS_ERROR;
+    }
+
+    for (hi = ogs_hash_first(request->http.params);
+            hi; hi = ogs_hash_next(hi)) {
+        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_PARAM_NF_TYPE)) {
+            message->param.nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_TARGET_NF_TYPE)) {
+            message->param.target_nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_REQUESTER_NF_TYPE)) {
+            message->param.requester_nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_LIMIT)) {
+            message->param.limit = atoi(ogs_hash_this_val(hi));
+        }
+    }
+
+    for (hi = ogs_hash_first(request->http.headers);
+            hi; hi = ogs_hash_next(hi)) {
+        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_ACCEPT_ENCODING)) {
+            message->http.content_encoding = ogs_hash_this_val(hi);
+        } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE)) {
+            message->http.content_type = ogs_hash_this_val(hi);
+        } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_ACCEPT)) {
+            message->http.accept = ogs_hash_this_val(hi);
+        }
+    }
+
+    if (ogs_sbi_parse_content(message, request->http.content) != OGS_OK) {
+        ogs_error("ogs_sbi_parse_content() failed");
+        return OGS_ERROR;
+    }
+
+    return OGS_OK;
+}
+
+int ogs_sbi_parse_response(
+        ogs_sbi_message_t *message, ogs_sbi_response_t *response)
+{
+    int rv;
+    ogs_hash_index_t *hi;
+
+    ogs_assert(response);
+    ogs_assert(message);
+
+    rv = parse_sbi_header(message, &response->h);
+    if (rv != OGS_OK) {
+        ogs_error("sbi_parse_header() failed");
+        return OGS_ERROR;
+    }
+
+    for (hi = ogs_hash_first(response->http.headers);
+            hi; hi = ogs_hash_next(hi)) {
+        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE))
+            message->http.content_type = ogs_hash_this_val(hi);
+        else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_LOCATION))
+            message->http.location = ogs_hash_this_val(hi);
+    }
+
+    message->res_status = response->status;
+
+    if (ogs_sbi_parse_content(message, response->http.content) != OGS_OK) {
+        ogs_error("ogs_sbi_parse_content() failed");
+        return OGS_ERROR;
+    }
+
+    return OGS_OK;
+}
+
+char *ogs_sbi_build_content(ogs_sbi_message_t *message)
 {
     char *content = NULL;
     cJSON *item = NULL;
@@ -385,160 +472,7 @@ static char *build_content(ogs_sbi_message_t *message)
     return content;
 }
 
-static int parse_sbi_header(
-        ogs_sbi_message_t *message, ogs_sbi_header_t *header);
-static int parse_content(ogs_sbi_message_t *message, char *content);
-
-int ogs_sbi_parse_request(
-        ogs_sbi_message_t *message, ogs_sbi_request_t *request)
-{
-    int rv;
-    ogs_hash_index_t *hi;
-
-    ogs_assert(request);
-    ogs_assert(message);
-
-    rv = parse_sbi_header(message, &request->h);
-    if (rv != OGS_OK) {
-        ogs_error("sbi_parse_header() failed");
-        return OGS_ERROR;
-    }
-
-    for (hi = ogs_hash_first(request->http.params);
-            hi; hi = ogs_hash_next(hi)) {
-        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_PARAM_NF_TYPE)) {
-            message->param.nf_type =
-                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
-        } else if (!strcmp(ogs_hash_this_key(hi),
-                    OGS_SBI_PARAM_TARGET_NF_TYPE)) {
-            message->param.target_nf_type =
-                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
-        } else if (!strcmp(ogs_hash_this_key(hi),
-                    OGS_SBI_PARAM_REQUESTER_NF_TYPE)) {
-            message->param.requester_nf_type =
-                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
-        } else if (!strcmp(ogs_hash_this_key(hi),
-                    OGS_SBI_PARAM_LIMIT)) {
-            message->param.limit = atoi(ogs_hash_this_val(hi));
-        }
-    }
-
-    for (hi = ogs_hash_first(request->http.headers);
-            hi; hi = ogs_hash_next(hi)) {
-        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_ACCEPT_ENCODING)) {
-            message->http.content_encoding = ogs_hash_this_val(hi);
-        } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE)) {
-            message->http.content_type = ogs_hash_this_val(hi);
-        } else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_ACCEPT)) {
-            message->http.accept = ogs_hash_this_val(hi);
-        }
-    }
-
-    if (parse_content(message, request->http.content) != OGS_OK) {
-        ogs_error("parse_content() failed");
-        return OGS_ERROR;
-    }
-
-    return OGS_OK;
-}
-
-int ogs_sbi_parse_response(
-        ogs_sbi_message_t *message, ogs_sbi_response_t *response)
-{
-    int rv;
-    ogs_hash_index_t *hi;
-
-    ogs_assert(response);
-    ogs_assert(message);
-
-    rv = parse_sbi_header(message, &response->h);
-    if (rv != OGS_OK) {
-        ogs_error("sbi_parse_header() failed");
-        return OGS_ERROR;
-    }
-
-    for (hi = ogs_hash_first(response->http.headers);
-            hi; hi = ogs_hash_next(hi)) {
-        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_CONTENT_TYPE))
-            message->http.content_type = ogs_hash_this_val(hi);
-        else if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_LOCATION))
-            message->http.location = ogs_hash_this_val(hi);
-    }
-
-    message->res_status = response->status;
-
-    if (parse_content(message, response->http.content) != OGS_OK) {
-        ogs_error("parse_content() failed");
-        return OGS_ERROR;
-    }
-
-    return OGS_OK;
-}
-
-static int parse_sbi_header(
-        ogs_sbi_message_t *message, ogs_sbi_header_t *header)
-{
-    struct yuarel yuarel;
-    char *saveptr = NULL;
-    char *url = NULL, *p = NULL;;
-
-    char *component = NULL;
-    int i = 0;
-
-    ogs_assert(message);
-    ogs_assert(header);
-
-    memset(message, 0, sizeof(*message));
-
-    message->h.method = header->method;
-    ogs_assert(message->h.method);
-    message->h.url = header->url;
-    ogs_assert(message->h.url);
-
-    url = ogs_strdup(header->url);
-    ogs_assert(url);
-    p = url;
-
-    if (p[0] != '/') {
-        int rv = yuarel_parse(&yuarel, p);
-        if (rv != OGS_OK) {
-            ogs_error("yuarel_parse() failed");
-            ogs_free(url);
-            return OGS_ERROR;
-        }
-
-        p = yuarel.path;
-    }
-
-    header->service.name = ogs_sbi_parse_url(p, "/", &saveptr);
-    if (!header->service.name) {
-        ogs_error("ogs_sbi_parse_url() failed");
-        ogs_free(url);
-        return OGS_ERROR;
-    }
-    message->h.service.name = header->service.name;
-
-    header->api.version = ogs_sbi_parse_url(NULL, "/", &saveptr);
-    if (!header->api.version) {
-        ogs_error("ogs_sbi_parse_url() failed");
-        ogs_free(url);
-        return OGS_ERROR;
-    }
-    message->h.api.version = header->api.version;
-
-    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
-            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL;
-         i++) {
-        header->resource.component[i] = component;
-        message->h.resource.component[i] = component;
-    }
-
-    ogs_free(url);
-
-    return OGS_OK;
-}
-
-static int parse_content(ogs_sbi_message_t *message, char *content)
+int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
 {
     int rv = OGS_OK;
     cJSON *item = NULL;
@@ -822,6 +756,69 @@ cleanup:
 
     cJSON_Delete(item);
     return rv;
+}
+
+static int parse_sbi_header(
+        ogs_sbi_message_t *message, ogs_sbi_header_t *header)
+{
+    struct yuarel yuarel;
+    char *saveptr = NULL;
+    char *url = NULL, *p = NULL;;
+
+    char *component = NULL;
+    int i = 0;
+
+    ogs_assert(message);
+    ogs_assert(header);
+
+    memset(message, 0, sizeof(*message));
+
+    message->h.method = header->method;
+    ogs_assert(message->h.method);
+    message->h.url = header->url;
+    ogs_assert(message->h.url);
+
+    url = ogs_strdup(header->url);
+    ogs_assert(url);
+    p = url;
+
+    if (p[0] != '/') {
+        int rv = yuarel_parse(&yuarel, p);
+        if (rv != OGS_OK) {
+            ogs_error("yuarel_parse() failed");
+            ogs_free(url);
+            return OGS_ERROR;
+        }
+
+        p = yuarel.path;
+    }
+
+    header->service.name = ogs_sbi_parse_url(p, "/", &saveptr);
+    if (!header->service.name) {
+        ogs_error("ogs_sbi_parse_url() failed");
+        ogs_free(url);
+        return OGS_ERROR;
+    }
+    message->h.service.name = header->service.name;
+
+    header->api.version = ogs_sbi_parse_url(NULL, "/", &saveptr);
+    if (!header->api.version) {
+        ogs_error("ogs_sbi_parse_url() failed");
+        ogs_free(url);
+        return OGS_ERROR;
+    }
+    message->h.api.version = header->api.version;
+
+    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL;
+         i++) {
+        header->resource.component[i] = component;
+        message->h.resource.component[i] = component;
+    }
+
+    ogs_free(url);
+
+    return OGS_OK;
 }
 
 void ogs_sbi_header_set(ogs_hash_t *ht, const void *key, const void *val)
