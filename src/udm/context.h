@@ -56,8 +56,11 @@ struct udm_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-        void (*discover_handler)(
-            udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
+        struct {
+            OpenAPI_nf_type_e nf_type;
+            void (*handler)(
+                udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
+        } discover;
         ogs_timer_t *client_wait_timer;
     } sbi;
 

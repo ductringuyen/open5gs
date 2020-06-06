@@ -169,14 +169,15 @@ void udm_sbi_discover_and_send(
 
     ogs_assert(udm_ue);
 
-    udm_ue->sbi.discover_handler = discover_handler;
+    udm_ue->sbi.discover.nf_type = nf_type;
+    udm_ue->sbi.discover.handler = discover_handler;
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(udm_ue, nf_type);
 
     if (!nf_instance) return;
 
-    return (*udm_ue->sbi.discover_handler)(udm_ue, nf_instance);
+    return (*udm_ue->sbi.discover.handler)(udm_ue, nf_instance);
 }
 
 void udm_nudr_dr_send_query(

@@ -169,14 +169,15 @@ void ausf_sbi_discover_and_send(
 
     ogs_assert(ausf_ue);
 
-    ausf_ue->sbi.discover_handler = discover_handler;
+    ausf_ue->sbi.discover.nf_type = nf_type;
+    ausf_ue->sbi.discover.handler = discover_handler;
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(ausf_ue, nf_type);
 
     if (!nf_instance) return;
 
-    (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
+    (*ausf_ue->sbi.discover.handler)(ausf_ue, nf_instance);
 }
 
 void ausf_nudm_ueau_send_get(
