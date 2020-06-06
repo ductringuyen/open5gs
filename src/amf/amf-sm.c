@@ -104,7 +104,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 
-        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_VERSION) != 0) {
+        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_V1) != 0) {
             ogs_error("Not supported version [%s]", sbi_message.h.api.version);
             ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     &sbi_message, "Not supported version", NULL);
@@ -194,7 +194,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 
-        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_VERSION) != 0) {
+        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_V1) != 0) {
             ogs_error("Not supported version [%s]", sbi_message.h.api.version);
             ogs_sbi_message_free(&sbi_message);
             ogs_sbi_response_free(sbi_response);

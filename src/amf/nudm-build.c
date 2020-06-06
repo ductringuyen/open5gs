@@ -38,7 +38,7 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
-    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.api.version = (char *)OGS_SBI_API_V1;
     message.h.resource.component[0] = amf_ue->supi;
     message.h.resource.component[1] =
             (char *)OGS_SBI_RESOURCE_NAME_REGISTRATIONS;
@@ -61,7 +61,7 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
 
     memset(&header, 0, sizeof(header));
     header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
-    header.api.version = (char *)OGS_SBI_API_VERSION;
+    header.api.version = (char *)OGS_SBI_API_V1;
     header.resource.component[0] =amf_ue->supi;
     header.resource.component[1] =
             (char *)OGS_SBI_RESOURCE_NAME_DEREG_NOTIFY;

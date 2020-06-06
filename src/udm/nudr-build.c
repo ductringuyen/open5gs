@@ -29,7 +29,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_query_authentication(udm_ue_t *udm_ue)
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_GET;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDR_DR;
-    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.api.version = (char *)OGS_SBI_API_V1;
     message.h.resource.component[0] =
         (char *)OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA;
     message.h.resource.component[1] = udm_ue->supi;
@@ -55,7 +55,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue)
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDR_DR;
-    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.api.version = (char *)OGS_SBI_API_V1;
     message.h.resource.component[0] =
         (char *)OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA;
     message.h.resource.component[1] = udm_ue->supi;
@@ -86,7 +86,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue)
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDR_DR;
-    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.api.version = (char *)OGS_SBI_API_V1;
     message.h.resource.component[0] =
         (char *)OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA;
     message.h.resource.component[1] = udm_ue->supi;

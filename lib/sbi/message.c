@@ -501,11 +501,6 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
     if (!content)
         return OGS_OK;
 
-    if (strcmp(message->h.api.version, OGS_SBI_API_VERSION) != 0) {
-        ogs_error("Not supported version - %s", message->h.api.version);
-        return OGS_ERROR;
-    }
-
     item = cJSON_Parse(content);
     if (!item) {
         ogs_error("JSON parse error");

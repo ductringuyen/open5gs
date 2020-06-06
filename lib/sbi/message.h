@@ -75,8 +75,8 @@ extern "C" {
 #define OGS_SBI_HTTP_METHOD_PUT                     "PUT"
 #define OGS_SBI_HTTP_METHOD_OPTIONS                 "OPTIONS"
 
-#define OGS_SBI_API_VERSION                         "v1"
-#define OGS_SBI_API_FULL_VERSION                    "1.0.0"
+#define OGS_SBI_API_V1                              "v1"
+#define OGS_SBI_API_V1_0_0                          "1.0.0"
 
 #define OGS_SBI_SERVICE_NAME_NNRF_NFM               "nnrf-nfm"
 #define OGS_SBI_SERVICE_NAME_NNRF_DISC              "nnrf-disc"

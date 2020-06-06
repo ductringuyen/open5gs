@@ -211,7 +211,7 @@ bool udm_nudr_dr_handle_subscription_authentication(
 
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
-        header.api.version = (char *)OGS_SBI_API_VERSION;
+        header.api.version = (char *)OGS_SBI_API_V1;
         header.resource.component[0] = udm_ue->supi;
         header.resource.component[1] =
             (char *)OGS_SBI_RESOURCE_NAME_AUTH_EVENTS;
@@ -301,7 +301,7 @@ bool udm_nudr_dr_handle_subscription_context(
 
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
-        header.api.version = (char *)OGS_SBI_API_VERSION;
+        header.api.version = (char *)OGS_SBI_API_V1;
         header.resource.component[0] = udm_ue->supi;
         header.resource.component[1] =
             (char *)OGS_SBI_RESOURCE_NAME_REGISTRATIONS;
