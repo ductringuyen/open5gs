@@ -209,7 +209,6 @@ bool udm_nudr_dr_handle_subscription_authentication(
         return true;
 
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
-
         memset(&sendmsg, 0, sizeof(sendmsg));
 
         ogs_assert(udm_ue->auth_event);
@@ -238,6 +237,68 @@ bool udm_nudr_dr_handle_subscription_authentication(
         if (sendmsg.AuthEvent)
             OpenAPI_auth_event_free(sendmsg.AuthEvent);
 
+        return true;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[3]);
+    END
+
+    return false;
+}
+
+bool udm_nudr_dr_handle_subscription_context(
+        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+{
+    ogs_sbi_server_t *server = NULL;
+    ogs_sbi_session_t *session = NULL;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_header_t header;
+    ogs_sbi_response_t *response = NULL;
+
+    cJSON *item = NULL;
+
+    ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
+    server = ogs_sbi_session_get_server(session);
+    ogs_assert(server);
+
+    ogs_assert(recvmsg);
+
+    SWITCH(recvmsg->h.resource.component[3])
+    CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
+        memset(&sendmsg, 0, sizeof(sendmsg));
+
+        ogs_assert(udm_ue->amf_3gpp_access_registration);
+        item = cJSON_Parse(udm_ue->amf_3gpp_access_registration);
+        if (item) {
+            sendmsg.Amf3GppAccessRegistration =
+                OpenAPI_amf3_gpp_access_registration_parseFromJSON(item);
+            cJSON_Delete(item);
+        }
+
+        memset(&header, 0, sizeof(header));
+        header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
+        header.api.version = (char *)OGS_SBI_API_VERSION;
+        header.resource.component[0] = udm_ue->supi;
+        header.resource.component[1] =
+            (char *)OGS_SBI_RESOURCE_NAME_REGISTRATIONS;
+        header.resource.component[2] =
+            (char *)OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS;
+
+        sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+
+        response = ogs_sbi_build_response(&sendmsg,
+                OGS_SBI_HTTP_STATUS_CREATED);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+
+        ogs_free(sendmsg.http.location);
+        if (sendmsg.Amf3GppAccessRegistration)
+            OpenAPI_amf3_gpp_access_registration_free(
+                    sendmsg.Amf3GppAccessRegistration);
         return true;
 
     DEFAULT

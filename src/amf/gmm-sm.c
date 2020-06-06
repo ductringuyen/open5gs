@@ -991,8 +991,46 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         sbi_message = e->sbi.message;
         ogs_assert(sbi_message);
 
-        ogs_fatal("asdflkjasdfasdf");
+        SWITCH(sbi_message->h.resource.component[1])
+        CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
+            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
 
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
+                sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->suci, sbi_message->res_status);
+                nas_5gs_send_authentication_reject(amf_ue);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+
+            SWITCH(sbi_message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_PUT)
+                ogs_fatal("asdlfkjasdfasdf");
+#if 0
+                rv = amf_nausf_auth_handle_authenticate_confirmation(
+                        amf_ue, sbi_message);
+                if (rv != OGS_OK) {
+                    ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    nas_5gs_send_authentication_reject(amf_ue);
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                } else {
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);
+                }
+#endif
+                break;
+            DEFAULT
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        amf_ue->suci, sbi_message->h.method);
+                ogs_assert_if_reached();
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    sbi_message->h.resource.component[0]);
+            ogs_assert_if_reached();
+        END
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {

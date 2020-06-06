@@ -71,6 +71,7 @@ struct udm_ue_s {
     char *ausf_instance_id;
 
     OpenAPI_auth_type_e auth_type;
+
     char *auth_event;
     char *amf_3gpp_access_registration;
 
