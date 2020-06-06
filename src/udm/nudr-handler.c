@@ -249,7 +249,9 @@ bool udm_nudr_dr_handle_subscription_context(
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
-    cJSON *item = NULL;
+    int status;
+
+    OpenAPI_amf3_gpp_access_registration_t *Amf3GppAccessRegistration = NULL;
 
     ogs_assert(udm_ue);
     session = udm_ue->session;
@@ -261,6 +263,40 @@ bool udm_nudr_dr_handle_subscription_context(
 
     SWITCH(recvmsg->h.resource.component[3])
     CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
+        Amf3GppAccessRegistration = udm_ue->sbi.amf_3gpp_access_registration;
+        if (!Amf3GppAccessRegistration) {
+            ogs_error("[%s] No Amf3GppAccessRegistration", udm_ue->supi);
+            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    recvmsg, "No Amf3GppAccessRegistration", udm_ue->supi);
+            return false;
+        }
+
+        if (!Amf3GppAccessRegistration->amf_instance_id) {
+            ogs_error("[%s] No amfInstanceId", udm_ue->supi);
+            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    recvmsg, "No amfInstanceId", udm_ue->supi);
+            return false;
+        }
+
+        if (!Amf3GppAccessRegistration->dereg_callback_uri) {
+            ogs_error("[%s] No dregCallbackUri", udm_ue->supi);
+            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    recvmsg, "No dregCallbackUri", udm_ue->supi);
+            return false;
+        }
+
+        if (udm_ue->amf_instance_id &&
+            strcmp(udm_ue->amf_instance_id,
+                Amf3GppAccessRegistration->amf_instance_id) == 0)
+            status = OGS_SBI_HTTP_STATUS_OK;
+        else
+            status = OGS_SBI_HTTP_STATUS_CREATED;
+
+        if (udm_ue->dereg_callback_uri)
+            ogs_free(udm_ue->dereg_callback_uri);
+        udm_ue->dereg_callback_uri = ogs_strdup(
+                Amf3GppAccessRegistration->dereg_callback_uri);
+
         memset(&sendmsg, 0, sizeof(sendmsg));
 
         memset(&header, 0, sizeof(header));
@@ -278,8 +314,7 @@ bool udm_nudr_dr_handle_subscription_context(
                 sendmsg.Amf3GppAccessRegistration,
                     udm_ue->sbi.amf_3gpp_access_registration);
 
-        response = ogs_sbi_build_response(&sendmsg,
-                OGS_SBI_HTTP_STATUS_CREATED);
+        response = ogs_sbi_build_response(&sendmsg, status);
         ogs_assert(response);
         ogs_sbi_server_send_response(session, response);
 

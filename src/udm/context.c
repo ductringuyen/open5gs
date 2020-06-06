@@ -182,6 +182,10 @@ void udm_ue_remove(udm_ue_t *udm_ue)
         ogs_free(udm_ue->serving_network_name);
     if (udm_ue->ausf_instance_id)
         ogs_free(udm_ue->ausf_instance_id);
+    if (udm_ue->amf_instance_id)
+        ogs_free(udm_ue->amf_instance_id);
+    if (udm_ue->dereg_callback_uri)
+        ogs_free(udm_ue->dereg_callback_uri);
 
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (udm_ue->nf_types[i].nf_instance)
