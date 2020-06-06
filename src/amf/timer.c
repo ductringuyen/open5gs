@@ -23,7 +23,7 @@ static amf_timer_cfg_t g_amf_timer_cfg[MAX_NUM_OF_AMF_TIMER] = {
     [AMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL] =
         { .duration = ogs_time_from_sec(3) },
     [AMF_TIMER_SBI_CLIENT_WAIT] =
-        { .duration = ogs_time_from_sec(2) },
+        { .duration = ogs_time_from_msec(500) },
 
     /* Paging procedure for EPS services initiated */
     [AMF_TIMER_T3513] =
