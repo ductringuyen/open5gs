@@ -98,6 +98,7 @@ extern "C" {
 #define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"
 #define OGS_SBI_RESOURCE_NAME_REGISTRATIONS         "registrations"
 #define OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS       "amf-3gpp-access"
+#define OGS_SBI_RESOURCE_NAME_DEREG_NOTIFY          "dereg-notify"
 
 #define OGS_SBI_SERVICE_NAME_NUDR_DR                "nudr-dr"
 #define OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA     "subscription-data"

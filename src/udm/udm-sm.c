@@ -119,6 +119,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
             if (!message.h.resource.component[0]) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
@@ -175,7 +176,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             ogs_error("Invalid API name [%s]", message.h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
-                    "Invalid API name", message.h.resource.component[0]);
+                    "Invalid API name", message.h.service.name);
         END
 
         /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */

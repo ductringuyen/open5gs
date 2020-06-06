@@ -61,30 +61,66 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
         session = e->sbi.session;
         ogs_assert(session);
 
-        SWITCH(message->h.method)
-        CASE(OGS_SBI_HTTP_METHOD_POST)
-            SWITCH(message->h.resource.component[1])
-            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
-                udm_nudm_ueau_handle_get(udm_ue, message);
+        SWITCH(message->h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            SWITCH(message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_POST)
+                SWITCH(message->h.resource.component[1])
+                CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                    udm_nudm_ueau_handle_get(udm_ue, message);
+                    break;
+                CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                    udm_nudm_ueau_handle_result_confirmation_inform(
+                            udm_ue, message);
+                    break;
+                DEFAULT
+                    ogs_error("[%s] Invalid resource name [%s]",
+                            udm_ue->suci, message->h.resource.component[1]);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                            "Invalid HTTP method", message->h.method);
+                END
                 break;
-            CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
-                udm_nudm_ueau_handle_result_confirmation_inform(
-                        udm_ue, message);
-                break;
+
             DEFAULT
-                ogs_error("[%s] Invalid resource name  [%s]",
-                        udm_ue->suci, message->h.resource.component[1]);
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        udm_ue->suci, message->h.method);
                 ogs_sbi_server_send_error(session,
                         OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
                         "Invalid HTTP method", message->h.method);
             END
             break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
+            SWITCH(message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_PUT)
+                SWITCH(message->h.resource.component[1])
+                CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
+                    ogs_fatal("asdfkljasdf");
+                    break;
+
+                DEFAULT
+                    ogs_error("[%s] Invalid resource name [%s]",
+                            udm_ue->suci, message->h.resource.component[1]);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                            "Invalid HTTP method", message->h.method);
+                END
+                break;
+            DEFAULT
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        udm_ue->suci, message->h.method);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                        "Invalid HTTP method", message->h.method);
+            END
+            break;
+
         DEFAULT
-            ogs_error("[%s] Invalid HTTP method [%s]",
-                    udm_ue->suci, message->h.method);
+            ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                    "Invalid HTTP method", message->h.method);
+                    "Invalid API name", message->h.service.name);
         END
         break;
 

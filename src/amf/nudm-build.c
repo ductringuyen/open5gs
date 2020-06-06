@@ -22,7 +22,10 @@
 ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
 {
     ogs_sbi_message_t message;
+    ogs_sbi_header_t header;
     ogs_sbi_request_t *request = NULL;
+    ogs_sbi_server_t *server = NULL;
+
     char buf[OGS_AMFIDSTRLEN];
 
     OpenAPI_amf3_gpp_access_registration_t Amf3GppAccessRegistration;
@@ -44,8 +47,27 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
 
     memset(&Amf3GppAccessRegistration, 0, sizeof(Amf3GppAccessRegistration));
 
+    /* Disable boolean type */
+    Amf3GppAccessRegistration.purge_flag = -1;
+    Amf3GppAccessRegistration.initial_registration_ind = -1;
+    Amf3GppAccessRegistration.dr_flag = -1;
+    Amf3GppAccessRegistration.urrp_indicator = -1;
+    Amf3GppAccessRegistration.ue_srvcc_capability = -1;
+
     Amf3GppAccessRegistration.amf_instance_id = ogs_sbi_self()->nf_instance_id;
-    Amf3GppAccessRegistration.dereg_callback_uri = (char *)"asdfasdf";
+
+    server = ogs_list_first(&ogs_sbi_self()->server_list);
+    ogs_assert(server);
+
+    memset(&header, 0, sizeof(header));
+    header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
+    header.api.version = (char *)OGS_SBI_API_VERSION;
+    header.resource.component[0] =amf_ue->supi;
+    header.resource.component[1] =
+            (char *)OGS_SBI_RESOURCE_NAME_DEREG_NOTIFY;
+    Amf3GppAccessRegistration.dereg_callback_uri =
+                        ogs_sbi_server_uri(server, &header);
+    ogs_assert(Amf3GppAccessRegistration.dereg_callback_uri);
 
     plmn_id.mcc = ogs_plmn_id_mcc_string(&amf_ue->tai.plmn_id);
     plmn_id.mnc = ogs_plmn_id_mnc_string(&amf_ue->tai.plmn_id);
@@ -65,6 +87,7 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
 
     ogs_free(plmn_id.mcc);
     ogs_free(plmn_id.mnc);
+    ogs_free(Amf3GppAccessRegistration.dereg_callback_uri);
 
     return request;
 }
