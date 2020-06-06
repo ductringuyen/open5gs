@@ -77,6 +77,8 @@ extern "C" {
 
 #define OGS_SBI_API_V1                              "v1"
 #define OGS_SBI_API_V1_0_0                          "1.0.0"
+#define OGS_SBI_API_V2                              "v2"
+#define OGS_SBI_API_V2_0_0                          "2.0.0"
 
 #define OGS_SBI_SERVICE_NAME_NNRF_NFM               "nnrf-nfm"
 #define OGS_SBI_SERVICE_NAME_NNRF_DISC              "nnrf-disc"

@@ -57,10 +57,10 @@ int app_initialize(const char *const argv[])
         ausf_thread = test_child_create("ausf", argv_out);
     if (ogs_config()->parameter.no_udm == 0)
         udm_thread = test_child_create("udm", argv_out);
-    if (ogs_config()->parameter.no_udr == 0)
-        udr_thread = test_child_create("udr", argv_out);
     if (ogs_config()->parameter.no_smf == 0)
         smf_thread = test_child_create("smf", argv_out);
+    if (ogs_config()->parameter.no_udr == 0)
+        udr_thread = test_child_create("udr", argv_out);
 
     return OGS_OK;;
 }
