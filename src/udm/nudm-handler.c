@@ -65,7 +65,7 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
     ogs_assert(udm_ue->ausf_instance_id);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_query_authentication_data);
+            udm_nudr_dr_send_query_authentication);
 
     return true;
 }
@@ -97,7 +97,7 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     ogs_assert(udm_ue->auth_event);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update_authentication_data);
+            udm_nudr_dr_send_update_authentication);
 
     return true;
 }
@@ -129,7 +129,7 @@ bool udm_nudm_uecm_handle_registration(
     ogs_assert(udm_ue->amf_3gpp_access_registration);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update_context_data);
+            udm_nudr_dr_send_update_context);
 
     return true;
 }

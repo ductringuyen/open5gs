@@ -26,11 +26,9 @@
 extern "C" {
 #endif
 
-ogs_sbi_request_t *udm_nudr_dr_build_query_authentication_data(
-        udm_ue_t *udm_ue);
-ogs_sbi_request_t *udm_nudr_dr_build_update_authentication_data(
-        udm_ue_t *udm_ue);
-ogs_sbi_request_t *udm_nudr_dr_build_update_context_data(udm_ue_t *udm_ue);
+ogs_sbi_request_t *udm_nudr_dr_build_query_authentication(udm_ue_t *udm_ue);
+ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue);
+ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue);
 
 #ifdef __cplusplus
 }
