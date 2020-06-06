@@ -63,6 +63,7 @@ struct udm_ue_s {
         } discover;
         ogs_timer_t *client_wait_timer;
         OpenAPI_auth_event_t *auth_event;
+        OpenAPI_amf3_gpp_access_registration_t *amf_3gpp_access_registration;
     } sbi;
 
     char *ctx_id;
@@ -72,8 +73,6 @@ struct udm_ue_s {
     char *ausf_instance_id;
 
     OpenAPI_auth_type_e auth_type;
-
-    char *amf_3gpp_access_registration;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

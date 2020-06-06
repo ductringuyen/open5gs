@@ -164,6 +164,8 @@ void udm_ue_remove(udm_ue_t *udm_ue)
 
     ogs_timer_delete(udm_ue->sbi.client_wait_timer);
     OpenAPI_auth_event_free(udm_ue->sbi.auth_event);
+    OpenAPI_amf3_gpp_access_registration_free(
+            udm_ue->sbi.amf_3gpp_access_registration);
 
     ogs_assert(udm_ue->ctx_id);
     ogs_free(udm_ue->ctx_id);
@@ -181,9 +183,6 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     if (udm_ue->ausf_instance_id)
         ogs_free(udm_ue->ausf_instance_id);
 
-    if (udm_ue->amf_3gpp_access_registration)
-        ogs_free(udm_ue->amf_3gpp_access_registration);
-    
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (udm_ue->nf_types[i].nf_instance)
             ogs_sbi_nf_instance_remove(udm_ue->nf_types[i].nf_instance);

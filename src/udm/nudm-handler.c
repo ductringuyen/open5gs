@@ -105,26 +105,23 @@ bool udm_nudm_uecm_handle_registration(
 {
     ogs_sbi_session_t *session = NULL;
 
-    OpenAPI_amf3_gpp_access_registration_t *Amf3GppAccessRegistration = NULL;
-
     ogs_assert(udm_ue);
     session = udm_ue->session;
     ogs_assert(session);
 
     ogs_assert(message);
 
-    Amf3GppAccessRegistration = message->Amf3GppAccessRegistration;
-    if (!Amf3GppAccessRegistration) {
+    if (!message->Amf3GppAccessRegistration) {
         ogs_error("[%s] No Amf3GppAccessRegistration", udm_ue->supi);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 message, "No Amf3GppAccessRegistration", udm_ue->supi);
         return false;
     }
 
-    if (udm_ue->amf_3gpp_access_registration)
-        ogs_free(udm_ue->amf_3gpp_access_registration);
-    udm_ue->amf_3gpp_access_registration = ogs_sbi_build_content(message);
-    ogs_assert(udm_ue->amf_3gpp_access_registration);
+    udm_ue->sbi.amf_3gpp_access_registration =
+        OpenAPI_amf3_gpp_access_registration_copy(
+            udm_ue->sbi.amf_3gpp_access_registration,
+                message->Amf3GppAccessRegistration);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
             udm_nudr_dr_send_update_context);

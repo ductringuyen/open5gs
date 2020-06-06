@@ -81,7 +81,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue)
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(udm_ue);
-    ogs_assert(udm_ue->amf_3gpp_access_registration);
+    ogs_assert(udm_ue->sbi.amf_3gpp_access_registration);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
@@ -95,12 +95,16 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue)
     message.h.resource.component[3] =
         (char *)OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS;
 
-    ogs_sbi_parse_content(&message, udm_ue->amf_3gpp_access_registration);
+    message.Amf3GppAccessRegistration =
+        OpenAPI_amf3_gpp_access_registration_copy(
+            message.Amf3GppAccessRegistration,
+                udm_ue->sbi.amf_3gpp_access_registration);
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
 
-    ogs_sbi_message_free(&message);
+    OpenAPI_amf3_gpp_access_registration_free(
+            message.Amf3GppAccessRegistration);
 
     return request;
 }

@@ -209,9 +209,6 @@ bool udm_nudr_dr_handle_subscription_authentication(
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
         memset(&sendmsg, 0, sizeof(sendmsg));
 
-        sendmsg.AuthEvent = OpenAPI_auth_event_copy(
-                sendmsg.AuthEvent, udm_ue->sbi.auth_event);
-
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
         header.api.version = (char *)OGS_SBI_API_VERSION;
@@ -221,6 +218,8 @@ bool udm_nudr_dr_handle_subscription_authentication(
         header.resource.component[2] = udm_ue->ctx_id;
 
         sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+        sendmsg.AuthEvent = OpenAPI_auth_event_copy(
+                sendmsg.AuthEvent, udm_ue->sbi.auth_event);
 
         response = ogs_sbi_build_response(&sendmsg,
                 OGS_SBI_HTTP_STATUS_CREATED);
@@ -264,14 +263,6 @@ bool udm_nudr_dr_handle_subscription_context(
     CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
         memset(&sendmsg, 0, sizeof(sendmsg));
 
-        ogs_assert(udm_ue->amf_3gpp_access_registration);
-        item = cJSON_Parse(udm_ue->amf_3gpp_access_registration);
-        if (item) {
-            sendmsg.Amf3GppAccessRegistration =
-                OpenAPI_amf3_gpp_access_registration_parseFromJSON(item);
-            cJSON_Delete(item);
-        }
-
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
         header.api.version = (char *)OGS_SBI_API_VERSION;
@@ -282,6 +273,10 @@ bool udm_nudr_dr_handle_subscription_context(
             (char *)OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS;
 
         sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+        sendmsg.Amf3GppAccessRegistration =
+            OpenAPI_amf3_gpp_access_registration_copy(
+                sendmsg.Amf3GppAccessRegistration,
+                    udm_ue->sbi.amf_3gpp_access_registration);
 
         response = ogs_sbi_build_response(&sendmsg,
                 OGS_SBI_HTTP_STATUS_CREATED);
@@ -289,9 +284,8 @@ bool udm_nudr_dr_handle_subscription_context(
         ogs_sbi_server_send_response(session, response);
 
         ogs_free(sendmsg.http.location);
-        if (sendmsg.Amf3GppAccessRegistration)
-            OpenAPI_amf3_gpp_access_registration_free(
-                    sendmsg.Amf3GppAccessRegistration);
+        OpenAPI_amf3_gpp_access_registration_free(
+                sendmsg.Amf3GppAccessRegistration);
         return true;
 
     DEFAULT
