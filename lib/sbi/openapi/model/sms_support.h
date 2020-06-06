@@ -26,6 +26,7 @@ OpenAPI_sms_support_t *OpenAPI_sms_support_create(
 void OpenAPI_sms_support_free(OpenAPI_sms_support_t *sms_support);
 OpenAPI_sms_support_t *OpenAPI_sms_support_parseFromJSON(cJSON *sms_supportJSON);
 cJSON *OpenAPI_sms_support_convertToJSON(OpenAPI_sms_support_t *sms_support);
+OpenAPI_sms_support_t *OpenAPI_sms_support_copy(OpenAPI_sms_support_t *dst, OpenAPI_sms_support_t *src);
 
 #ifdef __cplusplus
 }

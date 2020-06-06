@@ -29,8 +29,6 @@ bool udm_nudr_dr_handle_subscription_authentication(
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
-    cJSON *item = NULL;
-
     const char *tmp = "de8ca9df474091fe4e9263c5daa907e9"; /* For test */
     uint8_t k[OGS_KEY_LEN];
     uint8_t opc[OGS_KEY_LEN];
@@ -211,12 +209,8 @@ bool udm_nudr_dr_handle_subscription_authentication(
     CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
         memset(&sendmsg, 0, sizeof(sendmsg));
 
-        ogs_assert(udm_ue->auth_event);
-        item = cJSON_Parse(udm_ue->auth_event);
-        if (item) {
-            sendmsg.AuthEvent = OpenAPI_auth_event_parseFromJSON(item);
-            cJSON_Delete(item);
-        }
+        sendmsg.AuthEvent = OpenAPI_auth_event_copy(
+                sendmsg.AuthEvent, udm_ue->sbi.auth_event);
 
         memset(&header, 0, sizeof(header));
         header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU;
@@ -234,8 +228,7 @@ bool udm_nudr_dr_handle_subscription_authentication(
         ogs_sbi_server_send_response(session, response);
 
         ogs_free(sendmsg.http.location);
-        if (sendmsg.AuthEvent)
-            OpenAPI_auth_event_free(sendmsg.AuthEvent);
+        OpenAPI_auth_event_free(sendmsg.AuthEvent);
 
         return true;
 

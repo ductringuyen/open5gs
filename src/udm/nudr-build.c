@@ -50,7 +50,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue)
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(udm_ue);
-    ogs_assert(udm_ue->auth_event);
+    ogs_assert(udm_ue->sbi.auth_event);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
@@ -64,12 +64,13 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue)
     message.h.resource.component[3] =
         (char *)OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS;
 
-    ogs_sbi_parse_content(&message, udm_ue->auth_event);
+    message.AuthEvent = OpenAPI_auth_event_copy(
+            message.AuthEvent, udm_ue->sbi.auth_event);
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
 
-    ogs_sbi_message_free(&message);
+    OpenAPI_auth_event_free(message.AuthEvent);
 
     return request;
 }

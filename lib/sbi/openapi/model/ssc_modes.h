@@ -31,6 +31,7 @@ OpenAPI_ssc_modes_t *OpenAPI_ssc_modes_create(
 void OpenAPI_ssc_modes_free(OpenAPI_ssc_modes_t *ssc_modes);
 OpenAPI_ssc_modes_t *OpenAPI_ssc_modes_parseFromJSON(cJSON *ssc_modesJSON);
 cJSON *OpenAPI_ssc_modes_convertToJSON(OpenAPI_ssc_modes_t *ssc_modes);
+OpenAPI_ssc_modes_t *OpenAPI_ssc_modes_copy(OpenAPI_ssc_modes_t *dst, OpenAPI_ssc_modes_t *src);
 
 #ifdef __cplusplus
 }

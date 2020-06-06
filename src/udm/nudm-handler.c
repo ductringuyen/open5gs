@@ -78,26 +78,21 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
 {
     ogs_sbi_session_t *session = NULL;
 
-    OpenAPI_auth_event_t *AuthEvent = NULL;
-
     ogs_assert(udm_ue);
     session = udm_ue->session;
     ogs_assert(session);
 
     ogs_assert(message);
 
-    AuthEvent = message->AuthEvent;
-    if (!AuthEvent) {
+    if (!message->AuthEvent) {
         ogs_error("[%s] No AuthEvent", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 message, "No AuthEvent", udm_ue->suci);
         return false;
     }
 
-    if (udm_ue->auth_event)
-        ogs_free(udm_ue->auth_event);
-    udm_ue->auth_event = ogs_sbi_build_content(message);
-    ogs_assert(udm_ue->auth_event);
+    udm_ue->sbi.auth_event = OpenAPI_auth_event_copy(
+            udm_ue->sbi.auth_event, message->AuthEvent);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
             udm_nudr_dr_send_update_authentication);

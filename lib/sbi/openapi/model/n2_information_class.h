@@ -26,6 +26,7 @@ OpenAPI_n2_information_class_t *OpenAPI_n2_information_class_create(
 void OpenAPI_n2_information_class_free(OpenAPI_n2_information_class_t *n2_information_class);
 OpenAPI_n2_information_class_t *OpenAPI_n2_information_class_parseFromJSON(cJSON *n2_information_classJSON);
 cJSON *OpenAPI_n2_information_class_convertToJSON(OpenAPI_n2_information_class_t *n2_information_class);
+OpenAPI_n2_information_class_t *OpenAPI_n2_information_class_copy(OpenAPI_n2_information_class_t *dst, OpenAPI_n2_information_class_t *src);
 
 #ifdef __cplusplus
 }

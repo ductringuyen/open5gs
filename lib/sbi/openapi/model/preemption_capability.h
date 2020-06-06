@@ -26,6 +26,7 @@ OpenAPI_preemption_capability_t *OpenAPI_preemption_capability_create(
 void OpenAPI_preemption_capability_free(OpenAPI_preemption_capability_t *preemption_capability);
 OpenAPI_preemption_capability_t *OpenAPI_preemption_capability_parseFromJSON(cJSON *preemption_capabilityJSON);
 cJSON *OpenAPI_preemption_capability_convertToJSON(OpenAPI_preemption_capability_t *preemption_capability);
+OpenAPI_preemption_capability_t *OpenAPI_preemption_capability_copy(OpenAPI_preemption_capability_t *dst, OpenAPI_preemption_capability_t *src);
 
 #ifdef __cplusplus
 }

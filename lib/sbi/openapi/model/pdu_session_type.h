@@ -26,6 +26,7 @@ OpenAPI_pdu_session_type_t *OpenAPI_pdu_session_type_create(
 void OpenAPI_pdu_session_type_free(OpenAPI_pdu_session_type_t *pdu_session_type);
 OpenAPI_pdu_session_type_t *OpenAPI_pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON);
 cJSON *OpenAPI_pdu_session_type_convertToJSON(OpenAPI_pdu_session_type_t *pdu_session_type);
+OpenAPI_pdu_session_type_t *OpenAPI_pdu_session_type_copy(OpenAPI_pdu_session_type_t *dst, OpenAPI_pdu_session_type_t *src);
 
 #ifdef __cplusplus
 }

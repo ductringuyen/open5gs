@@ -34,6 +34,7 @@ OpenAPI_arp_t *OpenAPI_arp_create(
 void OpenAPI_arp_free(OpenAPI_arp_t *arp);
 OpenAPI_arp_t *OpenAPI_arp_parseFromJSON(cJSON *arpJSON);
 cJSON *OpenAPI_arp_convertToJSON(OpenAPI_arp_t *arp);
+OpenAPI_arp_t *OpenAPI_arp_copy(OpenAPI_arp_t *dst, OpenAPI_arp_t *src);
 
 #ifdef __cplusplus
 }
