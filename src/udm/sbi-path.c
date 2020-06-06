@@ -180,7 +180,7 @@ void udm_sbi_discover_and_send(
     return (*udm_ue->sbi.discover.handler)(udm_ue, nf_instance);
 }
 
-void udm_nudr_dr_send_query(
+void udm_nudr_dr_send_query_authentication_data(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_request_t *request = NULL;
@@ -196,7 +196,7 @@ void udm_nudr_dr_send_query(
     ogs_timer_start(udm_ue->sbi.client_wait_timer,
             udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 
-    request = udm_nudr_dr_build_query(udm_ue);
+    request = udm_nudr_dr_build_query_authentication_data(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
 }

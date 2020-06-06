@@ -65,7 +65,7 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
     ogs_assert(udm_ue->ausf_instance_id);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_query);
+            udm_nudr_dr_send_query_authentication_data);
 
     return true;
 }

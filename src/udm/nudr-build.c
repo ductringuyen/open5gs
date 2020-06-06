@@ -19,7 +19,7 @@
 
 #include "nudr-build.h"
 
-ogs_sbi_request_t *udm_nudr_dr_build_query(udm_ue_t *udm_ue)
+ogs_sbi_request_t *udm_nudr_dr_build_query_authentication_data(udm_ue_t *udm_ue)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
