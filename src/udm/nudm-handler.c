@@ -111,7 +111,7 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
 }
 
 bool udm_nudm_uecm_handle_registration(
-        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+        udm_ue_t *udm_ue, ogs_sbi_message_t *message)
 {
     ogs_sbi_session_t *session = NULL;
 
@@ -121,24 +121,21 @@ bool udm_nudm_uecm_handle_registration(
     session = udm_ue->session;
     ogs_assert(session);
 
-    ogs_assert(recvmsg);
+    ogs_assert(message);
 
-    Amf3GppAccessRegistration = recvmsg->Amf3GppAccessRegistration;
+    Amf3GppAccessRegistration = message->Amf3GppAccessRegistration;
     if (!Amf3GppAccessRegistration) {
         ogs_error("[%s] No Amf3GppAccessRegistration", udm_ue->supi);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No Amf3GppAccessRegistration", udm_ue->supi);
+                message, "No Amf3GppAccessRegistration", udm_ue->supi);
         return false;
     }
 
-    ogs_fatal("pur = %d, %d",
-            Amf3GppAccessRegistration->purge_flag,
-            Amf3GppAccessRegistration->initial_registration_ind);
-#if 0
+    udm_ue->amf_3gpp_access_registration = ogs_sbi_build_content(message);
+    ogs_assert(udm_ue->amf_3gpp_access_registration);
+
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update);
-#endif
-    ogs_error("asdfsdf");
+            udm_nudr_dr_send_update_context_data);
 
     return true;
 }

@@ -28,6 +28,7 @@ extern "C" {
 
 ogs_sbi_request_t *udm_nudr_dr_build_query(udm_ue_t *udm_ue);
 ogs_sbi_request_t *udm_nudr_dr_build_update(udm_ue_t *udm_ue);
+ogs_sbi_request_t *udm_nudr_dr_build_update_context_data(udm_ue_t *udm_ue);
 
 #ifdef __cplusplus
 }

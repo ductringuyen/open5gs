@@ -193,6 +193,9 @@ void udm_ue_remove(udm_ue_t *udm_ue)
         ogs_free(udm_ue->plmn_id.mnc);
     if (udm_ue->plmn_id.mcc)
         ogs_free(udm_ue->plmn_id.mcc);
+
+    if (udm_ue->amf_3gpp_access_registration)
+        ogs_free(udm_ue->amf_3gpp_access_registration);
     
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
         if (udm_ue->nf_types[i].nf_instance)

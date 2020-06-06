@@ -74,6 +74,7 @@ struct udm_ue_s {
     int auth_success;
     char *auth_timestamp;
 
+    char *amf_3gpp_access_registration;
     char *amf_instance_id;
     char *dereg_callback_uri;
     char *amf_id;

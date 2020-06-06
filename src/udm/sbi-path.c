@@ -221,3 +221,24 @@ void udm_nudr_dr_send_update(
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
 }
+
+void udm_nudr_dr_send_update_context_data(
+        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_request_t *request = NULL;
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(udm_ue);
+    ogs_assert(nf_instance);
+
+    client = ogs_sbi_client_find_by_service_name(
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
+    ogs_assert(client);
+
+    ogs_timer_start(udm_ue->sbi.client_wait_timer,
+            udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
+
+    request = udm_nudr_dr_build_update_context_data(udm_ue);
+    ogs_assert(request);
+    ogs_sbi_client_send_request(client, request, udm_ue);
+}

@@ -154,6 +154,11 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                             udm_ue, message);
                     break;
 
+                CASE(OGS_SBI_RESOURCE_NAME_CONTEXT_DATA)
+                    ogs_fatal("asdlkfjasdfasdf");
+
+                    break;
+
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
                             message->h.resource.component[2]);

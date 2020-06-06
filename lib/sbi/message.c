@@ -493,193 +493,229 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
         return OGS_ERROR;
     }
 
-    if (message->http.content_type) {
-        if (!strncmp(message->http.content_type,
-                OGS_SBI_CONTENT_PROBLEM_TYPE,
-                strlen(OGS_SBI_CONTENT_PROBLEM_TYPE))) {
-            message->ProblemDetails =
-                OpenAPI_problem_details_parseFromJSON(item);
-        } else if (!strncmp(message->http.content_type,
-                OGS_SBI_CONTENT_PATCH_TYPE,
-                strlen(OGS_SBI_CONTENT_PATCH_TYPE))) {
-            if (item) {
-                OpenAPI_patch_item_t *patch_item = NULL;
-                cJSON *patchJSON = NULL;
-                message->PatchItemList = OpenAPI_list_create();
-                cJSON_ArrayForEach(patchJSON, item) {
-                    if (!cJSON_IsObject(patchJSON)) {
-                        rv = OGS_ERROR;
-                        ogs_error("Unknown JSON");
-                        goto cleanup;
-                    }
-
-                    patch_item = OpenAPI_patch_item_parseFromJSON(patchJSON);
-                    OpenAPI_list_add(message->PatchItemList, patch_item);
+    if (message->http.content_type &&
+        !strncmp(message->http.content_type, OGS_SBI_CONTENT_PROBLEM_TYPE,
+            strlen(OGS_SBI_CONTENT_PROBLEM_TYPE))) {
+        message->ProblemDetails = OpenAPI_problem_details_parseFromJSON(item);
+    } else if (message->http.content_type &&
+                !strncmp(message->http.content_type, OGS_SBI_CONTENT_PATCH_TYPE,
+                    strlen(OGS_SBI_CONTENT_PATCH_TYPE))) {
+        if (item) {
+            OpenAPI_patch_item_t *patch_item = NULL;
+            cJSON *patchJSON = NULL;
+            message->PatchItemList = OpenAPI_list_create();
+            cJSON_ArrayForEach(patchJSON, item) {
+                if (!cJSON_IsObject(patchJSON)) {
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown JSON");
+                    goto cleanup;
                 }
+
+                patch_item = OpenAPI_patch_item_parseFromJSON(patchJSON);
+                OpenAPI_list_add(message->PatchItemList, patch_item);
             }
-        } else {
-            SWITCH(message->h.service.name)
-            CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
+        }
+    } else {
+        SWITCH(message->h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
 
-                SWITCH(message->h.resource.component[0])
-                CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                    message->NFProfile =
-                        OpenAPI_nf_profile_parseFromJSON(item);
-                    if (!message->NFProfile) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
-                    }
-                    break;
-
-                CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
-                    message->SubscriptionData =
-                        OpenAPI_subscription_data_parseFromJSON(item);
-                    if (!message->SubscriptionData) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
-                    }
-                    break;
-
-                CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
-                    message->NotificationData =
-                        OpenAPI_notification_data_parseFromJSON(item);
-                    if (!message->NotificationData) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
-                    }
-                    break;
-
-                DEFAULT
+            SWITCH(message->h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+                message->NFProfile =
+                    OpenAPI_nf_profile_parseFromJSON(item);
+                if (!message->NFProfile) {
                     rv = OGS_ERROR;
-                    ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[0]);
-                END
+                    ogs_error("JSON parse error");
+                }
                 break;
 
-            CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
-                SWITCH(message->h.resource.component[0])
-                CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                    message->SearchResult =
-                        OpenAPI_search_result_parseFromJSON(item);
-                    if (!message->SearchResult) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
-                    }
-                    break;
-
-                DEFAULT
+            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
+                message->SubscriptionData =
+                    OpenAPI_subscription_data_parseFromJSON(item);
+                if (!message->SubscriptionData) {
                     rv = OGS_ERROR;
-                    ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[0]);
-                END
+                    ogs_error("JSON parse error");
+                }
                 break;
 
-            CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
-                SWITCH(message->h.resource.component[0])
-                CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
-                    SWITCH(message->h.method)
-                    CASE(OGS_SBI_HTTP_METHOD_POST)
-                        if (message->res_status ==
-                                OGS_SBI_HTTP_STATUS_CREATED) {
-                            message->UeAuthenticationCtx =
-                            OpenAPI_ue_authentication_ctx_parseFromJSON(item);
-                            if (!message->UeAuthenticationCtx) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
-                        } else {
-                            message->AuthenticationInfo =
-                                OpenAPI_authentication_info_parseFromJSON(item);
-                            if (!message->AuthenticationInfo) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
+            CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
+                message->NotificationData =
+                    OpenAPI_notification_data_parseFromJSON(item);
+                if (!message->NotificationData) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[0]);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NNRF_DISC)
+            SWITCH(message->h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+                message->SearchResult =
+                    OpenAPI_search_result_parseFromJSON(item);
+                if (!message->SearchResult) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[0]);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
+            SWITCH(message->h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
+                SWITCH(message->h.method)
+                CASE(OGS_SBI_HTTP_METHOD_POST)
+                    if (message->res_status ==
+                            OGS_SBI_HTTP_STATUS_CREATED) {
+                        message->UeAuthenticationCtx =
+                        OpenAPI_ue_authentication_ctx_parseFromJSON(item);
+                        if (!message->UeAuthenticationCtx) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
                         }
-                        break;
-                    CASE(OGS_SBI_HTTP_METHOD_PUT)
+                    } else {
+                        message->AuthenticationInfo =
+                            OpenAPI_authentication_info_parseFromJSON(item);
+                        if (!message->AuthenticationInfo) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    }
+                    break;
+                CASE(OGS_SBI_HTTP_METHOD_PUT)
+                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                        message->ConfirmationDataResponse =
+                            OpenAPI_confirmation_data_response_parseFromJSON(item);
+                        if (!message->ConfirmationDataResponse) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else {
+                        message->ConfirmationData =
+                            OpenAPI_confirmation_data_parseFromJSON(item);
+                        if (!message->ConfirmationData) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    }
+                    break;
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown method [%s]", message->h.method);
+                END
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[0]);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
+                SWITCH(message->h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
+                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                        message->AuthenticationInfoResult =
+                        OpenAPI_authentication_info_result_parseFromJSON(
+                                item);
+                        if (!message->AuthenticationInfoResult) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else {
+                        message->AuthenticationInfoRequest =
+                        OpenAPI_authentication_info_request_parseFromJSON(
+                                item);
+                        if (!message->AuthenticationInfoRequest) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    }
+                    break;
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.component[2]);
+                END
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
+                message->AuthEvent = OpenAPI_auth_event_parseFromJSON(item);
+                if (!message->AuthEvent) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[1]);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
+                SWITCH(message->h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
+                    message->Amf3GppAccessRegistration =
+                        OpenAPI_amf3_gpp_access_registration_parseFromJSON(
+                                item);
+                    if (!message->Amf3GppAccessRegistration) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                    break;
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.component[2]);
+                END
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[1]);
+            END
+            break;
+
+        CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
+            SWITCH(message->h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
+                SWITCH(message->h.resource.component[2])
+                CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
+                    SWITCH(message->h.resource.component[3])
+                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
                         if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                            message->ConfirmationDataResponse =
-                                OpenAPI_confirmation_data_response_parseFromJSON(item);
-                            if (!message->ConfirmationDataResponse) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
-                        } else {
-                            message->ConfirmationData =
-                                OpenAPI_confirmation_data_parseFromJSON(item);
-                            if (!message->ConfirmationData) {
+                            message->AuthenticationSubscription =
+                                OpenAPI_authentication_subscription_parseFromJSON(item);
+                            if (!message->AuthenticationSubscription) {
                                 rv = OGS_ERROR;
                                 ogs_error("JSON parse error");
                             }
                         }
                         break;
-                    DEFAULT
-                        rv = OGS_ERROR;
-                        ogs_error("Unknown method [%s]", message->h.method);
-                    END
-                    break;
-
-                DEFAULT
-                    rv = OGS_ERROR;
-                    ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[0]);
-                END
-                break;
-
-            CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
-                SWITCH(message->h.resource.component[1])
-                CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
-                    SWITCH(message->h.resource.component[2])
-                    CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
-                        if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                            message->AuthenticationInfoResult =
-                            OpenAPI_authentication_info_result_parseFromJSON(
-                                    item);
-                            if (!message->AuthenticationInfoResult) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
-                        } else {
-                            message->AuthenticationInfoRequest =
-                            OpenAPI_authentication_info_request_parseFromJSON(
-                                    item);
-                            if (!message->AuthenticationInfoRequest) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
-                        }
-                        break;
-                    DEFAULT
-                        rv = OGS_ERROR;
-                        ogs_error("Unknown resource name [%s]",
-                                message->h.resource.component[2]);
-                    END
-                    break;
-
-                CASE(OGS_SBI_RESOURCE_NAME_AUTH_EVENTS)
-                    message->AuthEvent = OpenAPI_auth_event_parseFromJSON(item);
-                    if (!message->AuthEvent) {
-                        rv = OGS_ERROR;
-                        ogs_error("JSON parse error");
-                    }
-                    break;
-
-                DEFAULT
-                    rv = OGS_ERROR;
-                    ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[1]);
-                END
-                break;
-
-            CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
-                SWITCH(message->h.resource.component[1])
-                CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
-                    SWITCH(message->h.resource.component[2])
-                    CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
-                        message->Amf3GppAccessRegistration =
-                            OpenAPI_amf3_gpp_access_registration_parseFromJSON(
-                                    item);
-                        if (!message->Amf3GppAccessRegistration) {
+                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
+                        message->AuthEvent =
+                            OpenAPI_auth_event_parseFromJSON(item);
+                        if (!message->AuthEvent) {
                             rv = OGS_ERROR;
                             ogs_error("JSON parse error");
                         }
@@ -687,69 +723,40 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
                     DEFAULT
                         rv = OGS_ERROR;
                         ogs_error("Unknown resource name [%s]",
-                                message->h.resource.component[2]);
+                                message->h.resource.component[3]);
                     END
                     break;
 
-                DEFAULT
-                    rv = OGS_ERROR;
-                    ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[1]);
-                END
-                break;
-
-            CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
-                SWITCH(message->h.resource.component[0])
-                CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)
-                    SWITCH(message->h.resource.component[2])
-                    CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_DATA)
-                        SWITCH(message->h.resource.component[3])
-                        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_SUBSCRIPTION)
-                            if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                                message->AuthenticationSubscription =
-                                    OpenAPI_authentication_subscription_parseFromJSON(item);
-                                if (!message->AuthenticationSubscription) {
-                                    rv = OGS_ERROR;
-                                    ogs_error("JSON parse error");
-                                }
-                            }
-                            break;
-                        CASE(OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS)
-                            message->AuthEvent =
-                                OpenAPI_auth_event_parseFromJSON(item);
-                            if (!message->AuthEvent) {
-                                rv = OGS_ERROR;
-                                ogs_error("JSON parse error");
-                            }
-                            break;
-                        DEFAULT
-                            rv = OGS_ERROR;
-                            ogs_error("Unknown resource name [%s]",
-                                    message->h.resource.component[3]);
-                        END
-                        break;
-
-                    DEFAULT
+                CASE(OGS_SBI_RESOURCE_NAME_CONTEXT_DATA)
+                    message->Amf3GppAccessRegistration =
+                        OpenAPI_amf3_gpp_access_registration_parseFromJSON(
+                                item);
+                    if (!message->Amf3GppAccessRegistration) {
                         rv = OGS_ERROR;
-                        ogs_error("Unknown resource name [%s]",
-                                message->h.resource.component[2]);
-                    END
+                        ogs_error("JSON parse error");
+                    }
                     break;
 
                 DEFAULT
                     rv = OGS_ERROR;
                     ogs_error("Unknown resource name [%s]",
-                            message->h.resource.component[0]);
+                            message->h.resource.component[2]);
                 END
                 break;
-
 
             DEFAULT
                 rv = OGS_ERROR;
-                ogs_error("Not implemented API name [%s]",
-                        message->h.service.name);
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[0]);
             END
-        }
+            break;
+
+
+        DEFAULT
+            rv = OGS_ERROR;
+            ogs_error("Not implemented API name [%s]",
+                    message->h.service.name);
+        END
     }
 
 cleanup:
