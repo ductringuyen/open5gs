@@ -71,7 +71,7 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
 }
 
 bool udm_nudm_ueau_handle_result_confirmation_inform(
-        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+        udm_ue_t *udm_ue, ogs_sbi_message_t *message)
 {
     ogs_sbi_session_t *session = NULL;
 
@@ -82,21 +82,24 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     session = udm_ue->session;
     ogs_assert(session);
 
-    ogs_assert(recvmsg);
+    ogs_assert(message);
 
-    AuthEvent = recvmsg->AuthEvent;
+    AuthEvent = message->AuthEvent;
     if (!AuthEvent) {
         ogs_error("[%s] No AuthEvent", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthEvent", udm_ue->suci);
+                message, "No AuthEvent", udm_ue->suci);
         return false;
     }
+
+    udm_ue->auth_event = ogs_sbi_build_content(message);
+    ogs_assert(udm_ue->auth_event);
 
     timestamp = AuthEvent->time_stamp;
     if (!AuthEvent) {
         ogs_error("[%s] No timeStamp", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No timeStamp", udm_ue->suci);
+                message, "No timeStamp", udm_ue->suci);
         return false;
     }
 
@@ -105,7 +108,7 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     ogs_assert(udm_ue->auth_timestamp);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update);
+            udm_nudr_dr_send_update_authentication_data);
 
     return true;
 }

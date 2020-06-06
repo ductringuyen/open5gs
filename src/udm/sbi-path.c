@@ -201,7 +201,7 @@ void udm_nudr_dr_send_query(
     ogs_sbi_client_send_request(client, request, udm_ue);
 }
 
-void udm_nudr_dr_send_update(
+void udm_nudr_dr_send_update_authentication_data(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_request_t *request = NULL;
@@ -217,7 +217,7 @@ void udm_nudr_dr_send_update(
     ogs_timer_start(udm_ue->sbi.client_wait_timer,
             udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 
-    request = udm_nudr_dr_build_update(udm_ue);
+    request = udm_nudr_dr_build_update_authentication_data(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
 }

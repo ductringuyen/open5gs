@@ -182,18 +182,8 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     if (udm_ue->auth_timestamp)
         ogs_free(udm_ue->auth_timestamp);
 
-    if (udm_ue->amf_instance_id)
-        ogs_free(udm_ue->amf_instance_id);
-    if (udm_ue->dereg_callback_uri)
-        ogs_free(udm_ue->dereg_callback_uri);
-
-    if (udm_ue->amf_id)
-        ogs_free(udm_ue->amf_id);
-    if (udm_ue->plmn_id.mnc)
-        ogs_free(udm_ue->plmn_id.mnc);
-    if (udm_ue->plmn_id.mcc)
-        ogs_free(udm_ue->plmn_id.mcc);
-
+    if (udm_ue->auth_event)
+        ogs_free(udm_ue->auth_event);
     if (udm_ue->amf_3gpp_access_registration)
         ogs_free(udm_ue->amf_3gpp_access_registration);
     

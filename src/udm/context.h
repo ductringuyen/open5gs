@@ -74,12 +74,8 @@ struct udm_ue_s {
     int auth_success;
     char *auth_timestamp;
 
+    char *auth_event;
     char *amf_3gpp_access_registration;
-    char *amf_instance_id;
-    char *dereg_callback_uri;
-    char *amf_id;
-    OpenAPI_plmn_id_t plmn_id;
-    OpenAPI_rat_type_e rat_type;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
     do { \

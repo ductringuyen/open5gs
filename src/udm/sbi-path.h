@@ -40,7 +40,7 @@ void udm_sbi_discover_and_send(
 
 void udm_nudr_dr_send_query(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
-void udm_nudr_dr_send_update(
+void udm_nudr_dr_send_update_authentication_data(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
 void udm_nudr_dr_send_update_context_data(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
