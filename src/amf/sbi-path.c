@@ -20,6 +20,7 @@
 #include "sbi-path.h"
 #include "nas-path.h"
 #include "nausf-build.h"
+#include "nudm-build.h"
 
 static int server_cb(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_request_t *request)
@@ -162,15 +163,15 @@ int amf_sbi_discover_and_send(
 
     ogs_assert(amf_ue);
 
-    amf_ue->sbi.discover_handler = discover_handler;
+    amf_ue->sbi.discover.nf_type = nf_type;
+    amf_ue->sbi.discover.handler = discover_handler;
 
     if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            amf_ue, OpenAPI_nf_type_AUSF);
+        nf_instance = find_or_discover_nf_instance(amf_ue, nf_type);
 
     if (!nf_instance) return OGS_RETRY;
 
-    return (*amf_ue->sbi.discover_handler)(amf_ue, nf_instance);
+    return (*amf_ue->sbi.discover.handler)(amf_ue, nf_instance);
 }
 
 int amf_nausf_auth_send_authenticate(
@@ -214,6 +215,34 @@ int amf_nausf_auth_send_authenticate(
         request = amf_nausf_auth_build_authenticate(amf_ue);
         ogs_assert(request);
     }
+
+    ogs_timer_start(amf_ue->sbi_client_wait.timer,
+            amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+    ogs_sbi_client_send_request(client, request, amf_ue);
+
+    return OGS_OK;
+}
+
+int amf_nudm_uecm_send_registration(
+        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_request_t *request = NULL;
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(nf_instance);
+
+    client = ogs_sbi_client_find_by_service_name(
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+    if (!client) {
+        ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->suci,
+                nf_instance->id, OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+        return OGS_ERROR;
+    }
+
+    request = amf_nudm_uecm_build_registration(amf_ue);
+    ogs_assert(request);
 
     ogs_timer_start(amf_ue->sbi_client_wait.timer,
             amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);

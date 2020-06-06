@@ -261,6 +261,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
 
         CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
             amf_ue = e->sbi.data;
             ogs_assert(amf_ue);
             ogs_assert(OGS_FSM_STATE(&amf_ue->sm));
@@ -273,40 +274,6 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 amf_ue_remove(amf_ue);
             }
             break;
-#if 0
-            SWITCH(sbi_message.h.resource.component[0])
-            CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
-                amf_ue = e->sbi.data;
-                ogs_assert(amf_ue);
-
-                SWITCH(sbi_message.h.method)
-                CASE(OGS_SBI_HTTP_METHOD_POST)
-                    if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
-
-                        ogs_fatal("TODO");
-                    } else {
-                        ogs_error("[%s] HTTP response error [%d]",
-                                amf_ue->suci, sbi_message.res_status);
-                        nas_5gs_send_nas_reject_from_sbi(amf_ue,
-                                sbi_message.res_status);
-                    }
-                    break;
-
-                DEFAULT
-                    ogs_error("[%s] Invalid HTTP method [%s]",
-                            amf_ue->suci, sbi_message.h.method);
-                    ogs_assert_if_reached();
-                END
-                break;
-
-            DEFAULT
-                ogs_error("Invalid resource name [%s]",
-                        sbi_message.h.resource.component[0]);
-                ogs_assert_if_reached();
-            END
-            break;
-#endif
 
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);

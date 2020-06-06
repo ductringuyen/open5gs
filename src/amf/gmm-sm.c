@@ -784,9 +784,16 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
-#if 0
-            amf_s6a_send_ulr(amf_ue);
-#endif
+            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                    amf_nudm_uecm_send_registration);
+            if (rv == OGS_ERROR) {
+                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(s, &gmm_state_exception);
+                break;
+            }
+
             if (amf_ue->nas.type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
 #if 0
@@ -898,6 +905,9 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
+    ogs_sbi_response_t *sbi_response = NULL;
+    ogs_sbi_message_t *sbi_message = NULL;
+
     ogs_assert(s);
     ogs_assert(e);
 
@@ -974,6 +984,15 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 #endif
+        break;
+    case AMF_EVT_SBI_CLIENT:
+        sbi_response = e->sbi.response;
+        ogs_assert(sbi_response);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
+
+        ogs_fatal("asdflkjasdfasdf");
+
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {

@@ -216,8 +216,11 @@ struct amf_ue_s {
     } __attribute__ ((packed)) nas;
 
     struct {
-        int (*discover_handler)(
+        struct {
+        OpenAPI_nf_type_e nf_type;
+        int (*handler)(
             amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
+        } discover;
     } sbi;
 
     /* UE identity */
