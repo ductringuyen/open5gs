@@ -234,10 +234,10 @@ int amf_nudm_uecm_send_registration(
     ogs_assert(nf_instance);
 
     client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM);
     if (!client) {
         ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->suci,
-                nf_instance->id, OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+                nf_instance->id, OGS_SBI_SERVICE_NAME_NUDM_UECM);
         return OGS_ERROR;
     }
 
