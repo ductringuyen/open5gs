@@ -130,14 +130,16 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             amf_ue->nf_types, nf_type, amf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover AUSF", amf_ue->suci);
+        ogs_error("[%s] Cannot discover [%s]",
+                amf_ue->suci, OpenAPI_nf_type_ToString(nf_type));
         nas_5gs_send_nas_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover AUSF", amf_ue->suci);
+        ogs_warn("[%s] Try to discover [%s]",
+                amf_ue->suci, OpenAPI_nf_type_ToString(nf_type));
         ogs_timer_start(amf_ue->sbi_client_wait.timer,
                 amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
@@ -149,6 +151,26 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     }
 
     return amf_ue->nf_types[nf_type].nf_instance;
+}
+
+int amf_sbi_discover_and_send(
+        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type,
+        int (*discover_handler)(
+            amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance))
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(amf_ue);
+
+    amf_ue->sbi.discover_handler = discover_handler;
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(
+                            amf_ue, OpenAPI_nf_type_AUSF);
+
+    if (!nf_instance) return OGS_RETRY;
+
+    return (*amf_ue->sbi.discover_handler)(amf_ue, nf_instance);
 }
 
 int amf_nausf_auth_send_authenticate(
@@ -199,21 +221,4 @@ int amf_nausf_auth_send_authenticate(
     ogs_sbi_client_send_request(client, request, amf_ue);
 
     return OGS_OK;
-}
-
-int amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(amf_ue);
-
-    amf_ue->sbi.discover_handler = amf_nausf_auth_send_authenticate;
-
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            amf_ue, OpenAPI_nf_type_AUSF);
-
-    if (!nf_instance) return OGS_RETRY;
-
-    return (*amf_ue->sbi.discover_handler)(amf_ue, nf_instance);
 }

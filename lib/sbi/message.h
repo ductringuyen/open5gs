@@ -91,11 +91,13 @@ extern "C" {
 #define OGS_SBI_RESOURCE_NAME_EAP_SESSION           "eap-session"
 
 #define OGS_SBI_SERVICE_NAME_NUDM_SDM               "nudm-sdm"
-#define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"
 #define OGS_SBI_SERVICE_NAME_NUDM_UEAU              "nudm-ueau"
 #define OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION  "security-information"
 #define OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA    "generate-auth-data"
 #define OGS_SBI_RESOURCE_NAME_AUTH_EVENTS           "auth-events"
+#define OGS_SBI_SERVICE_NAME_NUDM_UECM              "nudm-uecm"
+#define OGS_SBI_RESOURCE_NAME_REGISTRATIONS         "registrations"
+#define OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS       "amf-3gpp-access"
 
 #define OGS_SBI_SERVICE_NAME_NUDR_DR                "nudr-dr"
 #define OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA     "subscription-data"
@@ -179,6 +181,7 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_confirmation_data_t *ConfirmationData;
     OpenAPI_confirmation_data_response_t *ConfirmationDataResponse;
     OpenAPI_auth_event_t *AuthEvent;
+    OpenAPI_amf3_gpp_access_registration_t *Amf3GppAccessRegistration;
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;

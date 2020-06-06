@@ -23,6 +23,8 @@ libamf_sources = files('''
     nausf-build.c
     nausf-handler.c
 
+    nudm-build.c
+
     nnrf-handler.c
     sbi-path.c
 

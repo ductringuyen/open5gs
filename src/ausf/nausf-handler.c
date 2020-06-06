@@ -53,7 +53,8 @@ bool ausf_nausf_auth_handle_authenticate(
     ausf_ue->serving_network_name = ogs_strdup(serving_network_name);
     ogs_assert(ausf_ue->serving_network_name);
 
-    ausf_nudm_ueau_discover_and_send_get(ausf_ue);
+    ausf_sbi_discover_and_send(ausf_ue, OpenAPI_nf_type_UDM,
+            ausf_nudm_ueau_send_get);
 
     return true;
 }
@@ -100,7 +101,8 @@ bool ausf_nausf_auth_handle_authenticate_confirmation(
         ausf_ue->auth_result = OpenAPI_auth_result_AUTHENTICATION_SUCCESS;
     }
 
-    ausf_nudm_ueau_discover_and_send_result_confirmation_inform(ausf_ue);
+    ausf_sbi_discover_and_send(ausf_ue, OpenAPI_nf_type_UDM,
+            ausf_nudm_ueau_send_result_confirmation_inform);
 
     return true;
 }

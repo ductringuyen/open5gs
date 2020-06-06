@@ -77,6 +77,9 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
                 message->ConfirmationDataResponse);
     if (message->AuthEvent)
         OpenAPI_auth_event_free(message->AuthEvent);
+    if (message->Amf3GppAccessRegistration)
+        OpenAPI_amf3_gpp_access_registration_free(
+                message->Amf3GppAccessRegistration);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -366,6 +369,10 @@ static char *build_content(ogs_sbi_message_t *message)
         ogs_assert(item);
     } else if (message->AuthEvent) {
         item = OpenAPI_auth_event_convertToJSON(message->AuthEvent);
+        ogs_assert(item);
+    } else if (message->Amf3GppAccessRegistration) {
+        item = OpenAPI_amf3_gpp_access_registration_convertToJSON(
+                message->Amf3GppAccessRegistration);
         ogs_assert(item);
     }
 
@@ -721,6 +728,33 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                         rv = OGS_ERROR;
                         ogs_error("JSON parse error");
                     }
+                    break;
+
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.component[1]);
+                END
+                break;
+
+            CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
+                SWITCH(message->h.resource.component[1])
+                CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
+                    SWITCH(message->h.resource.component[2])
+                    CASE(OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS)
+                        message->Amf3GppAccessRegistration =
+                            OpenAPI_amf3_gpp_access_registration_parseFromJSON(
+                                    item);
+                        if (!message->Amf3GppAccessRegistration) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                        break;
+                    DEFAULT
+                        rv = OGS_ERROR;
+                        ogs_error("Unknown resource name [%s]",
+                                message->h.resource.component[2]);
+                    END
                     break;
 
                 DEFAULT

@@ -134,17 +134,19 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             ausf_ue->nf_types, nf_type, ausf_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover UDM", ausf_ue->suci);
+        ogs_error("[%s] Cannot discover [%s]",
+                ausf_ue->suci, OpenAPI_nf_type_ToString(nf_type));
 
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "Cannot discover UDM", ausf_ue->suci);
+                "Cannot discover", ausf_ue->suci);
 
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover UDM", ausf_ue->suci);
+        ogs_warn("[%s] Try to discover [%s]",
+                ausf_ue->suci, OpenAPI_nf_type_ToString(nf_type));
         ogs_timer_start(ausf_ue->sbi.client_wait_timer,
                 ausf_timer_cfg(AUSF_TIMER_SBI_CLIENT_WAIT)->duration);
 
@@ -156,6 +158,25 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     }
 
     return ausf_ue->nf_types[nf_type].nf_instance;
+}
+
+void ausf_sbi_discover_and_send(
+        ausf_ue_t *ausf_ue, OpenAPI_nf_type_e nf_type,
+        void (*discover_handler)(
+            ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance))
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(ausf_ue);
+
+    ausf_ue->sbi.discover_handler = discover_handler;
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(ausf_ue, nf_type);
+
+    if (!nf_instance) return;
+
+    (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
 }
 
 void ausf_nudm_ueau_send_get(
@@ -182,23 +203,6 @@ void ausf_nudm_ueau_send_get(
     ogs_sbi_client_send_request(client, request, ausf_ue);
 }
 
-void ausf_nudm_ueau_discover_and_send_get(ausf_ue_t *ausf_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(ausf_ue);
-
-    ausf_ue->sbi.discover_handler = ausf_nudm_ueau_send_get;
-
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            ausf_ue, OpenAPI_nf_type_UDM);
-
-    if (!nf_instance) return;
-
-    return (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
-}
-
 void ausf_nudm_ueau_send_result_confirmation_inform(
         ausf_ue_t *ausf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
@@ -221,23 +225,4 @@ void ausf_nudm_ueau_send_result_confirmation_inform(
     request = ausf_nudm_ueau_build_result_confirmation_inform(ausf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, ausf_ue);
-}
-
-void ausf_nudm_ueau_discover_and_send_result_confirmation_inform(
-        ausf_ue_t *ausf_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(ausf_ue);
-
-    ausf_ue->sbi.discover_handler =
-        ausf_nudm_ueau_send_result_confirmation_inform;
-
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(
-                            ausf_ue, OpenAPI_nf_type_UDM);
-
-    if (!nf_instance) return;
-
-    return (*ausf_ue->sbi.discover_handler)(ausf_ue, nf_instance);
 }

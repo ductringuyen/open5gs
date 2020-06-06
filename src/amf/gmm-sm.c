@@ -370,7 +370,8 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 amf_sbi_send_authenticate(amf_ue);
             }
 #else
-            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_send_authenticate);
             if (rv == OGS_ERROR) {
                 ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
                 nas_5gs_send_registration_reject(
@@ -597,7 +598,8 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_send_authenticate);
             if (rv == OGS_ERROR) {
                 ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
                 nas_5gs_send_registration_reject(
@@ -814,7 +816,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_send_authenticate);
             if (rv == OGS_ERROR) {
                 ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
                 nas_5gs_send_registration_reject(

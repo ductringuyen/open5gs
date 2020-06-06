@@ -31,9 +31,15 @@ void amf_sbi_close(void);
 
 void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
 
+int amf_sbi_discover_and_send(
+        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type,
+        int (*discover_handler)(
+            amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance));
+
 int amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
-int amf_nausf_auth_discover_and_send_authenticate(amf_ue_t *amf_ue);
+int amf_nudm_uecm_send_registration(
+        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
 
 #ifdef __cplusplus
 }

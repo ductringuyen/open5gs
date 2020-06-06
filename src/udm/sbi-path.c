@@ -134,17 +134,19 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
             udm_ue->nf_types, nf_type, udm_nf_state_registered);
 
     if (nrf == false && nf == false) {
-        ogs_error("[%s] Cannot discover UDR", udm_ue->suci);
+        ogs_error("[%s] Cannot discover [%s]",
+                udm_ue->suci, OpenAPI_nf_type_ToString(nf_type));
 
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
-                "Cannot discover UDR", udm_ue->suci);
+                "Cannot discover", udm_ue->suci);
 
         return NULL;
     }
 
     if (nf == false) {
-        ogs_warn("[%s] Try to discover UDR", udm_ue->suci);
+        ogs_warn("[%s] Try to discover [%s]",
+                udm_ue->suci, OpenAPI_nf_type_ToString(nf_type));
         ogs_timer_start(udm_ue->sbi.client_wait_timer,
                 udm_timer_cfg(UDM_TIMER_SBI_CLIENT_WAIT)->duration);
 
@@ -156,6 +158,25 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(
     }
 
     return udm_ue->nf_types[nf_type].nf_instance;
+}
+
+void udm_sbi_discover_and_send(
+        udm_ue_t *udm_ue, OpenAPI_nf_type_e nf_type,
+        void (*discover_handler)(
+            udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance))
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(udm_ue);
+
+    udm_ue->sbi.discover_handler = discover_handler;
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(udm_ue, nf_type);
+
+    if (!nf_instance) return;
+
+    return (*udm_ue->sbi.discover_handler)(udm_ue, nf_instance);
 }
 
 void udm_nudr_dr_send_query(
@@ -179,22 +200,6 @@ void udm_nudr_dr_send_query(
     ogs_sbi_client_send_request(client, request, udm_ue);
 }
 
-void udm_nudr_dr_discover_and_send_query(udm_ue_t *udm_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(udm_ue);
-
-    udm_ue->sbi.discover_handler = udm_nudr_dr_send_query;
-
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(udm_ue, OpenAPI_nf_type_UDR);
-
-    if (!nf_instance) return;
-
-    return (*udm_ue->sbi.discover_handler)(udm_ue, nf_instance);
-}
-
 void udm_nudr_dr_send_update(
         udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
@@ -214,20 +219,4 @@ void udm_nudr_dr_send_update(
     request = udm_nudr_dr_build_update(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
-}
-
-void udm_nudr_dr_discover_and_send_update(udm_ue_t *udm_ue)
-{
-    ogs_sbi_nf_instance_t *nf_instance = NULL;
-
-    ogs_assert(udm_ue);
-
-    udm_ue->sbi.discover_handler = udm_nudr_dr_send_update;
-
-    if (!nf_instance)
-        nf_instance = find_or_discover_nf_instance(udm_ue, OpenAPI_nf_type_UDR);
-
-    if (!nf_instance) return;
-
-    return (*udm_ue->sbi.discover_handler)(udm_ue, nf_instance);
 }

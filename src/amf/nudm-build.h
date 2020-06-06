@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UDM_SBI_PATH_H
-#define UDM_SBI_PATH_H
+#ifndef AMF_NUDM_BUILD_H
+#define AMF_NUDM_BUILD_H
 
 #include "context.h"
 
@@ -26,25 +26,10 @@
 extern "C" {
 #endif
 
-#include "nudr-build.h"
-
-int udm_sbi_open(void);
-void udm_sbi_close(void);
-
-void udm_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
-
-void udm_sbi_discover_and_send(
-        udm_ue_t *udm_ue, OpenAPI_nf_type_e nf_type,
-        void (*discover_handler)(
-            udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance));
-
-void udm_nudr_dr_send_query(
-        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
-void udm_nudr_dr_send_update(
-        udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
+ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UDM_SBI_PATH_H */
+#endif /* AMF_NUDM_BUILD_H */

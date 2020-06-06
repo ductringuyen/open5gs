@@ -231,7 +231,8 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     memcpy(amf_ue->xres_star, authentication_response_parameter->res,
             authentication_response_parameter->length);
 
-    rv = amf_nausf_auth_discover_and_send_authenticate(amf_ue);
+    rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
+            amf_nausf_auth_send_authenticate);
     if (rv == OGS_ERROR) {
         ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
         return OGS_ERROR;

@@ -64,7 +64,8 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
     ogs_assert(udm_ue->ausf_instance_id);
 
-    udm_nudr_dr_discover_and_send_query(udm_ue);
+    udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
+            udm_nudr_dr_send_query);
 
     return true;
 }
@@ -103,7 +104,8 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     udm_ue->auth_timestamp = ogs_strdup(timestamp);
     ogs_assert(udm_ue->auth_timestamp);
 
-    udm_nudr_dr_discover_and_send_update(udm_ue);
+    udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
+            udm_nudr_dr_send_update);
 
     return true;
 }

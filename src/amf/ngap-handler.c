@@ -286,7 +286,7 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
 
             memset(&nas_guti, 0, sizeof(ogs_nas_5gs_guti_t));
 
-            /* Use the first configured plmn_id and amf id */
+            /* TODO : Use the first configured plmn_id and amf id */
             ogs_nas_from_plmn_id(&nas_guti.nas_plmn_id,
                     &amf_self()->served_guami[0].plmn_id);
             region = amf_self()->served_guami[0].amf_id.region;
