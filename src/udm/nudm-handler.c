@@ -59,10 +59,13 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
         return false;
     }
 
+    if (udm_ue->serving_network_name)
+        ogs_free(udm_ue->serving_network_name);
     udm_ue->serving_network_name = ogs_strdup(serving_network_name);
-    ogs_assert(udm_ue->serving_network_name);
+
+    if (udm_ue->ausf_instance_id)
+        ogs_free(udm_ue->ausf_instance_id);
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
-    ogs_assert(udm_ue->ausf_instance_id);
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
             udm_nudr_dr_send_query_authentication);

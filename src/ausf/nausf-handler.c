@@ -50,8 +50,9 @@ bool ausf_nausf_auth_handle_authenticate(
         return false;
     }
 
+    if (ausf_ue->serving_network_name)
+        ogs_free(ausf_ue->serving_network_name);
     ausf_ue->serving_network_name = ogs_strdup(serving_network_name);
-    ogs_assert(ausf_ue->serving_network_name);
 
     ausf_sbi_discover_and_send(ausf_ue, OpenAPI_nf_type_UDM,
             ausf_nudm_ueau_send_get);
