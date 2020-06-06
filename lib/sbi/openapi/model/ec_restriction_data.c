@@ -78,8 +78,8 @@ OpenAPI_ec_restriction_data_t *OpenAPI_ec_restriction_data_parseFromJSON(cJSON *
     }
 
     ec_restriction_data_local_var = OpenAPI_ec_restriction_data_create (
-        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : 0,
-        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : 0
+        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : -1,
+        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : -1
         );
 
     return ec_restriction_data_local_var;

@@ -263,7 +263,7 @@ OpenAPI_pcf_info_t *OpenAPI_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
         gpsi_ranges ? gpsi_rangesList : NULL,
         rx_diam_host ? ogs_strdup(rx_diam_host->valuestring) : NULL,
         rx_diam_realm ? ogs_strdup(rx_diam_realm->valuestring) : NULL,
-        v2x_support_ind ? v2x_support_ind->valueint : 0
+        v2x_support_ind ? v2x_support_ind->valueint : -1
         );
 
     return pcf_info_local_var;

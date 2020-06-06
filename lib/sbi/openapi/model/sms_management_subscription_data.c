@@ -235,12 +235,12 @@ OpenAPI_sms_management_subscription_data_t *OpenAPI_sms_management_subscription_
 
     sms_management_subscription_data_local_var = OpenAPI_sms_management_subscription_data_create (
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
-        mt_sms_subscribed ? mt_sms_subscribed->valueint : 0,
-        mt_sms_barring_all ? mt_sms_barring_all->valueint : 0,
-        mt_sms_barring_roaming ? mt_sms_barring_roaming->valueint : 0,
-        mo_sms_subscribed ? mo_sms_subscribed->valueint : 0,
-        mo_sms_barring_all ? mo_sms_barring_all->valueint : 0,
-        mo_sms_barring_roaming ? mo_sms_barring_roaming->valueint : 0,
+        mt_sms_subscribed ? mt_sms_subscribed->valueint : -1,
+        mt_sms_barring_all ? mt_sms_barring_all->valueint : -1,
+        mt_sms_barring_roaming ? mt_sms_barring_roaming->valueint : -1,
+        mo_sms_subscribed ? mo_sms_subscribed->valueint : -1,
+        mo_sms_barring_all ? mo_sms_barring_all->valueint : -1,
+        mo_sms_barring_roaming ? mo_sms_barring_roaming->valueint : -1,
         shared_sms_mng_data_ids ? shared_sms_mng_data_idsList : NULL,
         trace_data ? trace_data_local_nonprim : NULL
         );

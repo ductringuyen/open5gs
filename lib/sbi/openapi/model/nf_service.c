@@ -956,7 +956,7 @@ OpenAPI_nf_service_t *OpenAPI_nf_service_parseFromJSON(cJSON *nf_serviceJSON)
         per_plmn_snssai_list ? per_plmn_snssai_listList : NULL,
         vendor_id ? ogs_strdup(vendor_id->valuestring) : NULL,
         supported_vendor_specific_features ? supported_vendor_specific_featuresList : NULL,
-        oauth2_required ? oauth2_required->valueint : 0
+        oauth2_required ? oauth2_required->valueint : -1
         );
 
     return nf_service_local_var;

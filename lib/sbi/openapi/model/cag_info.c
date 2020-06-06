@@ -108,7 +108,7 @@ OpenAPI_cag_info_t *OpenAPI_cag_info_parseFromJSON(cJSON *cag_infoJSON)
 
     cag_info_local_var = OpenAPI_cag_info_create (
         allowed_cag_listList,
-        cag_only_indicator ? cag_only_indicator->valueint : 0
+        cag_only_indicator ? cag_only_indicator->valueint : -1
         );
 
     return cag_info_local_var;

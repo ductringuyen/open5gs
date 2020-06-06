@@ -126,7 +126,7 @@ OpenAPI_location_reporting_configuration_t *OpenAPI_location_reporting_configura
 
     location_reporting_configuration_local_var = OpenAPI_location_reporting_configuration_create (
         current_location->valueint,
-        one_time ? one_time->valueint : 0,
+        one_time ? one_time->valueint : -1,
         accuracy ? accuracy_local_nonprim : NULL,
         n3gpp_accuracy ? n3gpp_accuracy_local_nonprim : NULL
         );

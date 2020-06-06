@@ -452,16 +452,16 @@ OpenAPI_upf_info_t *OpenAPI_upf_info_parseFromJSON(cJSON *upf_infoJSON)
         s_nssai_upf_info_listList,
         smf_serving_area ? smf_serving_areaList : NULL,
         interface_upf_info_list ? interface_upf_info_listList : NULL,
-        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
+        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
         pdu_session_types ? pdu_session_typesList : NULL,
         atsss_capability ? atsss_capability_local_nonprim : NULL,
-        ue_ip_addr_ind ? ue_ip_addr_ind->valueint : 0,
+        ue_ip_addr_ind ? ue_ip_addr_ind->valueint : -1,
         tai_list ? tai_listList : NULL,
         w_agf_info ? w_agf_info_local_nonprim : NULL,
         tngf_info ? tngf_info_local_nonprim : NULL,
         twif_info ? twif_info_local_nonprim : NULL,
         priority ? priority->valuedouble : 0,
-        redundant_gtpu ? redundant_gtpu->valueint : 0
+        redundant_gtpu ? redundant_gtpu->valueint : -1
         );
 
     return upf_info_local_var;

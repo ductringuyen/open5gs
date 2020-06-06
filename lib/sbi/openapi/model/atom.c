@@ -110,7 +110,7 @@ OpenAPI_atom_t *OpenAPI_atom_parseFromJSON(cJSON *atomJSON)
     atom_local_var = OpenAPI_atom_create (
         ogs_strdup(attr->valuestring),
         ogs_strdup(value->valuestring),
-        negative ? negative->valueint : 0
+        negative ? negative->valueint : -1
         );
 
     return atom_local_var;

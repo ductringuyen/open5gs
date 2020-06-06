@@ -78,8 +78,8 @@ OpenAPI_atsss_capability_t *OpenAPI_atsss_capability_parseFromJSON(cJSON *atsss_
     }
 
     atsss_capability_local_var = OpenAPI_atsss_capability_create (
-        atsss_ll ? atsss_ll->valueint : 0,
-        mptcp ? mptcp->valueint : 0
+        atsss_ll ? atsss_ll->valueint : -1,
+        mptcp ? mptcp->valueint : -1
         );
 
     return atsss_capability_local_var;

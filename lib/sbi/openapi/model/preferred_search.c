@@ -60,7 +60,7 @@ OpenAPI_preferred_search_t *OpenAPI_preferred_search_parseFromJSON(cJSON *prefer
     }
 
     preferred_search_local_var = OpenAPI_preferred_search_create (
-        preferred_tai_match_ind ? preferred_tai_match_ind->valueint : 0
+        preferred_tai_match_ind ? preferred_tai_match_ind->valueint : -1
         );
 
     return preferred_search_local_var;

@@ -366,7 +366,7 @@ OpenAPI_ue_policy_set_t *OpenAPI_ue_policy_set_parseFromJSON(cJSON *ue_policy_se
         ue_policy_sections ? ue_policy_sectionsList : NULL,
         upsis ? upsisList : NULL,
         allowed_route_sel_descs ? allowed_route_sel_descsList : NULL,
-        andsp_ind ? andsp_ind->valueint : 0,
+        andsp_ind ? andsp_ind->valueint : -1,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         os_ids ? os_idsList : NULL
         );

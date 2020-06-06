@@ -30,6 +30,9 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg);
 bool udm_nudm_ueau_handle_result_confirmation_inform(
         udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg);
 
+bool udm_nudm_uecm_handle_registration(
+        udm_ue_t *udm_ue, ogs_sbi_message_t *message);
+
 #ifdef __cplusplus
 }
 #endif

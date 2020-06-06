@@ -239,7 +239,7 @@ OpenAPI_eutra_location_t *OpenAPI_eutra_location_parseFromJSON(cJSON *eutra_loca
     eutra_location_local_var = OpenAPI_eutra_location_create (
         tai_local_nonprim,
         ecgi_local_nonprim,
-        ignore_ecgi ? ignore_ecgi->valueint : 0,
+        ignore_ecgi ? ignore_ecgi->valueint : -1,
         age_of_location_information ? age_of_location_information->valuedouble : 0,
         ue_location_timestamp ? ogs_strdup(ue_location_timestamp->valuestring) : NULL,
         geographical_information ? ogs_strdup(geographical_information->valuestring) : NULL,

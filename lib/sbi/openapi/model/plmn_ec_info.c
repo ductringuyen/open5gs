@@ -107,8 +107,8 @@ OpenAPI_plmn_ec_info_t *OpenAPI_plmn_ec_info_parseFromJSON(cJSON *plmn_ec_infoJS
 
     plmn_ec_info_local_var = OpenAPI_plmn_ec_info_create (
         plmn_id_local_nonprim,
-        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : 0,
-        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : 0
+        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : -1,
+        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : -1
         );
 
     return plmn_ec_info_local_var;

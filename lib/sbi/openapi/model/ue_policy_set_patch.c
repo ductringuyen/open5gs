@@ -217,7 +217,7 @@ OpenAPI_ue_policy_set_patch_t *OpenAPI_ue_policy_set_patch_parseFromJSON(cJSON *
     ue_policy_set_patch_local_var = OpenAPI_ue_policy_set_patch_create (
         ue_policy_sections ? ue_policy_sectionsList : NULL,
         upsis ? upsisList : NULL,
-        andsp_ind ? andsp_ind->valueint : 0,
+        andsp_ind ? andsp_ind->valueint : -1,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         os_ids ? os_idsList : NULL
         );

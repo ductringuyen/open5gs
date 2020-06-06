@@ -106,7 +106,7 @@ OpenAPI_rg_auth_ctx_t *OpenAPI_rg_auth_ctx_parseFromJSON(cJSON *rg_auth_ctxJSON)
     rg_auth_ctx_local_var = OpenAPI_rg_auth_ctx_create (
         auth_resultVariable,
         supi ? ogs_strdup(supi->valuestring) : NULL,
-        auth_ind ? auth_ind->valueint : 0
+        auth_ind ? auth_ind->valueint : -1
         );
 
     return rg_auth_ctx_local_var;

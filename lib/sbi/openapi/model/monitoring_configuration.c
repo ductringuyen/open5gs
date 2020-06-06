@@ -158,7 +158,7 @@ OpenAPI_monitoring_configuration_t *OpenAPI_monitoring_configuration_parseFromJS
 
     monitoring_configuration_local_var = OpenAPI_monitoring_configuration_create (
         event_type_local_nonprim,
-        immediate_flag ? immediate_flag->valueint : 0,
+        immediate_flag ? immediate_flag->valueint : -1,
         location_reporting_configuration ? location_reporting_configuration_local_nonprim : NULL,
         association_type ? association_type_local_nonprim : NULL,
         datalink_report_cfg ? datalink_report_cfg_local_nonprim : NULL

@@ -230,7 +230,7 @@ OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_parse
         algorithm_id ? ogs_strdup(algorithm_id->valuestring) : NULL,
         enc_opc_key ? ogs_strdup(enc_opc_key->valuestring) : NULL,
         enc_topc_key ? ogs_strdup(enc_topc_key->valuestring) : NULL,
-        vector_generation_in_hss ? vector_generation_in_hss->valueint : 0
+        vector_generation_in_hss ? vector_generation_in_hss->valueint : -1
         );
 
     return authentication_subscription_local_var;

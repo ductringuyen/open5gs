@@ -96,9 +96,9 @@ OpenAPI_battery_indication_t *OpenAPI_battery_indication_parseFromJSON(cJSON *ba
     }
 
     battery_indication_local_var = OpenAPI_battery_indication_create (
-        battery_ind ? battery_ind->valueint : 0,
-        replaceable_ind ? replaceable_ind->valueint : 0,
-        rechargeable_ind ? rechargeable_ind->valueint : 0
+        battery_ind ? battery_ind->valueint : -1,
+        replaceable_ind ? replaceable_ind->valueint : -1,
+        rechargeable_ind ? rechargeable_ind->valueint : -1
         );
 
     return battery_indication_local_var;

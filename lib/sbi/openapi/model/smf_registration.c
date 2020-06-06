@@ -343,11 +343,11 @@ OpenAPI_smf_registration_t *OpenAPI_smf_registration_parseFromJSON(cJSON *smf_re
         pdu_session_id->valuedouble,
         single_nssai_local_nonprim,
         dnn ? ogs_strdup(dnn->valuestring) : NULL,
-        emergency_services ? emergency_services->valueint : 0,
+        emergency_services ? emergency_services->valueint : -1,
         pcscf_restoration_callback_uri ? ogs_strdup(pcscf_restoration_callback_uri->valuestring) : NULL,
         plmn_id_local_nonprim,
         pgw_fqdn ? ogs_strdup(pgw_fqdn->valuestring) : NULL,
-        epdg_ind ? epdg_ind->valueint : 0,
+        epdg_ind ? epdg_ind->valueint : -1,
         dereg_callback_uri ? ogs_strdup(dereg_callback_uri->valuestring) : NULL,
         registration_reason ? registration_reason_local_nonprim : NULL,
         registration_time ? ogs_strdup(registration_time->valuestring) : NULL

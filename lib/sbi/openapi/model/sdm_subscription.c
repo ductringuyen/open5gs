@@ -319,7 +319,7 @@ OpenAPI_sdm_subscription_t *OpenAPI_sdm_subscription_parseFromJSON(cJSON *sdm_su
 
     sdm_subscription_local_var = OpenAPI_sdm_subscription_create (
         ogs_strdup(nf_instance_id->valuestring),
-        implicit_unsubscribe ? implicit_unsubscribe->valueint : 0,
+        implicit_unsubscribe ? implicit_unsubscribe->valueint : -1,
         expires ? ogs_strdup(expires->valuestring) : NULL,
         ogs_strdup(callback_reference->valuestring),
         amf_service_name ? ogs_strdup(amf_service_name->valuestring) : NULL,
@@ -328,7 +328,7 @@ OpenAPI_sdm_subscription_t *OpenAPI_sdm_subscription_parseFromJSON(cJSON *sdm_su
         dnn ? ogs_strdup(dnn->valuestring) : NULL,
         subscription_id ? ogs_strdup(subscription_id->valuestring) : NULL,
         plmn_id ? plmn_id_local_nonprim : NULL,
-        immediate_report ? immediate_report->valueint : 0,
+        immediate_report ? immediate_report->valueint : -1,
         report ? report_local_nonprim : NULL
         );
 

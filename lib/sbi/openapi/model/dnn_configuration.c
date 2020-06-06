@@ -492,21 +492,21 @@ OpenAPI_dnn_configuration_t *OpenAPI_dnn_configuration_parseFromJSON(cJSON *dnn_
     dnn_configuration_local_var = OpenAPI_dnn_configuration_create (
         pdu_session_types_local_nonprim,
         ssc_modes_local_nonprim,
-        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
+        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
         _5g_qos_profile ? _5g_qos_profile_local_nonprim : NULL,
         session_ambr ? session_ambr_local_nonprim : NULL,
         _3gpp_charging_characteristics ? ogs_strdup(_3gpp_charging_characteristics->valuestring) : NULL,
         static_ip_address ? static_ip_addressList : NULL,
         up_security ? up_security_local_nonprim : NULL,
         pdu_session_continuity_ind ? pdu_session_continuity_indVariable : 0,
-        invoke_nef_selection ? invoke_nef_selection->valueint : 0,
+        invoke_nef_selection ? invoke_nef_selection->valueint : -1,
         nidd_nef_id ? ogs_strdup(nidd_nef_id->valuestring) : NULL,
         nidd_info ? nidd_info_local_nonprim : NULL,
-        redundant_session_allowed ? redundant_session_allowed->valueint : 0,
+        redundant_session_allowed ? redundant_session_allowed->valueint : -1,
         acs_info ? acs_info_local_nonprim : NULL,
         ipv4_frame_route_list ? ipv4_frame_route_listList : NULL,
         ipv6_frame_route_list ? ipv6_frame_route_listList : NULL,
-        atsss_allowed ? atsss_allowed->valueint : 0
+        atsss_allowed ? atsss_allowed->valueint : -1
         );
 
     return dnn_configuration_local_var;

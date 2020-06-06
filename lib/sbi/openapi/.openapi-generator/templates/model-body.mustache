@@ -754,7 +754,7 @@ OpenAPI_{{classname}}_t *OpenAPI_{{classname}}_parseFromJSON(cJSON *{{classname}
                     {{^required}}{{{name}}} ? {{/required}}{{{name}}}->valuedouble{{^required}} : 0{{/required}}{{#hasMore}},{{/hasMore}}
                 {{/isNumeric}}
                 {{#isBoolean}}
-                    {{^required}}{{{name}}} ? {{/required}}{{{name}}}->valueint{{^required}} : 0{{/required}}{{#hasMore}},{{/hasMore}}
+                    {{^required}}{{{name}}} ? {{/required}}{{{name}}}->valueint{{^required}} : -1{{/required}}{{#hasMore}},{{/hasMore}}
                 {{/isBoolean}}
                 {{#isString}}
                     {{^required}}{{{name}}} ? {{/required}}ogs_strdup({{{name}}}->valuestring){{^required}} : NULL{{/required}}{{#hasMore}},{{/hasMore}}

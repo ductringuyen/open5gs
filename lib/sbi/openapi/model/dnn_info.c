@@ -139,10 +139,10 @@ OpenAPI_dnn_info_t *OpenAPI_dnn_info_parseFromJSON(cJSON *dnn_infoJSON)
 
     dnn_info_local_var = OpenAPI_dnn_info_create (
         ogs_strdup(dnn->valuestring),
-        default_dnn_indicator ? default_dnn_indicator->valueint : 0,
-        lbo_roaming_allowed ? lbo_roaming_allowed->valueint : 0,
-        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
-        dnn_barred ? dnn_barred->valueint : 0
+        default_dnn_indicator ? default_dnn_indicator->valueint : -1,
+        lbo_roaming_allowed ? lbo_roaming_allowed->valueint : -1,
+        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
+        dnn_barred ? dnn_barred->valueint : -1
         );
 
     return dnn_info_local_var;

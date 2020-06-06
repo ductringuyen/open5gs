@@ -467,7 +467,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
     amf_non3_gpp_access_registration_local_var = OpenAPI_amf_non3_gpp_access_registration_create (
         ogs_strdup(amf_instance_id->valuestring),
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
-        purge_flag ? purge_flag->valueint : 0,
+        purge_flag ? purge_flag->valueint : -1,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         ims_vo_ps_local_nonprim,
         ogs_strdup(dereg_callback_uri->valuestring),
@@ -477,7 +477,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
         guami_local_nonprim,
         backup_amf_info ? backup_amf_infoList : NULL,
         rat_typeVariable,
-        urrp_indicator ? urrp_indicator->valueint : 0,
+        urrp_indicator ? urrp_indicator->valueint : -1,
         amf_ee_subscription_id ? ogs_strdup(amf_ee_subscription_id->valuestring) : NULL,
         nid ? ogs_strdup(nid->valuestring) : NULL,
         registration_time ? ogs_strdup(registration_time->valuestring) : NULL,

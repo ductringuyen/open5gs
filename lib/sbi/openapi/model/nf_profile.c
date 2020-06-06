@@ -2132,17 +2132,17 @@ OpenAPI_nf_profile_t *OpenAPI_nf_profile_parseFromJSON(cJSON *nf_profileJSON)
         hss_info ? hss_infoList : NULL,
         custom_info ? custom_info_local_object : NULL,
         recovery_time ? ogs_strdup(recovery_time->valuestring) : NULL,
-        nf_service_persistence ? nf_service_persistence->valueint : 0,
+        nf_service_persistence ? nf_service_persistence->valueint : -1,
         nf_services ? nf_servicesList : NULL,
-        nf_profile_changes_support_ind ? nf_profile_changes_support_ind->valueint : 0,
-        nf_profile_changes_ind ? nf_profile_changes_ind->valueint : 0,
+        nf_profile_changes_support_ind ? nf_profile_changes_support_ind->valueint : -1,
+        nf_profile_changes_ind ? nf_profile_changes_ind->valueint : -1,
         default_notification_subscriptions ? default_notification_subscriptionsList : NULL,
         lmf_info ? lmf_info_local_nonprim : NULL,
         gmlc_info ? gmlc_info_local_nonprim : NULL,
         nf_set_id_list ? nf_set_id_listList : NULL,
         serving_scope ? serving_scopeList : NULL,
-        lc_h_support_ind ? lc_h_support_ind->valueint : 0,
-        olc_h_support_ind ? olc_h_support_ind->valueint : 0
+        lc_h_support_ind ? lc_h_support_ind->valueint : -1,
+        olc_h_support_ind ? olc_h_support_ind->valueint : -1
         );
 
     return nf_profile_local_var;

@@ -60,7 +60,7 @@ OpenAPI_additional_snssai_data_t *OpenAPI_additional_snssai_data_parseFromJSON(c
     }
 
     additional_snssai_data_local_var = OpenAPI_additional_snssai_data_create (
-        required_authn_authz ? required_authn_authz->valueint : 0
+        required_authn_authz ? required_authn_authz->valueint : -1
         );
 
     return additional_snssai_data_local_var;

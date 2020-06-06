@@ -144,7 +144,7 @@ OpenAPI_snssai_upf_info_item_t *OpenAPI_snssai_upf_info_item_parseFromJSON(cJSON
     snssai_upf_info_item_local_var = OpenAPI_snssai_upf_info_item_create (
         s_nssai_local_nonprim,
         dnn_upf_info_listList,
-        redundant_transport ? redundant_transport->valueint : 0
+        redundant_transport ? redundant_transport->valueint : -1
         );
 
     return snssai_upf_info_item_local_var;
