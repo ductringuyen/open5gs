@@ -127,7 +127,7 @@ uint16_t ogs_plmn_id_mnc_len(ogs_plmn_id_t *plmn_id);
 void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id, 
         uint16_t mcc, uint16_t mnc, uint16_t mnc_len);
 
-char *ogs_plmn_id_string(ogs_plmn_id_t *plmn_id);
+char *ogs_serving_network_name_from_plmn_id(ogs_plmn_id_t *plmn_id);
 char *ogs_plmn_id_mcc_string(ogs_plmn_id_t *plmn_id);
 char *ogs_plmn_id_mnc_string(ogs_plmn_id_t *plmn_id);
 

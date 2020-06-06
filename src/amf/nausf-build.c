@@ -44,7 +44,7 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate(amf_ue_t *amf_ue)
     ogs_assert(amf_ue->suci);
     AuthenticationInfo->supi_or_suci = amf_ue->suci;
     AuthenticationInfo->serving_network_name =
-        ogs_plmn_id_string(&amf_ue->tai.plmn_id);
+        ogs_serving_network_name_from_plmn_id(&amf_ue->tai.plmn_id);
 
     message.AuthenticationInfo = AuthenticationInfo;
 

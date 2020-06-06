@@ -64,7 +64,7 @@ void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id,
     return plmn_id;
 }
 
-char *ogs_plmn_id_string(ogs_plmn_id_t *plmn_id)
+char *ogs_serving_network_name_from_plmn_id(ogs_plmn_id_t *plmn_id)
 {
     ogs_assert(plmn_id);
     return ogs_msprintf("5G:mnc%03d.mcc%03d.3gppnetwork.org",
@@ -80,7 +80,10 @@ char *ogs_plmn_id_mcc_string(ogs_plmn_id_t *plmn_id)
 char *ogs_plmn_id_mnc_string(ogs_plmn_id_t *plmn_id)
 {
     ogs_assert(plmn_id);
-    return ogs_msprintf("%03d", ogs_plmn_id_mnc(plmn_id));
+    if (ogs_plmn_id_mnc_len(plmn_id) == 2)
+        return ogs_msprintf("%02d", ogs_plmn_id_mnc(plmn_id));
+    else
+        return ogs_msprintf("%03d", ogs_plmn_id_mnc(plmn_id));
 }
 
 uint32_t ogs_amf_id_hexdump(ogs_amf_id_t *amf_id)
