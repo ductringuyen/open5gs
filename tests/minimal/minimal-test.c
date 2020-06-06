@@ -241,7 +241,7 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
     ogs_pkbuf_free(nasbuf);
 
-    ogs_msleep(2000);
+    ogs_msleep(300);
 #if 0
 
     /* Send Security mode Complete */

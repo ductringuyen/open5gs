@@ -308,7 +308,8 @@ bool udm_nudr_dr_handle_subscription_context(
         header.resource.component[2] =
             (char *)OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS;
 
-        sendmsg.http.location = ogs_sbi_server_uri(server, &header);
+        if (status == OGS_SBI_HTTP_STATUS_CREATED)
+            sendmsg.http.location = ogs_sbi_server_uri(server, &header);
         sendmsg.Amf3GppAccessRegistration =
             OpenAPI_amf3_gpp_access_registration_copy(
                 sendmsg.Amf3GppAccessRegistration,
