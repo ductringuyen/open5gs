@@ -21,7 +21,7 @@
 #include "nnrf-handler.h"
 #include "nudm-handler.h"
 
-bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
 {
     ogs_sbi_session_t *session = NULL;
 
@@ -33,13 +33,13 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
     session = udm_ue->session;
     ogs_assert(session);
 
-    ogs_assert(recvmsg);
+    ogs_assert(message);
 
-    AuthenticationInfoRequest = recvmsg->AuthenticationInfoRequest;
+    AuthenticationInfoRequest = message->AuthenticationInfoRequest;
     if (!AuthenticationInfoRequest) {
         ogs_error("[%s] No AuthenticationInfoRequest", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No AuthenticationInfoRequest", udm_ue->suci);
+                message, "No AuthenticationInfoRequest", udm_ue->suci);
         return false;
     }
 
@@ -47,7 +47,7 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
     if (!AuthenticationInfoRequest) {
         ogs_error("[%s] No servingNetworkName", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No servingNetworkName", udm_ue->suci);
+                message, "No servingNetworkName", udm_ue->suci);
         return false;
     }
 
@@ -55,7 +55,7 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
     if (!AuthenticationInfoRequest) {
         ogs_error("[%s] No ausfInstanceId", udm_ue->suci);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                recvmsg, "No ausfInstanceId", udm_ue->suci);
+                message, "No ausfInstanceId", udm_ue->suci);
         return false;
     }
 
@@ -76,7 +76,6 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     ogs_sbi_session_t *session = NULL;
 
     OpenAPI_auth_event_t *AuthEvent = NULL;
-    char *timestamp = NULL;
 
     ogs_assert(udm_ue);
     session = udm_ue->session;
@@ -96,14 +95,6 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
         ogs_free(udm_ue->auth_event);
     udm_ue->auth_event = ogs_sbi_build_content(message);
     ogs_assert(udm_ue->auth_event);
-
-    timestamp = AuthEvent->time_stamp;
-    if (!AuthEvent) {
-        ogs_error("[%s] No timeStamp", udm_ue->suci);
-        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                message, "No timeStamp", udm_ue->suci);
-        return false;
-    }
 
     udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
             udm_nudr_dr_send_update_authentication_data);
