@@ -194,8 +194,8 @@ void udm_nudr_dr_send_query_authentication(
     ogs_assert(udm_ue);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDR_DR, (char *)OGS_SBI_API_V1);
     ogs_assert(client);
 
     ogs_timer_start(udm_ue->sbi.client_wait_timer,
@@ -215,8 +215,8 @@ void udm_nudr_dr_send_update_authentication(
     ogs_assert(udm_ue);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDR_DR, (char *)OGS_SBI_API_V1);
     ogs_assert(client);
 
     ogs_timer_start(udm_ue->sbi.client_wait_timer,
@@ -236,8 +236,8 @@ void udm_nudr_dr_send_update_context(
     ogs_assert(udm_ue);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDR_DR);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDR_DR, (char *)OGS_SBI_API_V1);
     ogs_assert(client);
 
     ogs_timer_start(udm_ue->sbi.client_wait_timer,

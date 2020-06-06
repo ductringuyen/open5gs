@@ -192,8 +192,8 @@ void ausf_nudm_ueau_send_get(
     ogs_assert(session);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU, (char *)OGS_SBI_API_V1);
     ogs_assert(client);
 
     ogs_timer_start(ausf_ue->sbi.client_wait_timer,
@@ -216,8 +216,8 @@ void ausf_nudm_ueau_send_result_confirmation_inform(
     ogs_assert(session);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDM_UEAU, (char *)OGS_SBI_API_V1);
     ogs_assert(client);
 
     ogs_timer_start(ausf_ue->sbi.client_wait_timer,

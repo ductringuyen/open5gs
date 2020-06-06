@@ -907,7 +907,7 @@ bool ogs_sbi_client_associate(ogs_sbi_nf_instance_t *nf_instance)
 }
 
 ogs_sbi_client_t *ogs_sbi_client_find_by_service_name(
-        ogs_sbi_nf_instance_t *nf_instance, char *name)
+        ogs_sbi_nf_instance_t *nf_instance, char *name, char *version)
 {
     ogs_sbi_nf_service_t *nf_service = NULL;
 

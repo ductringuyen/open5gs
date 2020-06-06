@@ -204,8 +204,8 @@ int amf_nausf_auth_send_authenticate(
         request = amf_nausf_auth_build_authenticate_confirmation(amf_ue);
         ogs_assert(request);
     } else {
-        client = ogs_sbi_client_find_by_service_name(
-                nf_instance, (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
+        client = ogs_sbi_client_find_by_service_name(nf_instance,
+            (char *)OGS_SBI_SERVICE_NAME_NAUSF_AUTH, (char *)OGS_SBI_API_V1);
         if (!client) {
             ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->suci,
                     nf_instance->id, OGS_SBI_SERVICE_NAME_NAUSF_AUTH);
@@ -233,8 +233,8 @@ int amf_nudm_uecm_send_registration(
     ogs_assert(amf_ue);
     ogs_assert(nf_instance);
 
-    client = ogs_sbi_client_find_by_service_name(
-            nf_instance, (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM);
+    client = ogs_sbi_client_find_by_service_name(nf_instance,
+        (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM, (char *)OGS_SBI_API_V1);
     if (!client) {
         ogs_error("[%s] Cannot find client [%s:%s]", amf_ue->suci,
                 nf_instance->id, OGS_SBI_SERVICE_NAME_NUDM_UECM);
