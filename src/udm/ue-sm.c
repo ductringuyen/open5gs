@@ -133,9 +133,8 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     break;
 
                 CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
-                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue,
-                            message->h.resource.component[1],
-                            udm_nudr_dr_build_query_provisioned);
+                    udm_nudm_sdm_handle_subscription_provisioned(
+                            udm_ue, message);
                     break;
 
                 DEFAULT
