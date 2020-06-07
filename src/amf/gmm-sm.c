@@ -899,9 +899,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
-#if 0
     int rv;
-#endif
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
@@ -991,39 +989,52 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         sbi_message = e->sbi.message;
         ogs_assert(sbi_message);
 
+        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+
         SWITCH(sbi_message->h.resource.component[1])
         CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
-            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
-
             if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
                 sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
                 ogs_error("[%s] HTTP response error [%d]",
-                        amf_ue->suci, sbi_message->res_status);
-                nas_5gs_send_authentication_reject(amf_ue);
+                        amf_ue->supi, sbi_message->res_status);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 break;
             }
 
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                ogs_fatal("asdlfkjasdfasdf");
-#if 0
-                rv = amf_nausf_auth_handle_authenticate_confirmation(
-                        amf_ue, sbi_message);
-                if (rv != OGS_OK) {
-                    ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
-                    nas_5gs_send_authentication_reject(amf_ue);
-                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-                } else {
-                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_security_mode);
+                amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
+
+                rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_send_get);
+                if (rv == OGS_ERROR) {
+                    ogs_error("[%s] Cannot send SBI message", amf_ue->supi);
+                    nas_5gs_send_registration_reject(
+                            amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                    OGS_FSM_TRAN(s, &gmm_state_exception);
+                    break;
                 }
-#endif
                 break;
+
             DEFAULT
                 ogs_error("[%s] Invalid HTTP method [%s]",
                         amf_ue->suci, sbi_message->h.method);
                 ogs_assert_if_reached();
             END
+            break;
+
+        CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->supi, sbi_message->res_status);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+            ogs_fatal("am-data");
             break;
 
         DEFAULT

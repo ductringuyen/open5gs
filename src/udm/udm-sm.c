@@ -37,6 +37,7 @@ void udm_state_final(ogs_fsm_t *s, udm_event_t *e)
 void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
 {
     int rv;
+    const char *api_version = NULL;
 
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_request_t *request = NULL;
@@ -80,7 +81,15 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
         }
 
-        if (strcmp(message.h.api.version, OGS_SBI_API_V1) != 0) {
+        SWITCH(message.h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+            api_version = OGS_SBI_API_V2;
+            break;
+        DEFAULT
+            api_version = OGS_SBI_API_V1;
+        END
+
+        if (strcmp(message.h.api.version, api_version) != 0) {
             ogs_error("Not supported version [%s]", message.h.api.version);
             ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     &message, "Not supported version", NULL);
@@ -120,6 +129,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
 
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UEAU)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
             if (!message.h.resource.component[0]) {
                 ogs_error("Not found [%s]", message.h.method);
                 ogs_sbi_server_send_error(session,
@@ -196,7 +206,15 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             break;
         }
 
-        if (strcmp(message.h.api.version, OGS_SBI_API_V1) != 0) {
+        SWITCH(message.h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+            api_version = OGS_SBI_API_V2;
+            break;
+        DEFAULT
+            api_version = OGS_SBI_API_V1;
+        END
+
+        if (strcmp(message.h.api.version, api_version) != 0) {
             ogs_error("Not supported version [%s]", message.h.api.version);
             ogs_sbi_message_free(&message);
             ogs_sbi_response_free(response);

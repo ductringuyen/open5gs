@@ -43,6 +43,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
     char buf[OGS_ADDRSTRLEN];
+    const char *api_version = NULL;
 
     ogs_sock_t *sock = NULL;
     ogs_sockaddr_t *addr = NULL;
@@ -104,7 +105,16 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 
-        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_V1) != 0) {
+        SWITCH(sbi_message.h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+            api_version = OGS_SBI_API_V2;
+            break;
+        DEFAULT
+            api_version = OGS_SBI_API_V1;
+        END
+
+        ogs_assert(api_version);
+        if (strcmp(sbi_message.h.api.version, api_version) != 0) {
             ogs_error("Not supported version [%s]", sbi_message.h.api.version);
             ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     &sbi_message, "Not supported version", NULL);
@@ -194,7 +204,16 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 
-        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_V1) != 0) {
+        SWITCH(sbi_message.h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+            api_version = OGS_SBI_API_V2;
+            break;
+        DEFAULT
+            api_version = OGS_SBI_API_V1;
+        END
+
+        ogs_assert(api_version);
+        if (strcmp(sbi_message.h.api.version, api_version) != 0) {
             ogs_error("Not supported version [%s]", sbi_message.h.api.version);
             ogs_sbi_message_free(&sbi_message);
             ogs_sbi_response_free(sbi_response);
@@ -290,6 +309,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
 
         CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
             amf_ue = e->sbi.data;
             ogs_assert(amf_ue);
             ogs_assert(OGS_FSM_STATE(&amf_ue->sm));

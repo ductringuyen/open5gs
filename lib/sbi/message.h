@@ -93,6 +93,9 @@ extern "C" {
 #define OGS_SBI_RESOURCE_NAME_EAP_SESSION           "eap-session"
 
 #define OGS_SBI_SERVICE_NAME_NUDM_SDM               "nudm-sdm"
+#define OGS_SBI_RESOURCE_NAME_AM_DATA               "am-data"
+#define OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA       "smf-select-data"
+#define OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA "ue-context-in-smf-data"
 #define OGS_SBI_SERVICE_NAME_NUDM_UEAU              "nudm-ueau"
 #define OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION  "security-information"
 #define OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA    "generate-auth-data"

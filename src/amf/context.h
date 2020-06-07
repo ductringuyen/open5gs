@@ -221,6 +221,7 @@ struct amf_ue_s {
             int (*handler)(
                 amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
         } discover;
+        const char *nudm_sdm_resource;
     } sbi;
 
     /* UE identity */

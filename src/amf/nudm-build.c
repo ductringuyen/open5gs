@@ -91,3 +91,27 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
 
     return request;
 }
+
+ogs_sbi_request_t *amf_nudm_sdm_build_get(amf_ue_t *amf_ue)
+{
+    ogs_sbi_message_t message;
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(amf_ue->supi);
+    ogs_assert(amf_ue->sbi.nudm_sdm_resource);
+
+    memset(&message, 0, sizeof(message));
+    message.h.method = (char *)OGS_SBI_HTTP_METHOD_GET;
+    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_SDM;
+    message.h.api.version = (char *)OGS_SBI_API_V2;
+    message.h.resource.component[0] = amf_ue->supi;
+    message.h.resource.component[1] = (char *)amf_ue->sbi.nudm_sdm_resource;
+
+    request = ogs_sbi_build_request(&message);
+    ogs_assert(request);
+
+    amf_ue->sbi.nudm_sdm_resource = NULL; /* Reset */
+
+    return request;
+}
