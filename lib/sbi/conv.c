@@ -189,3 +189,45 @@ ogs_sockaddr_t *ogs_sbi_getaddr_from_uri(char *uri)
     ogs_free(p);
     return addr;
 }
+
+char *ogs_sbi_bitrate_to_string(uint64_t bitrate, int unit)
+{
+    if (unit == OGS_SBI_BITRATE_KBPS) {
+        return ogs_msprintf("%lld Kbps",
+                (long long)bitrate / 1024);
+    } else if (unit == OGS_SBI_BITRATE_MBPS) {
+        return ogs_msprintf("%lld Mbps",
+                (long long)bitrate / 1024 / 1024);
+    } else if (unit == OGS_SBI_BITRATE_GBPS) {
+        return ogs_msprintf("%lld Gbps",
+                (long long)bitrate / 1024 / 1024 / 1024);
+    } else if (unit == OGS_SBI_BITRATE_TBPS) {
+        return ogs_msprintf("%lld Tbps",
+                (long long)bitrate / 1024 / 1024 / 1024 / 1024);
+    }
+
+    return ogs_msprintf("%lld bps", (long long)bitrate);
+}
+
+uint64_t ogs_sbi_bitrate_from_string(char *str)
+{
+    char *unit = NULL;
+    uint64_t bitrate = 0;
+    ogs_assert(str);
+
+    unit = strrchr(str, ' ');
+    bitrate = atoll(str);
+
+    SWITCH(unit+1)
+    CASE("Kbps")
+        return bitrate * 1024;
+    CASE("Mbps")
+        return bitrate * 1024 * 1024;
+    CASE("Gbps")
+        return bitrate * 1024 * 1024 * 1024;
+    CASE("Tbps")
+        return bitrate * 1024 * 1024 * 1024 * 1024;
+    DEFAULT
+    END
+    return bitrate;
+}

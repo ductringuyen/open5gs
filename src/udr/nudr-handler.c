@@ -240,8 +240,13 @@ bool udr_nudr_dr_handle_subscription_provisioned(
 
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
+    ogs_dbi_subscription_data_t subscription_data;
 
     char *supi = NULL;
+
+    OpenAPI_access_and_mobility_subscription_data_t
+        AccessAndMobilitySubscriptionData;
+    OpenAPI_ambr_rm_t subscribed_ue_ambr;
 
     ogs_assert(session);
     ogs_assert(recvmsg);
@@ -262,10 +267,46 @@ bool udr_nudr_dr_handle_subscription_provisioned(
         return false;
     }
 
+    rv = ogs_dbi_subscription_data(supi, &subscription_data);
+    if (rv != OGS_OK) {
+        ogs_fatal("[%s] Cannot find SUPI in DB", supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                recvmsg, "Cannot find SUPI Type", supi);
+        return false;
+    }
+
+    memset(&AccessAndMobilitySubscriptionData, 0,
+            sizeof(AccessAndMobilitySubscriptionData));
+
     SWITCH(recvmsg->h.resource.component[4])
     CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+        memset(&sendmsg, 0, sizeof(sendmsg));
 
-        ogs_fatal("am-data");
+        AccessAndMobilitySubscriptionData.mps_priority = -1;
+        AccessAndMobilitySubscriptionData.mcs_priority = -1;
+        AccessAndMobilitySubscriptionData.sor_info_expect_ind = -1;
+        AccessAndMobilitySubscriptionData.soraf_retrieval = -1;
+        AccessAndMobilitySubscriptionData.mico_allowed = -1;
+        AccessAndMobilitySubscriptionData.nssai_inclusion_allowed = -1;
+        AccessAndMobilitySubscriptionData.iab_operation_allowed = -1;
+
+        subscribed_ue_ambr.uplink = ogs_sbi_bitrate_to_string(
+                subscription_data.ambr.uplink, OGS_SBI_BITRATE_KBPS);
+        subscribed_ue_ambr.downlink = ogs_sbi_bitrate_to_string(
+                subscription_data.ambr.downlink, OGS_SBI_BITRATE_KBPS);
+
+        AccessAndMobilitySubscriptionData.subscribed_ue_ambr =
+            &subscribed_ue_ambr;
+
+        sendmsg.AccessAndMobilitySubscriptionData =
+            &AccessAndMobilitySubscriptionData;
+
+        response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+
+        ogs_free(subscribed_ue_ambr.uplink);
+        ogs_free(subscribed_ue_ambr.downlink);
 
         break;
 
