@@ -319,3 +319,38 @@ bool udm_nudr_dr_handle_subscription_context(
 
     return false;
 }
+
+bool udm_nudr_dr_handle_subscription_provisioned(
+        udm_ue_t *udm_ue, ogs_sbi_message_t *recvmsg)
+{
+    ogs_sbi_server_t *server = NULL;
+    ogs_sbi_session_t *session = NULL;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_response_t *response = NULL;
+
+    ogs_assert(udm_ue);
+    session = udm_ue->session;
+    ogs_assert(session);
+    server = ogs_sbi_session_get_server(session);
+    ogs_assert(server);
+
+    ogs_assert(recvmsg);
+
+    SWITCH(recvmsg->h.resource.component[4])
+    CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+        memset(&sendmsg, 0, sizeof(sendmsg));
+
+        response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+        break;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[3]);
+        return false;
+    END
+
+    return true;
+}
