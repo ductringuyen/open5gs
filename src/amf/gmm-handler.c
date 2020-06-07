@@ -194,7 +194,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
 int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_authentication_response_t *authentication_response)
 {
-    int rv;
     ogs_nas_authentication_response_parameter_t
         *authentication_response_parameter = NULL;
     uint8_t hxres_star[OGS_MAX_RES_LEN];
@@ -231,12 +230,8 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     memcpy(amf_ue->xres_star, authentication_response_parameter->res,
             authentication_response_parameter->length);
 
-    rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
-            amf_nausf_auth_send_authenticate_confirmation);
-    if (rv == OGS_ERROR) {
-        ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-        return OGS_ERROR;
-    }
+    amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_AUSF,
+            amf_nausf_auth_build_authenticate_confirmation);
 
     return OGS_OK;
 }

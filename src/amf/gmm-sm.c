@@ -770,8 +770,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
-            amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                    amf_nudm_uecm_send_registration);
+            amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_UDM,
+                    amf_nudm_uecm_build_registration);
 
             if (amf_ue->nas.type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
@@ -915,8 +915,8 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_PUT)
                 amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
-                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                        amf_nudm_sdm_send_get);
+                amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_build_get);
                 break;
 
             DEFAULT
@@ -956,15 +956,15 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
                 amf_ue->sbi.nudm_sdm_resource =
                     OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
-                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                        amf_nudm_sdm_send_get);
+                amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_build_get);
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
                 amf_ue->sbi.nudm_sdm_resource =
                     OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA;
-                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                        amf_nudm_sdm_send_get);
+                amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_build_get);
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)

@@ -21,6 +21,7 @@
 #define AMF_SBI_PATH_H
 
 #include "nausf-build.h"
+#include "nudm-build.h"
 
 #ifdef __cplusplus
 extern "C" {
