@@ -719,6 +719,24 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+            SWITCH(message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+                message->AccessAndMobilitySubscriptionData =
+                    OpenAPI_access_and_mobility_subscription_data_parseFromJSON(item);
+                if (!message->AccessAndMobilitySubscriptionData) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[1]);
+            END
+            break;
+
         CASE(OGS_SBI_SERVICE_NAME_NUDR_DR)
             SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTION_DATA)

@@ -341,9 +341,18 @@ bool udm_nudr_dr_handle_subscription_provisioned(
     CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
         memset(&sendmsg, 0, sizeof(sendmsg));
 
+        if (recvmsg->AccessAndMobilitySubscriptionData)
+            sendmsg.AccessAndMobilitySubscriptionData =
+                OpenAPI_access_and_mobility_subscription_data_copy(
+                    sendmsg.AccessAndMobilitySubscriptionData,
+                        recvmsg->AccessAndMobilitySubscriptionData);
+
         response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
         ogs_assert(response);
         ogs_sbi_server_send_response(session, response);
+
+        OpenAPI_access_and_mobility_subscription_data_free(
+                sendmsg.AccessAndMobilitySubscriptionData);
         break;
 
     DEFAULT
