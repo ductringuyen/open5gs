@@ -121,7 +121,6 @@ ogs_sbi_request_t *udm_nudr_dr_build_query_provisioned(
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(udm_ue);
-    ogs_assert(udm_ue->sbi.provisioned_resource);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_GET;
@@ -134,7 +133,7 @@ ogs_sbi_request_t *udm_nudr_dr_build_query_provisioned(
         (char *)ogs_plmn_id_to_string(&udm_ue->serving_plmn_id, buf);
     message.h.resource.component[3] =
         (char *)OGS_SBI_RESOURCE_NAME_PROVISIONED_DATA;
-    message.h.resource.component[4] = (char *)udm_ue->sbi.provisioned_resource;
+    message.h.resource.component[4] = data;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);

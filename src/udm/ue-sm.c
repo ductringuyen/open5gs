@@ -119,26 +119,22 @@ void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
             SWITCH(message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_GET)
-                udm_ue->sbi.provisioned_resource = NULL;
                 SWITCH(message->h.resource.component[1])
                 CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
-                    udm_ue->sbi.provisioned_resource =
-                        OGS_SBI_RESOURCE_NAME_AM_DATA;
-                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue,
+                            message->h.resource.component[1],
                             udm_nudr_dr_build_query_provisioned);
                     break;
 
                 CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
-                    udm_ue->sbi.provisioned_resource =
-                        OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
-                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue,
+                            message->h.resource.component[1],
                             udm_nudr_dr_build_query_provisioned);
                     break;
 
                 CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
-                    udm_ue->sbi.provisioned_resource =
-                        OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA;
-                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+                    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue,
+                            message->h.resource.component[1],
                             udm_nudr_dr_build_query_provisioned);
                     break;
 
