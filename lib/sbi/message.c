@@ -104,6 +104,11 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->AccessAndMobilitySubscriptionData)
         OpenAPI_access_and_mobility_subscription_data_free(
                 message->AccessAndMobilitySubscriptionData);
+    if (message->SmfSelectionSubscriptionData)
+        OpenAPI_smf_selection_subscription_data_free(
+                message->SmfSelectionSubscriptionData);
+    if (message->UeContextInSmfData)
+        OpenAPI_ue_context_in_smf_data_free(message->UeContextInSmfData);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -489,6 +494,14 @@ char *ogs_sbi_build_content(ogs_sbi_message_t *message)
         item = OpenAPI_access_and_mobility_subscription_data_convertToJSON(
                 message->AccessAndMobilitySubscriptionData);
         ogs_assert(item);
+    } else if (message->SmfSelectionSubscriptionData) {
+        item = OpenAPI_smf_selection_subscription_data_convertToJSON(
+                message->SmfSelectionSubscriptionData);
+        ogs_assert(item);
+    } else if (message->UeContextInSmfData) {
+        item = OpenAPI_ue_context_in_smf_data_convertToJSON(
+                message->UeContextInSmfData);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -730,6 +743,24 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
                 }
                 break;
 
+            CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
+                message->SmfSelectionSubscriptionData =
+                    OpenAPI_smf_selection_subscription_data_parseFromJSON(item);
+                if (!message->SmfSelectionSubscriptionData) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
+                message->UeContextInSmfData =
+                    OpenAPI_ue_context_in_smf_data_parseFromJSON(item);
+                if (!message->UeContextInSmfData) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
             DEFAULT
                 rv = OGS_ERROR;
                 ogs_error("Unknown resource name [%s]",
@@ -786,6 +817,24 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
                             message->AccessAndMobilitySubscriptionData =
                                 OpenAPI_access_and_mobility_subscription_data_parseFromJSON(item);
                             if (!message->AccessAndMobilitySubscriptionData) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                            break;
+
+                        CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
+                            message->SmfSelectionSubscriptionData =
+                                OpenAPI_smf_selection_subscription_data_parseFromJSON(item);
+                            if (!message->SmfSelectionSubscriptionData) {
+                                rv = OGS_ERROR;
+                                ogs_error("JSON parse error");
+                            }
+                            break;
+
+                        CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
+                            message->UeContextInSmfData =
+                                OpenAPI_ue_context_in_smf_data_parseFromJSON(item);
+                            if (!message->UeContextInSmfData) {
                                 rv = OGS_ERROR;
                                 ogs_error("JSON parse error");
                             }

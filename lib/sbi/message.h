@@ -192,6 +192,8 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_amf3_gpp_access_registration_t *Amf3GppAccessRegistration;
     OpenAPI_access_and_mobility_subscription_data_t
         *AccessAndMobilitySubscriptionData;
+    OpenAPI_smf_selection_subscription_data_t *SmfSelectionSubscriptionData;
+    OpenAPI_ue_context_in_smf_data_t *UeContextInSmfData;
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;
