@@ -19,7 +19,7 @@
 
 #include "nudm-build.h"
 
-ogs_sbi_request_t *ausf_nudm_ueau_build_get(ausf_ue_t *ausf_ue)
+ogs_sbi_request_t *ausf_nudm_ueau_build_get(ausf_ue_t *ausf_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -58,7 +58,7 @@ ogs_sbi_request_t *ausf_nudm_ueau_build_get(ausf_ue_t *ausf_ue)
 }
 
 ogs_sbi_request_t *ausf_nudm_ueau_build_result_confirmation_inform(
-        ausf_ue_t *ausf_ue)
+        ausf_ue_t *ausf_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;

@@ -176,6 +176,9 @@ void ausf_ue_remove(ausf_ue_t *ausf_ue)
     ogs_hash_set(self.supi_hash, ausf_ue->supi, strlen(ausf_ue->supi), NULL);
     ogs_free(ausf_ue->supi);
 
+    if (ausf_ue->sbi.request)
+        ogs_sbi_request_free(ausf_ue->sbi.request);
+
     if (ausf_ue->auth_events_url)
         ogs_free(ausf_ue->auth_events_url);
 

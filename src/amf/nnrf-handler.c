@@ -298,6 +298,7 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
         }
     }
 
+    ogs_assert(amf_ue->sbi.nf_type);
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
             amf_ue->nf_types, amf_ue->sbi.nf_type);
     if (!nf_instance) {

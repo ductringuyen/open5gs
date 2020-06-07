@@ -301,18 +301,17 @@ void ausf_nnrf_handle_nf_discover(
         }
     }
 
-    ogs_assert(ausf_ue->sbi.discover.nf_type);
-    ogs_assert(ausf_ue->sbi.discover.handler);
+    ogs_assert(ausf_ue->sbi.nf_type);
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
-            ausf_ue->nf_types, ausf_ue->sbi.discover.nf_type);
+            ausf_ue->nf_types, ausf_ue->sbi.nf_type);
     if (!nf_instance) {
         ogs_error("[%s] (NF discover) No [%s]", ausf_ue->suci,
-                OpenAPI_nf_type_ToString(ausf_ue->sbi.discover.nf_type));
+                OpenAPI_nf_type_ToString(ausf_ue->sbi.nf_type));
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                 "(NF discover) No NF", ausf_ue->suci);
         ausf_ue_remove(ausf_ue);
     } else {
-        (*ausf_ue->sbi.discover.handler)(ausf_ue, nf_instance);
+        ausf_sbi_send(ausf_ue, nf_instance);
     }
 }
