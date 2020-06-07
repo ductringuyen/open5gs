@@ -209,6 +209,7 @@ void udm_nudr_dr_send_query_authentication(
     request = udm_nudr_dr_build_query_authentication(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
+    ogs_sbi_request_free(request);
 }
 
 void udm_nudr_dr_send_query_provisioned(
@@ -230,6 +231,7 @@ void udm_nudr_dr_send_query_provisioned(
     request = udm_nudr_dr_build_query_provisioned(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
+    ogs_sbi_request_free(request);
 }
 
 void udm_nudr_dr_send_update_authentication(
@@ -251,6 +253,7 @@ void udm_nudr_dr_send_update_authentication(
     request = udm_nudr_dr_build_update_authentication(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
+    ogs_sbi_request_free(request);
 }
 
 void udm_nudr_dr_send_update_context(
@@ -272,4 +275,5 @@ void udm_nudr_dr_send_update_context(
     request = udm_nudr_dr_build_update_context(udm_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, udm_ue);
+    ogs_sbi_request_free(request);
 }

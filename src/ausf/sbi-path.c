@@ -202,6 +202,7 @@ void ausf_nudm_ueau_send_get(
     request = ausf_nudm_ueau_build_get(ausf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, ausf_ue);
+    ogs_sbi_request_free(request);
 }
 
 void ausf_nudm_ueau_send_result_confirmation_inform(
@@ -226,4 +227,5 @@ void ausf_nudm_ueau_send_result_confirmation_inform(
     request = ausf_nudm_ueau_build_result_confirmation_inform(ausf_ue);
     ogs_assert(request);
     ogs_sbi_client_send_request(client, request, ausf_ue);
+    ogs_sbi_request_free(request);
 }

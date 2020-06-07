@@ -457,7 +457,6 @@ void ogs_sbi_client_send_request(
 
     conn = connection_add(client, request, data);
     ogs_assert(conn);
-    ogs_sbi_request_free(request);
 }
 
 void ogs_sbi_client_send_request_to_nf_instance(

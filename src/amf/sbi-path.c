@@ -170,7 +170,8 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
     ogs_timer_start(amf_ue->sbi_client_wait.timer,
             amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
-    ogs_sbi_client_send_request_to_nf_instance(nf_instance, request, amf_ue);
+    ogs_sbi_client_send_request_to_nf_instance(
+            nf_instance, amf_ue->sbi.discover.request, amf_ue);
 }
 
 void amf_sbi_discover_and_send(
