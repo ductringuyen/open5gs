@@ -225,8 +225,6 @@ struct amf_ue_s {
         const char *nudm_sdm_resource;
     } sbi;
 
-    ogs_sbi_discover_t discover;
-
     /* UE identity */
     char            *suci; /* TS33.501 : SUCI */
     char            *supi; /* TS33.501 : SUPI */

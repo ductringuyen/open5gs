@@ -370,15 +370,8 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 amf_sbi_send_authenticate(amf_ue);
             }
 #else
-            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
-                    amf_nausf_auth_send_authenticate);
-            if (rv == OGS_ERROR) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(s, &gmm_state_exception);
-                break;
-            }
+            amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_build_authenticate);
 #endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
         }
@@ -598,15 +591,8 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
-                    amf_nausf_auth_send_authenticate);
-            if (rv == OGS_ERROR) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(s, &gmm_state_exception);
-                break;
-            }
+            amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_build_authenticate);
 
             break;
         case OGS_NAS_5GS_5GMM_STATUS:
@@ -784,15 +770,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
-            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+            amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
                     amf_nudm_uecm_send_registration);
-            if (rv == OGS_ERROR) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(s, &gmm_state_exception);
-                break;
-            }
 
             if (amf_ue->nas.type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
@@ -823,15 +802,8 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
-                    amf_nausf_auth_send_authenticate);
-            if (rv == OGS_ERROR) {
-                ogs_error("[%s] Cannot send SBI message", amf_ue->suci);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(s, &gmm_state_exception);
-                break;
-            }
+            amf_sbi_discover_and_send2(amf_ue, OpenAPI_nf_type_AUSF,
+                    amf_nausf_auth_build_authenticate);
 
             OGS_FSM_TRAN(s, &gmm_state_authentication);
             break;

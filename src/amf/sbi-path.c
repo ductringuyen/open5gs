@@ -180,18 +180,18 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance2(amf_ue_t *amf_ue)
     bool nf = true;
 
     ogs_assert(amf_ue);
-    ogs_assert(amf_ue->discover.nf_type);
+    ogs_assert(amf_ue->sbi.discover.nf_type);
 
     if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, OpenAPI_nf_type_NRF))
         nrf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
                 OpenAPI_nf_type_NRF, amf_nf_state_registered);
-    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, amf_ue->discover.nf_type))
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, amf_ue->sbi.discover.nf_type))
         nf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
-                amf_ue->discover.nf_type, amf_nf_state_registered);
+                amf_ue->sbi.discover.nf_type, amf_nf_state_registered);
 
     if (nrf == false && nf == false) {
         ogs_error("[%s] Cannot discover [%s]", amf_ue->suci,
-                OpenAPI_nf_type_ToString(amf_ue->discover.nf_type));
+                OpenAPI_nf_type_ToString(amf_ue->sbi.discover.nf_type));
         nas_5gs_send_nas_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         return NULL;
@@ -199,18 +199,18 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance2(amf_ue_t *amf_ue)
 
     if (nf == false) {
         ogs_warn("[%s] Try to discover [%s]", amf_ue->suci,
-                OpenAPI_nf_type_ToString(amf_ue->discover.nf_type));
+                OpenAPI_nf_type_ToString(amf_ue->sbi.discover.nf_type));
         ogs_timer_start(amf_ue->sbi_client_wait.timer,
                 amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
             amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
-            amf_ue->discover.nf_type, OpenAPI_nf_type_AMF, amf_ue);
+            amf_ue->sbi.discover.nf_type, OpenAPI_nf_type_AMF, amf_ue);
 
         return NULL;
     }
 
-    return amf_ue->nf_types[amf_ue->discover.nf_type].nf_instance;
+    return amf_ue->nf_types[amf_ue->sbi.discover.nf_type].nf_instance;
 }
 
 void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
@@ -219,7 +219,7 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(amf_ue);
-    request = amf_ue->discover.request;
+    request = amf_ue->sbi.discover.request;
     ogs_assert(request);
 
     ogs_assert(nf_instance);
@@ -269,10 +269,10 @@ void amf_sbi_discover_and_send2(
     ogs_assert(nf_type);
     ogs_assert(build);
 
-    amf_ue->discover.nf_type = nf_type;
-    if (amf_ue->discover.request)
-        ogs_sbi_request_free(amf_ue->discover.request);
-    amf_ue->discover.request = (*build)(amf_ue);
+    amf_ue->sbi.discover.nf_type = nf_type;
+    if (amf_ue->sbi.discover.request)
+        ogs_sbi_request_free(amf_ue->sbi.discover.request);
+    amf_ue->sbi.discover.request = (*build)(amf_ue);
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance2(amf_ue);
