@@ -131,6 +131,9 @@ char *ogs_serving_network_name_from_plmn_id(ogs_plmn_id_t *plmn_id);
 char *ogs_plmn_id_mcc_string(ogs_plmn_id_t *plmn_id);
 char *ogs_plmn_id_mnc_string(ogs_plmn_id_t *plmn_id);
 
+#define OGS_PLMNIDSTRLEN    (sizeof(ogs_plmn_id_t)*2+1)
+char *ogs_plmn_id_to_string(ogs_plmn_id_t *plmn_id, char *buf);
+
 /************************************
  * AMF_ID Structure                 */
 typedef struct ogs_amf_id_s {

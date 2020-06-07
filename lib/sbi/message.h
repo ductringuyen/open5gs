@@ -112,6 +112,7 @@ extern "C" {
                                             "authentication-subscription"
 #define OGS_SBI_RESOURCE_NAME_AUTHENTICATION_STATUS "authentication-status"
 #define OGS_SBI_RESOURCE_NAME_CONTEXT_DATA          "context-data"
+#define OGS_SBI_RESOURCE_NAME_PROVISIONED_DATA      "provisioned-data"
 
 #define OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION        "nsmf-pdusession"
 #define OGS_SBI_SERVICE_NAME_NSMF_EVENT_EXPOSURE    "nsmf-event-exposure"

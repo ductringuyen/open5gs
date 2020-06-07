@@ -62,6 +62,7 @@ struct udm_ue_s {
                 udm_ue_t *udm_ue, ogs_sbi_nf_instance_t *nf_instance);
         } discover;
         ogs_timer_t *client_wait_timer;
+        const char *provisioned_resource;
         OpenAPI_auth_event_t *auth_event;
         OpenAPI_amf3_gpp_access_registration_t *amf_3gpp_access_registration;
     } sbi;
