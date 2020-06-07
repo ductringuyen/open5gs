@@ -899,7 +899,6 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
-    int rv;
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
@@ -1006,16 +1005,8 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_PUT)
                 amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
-
-                rv = amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
                         amf_nudm_sdm_send_get);
-                if (rv == OGS_ERROR) {
-                    ogs_error("[%s] Cannot send SBI message", amf_ue->supi);
-                    nas_5gs_send_registration_reject(
-                            amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                    OGS_FSM_TRAN(s, &gmm_state_exception);
-                    break;
-                }
                 break;
 
             DEFAULT
@@ -1034,7 +1025,25 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 break;
             }
-            ogs_fatal("am-data");
+
+            if (sbi_message->AccessAndMobilitySubscriptionData) {
+                OpenAPI_ambr_rm_t *subscribed_ue_ambr =
+                    sbi_message->AccessAndMobilitySubscriptionData->
+                        subscribed_ue_ambr;
+                if (subscribed_ue_ambr) {
+                    amf_ue->subscribed_ue_ambr.uplink =
+                        ogs_sbi_bitrate_from_string(
+                                subscribed_ue_ambr->uplink);
+                    amf_ue->subscribed_ue_ambr.downlink =
+                        ogs_sbi_bitrate_from_string(
+                                subscribed_ue_ambr->downlink);
+                }
+            }
+
+            amf_ue->sbi.nudm_sdm_resource =
+                OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
+            amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                    amf_nudm_sdm_send_get);
             break;
 
         DEFAULT

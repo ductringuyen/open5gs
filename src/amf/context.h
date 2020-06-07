@@ -326,6 +326,8 @@ struct amf_ue_s {
      * #define OGS_NAS_SECURITY_ALGORITHMS_128_NIA3    3 */
     uint8_t         selected_int_algorithm;
 
+    ogs_bitrate_t   subscribed_ue_ambr; /* UE-AMBR */
+
     /* ESM Info */
 #define MIN_5GS_BEARER_ID           5
 #define MAX_5GS_BEARER_ID           15
