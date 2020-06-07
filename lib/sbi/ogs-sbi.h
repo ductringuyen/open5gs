@@ -44,6 +44,7 @@
 #include "model/confirmation_data_response.h"
 #include "model/auth_event.h"
 #include "model/amf3_gpp_access_registration.h"
+#include "model/access_and_mobility_subscription_data.h"
 
 #include "custom/links.h"
 
