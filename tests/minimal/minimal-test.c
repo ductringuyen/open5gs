@@ -37,33 +37,6 @@ static void test1_func(abts_case *tc, void *data)
     test_ue_t test_ue;
 
     uint8_t tmp[OGS_MAX_SDU_LEN];
-    const char *_ng_setup_request =
-        "0015002d00000300 1b00080002f83910 0001020066001500 000000010002f839"
-        "0001100801020310 0811223300154001 20";
-    const char *_ng_setup_response =
-        "2015003a00000400 01000e05806f7065 6e3567732d616d66 3000600008000002"
-        "f839cafe00005640 01ff005000100002 f839000110080102 031008112233";
-    const char *_authentication_request = 
-        "000b403b00000300 000005c00100009d 000800020001001a 0025240752002008"
-        "0c3818183b522614 162c07601d0d10f1 1b89a2a8de8000ad 0ccf7f55e8b20d";
-    const char *_security_mode_command = 
-        "000b4028"
-        "00000300000005c0 0100009d00080002 0001001a00121137 f497722900075d01"
-        "0005e060c04070c1";
-    const char *_esm_information_request =
-        "000b402000000300 000005c00100009d 000800020001001a 000a092779012320"
-        "010221d9";
-    const char *_initial_context_setup_request = 
-        "00090080d8000006 00000005c0010000 9d00080002000100 42000a183e800000"
-        "603e800000001800 8086000034008080 450009200f807f00 0002000000017127"
-        "4db5d98302074202 49064000f1105ba0 00485221c1010909 08696e7465726e65"
-        "7405010a2d00025e 06fefeeeee030327 2980c22304030000 0480211002000010"
-        "8106080808088306 08080404000d0408 080808000d040808 0404500bf600f110"
-        "0002010000000153 12172c5949640125 006b000518000c00 00004900203311c6"
-        "03c6a6d67f695e5a c02bb75b381b693c 3893a6d932fd9182 3544e3e79b";
-    const char *_emm_information = 
-        "000b403b00000300 000005c00100009d 000800020001001a 002524271f9b491e"
-        "030761430f10004f 00700065006e0035 0047005347812072 11240563490100";
 
     const char *_k_string = "5122250214c33e723a5dd523fc145fc0";
     uint8_t k[OGS_KEY_LEN];
@@ -128,18 +101,12 @@ static void test1_func(abts_case *tc, void *data)
     /* Send NG-Setup Reqeust */
     sendbuf = testngap_build_ng_setup_request(0x000102);
     ABTS_PTR_NOTNULL(tc, sendbuf);
-    ABTS_TRUE(tc, memcmp(sendbuf->data,
-        OGS_HEX(_ng_setup_request, strlen(_ng_setup_request), tmp),
-        sendbuf->len) == 0);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
     /* Receive NG-Setup Response */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
-    ABTS_TRUE(tc, memcmp(recvbuf->data,
-        OGS_HEX(_ng_setup_response, strlen(_ng_setup_response), tmp),
-        recvbuf->len) == 0);
     ogs_pkbuf_free(recvbuf);
 
     /* Setup Test UE Context */
@@ -206,11 +173,6 @@ static void test1_func(abts_case *tc, void *data)
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);
-#if 0
-    ABTS_TRUE(tc, memcmp(recvbuf->data, 
-        OGS_HEX(_authentication_request, strlen(_authentication_request), tmp),
-        recvbuf->len) == 0);
-#endif
 
     /* Send Authentication response */
     gmmbuf = testgmm_build_authentication_response(&test_ue);
@@ -224,11 +186,6 @@ static void test1_func(abts_case *tc, void *data)
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);
-#if 0
-    ABTS_TRUE(tc, memcmp(recvbuf->data,
-        OGS_HEX(_security_mode_command, strlen(_security_mode_command), tmp),
-        recvbuf->len) == 0);
-#endif
 
     /* Send Security mode complete */
     nasbuf = testgmm_build_registration_request(&test_ue, &mobile_identity);
