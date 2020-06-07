@@ -216,10 +216,8 @@ struct amf_ue_s {
     } __attribute__ ((packed)) nas;
 
     struct {
-        struct {
-            OpenAPI_nf_type_e nf_type;
-            ogs_sbi_request_t *request;
-        } discover;
+        OpenAPI_nf_type_e nf_type;
+        ogs_sbi_request_t *request;
     } sbi;
 
     /* UE identity */

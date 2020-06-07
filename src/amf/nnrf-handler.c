@@ -299,10 +299,10 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
     }
 
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
-            amf_ue->nf_types, amf_ue->sbi.discover.nf_type);
+            amf_ue->nf_types, amf_ue->sbi.nf_type);
     if (!nf_instance) {
         ogs_error("[%s] (NF discover) No [%s]", amf_ue->suci,
-                OpenAPI_nf_type_ToString(amf_ue->sbi.discover.nf_type));
+                OpenAPI_nf_type_ToString(amf_ue->sbi.nf_type));
         nas_5gs_send_nas_reject(
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         amf_ue_remove(amf_ue);

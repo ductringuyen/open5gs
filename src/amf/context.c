@@ -1189,8 +1189,8 @@ void amf_ue_remove(amf_ue_t *amf_ue)
         ogs_free(amf_ue->supi);
     }
 
-    if (amf_ue->sbi.discover.request)
-        ogs_sbi_request_free(amf_ue->sbi.discover.request);
+    if (amf_ue->sbi.request)
+        ogs_sbi_request_free(amf_ue->sbi.request);
 
     if (amf_ue->confirmation_url_for_5g_aka)
         ogs_free(amf_ue->confirmation_url_for_5g_aka);
