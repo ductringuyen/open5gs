@@ -174,6 +174,114 @@ int amf_sbi_discover_and_send(
     return (*amf_ue->sbi.discover.handler)(amf_ue, nf_instance);
 }
 
+static ogs_sbi_nf_instance_t *find_or_discover_nf_instance2(amf_ue_t *amf_ue)
+{
+    bool nrf = true;
+    bool nf = true;
+
+    ogs_assert(amf_ue);
+    ogs_assert(amf_ue->discover.nf_type);
+
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, OpenAPI_nf_type_NRF))
+        nrf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
+                OpenAPI_nf_type_NRF, amf_nf_state_registered);
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, amf_ue->discover.nf_type))
+        nf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
+                amf_ue->discover.nf_type, amf_nf_state_registered);
+
+    if (nrf == false && nf == false) {
+        ogs_error("[%s] Cannot discover [%s]", amf_ue->suci,
+                OpenAPI_nf_type_ToString(amf_ue->discover.nf_type));
+        nas_5gs_send_nas_reject(
+                amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        return NULL;
+    }
+
+    if (nf == false) {
+        ogs_warn("[%s] Try to discover [%s]", amf_ue->suci,
+                OpenAPI_nf_type_ToString(amf_ue->discover.nf_type));
+        ogs_timer_start(amf_ue->sbi_client_wait.timer,
+                amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+        ogs_nnrf_disc_send_nf_discover(
+            amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
+            amf_ue->discover.nf_type, OpenAPI_nf_type_AMF, amf_ue);
+
+        return NULL;
+    }
+
+    return amf_ue->nf_types[amf_ue->discover.nf_type].nf_instance;
+}
+
+void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_client_t *client = NULL;
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(amf_ue);
+    request = amf_ue->discover.request;
+    ogs_assert(request);
+
+    ogs_assert(nf_instance);
+
+    ogs_timer_start(amf_ue->sbi_client_wait.timer,
+            amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+    if (request->h.url) {
+        ogs_sockaddr_t *addr = NULL;
+        char buf[OGS_ADDRSTRLEN];
+
+        addr = ogs_sbi_getaddr_from_uri(request->h.url);
+        if (!addr) {
+            ogs_error("[%s] Invalid confirmation URL [%s]", amf_ue->suci,
+                amf_ue->confirmation_url_for_5g_aka);
+            return;
+        }
+        client = ogs_sbi_client_find(addr);
+        if (!client) {
+            ogs_error("[%s] Cannot find client [%s:%d]", amf_ue->suci,
+                    OGS_ADDR(addr, buf), OGS_PORT(addr));
+            ogs_freeaddrinfo(addr);
+            return;
+        }
+        ogs_freeaddrinfo(addr);
+    } else {
+        client = ogs_sbi_client_find_by_service_name(nf_instance,
+                request->h.service.name, request->h.api.version);
+        if (!client) {
+            ogs_error("[%s] Cannot find client [%s:%s]",
+                    amf_ue->suci, nf_instance->id,
+                    OpenAPI_nf_type_ToString(nf_instance->nf_type));
+            return;
+        }
+    }
+
+    ogs_sbi_client_send_request(client, request, amf_ue);
+}
+
+void amf_sbi_discover_and_send2(
+        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type,
+        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue))
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(nf_type);
+    ogs_assert(build);
+
+    amf_ue->discover.nf_type = nf_type;
+    if (amf_ue->discover.request)
+        ogs_sbi_request_free(amf_ue->discover.request);
+    amf_ue->discover.request = (*build)(amf_ue);
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance2(amf_ue);
+
+    if (!nf_instance) return;
+
+    return amf_sbi_send(amf_ue, nf_instance);
+}
+
 int amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {

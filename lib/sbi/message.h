@@ -132,9 +132,6 @@ extern "C" {
         "application/json-patch+json"
 #define OGS_SBI_CONTENT_3GPPHAL_TYPE                "application/3gppHal+json"
 
-typedef struct ogs_sbi_request_s ogs_sbi_request_t;
-typedef struct ogs_sbi_response_s ogs_sbi_response_t;
-
 typedef struct ogs_sbi_header_s {
     char *method;
     char *url;
@@ -197,6 +194,30 @@ typedef struct ogs_sbi_message_s {
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;
+
+typedef struct ogs_sbi_http_message_s {
+    ogs_hash_t *params;
+    ogs_hash_t *headers;
+
+    char *content;
+    size_t content_length;
+} ogs_sbi_http_message_t;
+
+typedef struct ogs_sbi_request_s {
+    ogs_sbi_header_t h;
+    ogs_sbi_http_message_t http;
+
+    /* Used in microhttpd */
+    bool suspended;
+    ogs_poll_t *poll;
+} ogs_sbi_request_t;
+
+typedef struct ogs_sbi_response_s {
+    ogs_sbi_header_t h;
+    ogs_sbi_http_message_t http;
+
+    int status;
+} ogs_sbi_response_t;
 
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool);
 void ogs_sbi_message_final(void);

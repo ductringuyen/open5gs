@@ -152,6 +152,20 @@ typedef struct ogs_sbi_subscription_s {
     void *client;                       /* only used in SERVER */
 } ogs_sbi_subscription_t;
 
+typedef struct ogs_sbi_discover_s {
+    OpenAPI_nf_type_e nf_type;
+
+    char *uri;
+    struct {
+        char *name;
+    } service;
+    struct {
+        char *version;
+    } api;
+
+    ogs_sbi_request_t *request;
+} ogs_sbi_discover_t;
+
 void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr);
 void ogs_sbi_context_final(void);
 ogs_sbi_context_t *ogs_sbi_self(void);

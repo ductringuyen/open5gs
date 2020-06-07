@@ -18,8 +18,7 @@
  */
 
 #include "ogs-sbi.h"
-
-#include "sbi-private.h"
+#include "yuarel.h"
 
 static OGS_POOL(request_pool, ogs_sbi_request_t);
 static OGS_POOL(response_pool, ogs_sbi_response_t);
@@ -141,7 +140,7 @@ ogs_sbi_response_t *ogs_sbi_response_new(void)
 }
 
 static void sbi_header_free(ogs_sbi_header_t *h);
-static void http_message_free(http_message_t *http);
+static void http_message_free(ogs_sbi_http_message_t *http);
 
 void ogs_sbi_request_free(ogs_sbi_request_t *request)
 {
@@ -183,7 +182,7 @@ static void sbi_header_free(ogs_sbi_header_t *h)
         ogs_free(h->resource.component[i]);
 }
 
-static void http_message_free(http_message_t *http)
+static void http_message_free(ogs_sbi_http_message_t *http)
 {
     ogs_assert(http);
 

@@ -20,7 +20,6 @@
 #include "ogs-app.h"
 #include "ogs-sbi.h"
 
-#include "sbi-private.h"
 #include "microhttpd.h"
 
 typedef struct ogs_sbi_session_s {

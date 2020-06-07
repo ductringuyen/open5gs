@@ -20,7 +20,6 @@
 #include "ogs-app.h"
 #include "ogs-sbi.h"
 
-#include "sbi-private.h"
 #include "curl/curl.h"
 
 typedef struct sockinfo_s {
