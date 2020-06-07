@@ -278,25 +278,6 @@ bool udm_nudr_dr_handle_subscription_context(
             return false;
         }
 
-        if (!Amf3GppAccessRegistration->dereg_callback_uri) {
-            ogs_error("[%s] No dregCallbackUri", udm_ue->supi);
-            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                    recvmsg, "No dregCallbackUri", udm_ue->supi);
-            return false;
-        }
-
-        if (udm_ue->amf_instance_id &&
-            strcmp(udm_ue->amf_instance_id,
-                Amf3GppAccessRegistration->amf_instance_id) == 0)
-            status = OGS_SBI_HTTP_STATUS_OK;
-        else
-            status = OGS_SBI_HTTP_STATUS_CREATED;
-
-        if (udm_ue->dereg_callback_uri)
-            ogs_free(udm_ue->dereg_callback_uri);
-        udm_ue->dereg_callback_uri = ogs_strdup(
-                Amf3GppAccessRegistration->dereg_callback_uri);
-
         memset(&sendmsg, 0, sizeof(sendmsg));
 
         memset(&header, 0, sizeof(header));
@@ -307,6 +288,13 @@ bool udm_nudr_dr_handle_subscription_context(
             (char *)OGS_SBI_RESOURCE_NAME_REGISTRATIONS;
         header.resource.component[2] =
             (char *)OGS_SBI_RESOURCE_NAME_AMF_3GPP_ACCESS;
+
+        if (udm_ue->amf_instance_id &&
+            strcmp(udm_ue->amf_instance_id,
+                Amf3GppAccessRegistration->amf_instance_id) == 0)
+            status = OGS_SBI_HTTP_STATUS_OK;
+        else
+            status = OGS_SBI_HTTP_STATUS_CREATED;
 
         if (status == OGS_SBI_HTTP_STATUS_CREATED)
             sendmsg.http.location = ogs_sbi_server_uri(server, &header);

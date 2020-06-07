@@ -76,6 +76,9 @@ struct udm_ue_s {
 
     char *dereg_callback_uri;
 
+    ogs_amf_id_t amf_id;
+    ogs_plmn_id_t serving_plmn_id;
+
     OpenAPI_auth_type_e auth_type;
 
 #define UDM_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \

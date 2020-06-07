@@ -105,18 +105,77 @@ bool udm_nudm_uecm_handle_registration(
 {
     ogs_sbi_session_t *session = NULL;
 
+    OpenAPI_amf3_gpp_access_registration_t *Amf3GppAccessRegistration = NULL;
+    OpenAPI_guami_t *guami = NULL;
+    OpenAPI_plmn_id_t *serving_plmn_id = NULL;
+
     ogs_assert(udm_ue);
     session = udm_ue->session;
     ogs_assert(session);
 
     ogs_assert(message);
 
-    if (!message->Amf3GppAccessRegistration) {
+    Amf3GppAccessRegistration = message->Amf3GppAccessRegistration;
+    if (!Amf3GppAccessRegistration) {
         ogs_error("[%s] No Amf3GppAccessRegistration", udm_ue->supi);
         ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                 message, "No Amf3GppAccessRegistration", udm_ue->supi);
         return false;
     }
+
+    if (!Amf3GppAccessRegistration->dereg_callback_uri) {
+        ogs_error("[%s] No dregCallbackUri", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No dregCallbackUri", udm_ue->supi);
+        return false;
+    }
+
+    guami = Amf3GppAccessRegistration->guami;
+    if (!guami) {
+        ogs_error("[%s] No Guami", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No Guami", udm_ue->supi);
+        return false;
+    }
+
+    if (!guami->amf_id) {
+        ogs_error("[%s] No Guami.AmfId", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No Guami.AmfId", udm_ue->supi);
+        return false;
+    }
+
+    serving_plmn_id = guami->plmn_id;
+    if (!serving_plmn_id) {
+        ogs_error("[%s] No PlmnId", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No PlmnId", udm_ue->supi);
+        return false;
+    }
+
+    if (!serving_plmn_id->mnc) {
+        ogs_error("[%s] No PlmnId.Mnc", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No PlmnId.Mnc", udm_ue->supi);
+        return false;
+    }
+
+    if (!serving_plmn_id->mcc) {
+        ogs_error("[%s] No PlmnId.Mcc", udm_ue->supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                message, "No PlmnId.Mcc", udm_ue->supi);
+        return false;
+    }
+
+    if (udm_ue->dereg_callback_uri)
+        ogs_free(udm_ue->dereg_callback_uri);
+    udm_ue->dereg_callback_uri = ogs_strdup(
+            Amf3GppAccessRegistration->dereg_callback_uri);
+
+    ogs_amf_id_from_string(&udm_ue->amf_id, guami->amf_id);
+    ogs_plmn_id_build(&udm_ue->serving_plmn_id, 
+        atoi(serving_plmn_id->mcc), atoi(serving_plmn_id->mnc),
+        strlen(serving_plmn_id->mnc));
 
     udm_ue->sbi.amf_3gpp_access_registration =
         OpenAPI_amf3_gpp_access_registration_copy(
