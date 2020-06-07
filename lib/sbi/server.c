@@ -541,7 +541,7 @@ static int access_handler(
                 (MHD_KeyValueIterator)get_values, request->http.headers);
 
         request->h.method = ogs_strdup(method);
-        request->h.url = ogs_strdup(url);
+        request->h.uri = ogs_strdup(url);
 
         if (ogs_sbi_header_get(request->http.headers, "Content-Length") ||
             ogs_sbi_header_get(request->http.headers, "Transfer-Encoding")) {

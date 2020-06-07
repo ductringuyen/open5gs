@@ -182,18 +182,18 @@ static void mcode_or_die(const char *where, CURLMcode code)
     }
 }
 
-static char *add_params_to_url(CURL *easy, char *url, ogs_hash_t *params)
+static char *add_params_to_uri(CURL *easy, char *uri, ogs_hash_t *params)
 {
     ogs_hash_index_t *hi;
     int has_params = 0;
     const char *fp = "?", *np = "&";
 
     ogs_assert(easy);
-    ogs_assert(url);
+    ogs_assert(uri);
     ogs_assert(params);
     ogs_assert(ogs_hash_count(params));
 
-    has_params = (strchr(url, '?') != NULL);
+    has_params = (strchr(uri, '?') != NULL);
 
     for (hi = ogs_hash_first(params); hi; hi = ogs_hash_next(hi)) {
         const char *key = NULL;
@@ -212,17 +212,17 @@ static char *add_params_to_url(CURL *easy, char *url, ogs_hash_t *params)
         ogs_assert(val_esc);
 
         if (!has_params) {
-            url = ogs_mstrcatf(url, "%s%s=%s", fp, key_esc, val_esc);
+            uri = ogs_mstrcatf(uri, "%s%s=%s", fp, key_esc, val_esc);
             has_params = 1;
         } else {
-            url = ogs_mstrcatf(url, "%s%s=%s", np, key_esc, val_esc);
+            uri = ogs_mstrcatf(uri, "%s%s=%s", np, key_esc, val_esc);
         }
 
         curl_free(val_esc);
         curl_free(key_esc);
     }
 
-    return url;
+    return uri;
 }
 
 static connection_t *connection_add(ogs_sbi_client_t *client,
@@ -286,11 +286,11 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     curl_easy_setopt(conn->easy, CURLOPT_HTTPHEADER, conn->header_list);
 
     if (ogs_hash_count(request->http.params)) {
-        request->h.url = add_params_to_url(conn->easy,
-                            request->h.url, request->http.params);
+        request->h.uri = add_params_to_uri(conn->easy,
+                            request->h.uri, request->http.params);
     }
 
-    curl_easy_setopt(conn->easy, CURLOPT_URL, request->h.url);
+    curl_easy_setopt(conn->easy, CURLOPT_URL, request->h.uri);
 
     curl_easy_setopt(conn->easy, CURLOPT_PRIVATE, conn);
     curl_easy_setopt(conn->easy, CURLOPT_WRITEFUNCTION, write_cb);
@@ -412,7 +412,7 @@ static void check_multi_info(ogs_sbi_client_t *client)
                 response->h.method = ogs_strdup(conn->method);
 
                 /* remove https://localhost:8000 */
-                response->h.url = ogs_strdup(url);
+                response->h.uri = ogs_strdup(url);
 
                 response->http.content = ogs_strdup(conn->memory);
                 response->http.content_length = conn->size;
@@ -451,8 +451,8 @@ void ogs_sbi_client_send_request(
     ogs_assert(client);
     ogs_assert(request);
 
-    if (request->h.url == NULL) {
-        request->h.url = ogs_sbi_client_uri(client, &request->h);
+    if (request->h.uri == NULL) {
+        request->h.uri = ogs_sbi_client_uri(client, &request->h);
     }
 
     conn = connection_add(client, request, data);
@@ -468,7 +468,7 @@ void ogs_sbi_client_send_request_to_nf_instance(
     ogs_assert(request);
     ogs_assert(nf_instance);
 
-    if (request->h.url == NULL) {
+    if (request->h.uri == NULL) {
         client = ogs_sbi_client_find_by_service_name(nf_instance,
                 request->h.service.name, request->h.api.version);
         if (!client) {
@@ -481,10 +481,10 @@ void ogs_sbi_client_send_request_to_nf_instance(
         ogs_sockaddr_t *addr = NULL;
         char buf[OGS_ADDRSTRLEN];
 
-        addr = ogs_sbi_getaddr_from_uri(request->h.url);
+        addr = ogs_sbi_getaddr_from_uri(request->h.uri);
         if (!addr) {
             ogs_error("[%s] Invalid confirmation URL [%s]",
-                nf_instance->id, request->h.url);
+                nf_instance->id, request->h.uri);
             return;
         }
         client = ogs_sbi_client_find(addr);

@@ -23,15 +23,15 @@
 static char *ogs_uridup(bool https, ogs_sockaddr_t *addr, ogs_sbi_header_t *h)
 {
     char buf[OGS_ADDRSTRLEN];
-    char url[OGS_HUGE_LEN];
+    char uri[OGS_HUGE_LEN];
     char *p, *last;
     int i;
 
     ogs_assert(addr);
     ogs_assert(h);
 
-    p = url;
-    last = url + OGS_HUGE_LEN;
+    p = uri;
+    last = uri + OGS_HUGE_LEN;
 
     /* HTTP scheme is selected based on TLS information */
     if (https == true)
@@ -62,7 +62,7 @@ static char *ogs_uridup(bool https, ogs_sockaddr_t *addr, ogs_sbi_header_t *h)
                         h->resource.component[i]; i++)
         p = ogs_slprintf(p, last, "/%s", h->resource.component[i]);
 
-    return ogs_strdup(url);
+    return ogs_strdup(uri);
 }
 
 char *ogs_sbi_server_uri(ogs_sbi_server_t *server, ogs_sbi_header_t *h)
@@ -124,11 +124,11 @@ static char *url_decode(const char *str)
     }
 }
 
-char *ogs_sbi_parse_url(char *url, const char *delim, char **saveptr)
+char *ogs_sbi_parse_uri(char *uri, const char *delim, char **saveptr)
 {
     char *item = NULL;
 
-    item = url_decode(strtok_r(url, delim, saveptr));
+    item = url_decode(strtok_r(uri, delim, saveptr));
     if (!item) {
         return NULL;
     }

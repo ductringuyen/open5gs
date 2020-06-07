@@ -134,7 +134,7 @@ extern "C" {
 
 typedef struct ogs_sbi_header_s {
     char *method;
-    char *url;
+    char *uri;
 
     struct {
         char *name;

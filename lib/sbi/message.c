@@ -146,8 +146,8 @@ void ogs_sbi_request_free(ogs_sbi_request_t *request)
 {
     ogs_assert(request);
 
-    if (request->h.url)
-        ogs_free(request->h.url);
+    if (request->h.uri)
+        ogs_free(request->h.uri);
 
     sbi_header_free(&request->h);
     http_message_free(&request->http);
@@ -159,8 +159,8 @@ void ogs_sbi_response_free(ogs_sbi_response_t *response)
 {
     ogs_assert(response);
 
-    if (response->h.url)
-        ogs_free(response->h.url);
+    if (response->h.uri)
+        ogs_free(response->h.uri);
 
     sbi_header_free(&response->h);
     http_message_free(&response->http);
@@ -217,8 +217,8 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 
     ogs_assert(message->h.method);
     request->h.method = ogs_strdup(message->h.method);
-    if (message->h.url) {
-        request->h.url = ogs_strdup(message->h.url);
+    if (message->h.uri) {
+        request->h.uri = ogs_strdup(message->h.uri);
     } else {
         int i;
 
@@ -880,7 +880,7 @@ static int parse_sbi_header(
 {
     struct yuarel yuarel;
     char *saveptr = NULL;
-    char *url = NULL, *p = NULL;;
+    char *uri = NULL, *p = NULL;;
 
     char *component = NULL;
     int i = 0;
@@ -892,48 +892,48 @@ static int parse_sbi_header(
 
     message->h.method = header->method;
     ogs_assert(message->h.method);
-    message->h.url = header->url;
-    ogs_assert(message->h.url);
+    message->h.uri = header->uri;
+    ogs_assert(message->h.uri);
 
-    url = ogs_strdup(header->url);
-    ogs_assert(url);
-    p = url;
+    uri = ogs_strdup(header->uri);
+    ogs_assert(uri);
+    p = uri;
 
     if (p[0] != '/') {
         int rv = yuarel_parse(&yuarel, p);
         if (rv != OGS_OK) {
             ogs_error("yuarel_parse() failed");
-            ogs_free(url);
+            ogs_free(uri);
             return OGS_ERROR;
         }
 
         p = yuarel.path;
     }
 
-    header->service.name = ogs_sbi_parse_url(p, "/", &saveptr);
+    header->service.name = ogs_sbi_parse_uri(p, "/", &saveptr);
     if (!header->service.name) {
-        ogs_error("ogs_sbi_parse_url() failed");
-        ogs_free(url);
+        ogs_error("ogs_sbi_parse_uri() failed");
+        ogs_free(uri);
         return OGS_ERROR;
     }
     message->h.service.name = header->service.name;
 
-    header->api.version = ogs_sbi_parse_url(NULL, "/", &saveptr);
+    header->api.version = ogs_sbi_parse_uri(NULL, "/", &saveptr);
     if (!header->api.version) {
-        ogs_error("ogs_sbi_parse_url() failed");
-        ogs_free(url);
+        ogs_error("ogs_sbi_parse_uri() failed");
+        ogs_free(uri);
         return OGS_ERROR;
     }
     message->h.api.version = header->api.version;
 
     for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
-            (component = ogs_sbi_parse_url(NULL, "/", &saveptr)) != NULL;
+            (component = ogs_sbi_parse_uri(NULL, "/", &saveptr)) != NULL;
          i++) {
         header->resource.component[i] = component;
         message->h.resource.component[i] = component;
     }
 
-    ogs_free(url);
+    ogs_free(uri);
 
     return OGS_OK;
 }

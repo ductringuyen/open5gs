@@ -73,7 +73,7 @@ ogs_sbi_request_t *amf_nausf_auth_build_authenticate_confirmation(
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_PUT;
-    message.h.url = amf_ue->confirmation_url_for_5g_aka;
+    message.h.uri = amf_ue->confirmation_url_for_5g_aka;
 
     ConfirmationData = ogs_calloc(1, sizeof(*ConfirmationData));
     ogs_assert(ConfirmationData);
