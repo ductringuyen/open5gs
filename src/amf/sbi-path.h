@@ -38,6 +38,8 @@ int amf_sbi_discover_and_send(
 
 int amf_nausf_auth_send_authenticate(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
+int amf_nausf_auth_send_authenticate_confirmation(
+        amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
 int amf_nudm_uecm_send_registration(
         amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
 int amf_nudm_sdm_send_get(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
