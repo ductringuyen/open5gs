@@ -159,7 +159,6 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(amf_ue_t *amf_ue)
 
 void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
-    ogs_sbi_client_t *client = NULL;
     ogs_sbi_request_t *request = NULL;
 
     ogs_assert(amf_ue);
@@ -171,36 +170,7 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
     ogs_timer_start(amf_ue->sbi_client_wait.timer,
             amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
-    if (request->h.url) {
-        ogs_sockaddr_t *addr = NULL;
-        char buf[OGS_ADDRSTRLEN];
-
-        addr = ogs_sbi_getaddr_from_uri(request->h.url);
-        if (!addr) {
-            ogs_error("[%s] Invalid confirmation URL [%s]", amf_ue->suci,
-                amf_ue->confirmation_url_for_5g_aka);
-            return;
-        }
-        client = ogs_sbi_client_find(addr);
-        if (!client) {
-            ogs_error("[%s] Cannot find client [%s:%d]", amf_ue->suci,
-                    OGS_ADDR(addr, buf), OGS_PORT(addr));
-            ogs_freeaddrinfo(addr);
-            return;
-        }
-        ogs_freeaddrinfo(addr);
-    } else {
-        client = ogs_sbi_client_find_by_service_name(nf_instance,
-                request->h.service.name, request->h.api.version);
-        if (!client) {
-            ogs_error("[%s] Cannot find client [%s:%s]",
-                    amf_ue->suci, nf_instance->id,
-                    OpenAPI_nf_type_ToString(nf_instance->nf_type));
-            return;
-        }
-    }
-
-    ogs_sbi_client_send_request(client, request, amf_ue);
+    ogs_sbi_client_send_request_to_nf_instance(nf_instance, request, amf_ue);
 }
 
 void amf_sbi_discover_and_send(

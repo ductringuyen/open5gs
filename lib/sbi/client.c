@@ -460,6 +460,47 @@ void ogs_sbi_client_send_request(
     ogs_sbi_request_free(request);
 }
 
+void ogs_sbi_client_send_request_to_nf_instance(
+        ogs_sbi_nf_instance_t *nf_instance,
+        ogs_sbi_request_t *request, void *data)
+{
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(request);
+    ogs_assert(nf_instance);
+
+    if (request->h.url == NULL) {
+        client = ogs_sbi_client_find_by_service_name(nf_instance,
+                request->h.service.name, request->h.api.version);
+        if (!client) {
+            ogs_error("[%s] Cannot find client [%s:%s]",
+                    nf_instance->id,
+                    request->h.service.name, request->h.api.version);
+            return;
+        }
+    } else {
+        ogs_sockaddr_t *addr = NULL;
+        char buf[OGS_ADDRSTRLEN];
+
+        addr = ogs_sbi_getaddr_from_uri(request->h.url);
+        if (!addr) {
+            ogs_error("[%s] Invalid confirmation URL [%s]",
+                nf_instance->id, request->h.url);
+            return;
+        }
+        client = ogs_sbi_client_find(addr);
+        if (!client) {
+            ogs_error("[%s] Cannot find client [%s:%d]", nf_instance->id,
+                    OGS_ADDR(addr, buf), OGS_PORT(addr));
+            ogs_freeaddrinfo(addr);
+            return;
+        }
+        ogs_freeaddrinfo(addr);
+    }
+
+    ogs_sbi_client_send_request(client, request, data);
+}
+
 static size_t write_cb(void *contents, size_t size, size_t nmemb, void *data)
 {
     size_t realsize = 0;
