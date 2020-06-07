@@ -919,6 +919,96 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         break;
     case OGS_FSM_EXIT_SIG:
         break;
+
+    case AMF_EVT_SBI_CLIENT:
+        sbi_response = e->sbi.response;
+        ogs_assert(sbi_response);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
+
+        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+
+        SWITCH(sbi_message->h.resource.component[1])
+        CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
+                sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->supi, sbi_message->res_status);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+
+            SWITCH(sbi_message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_PUT)
+                amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
+                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_send_get);
+                break;
+
+            DEFAULT
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        amf_ue->suci, sbi_message->h.method);
+                ogs_assert_if_reached();
+            END
+            break;
+
+        CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+        CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
+        CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->supi, sbi_message->res_status);
+                nas_5gs_send_registration_reject(
+                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+
+            SWITCH(sbi_message->h.resource.component[1])
+            CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+                if (sbi_message->AccessAndMobilitySubscriptionData) {
+                    OpenAPI_ambr_rm_t *subscribed_ue_ambr =
+                        sbi_message->AccessAndMobilitySubscriptionData->
+                            subscribed_ue_ambr;
+                    if (subscribed_ue_ambr) {
+                        amf_ue->subscribed_ue_ambr.uplink =
+                            ogs_sbi_bitrate_from_string(
+                                    subscribed_ue_ambr->uplink);
+                        amf_ue->subscribed_ue_ambr.downlink =
+                            ogs_sbi_bitrate_from_string(
+                                    subscribed_ue_ambr->downlink);
+                    }
+                }
+
+                amf_ue->sbi.nudm_sdm_resource =
+                    OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
+                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_send_get);
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
+                amf_ue->sbi.nudm_sdm_resource =
+                    OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA;
+                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
+                        amf_nudm_sdm_send_get);
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
+                ogs_fatal("Next");
+                break;
+            DEFAULT
+            END
+
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    sbi_message->h.resource.component[0]);
+            ogs_assert_if_reached();
+        END
+        break;
     case AMF_EVT_5GMM_MESSAGE:
         message = e->nas.message;
         ogs_assert(message);
@@ -981,76 +1071,6 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             break;
         }
 #endif
-        break;
-    case AMF_EVT_SBI_CLIENT:
-        sbi_response = e->sbi.response;
-        ogs_assert(sbi_response);
-        sbi_message = e->sbi.message;
-        ogs_assert(sbi_message);
-
-        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
-
-        SWITCH(sbi_message->h.resource.component[1])
-        CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)
-            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
-                sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
-                ogs_error("[%s] HTTP response error [%d]",
-                        amf_ue->supi, sbi_message->res_status);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-                break;
-            }
-
-            SWITCH(sbi_message->h.method)
-            CASE(OGS_SBI_HTTP_METHOD_PUT)
-                amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
-                amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                        amf_nudm_sdm_send_get);
-                break;
-
-            DEFAULT
-                ogs_error("[%s] Invalid HTTP method [%s]",
-                        amf_ue->suci, sbi_message->h.method);
-                ogs_assert_if_reached();
-            END
-            break;
-
-        CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
-            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
-                ogs_error("[%s] HTTP response error [%d]",
-                        amf_ue->supi, sbi_message->res_status);
-                nas_5gs_send_registration_reject(
-                        amf_ue, OGS_5GMM_CAUSE_5GS_SERVICES_NOT_ALLOWED);
-                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
-                break;
-            }
-
-            if (sbi_message->AccessAndMobilitySubscriptionData) {
-                OpenAPI_ambr_rm_t *subscribed_ue_ambr =
-                    sbi_message->AccessAndMobilitySubscriptionData->
-                        subscribed_ue_ambr;
-                if (subscribed_ue_ambr) {
-                    amf_ue->subscribed_ue_ambr.uplink =
-                        ogs_sbi_bitrate_from_string(
-                                subscribed_ue_ambr->uplink);
-                    amf_ue->subscribed_ue_ambr.downlink =
-                        ogs_sbi_bitrate_from_string(
-                                subscribed_ue_ambr->downlink);
-                }
-            }
-
-            amf_ue->sbi.nudm_sdm_resource =
-                OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
-            amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_UDM,
-                    amf_nudm_sdm_send_get);
-            break;
-
-        DEFAULT
-            ogs_error("Invalid resource name [%s]",
-                    sbi_message->h.resource.component[0]);
-            ogs_assert_if_reached();
-        END
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {

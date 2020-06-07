@@ -355,6 +355,24 @@ bool udm_nudr_dr_handle_subscription_provisioned(
                 sendmsg.AccessAndMobilitySubscriptionData);
         break;
 
+    CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
+        memset(&sendmsg, 0, sizeof(sendmsg));
+
+        response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+
+        break;
+
+    CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
+        memset(&sendmsg, 0, sizeof(sendmsg));
+
+        response = ogs_sbi_build_response(&sendmsg, OGS_SBI_HTTP_STATUS_OK);
+        ogs_assert(response);
+        ogs_sbi_server_send_response(session, response);
+
+        break;
+
     DEFAULT
         ogs_error("Invalid resource name [%s]",
                 recvmsg->h.resource.component[3]);
