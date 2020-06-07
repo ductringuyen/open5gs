@@ -264,19 +264,9 @@ bool udr_nudr_dr_handle_subscription_provisioned(
 
     SWITCH(recvmsg->h.resource.component[4])
     CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
-        SWITCH(recvmsg->h.method)
-        CASE(OGS_SBI_HTTP_METHOD_GET)
 
-            ogs_fatal("am-data");
+        ogs_fatal("am-data");
 
-            return true;
-
-        DEFAULT
-            ogs_error("Invalid HTTP method [%s]", recvmsg->h.method);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                    recvmsg, "Invalid HTTP method", recvmsg->h.method);
-        END
         break;
 
     DEFAULT
@@ -286,7 +276,8 @@ bool udr_nudr_dr_handle_subscription_provisioned(
                 OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
                 recvmsg, "Unknown resource name",
                 recvmsg->h.resource.component[3]);
+        return false;
     END
 
-    return false;
+    return true;
 }

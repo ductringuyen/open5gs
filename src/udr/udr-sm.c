@@ -134,10 +134,20 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                 DEFAULT
                     SWITCH(message.h.resource.component[3])
                     CASE(OGS_SBI_RESOURCE_NAME_PROVISIONED_DATA)
-                        udr_nudr_dr_handle_subscription_provisioned(
-                                session, &message);
+                        SWITCH(message.h.method)
+                        CASE(OGS_SBI_HTTP_METHOD_GET)
+                            udr_nudr_dr_handle_subscription_provisioned(
+                                    session, &message);
+                            break;
+                        DEFAULT
+                            ogs_error("Invalid HTTP method [%s]",
+                                    message.h.method);
+                            ogs_sbi_server_send_error(session,
+                                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                                    &message, "Invalid HTTP method",
+                                    message.h.method);
+                        END
                         break;
-
                     DEFAULT
                         ogs_error("Invalid resource name [%s]",
                                 message.h.resource.component[2]);
