@@ -132,12 +132,20 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                     break;
 
                 DEFAULT
-                    ogs_error("Invalid resource name [%s]",
-                            message.h.resource.component[2]);
-                    ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                            &message, "Unknown resource name",
-                            message.h.resource.component[2]);
+                    SWITCH(message.h.resource.component[3])
+                    CASE(OGS_SBI_RESOURCE_NAME_PROVISIONED_DATA)
+                        udr_nudr_dr_handle_subscription_provisioned(
+                                session, &message);
+                        break;
+
+                    DEFAULT
+                        ogs_error("Invalid resource name [%s]",
+                                message.h.resource.component[2]);
+                        ogs_sbi_server_send_error(session,
+                                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                                &message, "Unknown resource name",
+                                message.h.resource.component[2]);
+                    END
                 END
                 break;
             DEFAULT

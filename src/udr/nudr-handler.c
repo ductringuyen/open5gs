@@ -232,3 +232,61 @@ bool udr_nudr_dr_handle_subscription_context(
 
     return false;
 }
+
+bool udr_nudr_dr_handle_subscription_provisioned(
+        ogs_sbi_session_t *session, ogs_sbi_message_t *recvmsg)
+{
+    int rv;
+
+    ogs_sbi_message_t sendmsg;
+    ogs_sbi_response_t *response = NULL;
+
+    char *supi = NULL;
+
+    ogs_assert(session);
+    ogs_assert(recvmsg);
+
+    supi = recvmsg->h.resource.component[1];
+    if (!supi) {
+        ogs_error("No SUPI");
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                recvmsg, "No SUPI", NULL);
+        return false;
+    }
+
+    if (strncmp(supi,
+            OGS_DBI_SUPI_TYPE_IMSI, strlen(OGS_DBI_SUPI_TYPE_IMSI)) != 0) {
+        ogs_error("[%s] Unknown SUPI Type", supi);
+        ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_FORBIDDEN,
+                recvmsg, "Unknwon SUPI Type", supi);
+        return false;
+    }
+
+    SWITCH(recvmsg->h.resource.component[4])
+    CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
+        SWITCH(recvmsg->h.method)
+        CASE(OGS_SBI_HTTP_METHOD_GET)
+
+            ogs_fatal("am-data");
+
+            return true;
+
+        DEFAULT
+            ogs_error("Invalid HTTP method [%s]", recvmsg->h.method);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                    recvmsg, "Invalid HTTP method", recvmsg->h.method);
+        END
+        break;
+
+    DEFAULT
+        ogs_error("Invalid resource name [%s]",
+                recvmsg->h.resource.component[3]);
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                recvmsg, "Unknown resource name",
+                recvmsg->h.resource.component[3]);
+    END
+
+    return false;
+}
