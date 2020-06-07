@@ -220,7 +220,6 @@ struct amf_ue_s {
             OpenAPI_nf_type_e nf_type;
             ogs_sbi_request_t *request;
         } discover;
-        const char *nudm_sdm_resource;
     } sbi;
 
     /* UE identity */

@@ -63,7 +63,7 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(
     memset(&header, 0, sizeof(header));
     header.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_UECM;
     header.api.version = (char *)OGS_SBI_API_V1;
-    header.resource.component[0] =amf_ue->supi;
+    header.resource.component[0] = amf_ue->supi;
     header.resource.component[1] =
             (char *)OGS_SBI_RESOURCE_NAME_DEREG_NOTIFY;
     Amf3GppAccessRegistration.dereg_callback_uri =
@@ -100,19 +100,16 @@ ogs_sbi_request_t *amf_nudm_sdm_build_get(amf_ue_t *amf_ue, void *data)
 
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->supi);
-    ogs_assert(amf_ue->sbi.nudm_sdm_resource);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_GET;
     message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NUDM_SDM;
     message.h.api.version = (char *)OGS_SBI_API_V2;
     message.h.resource.component[0] = amf_ue->supi;
-    message.h.resource.component[1] = (char *)amf_ue->sbi.nudm_sdm_resource;
+    message.h.resource.component[1] = data;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);
-
-    amf_ue->sbi.nudm_sdm_resource = NULL; /* Reset */
 
     return request;
 }

@@ -914,8 +914,8 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                amf_ue->sbi.nudm_sdm_resource = OGS_SBI_RESOURCE_NAME_AM_DATA;
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
+                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                        (char *)OGS_SBI_RESOURCE_NAME_AM_DATA,
                         amf_nudm_sdm_build_get);
                 break;
 
@@ -954,16 +954,14 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                     }
                 }
 
-                amf_ue->sbi.nudm_sdm_resource =
-                    OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA;
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
+                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                        (char *)OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA,
                         amf_nudm_sdm_build_get);
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
-                amf_ue->sbi.nudm_sdm_resource =
-                    OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA;
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
+                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                        (char *)OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA,
                         amf_nudm_sdm_build_get);
                 break;
 
