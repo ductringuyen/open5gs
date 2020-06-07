@@ -230,7 +230,7 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     memcpy(amf_ue->xres_star, authentication_response_parameter->res,
             authentication_response_parameter->length);
 
-    amf_sbi_discover_and_send(amf_ue, OpenAPI_nf_type_AUSF,
+    amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
             amf_nausf_auth_build_authenticate_confirmation);
 
     return OGS_OK;

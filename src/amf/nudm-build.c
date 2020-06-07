@@ -19,7 +19,8 @@
 
 #include "nudm-build.h"
 
-ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
+ogs_sbi_request_t *amf_nudm_uecm_build_registration(
+        amf_ue_t *amf_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_header_t header;
@@ -92,7 +93,7 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(amf_ue_t *amf_ue)
     return request;
 }
 
-ogs_sbi_request_t *amf_nudm_sdm_build_get(amf_ue_t *amf_ue)
+ogs_sbi_request_t *amf_nudm_sdm_build_get(amf_ue_t *amf_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;

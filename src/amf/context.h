@@ -218,8 +218,6 @@ struct amf_ue_s {
     struct {
         struct {
             OpenAPI_nf_type_e nf_type;
-            int (*handler)(
-                amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
             ogs_sbi_request_t *request;
         } discover;
         const char *nudm_sdm_resource;

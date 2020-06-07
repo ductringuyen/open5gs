@@ -174,8 +174,8 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 }
 
 void amf_sbi_discover_and_send(
-        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type,
-        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue))
+        OpenAPI_nf_type_e nf_type, amf_ue_t *amf_ue, void *data,
+        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue, void *data))
 {
     ogs_sbi_nf_instance_t *nf_instance = NULL;
 
@@ -186,7 +186,7 @@ void amf_sbi_discover_and_send(
     amf_ue->sbi.discover.nf_type = nf_type;
     if (amf_ue->sbi.discover.request)
         ogs_sbi_request_free(amf_ue->sbi.discover.request);
-    amf_ue->sbi.discover.request = (*build)(amf_ue);
+    amf_ue->sbi.discover.request = (*build)(amf_ue, data);
 
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(amf_ue);

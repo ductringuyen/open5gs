@@ -33,8 +33,8 @@ void amf_sbi_close(void);
 void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
 
 void amf_sbi_discover_and_send(
-        amf_ue_t *amf_ue, OpenAPI_nf_type_e nf_type,
-        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue));
+        OpenAPI_nf_type_e nf_type, amf_ue_t *amf_ue, void *data,
+        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue, void *data));
 void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
 
 #ifdef __cplusplus
