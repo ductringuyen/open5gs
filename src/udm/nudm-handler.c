@@ -67,8 +67,8 @@ bool udm_nudm_ueau_handle_get(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
         ogs_free(udm_ue->ausf_instance_id);
     udm_ue->ausf_instance_id = ogs_strdup(ausf_instance_id);
 
-    udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_query_authentication);
+    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+            udm_nudr_dr_build_query_authentication);
 
     return true;
 }
@@ -94,8 +94,8 @@ bool udm_nudm_ueau_handle_result_confirmation_inform(
     udm_ue->sbi.auth_event = OpenAPI_auth_event_copy(
             udm_ue->sbi.auth_event, message->AuthEvent);
 
-    udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update_authentication);
+    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+            udm_nudr_dr_build_update_authentication);
 
     return true;
 }
@@ -182,8 +182,8 @@ bool udm_nudm_uecm_handle_registration(
             udm_ue->sbi.amf_3gpp_access_registration,
                 message->Amf3GppAccessRegistration);
 
-    udm_sbi_discover_and_send(udm_ue, OpenAPI_nf_type_UDR,
-            udm_nudr_dr_send_update_context);
+    udm_sbi_discover_and_send(OpenAPI_nf_type_UDR, udm_ue, NULL,
+            udm_nudr_dr_build_update_context);
 
     return true;
 }

@@ -300,18 +300,17 @@ void udm_nnrf_handle_nf_discover(udm_ue_t *udm_ue, ogs_sbi_message_t *message)
         }
     }
 
-    ogs_assert(udm_ue->sbi.discover.nf_type);
-    ogs_assert(udm_ue->sbi.discover.handler);
+    ogs_assert(udm_ue->sbi.nf_type);
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
-            udm_ue->nf_types, udm_ue->sbi.discover.nf_type);
+            udm_ue->nf_types, udm_ue->sbi.nf_type);
     if (!nf_instance) {
         ogs_error("[%s] (NF discover) No [%s]", udm_ue->suci,
-                OpenAPI_nf_type_ToString(udm_ue->sbi.discover.nf_type));
+                OpenAPI_nf_type_ToString(udm_ue->sbi.nf_type));
         ogs_sbi_server_send_error(session,
                 OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
                 "(NF discover) No NF", udm_ue->suci);
         udm_ue_remove(udm_ue);
     } else {
-        (*udm_ue->sbi.discover.handler)(udm_ue, nf_instance);
+        udm_sbi_send(udm_ue, nf_instance);
     }
 }

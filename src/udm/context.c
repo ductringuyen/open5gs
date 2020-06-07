@@ -178,6 +178,9 @@ void udm_ue_remove(udm_ue_t *udm_ue)
     ogs_hash_set(self.supi_hash, udm_ue->supi, strlen(udm_ue->supi), NULL);
     ogs_free(udm_ue->supi);
 
+    if (udm_ue->sbi.request)
+        ogs_sbi_request_free(udm_ue->sbi.request);
+
     if (udm_ue->serving_network_name)
         ogs_free(udm_ue->serving_network_name);
     if (udm_ue->ausf_instance_id)

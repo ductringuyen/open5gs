@@ -19,7 +19,8 @@
 
 #include "nudr-build.h"
 
-ogs_sbi_request_t *udm_nudr_dr_build_query_authentication(udm_ue_t *udm_ue)
+ogs_sbi_request_t *udm_nudr_dr_build_query_authentication(
+        udm_ue_t *udm_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -44,7 +45,8 @@ ogs_sbi_request_t *udm_nudr_dr_build_query_authentication(udm_ue_t *udm_ue)
     return request;
 }
 
-ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue)
+ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(
+        udm_ue_t *udm_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -75,7 +77,8 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_authentication(udm_ue_t *udm_ue)
     return request;
 }
 
-ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue)
+ogs_sbi_request_t *udm_nudr_dr_build_update_context(
+        udm_ue_t *udm_ue, void *data)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -109,7 +112,8 @@ ogs_sbi_request_t *udm_nudr_dr_build_update_context(udm_ue_t *udm_ue)
     return request;
 }
 
-ogs_sbi_request_t *udm_nudr_dr_build_query_provisioned(udm_ue_t *udm_ue)
+ogs_sbi_request_t *udm_nudr_dr_build_query_provisioned(
+        udm_ue_t *udm_ue, void *data)
 {
     char buf[OGS_PLMNIDSTRLEN];
 
