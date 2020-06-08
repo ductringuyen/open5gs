@@ -36,10 +36,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     ogs_nas_5gs_mobile_identity_t *mobile_identity = &registration_accept->guti;
     ogs_nas_5gs_mobile_identity_guti_t mobile_identity_guti;
 #if 0
-    ogs_nas_5gs_network_feature_support_t *eps_network_feature_support =
-        &registration_accept->eps_network_feature_support;
-    ogs_nas_mobile_identity_t *ms_identity = &registration_accept->ms_identity;
-    ogs_nas_mobile_identity_tmsi_t *tmsi = &ms_identity->tmsi;;
+    ogs_nas_gprs_timer_2_t *t3502_value = &registration_accept->t3502_value;
 #endif
 
     ogs_assert(amf_ue);
@@ -63,7 +60,9 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     t3512_value->unit = OGS_NAS_GRPS_TIMER_3_UNIT_MULTIPLES_OF_1_HH;
     t3512_value->value = 9;
 
-    /* Set T3512 */
+    /* Set TAI List */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
+
     ogs_debug("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
             ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
     ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->supi,
@@ -75,12 +74,11 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     ogs_assert(served_tai_index >= 0 &&
             served_tai_index < OGS_MAX_NUM_OF_SERVED_TAI);
 
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
     ogs_nas_5gs_tai_list_build(&registration_accept->tai_list,
             &amf_self()->served_tai[served_tai_index].list0,
             &amf_self()->served_tai[served_tai_index].list2);
 
-
+    /* Set GUTI */
     ogs_debug("[%s]    %s 5G-S_GUTI[AMF_ID:0x%x,M_TMSI:0x%x]", amf_ue->supi,
             amf_ue->guti_present ? "[V]" : "[N]",
             ogs_amf_id_hexdump(&amf_ue->guti.amf_id), amf_ue->guti.m_tmsi);
@@ -88,55 +86,24 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
         registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_5G_GUTI_PRESENT;
         memset(&mobile_identity_guti, 0, sizeof(mobile_identity_guti));
 
+        mobile_identity_guti.h.type = OGS_NAS_5GS_MOBILE_IDENTITY_GUTI;
+
+        memcpy(&mobile_identity_guti.nas_plmn_id,
+                &amf_ue->guti.nas_plmn_id, OGS_PLMN_ID_LEN);
+        memcpy(&mobile_identity_guti.amf_id,
+                &amf_ue->guti.amf_id, sizeof(ogs_amf_id_t));
+        mobile_identity_guti.m_tmsi = htobe32(amf_ue->guti.m_tmsi);
+
         mobile_identity->length = sizeof(mobile_identity_guti);
         mobile_identity->buffer = &mobile_identity_guti;
-#if 0
-        nas_guti->guti.odd_even = OGS_NAS_MOBILE_IDENTITY_EVEN;
-        nas_guti->guti.type = OGS_NAS_5GS_MOBILE_IDENTITY_GUTI;
-        nas_guti->guti.nas_plmn_id = amf_ue->guti.nas_plmn_id;
-        nas_guti->guti.amf_gid = amf_ue->guti.amf_gid;
-        nas_guti->guti.amf_code = amf_ue->guti.amf_code;
-        nas_guti->guti.m_tmsi = amf_ue->guti.m_tmsi;
-#endif
     }
     amf_ue->guti_present = 0;
 
 #if 0
-#if 0 /* Need not to include T3502 */
     /* Set T3502 */
     registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3502_VALUE_PRESENT;
     registration_accept->t3502_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
     registration_accept->t3502_value.value = 12;
-#endif
-
-    /* Set T3523 */
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3523_VALUE_PRESENT;
-    registration_accept->t3523_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
-    registration_accept->t3523_value.value = 9;
-    registration_accept->presencemask |= 
-        OGS_NAS_5GS_REGISTRATION_ACCEPT_EPS_NETWORK_FEATURE_SUPPORT_PRESENT;
-    eps_network_feature_support->length = 1;
-    eps_network_feature_support->ims_vops = 1;
-
-    if (MME_P_TMSI_IS_AVAILABLE(amf_ue)) {
-        ogs_assert(amf_ue->csmap);
-        ogs_assert(amf_ue->p_tmsi);
-
-        registration_accept->presencemask |=
-            OGS_NAS_5GS_REGISTRATION_ACCEPT_LOCATION_AREA_IDENTIFICATION_PRESENT;
-        lai->nas_plmn_id = amf_ue->csmap->lai.nas_plmn_id;
-        lai->lac = amf_ue->csmap->lai.lac;
-        ogs_debug("    LAI[PLMN_ID:%06x,LAC:%d]",
-                ogs_plmn_id_hexdump(&lai->nas_plmn_id), lai->lac);
-
-        registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_MS_IDENTITY_PRESENT;
-        ms_identity->length = 5;
-        tmsi->spare = 0xf;
-        tmsi->odd_even = 0;
-        tmsi->type = OGS_NAS_MOBILE_IDENTITY_TMSI;
-        tmsi->tmsi = amf_ue->p_tmsi;
-        ogs_debug("    P-TMSI: 0x%08x", tmsi->tmsi);
-    }
 #endif
 
     pkbuf = nas_5gs_security_encode(amf_ue, &message);

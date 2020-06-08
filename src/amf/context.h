@@ -46,7 +46,6 @@ typedef struct ran_ue_s ran_ue_t;
 typedef struct amf_ue_s amf_ue_t;
 
 typedef uint32_t amf_m_tmsi_t;
-typedef uint32_t amf_p_tmsi_t;
 
 typedef struct amf_context_s {
     ogs_queue_t     *queue;         /* Queue for processing UPF control */
@@ -233,7 +232,6 @@ struct amf_ue_s {
     ogs_nas_mobile_identity_imeisv_t nas_mobile_identity_imeisv;
 
     amf_m_tmsi_t    *m_tmsi;
-    amf_p_tmsi_t    p_tmsi;
     ogs_nas_5gs_guti_t guti;
     int             guti_present;
 

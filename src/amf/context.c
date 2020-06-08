@@ -1061,18 +1061,6 @@ ran_ue_t *ran_ue_next_in_gnb(ran_ue_t *ran_ue)
 
 static int amf_ue_new_guti(amf_ue_t *amf_ue)
 {
-#if 0
-    served_guami_t *served_guami = NULL;
-
-    ogs_assert(amf_ue);
-    ogs_assert(amf_self()->num_of_served_guami > 0);
-
-    served_guami = &amf_self()->served_guami[0];
-
-    ogs_assert(served_guami->num_of_plmn_id > 0);
-    ogs_assert(served_guami->num_of_amf_gid > 0);
-    ogs_assert(served_guami->num_of_amf_code > 0);
-
     if (amf_ue->m_tmsi) {
         /* AMF has a VALID GUTI
          * As such, we need to remove previous GUTI in hash table */
@@ -1083,17 +1071,17 @@ static int amf_ue_new_guti(amf_ue_t *amf_ue)
 
     memset(&amf_ue->guti, 0, sizeof(ogs_nas_5gs_guti_t));
 
-    /* Use the first configured plmn_id and amf group id */
-    ogs_nas_from_plmn_id(&amf_ue->guti.nas_plmn_id, &served_guami->plmn_id[0]);
-    amf_ue->guti.amf_gid = served_guami->amf_gid[0];
-    amf_ue->guti.amf_code = served_guami->amf_code[0];
+    /* TODO : Use the first configured plmn_id and amf id */
+    ogs_nas_from_plmn_id(&amf_ue->guti.nas_plmn_id,
+            &amf_self()->served_guami[0].plmn_id);
+    memcpy(&amf_ue->guti.amf_id,
+            &amf_self()->served_guami[0].amf_id, sizeof(ogs_amf_id_t));
 
     amf_ue->m_tmsi = amf_m_tmsi_alloc();
     ogs_assert(amf_ue->m_tmsi);
     amf_ue->guti.m_tmsi = *(amf_ue->m_tmsi);
     ogs_hash_set(self.guti_ue_hash,
             &amf_ue->guti, sizeof(ogs_nas_5gs_guti_t), amf_ue);
-#endif
 
     return OGS_OK;
 }
