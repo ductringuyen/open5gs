@@ -460,10 +460,9 @@ ED4(uint8_t type:4;,
 
 /* 9.11.3.37 NSSAI
  * O TLV 4-72 */
-#define OGS_NAS_MAX_NUM_OF_S_NSSAI 18
 typedef struct ogs_nas_nssai_s {
     uint8_t length;
-    ogs_s_nssai_t s_nssai[OGS_NAS_MAX_NUM_OF_S_NSSAI];
+    ogs_s_nssai_t s_nssai[OGS_MAX_NUM_OF_S_NSSAI];
 } __attribute__ ((packed)) ogs_nas_nssai_t;
 
 /* 9.11.3.37A NSSAI inclusion mode

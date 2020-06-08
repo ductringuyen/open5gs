@@ -31,10 +31,12 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     ogs_nas_5gs_registration_accept_t *registration_accept = &message.gmm.registration_accept;
     ogs_nas_5gs_registration_result_t *registration_result =
         &registration_accept->registration_result;
-    ogs_nas_gprs_timer_3_t *t3512_value = &registration_accept->t3512_value;
-    int served_tai_index = 0;
     ogs_nas_5gs_mobile_identity_t *mobile_identity = &registration_accept->guti;
     ogs_nas_5gs_mobile_identity_guti_t mobile_identity_guti;
+    int served_tai_index = 0;
+    ogs_nas_nssai_t *allowed_nssai = &registration_accept->allowed_nssai;
+    int i, j, num_of_nssai;
+    ogs_nas_gprs_timer_3_t *t3512_value = &registration_accept->t3512_value;
 #if 0
     ogs_nas_gprs_timer_2_t *t3502_value = &registration_accept->t3502_value;
 #endif
@@ -57,31 +59,9 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_REGISTRATION_ACCEPT;
 
+    /* Registration Result */
     registration_result->length = 1;
     registration_result->value = amf_ue->nas.access_type;
-
-    /* Set T3512 */
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3512_VALUE_PRESENT;
-    t3512_value->unit = OGS_NAS_GRPS_TIMER_3_UNIT_MULTIPLES_OF_1_HH;
-    t3512_value->value = 9;
-
-    /* Set TAI List */
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
-
-    ogs_fatal("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
-            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
-    ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->supi,
-            ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),
-            (long long)amf_ue->cgi.cell_id);
-
-    served_tai_index = amf_find_served_tai(&amf_ue->tai);
-    ogs_debug("[%s]    SERVED_TAI_INDEX[%d]", amf_ue->supi, served_tai_index);
-    ogs_assert(served_tai_index >= 0 &&
-            served_tai_index < OGS_MAX_NUM_OF_SERVED_TAI);
-
-    ogs_nas_5gs_tai_list_build(&registration_accept->tai_list,
-            &amf_self()->served_tai[served_tai_index].list0,
-            &amf_self()->served_tai[served_tai_index].list2);
 
     /* Set GUTI */
     ogs_debug("[%s]    %s 5G-S_GUTI[AMF_ID:0x%x,M_TMSI:0x%x]", amf_ue->supi,
@@ -103,6 +83,66 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
         mobile_identity->buffer = &mobile_identity_guti;
     }
     amf_ue->guti_present = 0;
+
+    /* Set TAI List */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
+
+    ogs_debug("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
+            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
+    ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->supi,
+            ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),
+            (long long)amf_ue->cgi.cell_id);
+
+    served_tai_index = amf_find_served_tai(&amf_ue->tai);
+    ogs_debug("[%s]    SERVED_TAI_INDEX[%d]", amf_ue->supi, served_tai_index);
+    ogs_assert(served_tai_index >= 0 &&
+            served_tai_index < OGS_MAX_NUM_OF_SERVED_TAI);
+
+    ogs_nas_5gs_tai_list_build(&registration_accept->tai_list,
+            &amf_self()->served_tai[served_tai_index].list0,
+            &amf_self()->served_tai[served_tai_index].list2);
+
+    /* Set Allowed NSSAI */
+    num_of_nssai = 0;
+    allowed_nssai->length = 0;
+    for (i = 0; i < amf_self()->num_of_plmn_support; i++) {
+        if (memcmp(&amf_ue->tai.plmn_id,
+                &amf_self()->plmn_support[i].plmn_id, OGS_PLMN_ID_LEN) != 0)
+            continue;
+
+        ogs_debug("[%s]    NSSAI[PLMN_ID:%06x]", amf_ue->supi,
+                ogs_plmn_id_hexdump(&amf_self()->plmn_support[i].plmn_id));
+        for (j = 0; j < amf_self()->plmn_support[i].num_of_s_nssai; j++) {
+            ogs_debug("[%s]         [sst:%d, sd:%06x]", amf_ue->supi,
+                    amf_self()->plmn_support[i].s_nssai[j].sst,
+                    amf_self()->plmn_support[i].s_nssai[j].sd.v);
+            if (num_of_nssai < OGS_MAX_NUM_OF_S_NSSAI) {
+                allowed_nssai->s_nssai[num_of_nssai].len =
+                        amf_self()->plmn_support[i].s_nssai[j].len;
+                allowed_nssai->s_nssai[num_of_nssai].sst =
+                        amf_self()->plmn_support[i].s_nssai[j].sst;
+                if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
+                        OGS_S_NSSAI_NO_SD_VALUE) {
+                    allowed_nssai->s_nssai[num_of_nssai].sd =
+                        ogs_htobe24(amf_self()->plmn_support[i].s_nssai[j].sd);
+                }
+                allowed_nssai->length +=
+                    allowed_nssai->s_nssai[num_of_nssai].len;
+                num_of_nssai++;
+
+            }
+        }
+    }
+    if (allowed_nssai->length) {
+        registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_ALLOWED_NSSAI_PRESENT;
+        allowed_nssai->length += 2;
+    }
+
+    /* Set T3512 */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3512_VALUE_PRESENT;
+    t3512_value->length = 1;
+    t3512_value->unit = OGS_NAS_GRPS_TIMER_3_UNIT_MULTIPLES_OF_1_HH;
+    t3512_value->value = 9;
 
 #if 0
     /* Set T3502 */

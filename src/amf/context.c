@@ -635,9 +635,11 @@ int amf_context_parse_config(void)
                                             s_nssai->sd =
                                                 ogs_uint24_from_string(
                                                         (char*)sd);
+                                            s_nssai->len = 4;
                                         } else {
                                             s_nssai->sd.v =
                                                 OGS_S_NSSAI_NO_SD_VALUE;
+                                            s_nssai->len = 1;
                                         }
 
                                         self.plmn_support[
