@@ -173,7 +173,7 @@ ogs_pkbuf_t *testgmm_build_registration_complete(test_ue_t *test_ue)
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type =
-        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT;
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED;
     message.h.extended_protocol_discriminator =
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
 
