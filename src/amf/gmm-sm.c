@@ -183,7 +183,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             break;
 #endif
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
-            ogs_debug("Registration request[%s]", amf_ue->imsi_bcd);
+            ogs_debug("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
                     amf_ue, &message->gmm.registration_request);
             if (rv != OGS_OK) {
@@ -294,8 +294,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             if (amf_ue->t3513.retry_count >=
                     amf_timer_cfg(AMF_TIMER_T3513)->max_count) {
                 /* Paging failed */
-                ogs_warn("Paging to IMSI[%s] failed. Stop paging",
-                        amf_ue->imsi_bcd);
+                ogs_warn("[%s] Paging failed. Stop", amf_ue->supi);
                 CLEAR_AMF_UE_TIMER(amf_ue->t3513);
 
             } else {
@@ -846,9 +845,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         case AMF_TIMER_T3560:
             if (amf_ue->t3560.retry_count >=
                     amf_timer_cfg(AMF_TIMER_T3560)->max_count) {
-                ogs_warn("Retransmission of IMSI[%s] failed. "
-                        "Stop retransmission",
-                        amf_ue->imsi_bcd);
+                ogs_warn("[%s] Retransmission failed. Stop", amf_ue->supi);
                 nas_5gs_send_registration_reject(amf_ue,
                     OGS_5GMM_CAUSE_SECURITY_MODE_REJECTED_UNSPECIFIED);
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);

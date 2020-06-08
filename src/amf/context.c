@@ -1179,8 +1179,6 @@ void amf_ue_remove(amf_ue_t *amf_ue)
                 &amf_ue->guti, sizeof(ogs_nas_5gs_guti_t), NULL);
         ogs_assert(amf_m_tmsi_free(amf_ue->m_tmsi) == OGS_OK);
     }
-    if (amf_ue->imsi_len != 0)
-        ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, NULL);
     if (amf_ue->suci) {
         ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
         ogs_free(amf_ue->suci);
@@ -1289,8 +1287,7 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
     ogs_nas_5gs_mobile_identity_guti_t *mobile_identity_guti = NULL;
     ogs_nas_5gs_guti_t nas_guti;
 
-    char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
-    char *ueid = NULL;
+    char *suci = NULL;
 
     ogs_assert(message);
 
@@ -1306,15 +1303,14 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
         switch (mobile_identity_header->type) {
         case OGS_NAS_5GS_MOBILE_IDENTITY_SUCI:
-            ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
-            ueid = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
-            amf_ue = amf_ue_find_by_imsi_bcd(imsi_bcd);
+            suci = ogs_nas_5gs_suci_from_mobile_identity(mobile_identity);
+            amf_ue = amf_ue_find_by_suci(suci);
             if (amf_ue) {
-                ogs_trace("known UE by IMSI[%s]", imsi_bcd);
+                ogs_trace("[%s] known UE by SUCI", suci);
             } else {
-                ogs_trace("Unknown UE by IMSI[%s]", imsi_bcd);
+                ogs_trace("[%s] Unknown UE by SUCI", suci);
             }
-            ogs_free(ueid);
+            ogs_free(suci);
             break;
         case OGS_NAS_5GS_MOBILE_IDENTITY_GUTI:
             mobile_identity_guti =
@@ -1418,38 +1414,33 @@ amf_ue_t *amf_ue_find_by_message(ogs_nas_5gs_message_t *message)
 void amf_ue_set_suci(amf_ue_t *amf_ue,
         ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
-    char imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
     amf_ue_t *old_amf_ue = NULL;
+    char *suci = NULL;
 
     ogs_assert(amf_ue);
     ogs_assert(mobile_identity);
 
-    ogs_nas_5gs_imsi_to_bcd(mobile_identity, imsi_bcd);
-
-    ogs_cpystrn(amf_ue->imsi_bcd, imsi_bcd, OGS_MAX_IMSI_BCD_LEN+1);
-    ogs_bcd_to_buffer(amf_ue->imsi_bcd, amf_ue->imsi, &amf_ue->imsi_len);
+    suci = ogs_nas_5gs_suci_from_mobile_identity(mobile_identity);
+    ogs_assert(suci);
 
     /* Check if OLD amf_ue_t is existed */
-    old_amf_ue = amf_ue_find_by_imsi(amf_ue->imsi, amf_ue->imsi_len);
+    old_amf_ue = amf_ue_find_by_suci(suci);
     if (old_amf_ue) {
         /* Check if OLD amf_ue_t is different with NEW amf_ue_t */
         if (ogs_pool_index(&amf_ue_pool, amf_ue) !=
             ogs_pool_index(&amf_ue_pool, old_amf_ue)) {
-            ogs_warn("OLD UE Context Release [IMSI:%s]", amf_ue->imsi_bcd);
+            ogs_warn("[%s] OLD UE Context Release", suci);
             if (old_amf_ue->ran_ue)
                 ran_ue_deassociate(old_amf_ue->ran_ue);
             amf_ue_remove(old_amf_ue);
         }
     }
 
-    ogs_hash_set(self.imsi_ue_hash, amf_ue->imsi, amf_ue->imsi_len, amf_ue);
-
     if (amf_ue->suci) {
         ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), NULL);
         ogs_free(amf_ue->suci);
     }
-    amf_ue->suci = ogs_nas_5gs_ueid_from_mobile_identity(mobile_identity);
-    ogs_assert(amf_ue->suci);
+    amf_ue->suci = suci;
     ogs_hash_set(self.suci_hash, amf_ue->suci, strlen(amf_ue->suci), amf_ue);
 
     amf_ue->guti_present = 1;

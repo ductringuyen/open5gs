@@ -221,14 +221,10 @@ struct amf_ue_s {
     } sbi;
 
     /* UE identity */
-    char            *suci; /* TS33.501 : SUCI */
-    char            *supi; /* TS33.501 : SUPI */
-
 #define AMF_UE_HAVE_SUCI(__aMF) \
     ((__aMF) && ((__aMF)->suci))
-    uint8_t         imsi[OGS_MAX_IMSI_LEN];
-    int             imsi_len;
-    char            imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
+    char            *suci; /* TS33.501 : SUCI */
+    char            *supi; /* TS33.501 : SUPI */
     ogs_nas_5gs_mobile_identity_imsi_t nas_mobile_identity_imsi;
 
     bool            imeisv_presence;
