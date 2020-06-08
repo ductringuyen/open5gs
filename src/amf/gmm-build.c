@@ -370,6 +370,8 @@ ogs_pkbuf_t *gmm_build_configuration_update_command(
         configuration_update_command->presencemask |=
             OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_CONFIGURATION_UPDATE_INDICATION_PRESENT;
 
+        configuration_update_indication->ack = ack;
+        configuration_update_indication->red = red;
     }
 
     configuration_update_command->presencemask |=

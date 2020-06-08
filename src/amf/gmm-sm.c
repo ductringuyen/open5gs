@@ -1014,7 +1014,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("[%s] Registration complete", amf_ue->supi);
 
             /* Ack/Red to 0
-             * No need to receive configuration update complete */
+             *  - No need to receive configuration update complete */
             nas_5gs_send_configuration_update_command(amf_ue, 0, 0);
 
             OGS_FSM_TRAN(s, &gmm_state_registered);
