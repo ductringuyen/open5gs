@@ -66,6 +66,10 @@ extern "C" {
 
 #define OGS_NAS_PROCEDURE_TRANSACTION_IDENTITY_UNASSIGNED 0
 
+#define OGS_ACCESS_TYPE_3GPP 1
+#define OGS_ACCESS_TYPE_NON_3GPP 2
+#define OGS_ACCESS_TYPE_BOTH_3GPP_AND_NON_3GPP 3
+
 typedef struct ogs_uint24_s {
     uint32_t v:24;
 }  __attribute__ ((packed)) ogs_uint24_t;

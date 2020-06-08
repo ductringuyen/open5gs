@@ -197,9 +197,6 @@ ED3(uint8_t spare:6;,
 
 /* 9.11.3.6 5GS registration result
  * O TLV 3-5 */
-#define OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS 1
-#define OGS_NAS_REGISTRATION_RESULT_NON_3GPP_ACCESS 2
-#define OGS_NAS_REGISTRATION_RESULT_BOTH_3GPP_AND_NON_3GPP_ACCESS 3
 typedef struct ogs_nas_5gs_registration_result_s {
     uint8_t length;
 ED3(uint8_t spare:4;,

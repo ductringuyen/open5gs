@@ -137,7 +137,7 @@ static void test1_func(abts_case *tc, void *data)
 
     test_ue_set_mobile_identity(&test_ue, &mobile_identity);
 
-    test_ue.nas.access_type = OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS;
+    test_ue.nas.access_type = OGS_ACCESS_TYPE_3GPP;
     test_ue.abba_len = 2;
 
     OGS_HEX(_k_string, strlen(_k_string), test_ue.k);

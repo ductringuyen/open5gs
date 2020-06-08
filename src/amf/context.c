@@ -1104,7 +1104,7 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     /* TODO : Hard-coded */
     amf_ue->guami = &amf_self()->served_guami[0];
-    amf_ue->nas.access_type = OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS;
+    amf_ue->nas.access_type = OGS_ACCESS_TYPE_3GPP;
     amf_ue->abba_len = 2;
 
     /* Create New GUTI */

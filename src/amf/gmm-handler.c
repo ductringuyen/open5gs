@@ -106,7 +106,7 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
         ogs_kdf_kgnb_and_kn3iwf(
                 amf_ue->kamf, amf_ue->ul_count.i32,
-                OGS_KDF_ACCESS_TYPE_3GPP, amf_ue->kgnb);
+                amf_ue->nas.access_type, amf_ue->kgnb);
         ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
         amf_ue->nhcc = 1;
     }
