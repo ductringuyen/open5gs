@@ -30,7 +30,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
         ogs_nas_5gs_registration_request_t *registration_request);
 int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_authentication_response_t *authentication_response);
-#if 0
 int gmm_handle_registration_complete(amf_ue_t *amf_ue,
         ogs_nas_5gs_registration_complete_t *registration_complete);
 
@@ -43,6 +42,7 @@ int gmm_handle_deregistration_request(amf_ue_t *amf_ue,
 int gmm_handle_service_request(amf_ue_t *amf_ue,
         ogs_nas_5gs_service_request_t *service_request);
 
+#if 0
 int gmm_handle_tau_request(amf_ue_t *amf_ue,
         ogs_nas_5gs_tracking_area_update_request_t *tau_request);
 

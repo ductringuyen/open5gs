@@ -593,13 +593,14 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
             amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
                     amf_nausf_auth_build_authenticate);
-
             break;
+
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
                     amf_ue->suci, message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
+
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
             ogs_debug("[%s] Deregistration request", amf_ue->suci);
 #if 0
@@ -815,11 +816,13 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
 #endif
+
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
                     amf_ue->supi, message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
+
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
 #if 0
             ogs_debug("Deregistration request");
@@ -869,6 +872,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
 void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
+    int rv;
     amf_ue_t *amf_ue = NULL;
     ogs_nas_5gs_message_t *message = NULL;
 
@@ -885,7 +889,6 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        ogs_fatal("Under Development");
         break;
     case OGS_FSM_EXIT_SIG:
         break;
@@ -982,12 +985,9 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         message = e->nas.message;
         ogs_assert(message);
 
-        ogs_fatal("asdfkljasdfasdf");
-#if 0
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:
-            ogs_debug("Registration complete");
-            ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+            ogs_debug("[%s] Registration complete", amf_ue->supi);
 
             rv = gmm_handle_registration_complete(
                     amf_ue, &message->gmm.registration_complete);
@@ -997,30 +997,33 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 break;
             }
-            if (AMF_P_TMSI_IS_AVAILABLE(amf_ue))
-                sgsap_send_tmsi_reallocation_complete(amf_ue);
 
             OGS_FSM_TRAN(s, &gmm_state_registered);
             break;
+
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
-            ogs_warn("Registration request[%s]", amf_ue->imsi_bcd);
+            ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
                     amf_ue, &message->gmm.registration_request);
             if (rv != OGS_OK) {
-                ogs_error("gmm_handle_registration_request() failed");
+                ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
-                return;
+                break;
             }
 
+#if 0
             amf_gtp_send_delete_all_sessions(amf_ue);
+#endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
             break;
+
         case OGS_NAS_5GS_5GMM_STATUS:
-            ogs_warn("5GMM STATUS : IMSI[%s] Cause[%d]",
-                    amf_ue->imsi_bcd,
-                    message->gmm.gmm_status.gmm_cause);
+            ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
+                    amf_ue->supi, message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
+
+#if 0
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
@@ -1035,12 +1038,11 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             amf_send_delete_session_or_deregistration(amf_ue);
             OGS_FSM_TRAN(s, &gmm_state_de_registered);
             break;
+#endif
         default:
-            ogs_warn("Unknown message[%d]", 
-                    message->gmm.h.message_type);
+            ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
             break;
         }
-#endif
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {

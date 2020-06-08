@@ -236,7 +236,6 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     return OGS_OK;
 }
 
-#if 0
 int gmm_handle_registration_complete(amf_ue_t *amf_ue,
         ogs_nas_5gs_registration_complete_t *registration_complete)
 {
@@ -244,6 +243,7 @@ int gmm_handle_registration_complete(amf_ue_t *amf_ue,
     ogs_pkbuf_t *gmmbuf = NULL;
 
     ogs_nas_5gs_message_t message;
+#if 0
     ogs_nas_5gs_gmm_information_t *gmm_information =
         &message.gmm.gmm_information;
     ogs_nas_time_zone_and_time_t *universal_time_and_local_time_zone =
@@ -257,9 +257,11 @@ int gmm_handle_registration_complete(amf_ue_t *amf_ue,
     ogs_gettimeofday(&tv);
     ogs_gmtime(tv.tv_sec, &gmt);
     ogs_localtime(tv.tv_sec, &local);
+#endif
 
     ogs_assert(amf_ue);
 
+#if 0
     ogs_debug("    GMT Time[Y:M:D H:M:S GMT] - %d:%d:%d, %d:%d:%d, %d",
         gmt.tm_year, gmt.tm_mon, gmt.tm_mday,
         gmt.tm_hour, gmt.tm_min, gmt.tm_sec,
@@ -330,13 +332,14 @@ int gmm_handle_registration_complete(amf_ue_t *amf_ue,
     gmmbuf = nas_5gs_security_encode(amf_ue, &message);
     if (gmmbuf) 
         nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
+#endif
 
-    ogs_debug("[EMM] EMM information");
-    ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
+    ogs_debug("%s EMM information", amf_ue->supi);
 
     return OGS_OK;
 }
 
+#if 0
 int gmm_handle_identity_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_identity_response_t *identity_response)
 {
