@@ -491,6 +491,13 @@ typedef struct ogs_nas_payload_container_s {
 
 /* 9.11.3.40 Payload container type
  * O TV 1 */
+#define OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION 1
+#define OGS_NAS_PAYLOAD_CONTAINER_SMS 2
+#define OGS_NAS_PAYLOAD_CONTAINER_LPP 3
+#define OGS_NAS_PAYLOAD_CONTAINER_SOR 4
+#define OGS_NAS_PAYLOAD_CONTAINER_UE_POLICY 5
+#define OGS_NAS_PAYLOAD_CONTAINER_UE_PARAMETER_UPDATE 6
+#define OGS_NAS_PAYLOAD_CONTAINER_MULTIPLE 7
 typedef struct ogs_nas_payload_container_type_s {
 ED2(uint8_t type:4;,
     uint8_t value:4;)
