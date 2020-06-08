@@ -260,5 +260,8 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     ul_nas_transport->dnn.length = ogs_fqdn_build(
         ul_nas_transport->dnn.value, test_sess->dnn, strlen(test_sess->dnn));
 
-    return test_nas_5gs_security_encode(test_ue, &message);
+    pkbuf = test_nas_5gs_security_encode(test_ue, &message);
+    ogs_pkbuf_free(payload);
+
+    return pkbuf;
 }

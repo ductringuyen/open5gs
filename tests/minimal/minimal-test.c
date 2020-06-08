@@ -25,6 +25,7 @@ static void test1_func(abts_case *tc, void *data)
     ogs_socknode_t *ngap;
     ogs_socknode_t *gtpu;
     ogs_pkbuf_t *gmmbuf;
+    ogs_pkbuf_t *gsmbuf;
     ogs_pkbuf_t *nasbuf;
     ogs_pkbuf_t *sendbuf;
     ogs_pkbuf_t *recvbuf;
@@ -35,6 +36,7 @@ static void test1_func(abts_case *tc, void *data)
     ogs_nas_5gs_mobile_identity_t mobile_identity;
     ogs_nas_5gs_mobile_identity_imsi_t mobile_identity_imsi;
     test_ue_t test_ue;
+    test_sess_t test_sess;
 
     uint8_t tmp[OGS_MAX_SDU_LEN];
 
@@ -109,8 +111,10 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_PTR_NOTNULL(tc, recvbuf);
     ogs_pkbuf_free(recvbuf);
 
-    /* Setup Test UE Context */
+    /* Setup Test UE & Session Context */
     memset(&test_ue, 0, sizeof(test_ue));
+    memset(&test_sess, 0, sizeof(test_sess));
+    test_sess.test_ue = &test_ue;
 
     test_ue.nas.registration.type = 1; /* TSC[0], KSI[1] */
     test_ue.nas.registration.follow_on_request = 1;
@@ -142,6 +146,11 @@ static void test1_func(abts_case *tc, void *data)
 
     OGS_HEX(_k_string, strlen(_k_string), test_ue.k);
     OGS_HEX(_opc_string, strlen(_opc_string), test_ue.opc);
+
+    test_sess.id = 10;
+    test_sess.pti = 0;
+    test_sess.pdn_type = OGS_PDN_TYPE_IPV4;
+    test_sess.dnn = (char *)"internet";
 
     /********** Insert Subscriber in Database */
     collection = mongoc_client_get_collection(
@@ -231,15 +240,20 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_PTR_NOTNULL(tc, recvbuf);
     ogs_pkbuf_free(recvbuf);
 
-    ogs_msleep(300);
-
-#if 0
-    /* Send Attach Complete + Activate default EPS bearer cotext accept */
-    rv = testngap_build_attach_complete(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
+    /* Send PDU Session Establishment Request */
+    gsmbuf = testgsm_build_pdu_session_establishment_request(&test_sess);
+    ABTS_PTR_NOTNULL(tc, gsmbuf);
+    gmmbuf = testgmm_build_ul_nas_transport(&test_sess,
+            OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION, gsmbuf);
+    ABTS_PTR_NOTNULL(tc, gmmbuf);
+    sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
+    ABTS_PTR_NOTNULL(tc, sendbuf);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
+    ogs_msleep(300);
+
+#if 0
     ogs_msleep(50);
 
     /* Receive EMM information */
