@@ -394,7 +394,8 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_response(test_ue_t *test_ue)
     return ogs_ngap_encode(&pdu);
 }
 
-ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue)
+ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue,
+        NGAP_Cause_PR group, long cause)
 {
     int rv;
 
@@ -406,6 +407,7 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue)
     NGAP_InitialContextSetupFailureIEs_t *ie = NULL;
     NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+    NGAP_Cause_t *Cause = NULL;
 
     memset(&pdu, 0, sizeof (NGAP_NGAP_PDU_t));
     pdu.present = NGAP_NGAP_PDU_PR_unsuccessfulOutcome;
@@ -442,8 +444,21 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue)
 
     RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
 
+    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupFailureIEs_t));
+    ASN_SEQUENCE_ADD(&InitialContextSetupFailure->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_Cause;
+    ie->criticality = NGAP_Criticality_ignore;
+    ie->value.present =
+        NGAP_InitialContextSetupFailureIEs__value_PR_Cause;
+
+    Cause = &ie->value.choice.Cause;
+
     asn_uint642INTEGER(AMF_UE_NGAP_ID, test_ue->amf_ue_ngap_id);
     *RAN_UE_NGAP_ID = test_ue->ran_ue_ngap_id;
+
+    Cause->present = group;
+    Cause->choice.radioNetwork = cause;
 
     return ogs_ngap_encode(&pdu);
 }
