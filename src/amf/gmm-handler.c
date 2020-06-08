@@ -82,9 +82,9 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
     /* Set 5GS Registration Type */
     memcpy(&amf_ue->nas.registration, registration_type,
             sizeof(ogs_nas_5gs_registration_type_t));
-    amf_ue->nas.type = OGS_NAS_5GS_REGISTRATION_REQUEST;
+    amf_ue->nas.message_type = OGS_NAS_5GS_REGISTRATION_REQUEST;
     ogs_debug("[%s]    OGS_NAS_5GS TYPE[%d] TSC[%d] KSI[%d] REGISTRATION[0x%x]",
-            amf_ue->suci, amf_ue->nas.type,
+            amf_ue->suci, amf_ue->nas.message_type,
             amf_ue->nas.tsc, amf_ue->nas.ksi, amf_ue->nas.data);
     /*
      * REGISTRATION_REQUEST
@@ -389,10 +389,10 @@ int gmm_handle_deregistration_request(amf_ue_t *amf_ue,
 
     /* Set 5GS Attach Type */
     memcpy(&amf_ue->nas.deregistration, deregistration_type, sizeof(ogs_nas_deregistration_type_t));
-    amf_ue->nas.type = AMF_5GS_TYPE_DETACH_REQUEST_FROM_UE;
+    amf_ue->nas.message_type = AMF_5GS_TYPE_DETACH_REQUEST_FROM_UE;
     amf_ue->nas.ksi = deregistration_type->nas_key_set_identifier;
     ogs_debug("    OGS_NAS_5GS TYPE[%d] TSC[%d] KSI[%d] DETACH[0x%x]",
-        amf_ue->nas.type, amf_ue->nas.tsc, amf_ue->nas.ksi, amf_ue->nas.data);
+        amf_ue->nas.message_type, amf_ue->nas.tsc, amf_ue->nas.ksi, amf_ue->nas.data);
 
     switch (deregistration_request->deregistration_type.value) {
     /* 0 0 1 : 5GS deregistration */
@@ -429,10 +429,10 @@ int gmm_handle_service_request(amf_ue_t *amf_ue,
     ogs_assert(amf_ue);
 
     /* Set 5GS Update Type */
-    amf_ue->nas.type = AMF_5GS_TYPE_SERVICE_REQUEST;
+    amf_ue->nas.message_type = AMF_5GS_TYPE_SERVICE_REQUEST;
     amf_ue->nas.ksi = ksi_and_sequence_number->ksi;
     ogs_debug("    OGS_NAS_5GS TYPE[%d] KSI[%d]",
-            amf_ue->nas.type, amf_ue->nas.ksi);
+            amf_ue->nas.message_type, amf_ue->nas.ksi);
 
     /*
      * REGISTRATION_REQUEST
@@ -488,10 +488,10 @@ int gmm_handle_tau_request(amf_ue_t *amf_ue,
     /* Set 5GS Update Type */
     memcpy(&amf_ue->nas.update, 5gs_update_type,
             sizeof(ogs_nas_5gs_update_type_t));
-    amf_ue->nas.type = AMF_5GS_TYPE_TAU_REQUEST;
+    amf_ue->nas.message_type = AMF_5GS_TYPE_TAU_REQUEST;
     amf_ue->nas.ksi = 5gs_update_type->nas_key_set_identifier;
     ogs_debug("    OGS_NAS_5GS TYPE[%d] KSI[%d] UPDATE[0x%x]",
-            amf_ue->nas.type, amf_ue->nas.ksi,
+            amf_ue->nas.message_type, amf_ue->nas.ksi,
             amf_ue->nas.data);
     
     /*
@@ -622,10 +622,10 @@ int gmm_handle_extended_service_request(amf_ue_t *amf_ue,
     /* Set Service Type */
     memcpy(&amf_ue->nas.service, service_type,
             sizeof(ogs_nas_service_type_t));
-    amf_ue->nas.type = AMF_5GS_TYPE_EXTENDED_SERVICE_REQUEST;
+    amf_ue->nas.message_type = AMF_5GS_TYPE_EXTENDED_SERVICE_REQUEST;
     amf_ue->nas.ksi = service_type->nas_key_set_identifier;
     ogs_debug("    OGS_NAS_5GS TYPE[%d] KSI[%d] SERVICE[0x%x]",
-            amf_ue->nas.type, amf_ue->nas.ksi, amf_ue->nas.value);
+            amf_ue->nas.message_type, amf_ue->nas.ksi, amf_ue->nas.value);
     
     /*
      * REGISTRATION_REQUEST

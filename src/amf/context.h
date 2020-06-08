@@ -194,7 +194,8 @@ struct amf_ue_s {
     ogs_fsm_t       sm;     /* A state machine */
 
     struct {
-        uint8_t type; /* Type of last NAS message received */
+        uint8_t message_type; /* Type of last NAS message received */
+        int access_type; /* 3GPP or Non-3GPP */
 
         union {
             struct {
@@ -212,7 +213,6 @@ struct amf_ue_s {
             uint8_t data;
         };
 
-        bool non_3gpp;
     } __attribute__ ((packed)) nas;
 
     struct {

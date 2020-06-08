@@ -1117,7 +1117,8 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
-    /* Initialize Abba */
+    /* Initialize NAS context */
+    amf_ue->nas.access_type = OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS;
     amf_ue->abba_len = 2;
 
     /* Create New GUTI */

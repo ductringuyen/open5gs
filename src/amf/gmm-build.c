@@ -24,29 +24,27 @@
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __gmm_log_domain
 
-#if 0
-ogs_pkbuf_t *gmm_build_registration_accept(
-        amf_ue_t *amf_ue, ogs_pkbuf_t *esmbuf)
+ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
 {
     ogs_nas_5gs_message_t message;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_nas_5gs_registration_accept_t *registration_accept = &message.gmm.registration_accept;
-    ogs_nas_5gs_registration_result_t *eps_registration_result = 
-        &registration_accept->eps_registration_result;
-    ogs_nas_gprs_timer_t *t3412_value = &registration_accept->t3412_value;
+    ogs_nas_5gs_registration_result_t *registration_result =
+        &registration_accept->registration_result;
+    ogs_nas_gprs_timer_3_t *t3512_value = &registration_accept->t3512_value;
     int served_tai_index = 0;
-    ogs_nas_5gs_mobile_identity_t *nas_guti = &registration_accept->guti;
+    ogs_nas_5gs_mobile_identity_t *mobile_identity = &registration_accept->guti;
+    ogs_nas_5gs_mobile_identity_guti_t mobile_identity_guti;
+#if 0
     ogs_nas_5gs_network_feature_support_t *eps_network_feature_support =
         &registration_accept->eps_network_feature_support;
-    ogs_nas_location_area_identification_t *lai =
-        &registration_accept->location_area_identification;
     ogs_nas_mobile_identity_t *ms_identity = &registration_accept->ms_identity;
     ogs_nas_mobile_identity_tmsi_t *tmsi = &ms_identity->tmsi;;
+#endif
 
     ogs_assert(amf_ue);
-    ogs_assert(esmbuf);
 
-    ogs_debug("Registration accept");
+    ogs_debug("[%s] Registration accept", amf_ue->supi);
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type = 
@@ -58,55 +56,63 @@ ogs_pkbuf_t *gmm_build_registration_accept(
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_REGISTRATION_ACCEPT;
 
-    /* Set T3412 */
-    eps_registration_result->result = amf_ue->nas_5gs.registration.value;
-    t3412_value->unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
-    t3412_value->value = 9;
+    registration_result->value = amf_ue->nas.access_type;
 
-    ogs_debug("    TAI[PLMN_ID:%06x,TAC:%d]",
-            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id),
-            amf_ue->tai.tac);
-    ogs_debug("    E_CGI[PLMN_ID:%06x,CELL_ID:%d]",
-            ogs_plmn_id_hexdump(&amf_ue->e_cgi.plmn_id),
-            amf_ue->e_cgi.cell_id);
+    /* Set T3512 */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3512_VALUE_PRESENT;
+    t3512_value->unit = OGS_NAS_GRPS_TIMER_3_UNIT_MULTIPLES_OF_1_HH;
+    t3512_value->value = 9;
+
+    /* Set T3512 */
+    ogs_debug("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
+            ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
+    ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->supi,
+            ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),
+            (long long)amf_ue->cgi.cell_id);
+
     served_tai_index = amf_find_served_tai(&amf_ue->tai);
-    ogs_debug("    SERVED_TAI_INDEX[%d]", served_tai_index);
+    ogs_debug("[%s]    SERVED_TAI_INDEX[%d]", amf_ue->supi, served_tai_index);
     ogs_assert(served_tai_index >= 0 &&
             served_tai_index < OGS_MAX_NUM_OF_SERVED_TAI);
-    ogs_nas_tai_list_build(&registration_accept->tai_list,
+
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
+    ogs_nas_5gs_tai_list_build(&registration_accept->tai_list,
             &amf_self()->served_tai[served_tai_index].list0,
             &amf_self()->served_tai[served_tai_index].list2);
 
-    registration_accept->esm_message_container.buffer = esmbuf->data;
-    registration_accept->esm_message_container.length = esmbuf->len;
 
-    ogs_debug("    %s GUTI[G:%d,C:%d,M_TMSI:0x%x] IMSI:[%s]",
+    ogs_debug("[%s]    %s 5G-S_GUTI[AMF_ID:0x%x,M_TMSI:0x%x]", amf_ue->supi,
             amf_ue->guti_present ? "[V]" : "[N]",
-            amf_ue->guti.amf_gid, amf_ue->guti.amf_code,
-            amf_ue->guti.m_tmsi, amf_ue->imsi_bcd);
+            ogs_amf_id_hexdump(&amf_ue->guti.amf_id), amf_ue->guti.m_tmsi);
     if (amf_ue->guti_present) {
-        registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_GUTI_PRESENT;
-        nas_guti->length = sizeof(ogs_nas_5gs_mobile_identity_guti_t);
+        registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_5G_GUTI_PRESENT;
+        memset(&mobile_identity_guti, 0, sizeof(mobile_identity_guti));
+
+        mobile_identity->length = sizeof(mobile_identity_guti);
+        mobile_identity->buffer = &mobile_identity_guti;
+#if 0
         nas_guti->guti.odd_even = OGS_NAS_MOBILE_IDENTITY_EVEN;
         nas_guti->guti.type = OGS_NAS_5GS_MOBILE_IDENTITY_GUTI;
         nas_guti->guti.nas_plmn_id = amf_ue->guti.nas_plmn_id;
         nas_guti->guti.amf_gid = amf_ue->guti.amf_gid;
         nas_guti->guti.amf_code = amf_ue->guti.amf_code;
         nas_guti->guti.m_tmsi = amf_ue->guti.m_tmsi;
+#endif
     }
     amf_ue->guti_present = 0;
 
-#if 0 /* Need not to include T3402 */
-    /* Set T3402 */
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3402_VALUE_PRESENT;
-    registration_accept->t3402_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
-    registration_accept->t3402_value.value = 12;
+#if 0
+#if 0 /* Need not to include T3502 */
+    /* Set T3502 */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3502_VALUE_PRESENT;
+    registration_accept->t3502_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
+    registration_accept->t3502_value.value = 12;
 #endif
 
-    /* Set T3423 */
-    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3423_VALUE_PRESENT;
-    registration_accept->t3423_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
-    registration_accept->t3423_value.value = 9;
+    /* Set T3523 */
+    registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3523_VALUE_PRESENT;
+    registration_accept->t3523_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
+    registration_accept->t3523_value.value = 9;
     registration_accept->presencemask |= 
         OGS_NAS_5GS_REGISTRATION_ACCEPT_EPS_NETWORK_FEATURE_SUPPORT_PRESENT;
     eps_network_feature_support->length = 1;
@@ -131,13 +137,12 @@ ogs_pkbuf_t *gmm_build_registration_accept(
         tmsi->tmsi = amf_ue->p_tmsi;
         ogs_debug("    P-TMSI: 0x%08x", tmsi->tmsi);
     }
+#endif
 
     pkbuf = nas_5gs_security_encode(amf_ue, &message);
-    ogs_pkbuf_free(esmbuf);
 
     return pkbuf;
 }
-#endif
 
 ogs_pkbuf_t *gmm_build_registration_reject(ogs_nas_5gmm_cause_t gmm_cause)
 {
@@ -290,7 +295,7 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue)
     security_mode_command->presencemask |=
         OGS_NAS_5GS_SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT;
     imeisv_request->type = OGS_NAS_IMEISV_TYPE;
-    imeisv_request->imeisv_request_value = OGS_NAS_IMEISV_REQUESTED;
+    imeisv_request->value = OGS_NAS_IMEISV_REQUESTED;
 
     security_mode_command->presencemask |=
         OGS_NAS_5GS_SECURITY_MODE_COMMAND_ADDITIONAL_5G_SECURITY_INFORMATION_PRESENT;
@@ -357,11 +362,11 @@ ogs_pkbuf_t *gmm_build_tau_accept(amf_ue_t *amf_ue)
 
     tau_accept->eps_update_result.result = amf_ue->nas_5gs.update.value;
 
-    /* Set T3412 */
+    /* Set T3512 */
     tau_accept->presencemask |=
-        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3412_VALUE_PRESENT ;
-    tau_accept->t3412_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
-    tau_accept->t3412_value.value = 9;
+        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3512_VALUE_PRESENT ;
+    tau_accept->t3512_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
+    tau_accept->t3512_value.value = 9;
 
     /* Set TAI */
     tau_accept->presencemask |=
@@ -409,19 +414,19 @@ ogs_pkbuf_t *gmm_build_tau_accept(amf_ue_t *amf_ue)
         sess = amf_sess_next(sess);
     }
 
-#if 0 /* Need not to include T3402 */
-    /* Set T3402 */
+#if 0 /* Need not to include T3502 */
+    /* Set T3502 */
     tau_accept->presencemask |=
-        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3402_VALUE_PRESENT;
-    tau_accept->t3402_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
-    tau_accept->t3402_value.value = 12;
+        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3502_VALUE_PRESENT;
+    tau_accept->t3502_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
+    tau_accept->t3502_value.value = 12;
 #endif
 
-    /* Set T3423 */
+    /* Set T3523 */
     tau_accept->presencemask |=
-        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3423_VALUE_PRESENT;
-    tau_accept->t3423_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
-    tau_accept->t3423_value.value = 9;
+        OGS_NAS_5GS_TRACKING_AREA_UPDATE_ACCEPT_T3523_VALUE_PRESENT;
+    tau_accept->t3523_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_DECI_HH;
+    tau_accept->t3523_value.value = 9;
 
     /* Set EPS network feature support */
     tau_accept->presencemask |=

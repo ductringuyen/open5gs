@@ -293,7 +293,7 @@ ED4(uint8_t tsc:1;,
  * M LV-E 5-n */
 typedef struct ogs_nas_esm_message_container_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_esm_message_container_t;
 
 /* 9.9.3.17 Identity type 2
@@ -526,7 +526,7 @@ typedef uint8_t ogs_nas_generic_message_container_type_t;
  * M LV-E 3-n */
 typedef struct ogs_nas_generic_message_container_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_generic_message_container_t;
 
 /* 9.9.3.44 Voice domain preference and UE's usage setting

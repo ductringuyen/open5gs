@@ -47,7 +47,7 @@ typedef struct ogs_nas_dnn_s {
  * O TLV-E 7-1503 */
 typedef struct ogs_nas_eap_message_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_eap_message_t;
 
 /* 9.11.2.8.1 S-NSSAI
@@ -177,7 +177,7 @@ typedef struct ogs_nas_5gs_mobile_identity_s_tmsi_s {
 } __attribute__ ((packed)) ogs_nas_5gs_mobile_identity_s_tmsi_t;
 typedef struct ogs_nas_5gs_mobile_identity_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_5gs_mobile_identity_t;
 
 /* 9.11.3.5 5GS network feature support
@@ -197,9 +197,9 @@ ED3(uint8_t spare:6;,
 
 /* 9.11.3.6 5GS registration result
  * O TLV 3-5 */
-#define OGS_NAS_5GS_REGISTRATION_TYPE_3GPP_ACCESS 0
-#define OGS_NAS_5GS_REGISTRATION_TYPE_NON_3GPP_ACCESS 1
-#define OGS_NAS_5GS_REGISTRATION_TYPE_3GPP_AND_NON_3GPP_ACCESS 2
+#define OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS 1
+#define OGS_NAS_REGISTRATION_RESULT_NON_3GPP_ACCESS 2
+#define OGS_NAS_REGISTRATION_RESULT_BOTH_3GPP_AND_NON_3GPP_ACCESS 3
 typedef struct ogs_nas_5gs_registration_result_s {
     uint8_t length;
 ED3(uint8_t spare:4;,
@@ -356,7 +356,7 @@ ED4(uint8_t type:4;,
  * O TLV-E 3-n */
 typedef struct ogs_nas_cag_information_list_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_cag_information_list_t;
 
 /* 9.11.3.18B CIoT small data container
@@ -374,7 +374,7 @@ ED3(uint8_t data_type:3;,
  * O TLV-E x-n */
 typedef struct ogs_nas_ciphering_key_data_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_ciphering_key_data_t;
 
 /* 9.11.3.18D Control plane service type
@@ -398,7 +398,7 @@ ED4(uint8_t type:4;,
  * O TLV-E 4-n */
 typedef struct ogs_nas_eps_nas_message_container_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_eps_nas_message_container_t;
 
 /* 9.11.3.25 EPS NAS security algorithms
@@ -409,14 +409,14 @@ typedef ogs_nas_security_algorithms_t ogs_nas_eps_nas_security_algorithms_t;
  * O TLV-E 3-811 */
 typedef struct ogs_nas_ladn_indication_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_ladn_indication_t;
 
 /* 9.11.3.30 LADN information
  * O TLV-E 12-1715 */
 typedef struct ogs_nas_ladn_information_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_ladn_information_t;
 
 /* 9.11.3.31 MICO indication
@@ -446,7 +446,7 @@ typedef struct ogs_nas_mapped_nssai_s {
  * O TLV-E 4-n */
 typedef struct ogs_nas_message_container_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } __attribute__ ((packed)) ogs_nas_message_container_t;
 
 /* 9.11.3.36 Network slicing indication
@@ -482,14 +482,14 @@ ED3(uint8_t type:4;,
  * O TLV-E 3-n */
 typedef struct ogs_nas_operator_defined_access_category_definitions_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_operator_defined_access_category_definitions_t;
 
 /* 9.11.3.39 Payload container
  * O TLV-E 4-65535 */
 typedef struct ogs_nas_payload_container_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_payload_container_t;
 
 /* 9.11.3.40 Payload container type
@@ -514,7 +514,7 @@ typedef ogs_nas_allowed_pdu_session_status_t ogs_nas_pdu_session_reactivation_re
  * O TLV-E 5-515 */
 typedef struct ogs_nas_pdu_session_reactivation_result_error_cause_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_pdu_session_reactivation_result_error_cause_t;
 
 /* 9.11.3.44 PDU session status
@@ -566,7 +566,7 @@ ED2(uint8_t type:4;,
  * O TLV-E 20-n */
 typedef struct ogs_nas_sor_transparent_container_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_sor_transparent_container_t;
 
 /* 9.11.3.48 S1 UE network capability
@@ -720,7 +720,7 @@ typedef struct ogs_nas_integrity_protection_maximum_data_rate_s {
  * O TLV-E 7-65535 */
 typedef struct ogs_nas_mapped_eps_bearer_contexts_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } __attribute__ ((packed)) ogs_nas_mapped_eps_bearer_contexts_t;
 
 /* 9.11.4.9 Maximum number of supported packet filters
@@ -769,14 +769,14 @@ ED3(uint8_t type:4;,
  * O TLV-E 6-65535 */
 typedef struct ogs_nas_qos_flow_descriptions_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_qos_flow_descriptions_t;
 
 /* 9.11.4.13 QoS rules
  * M LV-E 6-65535 */
 typedef struct ogs_nas_qos_rules_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_qos_rules_t;
 
 /* 9.11.4.14 Session-AMBR
@@ -852,7 +852,7 @@ ED2(uint8_t spare:7;,
  * O TLV-E 3-65535 */
 typedef struct ogs_nas_atsss_container_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_atsss_container_t;
 
 /* 9.9.4.25 Release assistance indication
@@ -897,7 +897,7 @@ typedef struct ogs_nas_ue_ds_tt_residence_time_s {
  * O TLV-E 4-65535 */
 typedef struct ogs_nas_port_management_information_container_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_port_management_information_container_t;
 
 /* 9.11.3.72 N5GC indication

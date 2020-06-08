@@ -26,8 +26,7 @@
 extern "C" {
 #endif
 
-ogs_pkbuf_t *gmm_build_registration_accept(
-        amf_ue_t *amf_ue, ogs_pkbuf_t *esmbuf);
+ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_registration_reject(ogs_nas_5gmm_cause_t gmm_cause);
 
 ogs_pkbuf_t *gmm_build_identity_request(amf_ue_t *amf_ue);

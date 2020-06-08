@@ -346,7 +346,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
     ran_ue = amf_ue->ran_ue;
     ogs_assert(ran_ue);
 
-    switch (amf_ue->nas.type) {
+    switch (amf_ue->nas.message_type) {
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
         if (SECURITY_CONTEXT_IS_VALID(amf_ue)) {
 #if 0
@@ -495,7 +495,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         break;
 #endif
     default:
-        ogs_fatal("Invalid NAS-5GS[%d]", amf_ue->nas.type);
+        ogs_fatal("Invalid NAS-5GS[%d]", amf_ue->nas.message_type);
         break;
     }
 }
@@ -773,15 +773,15 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
                     amf_nudm_uecm_build_registration);
 
-            if (amf_ue->nas.type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
+            if (amf_ue->nas.message_type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_initial_context_setup);
 #if 0
-            } else if (amf_ue->nas.type ==
+            } else if (amf_ue->nas.message_type ==
                     AMF_EPS_TYPE_SERVICE_REQUEST ||
-                    amf_ue->nas.type == AMF_EPS_TYPE_TAU_REQUEST) {
+                    amf_ue->nas.message_type == AMF_EPS_TYPE_TAU_REQUEST) {
                 OGS_FSM_TRAN(s, &gmm_state_registered);
             } else {
-                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas.type);
+                ogs_fatal("Invalid OGS_NAS_5GS[%d]", amf_ue->nas.message_type);
 #endif
             }
             break;

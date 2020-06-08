@@ -99,7 +99,7 @@ void nas_5gs_send_nas_reject(
 {
     ogs_assert(amf_ue);
 
-    switch(amf_ue->nas.type) {
+    switch(amf_ue->nas.message_type) {
     case OGS_NAS_5GS_REGISTRATION_REQUEST:
         if (OGS_FSM_CHECK(&amf_ue->sm, gmm_state_authentication)) {
             nas_5gs_send_authentication_reject(amf_ue);
@@ -108,7 +108,7 @@ void nas_5gs_send_nas_reject(
         }
         break;
     default: 
-        ogs_fatal("Unknown type : %d", amf_ue->nas.type);
+        ogs_fatal("Unknown type : %d", amf_ue->nas.message_type);
         ogs_assert_if_reached();
         break;
     }

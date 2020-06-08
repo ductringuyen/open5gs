@@ -75,7 +75,8 @@ typedef struct test_ue_s {
     uint8_t kamf[OGS_SHA256_DIGEST_SIZE];
 
     struct {
-        uint8_t type; /* Type of last NAS message received */
+        uint8_t message_type; /* Type of last NAS message received */
+        int access_type; /* 3GPP or Non-3GPP */
 
         union {
             struct {
@@ -87,7 +88,6 @@ typedef struct test_ue_s {
             uint8_t data;
         };
 
-        bool non_3gpp;
     } __attribute__ ((packed)) nas;
 
     uint8_t         knas_int[OGS_SHA256_DIGEST_SIZE/2];

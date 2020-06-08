@@ -351,7 +351,7 @@ typedef struct ogs_nas_gprs_timer_2_s {
 typedef struct ogs_nas_gprs_timer_3_s {
     uint8_t length;
 ED2(uint8_t unit:3;,
-    uint8_t timer_value:5;)
+    uint8_t value:5;)
 } __attribute__ ((packed)) ogs_nas_gprs_timer_3_t;
 
 /* 9.9.3.18 IMEISV request
@@ -363,7 +363,7 @@ ED3(uint8_t type:4;,
     uint8_t spare:1;,
 #define OGS_NAS_IMEISV_NOT_REQUESTED            0
 #define OGS_NAS_IMEISV_REQUESTED                1
-    uint8_t imeisv_request_value:3;)
+    uint8_t value:3;)
 } __attribute__ ((packed)) ogs_nas_imeisv_request_t;
 
 /* 9.9.3.21 NAS key set identifier
@@ -697,7 +697,7 @@ typedef struct ogs_nas_emergency_number_list_s {
  * O TLV-E 7-65535 */
 typedef struct ogs_nas_extended_emergency_number_list_s {
     uint8_t length;
-    uint8_t *buffer;
+    void *buffer;
 } ogs_nas_extended_emergency_number_list_t;
 
 /* 9.9.3.46 Extended DRX parameters
@@ -830,7 +830,7 @@ ED3(uint8_t type:4;,
  * O TLV-E 4-65538 */
 typedef struct ogs_nas_extended_protocol_configuration_options_s {
     uint16_t length;
-    uint8_t *buffer;
+    void *buffer;
 } __attribute__ ((packed)) ogs_nas_extended_protocol_configuration_options_t;
 
 /* 9.9.4.28 Serving PLMN rate control
