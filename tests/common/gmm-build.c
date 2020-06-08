@@ -218,8 +218,6 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     test_ue_t *test_ue = NULL;
     ogs_pkbuf_t *pkbuf = NULL;
 
-    char dnn[OGS_MAX_DNN_LEN];
-
     ogs_nas_5gs_message_t message;
     ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport =
             &message.gmm.ul_nas_transport;
@@ -257,8 +255,10 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
 
     ul_nas_transport->presencemask |=
             OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT;
-    ul_nas_transport->dnn.length = ogs_fqdn_build(
-        ul_nas_transport->dnn.value, test_sess->dnn, strlen(test_sess->dnn));
+
+    ul_nas_transport->dnn.length = strlen(test_sess->dnn);
+    ogs_cpystrn(ul_nas_transport->dnn.value, test_sess->dnn,
+            ogs_min(ul_nas_transport->dnn.length, OGS_MAX_DNN_LEN) + 1);
 
     pkbuf = test_nas_5gs_security_encode(test_ue, &message);
     ogs_pkbuf_free(payload);
