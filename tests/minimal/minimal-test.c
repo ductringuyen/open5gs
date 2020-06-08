@@ -202,7 +202,7 @@ static void test1_func(abts_case *tc, void *data)
     /* Receive Initial Context Setup Request */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
-    ogs_pkbuf_free(recvbuf);
+    testngap_recv(&test_ue, recvbuf);
 
 #if 0
     /* Send UE Capability Info Indication */

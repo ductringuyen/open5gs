@@ -27,9 +27,9 @@ void testngap_handle_downlink_nas_transport(
 
     NGAP_NGAP_PDU_t pdu;
     NGAP_InitiatingMessage_t *initiatingMessage = NULL;
-    NGAP_DownlinkNASTransport_t *DownlinkNASTransport = NULL;
+    NGAP_InitialContextSetupRequest_t *InitialContextSetupRequest = NULL;
 
-    NGAP_DownlinkNASTransport_IEs_t *ie = NULL;
+    NGAP_InitialContextSetupRequestIEs_t *ie = NULL;
     NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
     NGAP_NAS_PDU_t *NAS_PDU = NULL;
@@ -40,12 +40,12 @@ void testngap_handle_downlink_nas_transport(
     ogs_assert(message);
     initiatingMessage = message->choice.initiatingMessage;
     ogs_assert(initiatingMessage);
-    DownlinkNASTransport =
-        &initiatingMessage->value.choice.DownlinkNASTransport;
-    ogs_assert(DownlinkNASTransport);
+    InitialContextSetupRequest =
+        &initiatingMessage->value.choice.InitialContextSetupRequest;
+    ogs_assert(InitialContextSetupRequest);
 
-    for (i = 0; i < DownlinkNASTransport->protocolIEs.list.count; i++) {
-        ie = DownlinkNASTransport->protocolIEs.list.array[i];
+    for (i = 0; i < InitialContextSetupRequest->protocolIEs.list.count; i++) {
+        ie = InitialContextSetupRequest->protocolIEs.list.array[i];
         switch (ie->id) {
         case NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID:
             RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
@@ -63,6 +63,44 @@ void testngap_handle_downlink_nas_transport(
 
     test_ue->ran_ue_ngap_id = *RAN_UE_NGAP_ID;
     asn_INTEGER2ulong(AMF_UE_NGAP_ID, &test_ue->amf_ue_ngap_id);
+
+    if (NAS_PDU)
+        testngap_send_to_nas(test_ue, NAS_PDU);
+}
+
+void testngap_handle_initial_context_setup_request(
+        test_ue_t *test_ue, ogs_ngap_message_t *message)
+{
+    int i;
+    char buf[OGS_ADDRSTRLEN];
+
+    NGAP_NGAP_PDU_t pdu;
+    NGAP_InitiatingMessage_t *initiatingMessage = NULL;
+    NGAP_InitialContextSetupRequest_t *InitialContextSetupRequest = NULL;
+
+    NGAP_InitialContextSetupRequestIEs_t *ie = NULL;
+    NGAP_NAS_PDU_t *NAS_PDU = NULL;
+
+    ogs_assert(test_ue);
+    ogs_assert(message);
+
+    ogs_assert(message);
+    initiatingMessage = message->choice.initiatingMessage;
+    ogs_assert(initiatingMessage);
+    InitialContextSetupRequest =
+        &initiatingMessage->value.choice.InitialContextSetupRequest;
+    ogs_assert(InitialContextSetupRequest);
+
+    for (i = 0; i < InitialContextSetupRequest->protocolIEs.list.count; i++) {
+        ie = InitialContextSetupRequest->protocolIEs.list.array[i];
+        switch (ie->id) {
+        case NGAP_ProtocolIE_ID_id_NAS_PDU:
+            NAS_PDU = &ie->value.choice.NAS_PDU;
+            break;
+        default:
+            break;
+        }
+    }
 
     if (NAS_PDU)
         testngap_send_to_nas(test_ue, NAS_PDU);

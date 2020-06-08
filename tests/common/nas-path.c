@@ -37,6 +37,10 @@ void testgmm_recv(test_ue_t *test_ue, ogs_pkbuf_t *pkbuf)
         break;
     case OGS_NAS_5GS_SECURITY_MODE_COMMAND:
         break;
+    case OGS_NAS_5GS_REGISTRATION_ACCEPT:
+        testgmm_handle_registration_accept(test_ue,
+                &message.gmm.authentication_request);
+        break;
     default:
         ogs_error("Unknown message[%d]", message.gmm.h.message_type);
         break;

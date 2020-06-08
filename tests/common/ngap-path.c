@@ -47,6 +47,9 @@ void testngap_recv(test_ue_t *test_ue, ogs_pkbuf_t *pkbuf)
         case NGAP_ProcedureCode_id_DownlinkNASTransport:
             testngap_handle_downlink_nas_transport(test_ue, pdu);
             break;
+        case NGAP_ProcedureCode_id_InitialContextSetup:
+            testngap_handle_initial_context_setup_request(test_ue, pdu);
+            break;
         default:
             ogs_error("Not implemented(choice:%d, proc:%d)",
                     pdu->present, (int)initiatingMessage->procedureCode);

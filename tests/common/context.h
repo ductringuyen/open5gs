@@ -120,6 +120,8 @@ typedef struct test_ue_s {
     } while(0)
     int             security_context_available;
     int             mac_failed;
+
+    ogs_nas_5gs_guti_t nas_guti;
 } test_ue_t;
 
 void test_context_init(void);
