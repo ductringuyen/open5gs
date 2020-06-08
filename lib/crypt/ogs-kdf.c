@@ -238,8 +238,8 @@ void ogs_kdf_kgnb_and_kn3iwf(uint8_t *kamf, uint32_t ul_count,
     ul_count = htobe32(ul_count);
     param[0].buf = (uint8_t *)&ul_count;
     param[0].len = 4;
-    param[0].buf = &access_type_distinguisher;
-    param[0].len = 1;
+    param[1].buf = &access_type_distinguisher;
+    param[1].len = 1;
 
     ogs_kdf_common(kamf, OGS_SHA256_DIGEST_SIZE,
             FC_FOR_KGNB_KN3IWF_DERIVATION, param, kgnb);
