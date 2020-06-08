@@ -33,6 +33,9 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_response(test_ue_t *test_ue);
 ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue,
         NGAP_Cause_PR group, long cause);
 
+ogs_pkbuf_t *testngap_build_ue_radio_capability_info_indication(
+        test_ue_t *test_ue);
+
 #ifdef __cplusplus
 }
 #endif

@@ -99,7 +99,7 @@ void ngap_handle_ng_setup_request(amf_gnb_t *gnb, ogs_ngap_message_t *message)
     }
 
     if (!GlobalRANNodeID) {
-        ogs_warn("No GlobalRANNodeID");
+        ogs_error("No GlobalRANNodeID");
         group = NGAP_Cause_PR_protocol;
         cause = NGAP_CauseProtocol_semantic_error;
         ngap_send_ng_setup_failure(gnb, group, cause);
@@ -108,7 +108,7 @@ void ngap_handle_ng_setup_request(amf_gnb_t *gnb, ogs_ngap_message_t *message)
 
     globalGNB_ID = GlobalRANNodeID->choice.globalGNB_ID;
     if (!globalGNB_ID) {
-        ogs_warn("No globalGNB_ID");
+        ogs_error("No globalGNB_ID");
         group = NGAP_Cause_PR_protocol;
         cause = NGAP_CauseProtocol_semantic_error;
         ngap_send_ng_setup_failure(gnb, group, cause);
@@ -116,7 +116,7 @@ void ngap_handle_ng_setup_request(amf_gnb_t *gnb, ogs_ngap_message_t *message)
     }
 
     if (!SupportedTAList) {
-        ogs_warn("No SupportedTAList");
+        ogs_error("No SupportedTAList");
         group = NGAP_Cause_PR_protocol;
         cause = NGAP_CauseProtocol_semantic_error;
         ngap_send_ng_setup_failure(gnb, group, cause);
@@ -215,9 +215,6 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
     NGAP_UserLocationInformation_t *UserLocationInformation = NULL;
     NGAP_FiveG_S_TMSI_t *FiveG_S_TMSI = NULL;
 
-    NGAP_Cause_PR group = NGAP_Cause_PR_NOTHING;
-    long cause = 0;
-
     ran_ue_t *ran_ue = NULL;
 
     ogs_assert(gnb);
@@ -255,18 +252,9 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
             OGS_ADDR(gnb->addr, buf), gnb->gnb_id);
 
     if (!RAN_UE_NGAP_ID) {
-        ogs_warn("No RAN_UE_NGAP_ID");
-        group = NGAP_Cause_PR_protocol;
-        cause = NGAP_CauseProtocol_semantic_error;
-        ngap_send_ng_setup_failure(gnb, group, cause);
-        return;
-    }
-
-    if (!UserLocationInformation) {
-        ogs_warn("No UserLocationInformation");
-        group = NGAP_Cause_PR_protocol;
-        cause = NGAP_CauseProtocol_semantic_error;
-        ngap_send_ng_setup_failure(gnb, group, cause);
+        ogs_error("No RAN_UE_NGAP_ID");
+        ngap_send_error_indication(gnb, NULL, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
         return;
     }
 
@@ -323,6 +311,20 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
                 amf_ue_associate_ran_ue(amf_ue, ran_ue);
             }
         }
+    }
+
+    if (!UserLocationInformation) {
+        ogs_error("No UserLocationInformation");
+        ngap_send_error_indication(gnb, &ran_ue->amf_ue_ngap_id, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
+
+    if (!NAS_PDU) {
+        ogs_error("No NAS_PDU");
+        ngap_send_error_indication(gnb, &ran_ue->amf_ue_ngap_id, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
     }
 
     if (UserLocationInformation->present ==
@@ -391,18 +393,31 @@ void ngap_handle_uplink_nas_transport(
     ogs_debug("    IP[%s] RAN_ID[%d]",
             OGS_ADDR(gnb->addr, buf), gnb->gnb_id);
 
-    ogs_assert(RAN_UE_NGAP_ID);
+    if (!RAN_UE_NGAP_ID) {
+        ogs_error("No RAN_UE_NGAP_ID");
+        ngap_send_error_indication(gnb, NULL, NULL,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
+
     ran_ue = ran_ue_find_by_ran_ue_ngap_id(gnb, *RAN_UE_NGAP_ID);
     ogs_expect_or_return(ran_ue);
 
     ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
             ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
 
+    if (!NAS_PDU) {
+        ogs_error("No NAS_PDU");
+        ngap_send_error_indication(gnb, &ran_ue->amf_ue_ngap_id, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
+
     ngap_send_to_nas(ran_ue,
-            NGAP_ProcedureCode_id_UplinkNASTransport, NAS_PDU);
+        NGAP_ProcedureCode_id_UplinkNASTransport, NAS_PDU);
 }
 
-void ngap_handle_ue_capability_info_indication(
+void ngap_handle_ue_radio_capability_info_indication(
         amf_gnb_t *gnb, ogs_ngap_message_t *message)
 {
     char buf[OGS_ADDRSTRLEN];
@@ -428,7 +443,7 @@ void ngap_handle_ue_capability_info_indication(
         &initiatingMessage->value.choice.UERadioCapabilityInfoIndication;
     ogs_assert(UERadioCapabilityInfoIndication);
 
-    ogs_debug("UE capability info indication");
+    ogs_debug("UE radio capability info indication");
 
     for (i = 0;
             i < UERadioCapabilityInfoIndication->protocolIEs.list.count; i++) {
@@ -448,12 +463,25 @@ void ngap_handle_ue_capability_info_indication(
     ogs_debug("    IP[%s] RAN_ID[%d]",
             OGS_ADDR(gnb->addr, buf), gnb->gnb_id);
 
-    ogs_assert(RAN_UE_NGAP_ID);
+    if (!RAN_UE_NGAP_ID) {
+        ogs_error("No RAN_UE_NGAP_ID");
+        ngap_send_error_indication(gnb, NULL, NULL,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
+
     ran_ue = ran_ue_find_by_ran_ue_ngap_id(gnb, *RAN_UE_NGAP_ID);
-    ogs_assert(ran_ue);
+    ogs_expect_or_return(ran_ue);
 
     ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
             ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
+
+    if (!UERadioCapability) {
+        ogs_error("No UERadioCapability");
+        ngap_send_error_indication(gnb, &ran_ue->amf_ue_ngap_id, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
 
     if (ran_ue->amf_ue) {
         ogs_assert(UERadioCapability);
@@ -474,7 +502,9 @@ void ngap_handle_initial_context_setup_response(
     NGAP_InitialContextSetupResponseIEs_t *ie = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
 
+#if 0
     amf_ue_t *amf_ue = NULL;
+#endif
     ran_ue_t *ran_ue = NULL;
 
     ogs_assert(gnb);
@@ -503,14 +533,23 @@ void ngap_handle_initial_context_setup_response(
     ogs_debug("    IP[%s] RAN_ID[%d]",
             OGS_ADDR(gnb->addr, buf), gnb->gnb_id);
 
-    ogs_assert(RAN_UE_NGAP_ID);
+    if (!RAN_UE_NGAP_ID) {
+        ogs_error("No RAN_UE_NGAP_ID");
+        ngap_send_error_indication(gnb, NULL, NULL,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
+
     ran_ue = ran_ue_find_by_ran_ue_ngap_id(gnb, *RAN_UE_NGAP_ID);
     ogs_expect_or_return(ran_ue);
-    amf_ue = ran_ue->amf_ue;
-    ogs_assert(amf_ue);
 
     ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
             ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
+
+#if 0
+    amf_ue = ran_ue->amf_ue;
+    ogs_assert(amf_ue);
+#endif
 }
 
 void ngap_handle_initial_context_setup_failure(
@@ -560,18 +599,25 @@ void ngap_handle_initial_context_setup_failure(
     ogs_debug("    IP[%s] RAN_ID[%d]",
             OGS_ADDR(gnb->addr, buf), gnb->gnb_id);
 
-    ogs_assert(RAN_UE_NGAP_ID);
-    ogs_assert(Cause);
-
-    ran_ue = ran_ue_find_by_ran_ue_ngap_id(gnb, *RAN_UE_NGAP_ID);
-    if (ran_ue == NULL) {
-        ogs_warn("Initial context setup failure : "
-                "cannot find RAN-UE-NGAP-ID[%d]", (int)*RAN_UE_NGAP_ID);
+    if (!RAN_UE_NGAP_ID) {
+        ogs_error("No RAN_UE_NGAP_ID");
+        ngap_send_error_indication(gnb, NULL, NULL,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
         return;
     }
 
+    ran_ue = ran_ue_find_by_ran_ue_ngap_id(gnb, *RAN_UE_NGAP_ID);
+    ogs_expect_or_return(ran_ue);
+
     ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
             ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
+
+    if (!Cause) {
+        ogs_error("No Cause");
+        ngap_send_error_indication(gnb, &ran_ue->amf_ue_ngap_id, RAN_UE_NGAP_ID,
+                NGAP_Cause_PR_protocol, NGAP_CauseProtocol_semantic_error);
+        return;
+    }
     ogs_debug("    Cause[Group:%d Cause:%d]",
             Cause->present, (int)Cause->choice.radioNetwork);
 
