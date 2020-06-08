@@ -235,12 +235,13 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             }
 
             break;
+#endif
         case OGS_NAS_5GS_5GMM_STATUS:
-            ogs_warn("5GMM STATUS : IMSI[%s] Cause[%d]",
-                    amf_ue->imsi_bcd,
+            ogs_warn("[%s] 5GMM STATUS : Cause[%d]", amf_ue->suci,
                     message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             return;
+#if 0
         case OGS_NAS_5GS_DEREGISTRATION_REQUEST:
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
