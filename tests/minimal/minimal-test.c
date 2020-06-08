@@ -109,7 +109,7 @@ static void test1_func(abts_case *tc, void *data)
     /* Receive NG-Setup Response */
     recvbuf = testgnb_ngap_read(ngap);
     ABTS_PTR_NOTNULL(tc, recvbuf);
-    ogs_pkbuf_free(recvbuf);
+    testngap_recv(&test_ue, recvbuf);
 
     /* Setup Test UE & Session Context */
     memset(&test_ue, 0, sizeof(test_ue));

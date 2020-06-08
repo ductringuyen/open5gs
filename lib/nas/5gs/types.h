@@ -58,8 +58,8 @@ typedef struct ogs_nas_eap_message_s {
 #define OGS_NAS_S_NSSAI_SST_SD_AND_MAPPED_HPLMN_SST_LEN 5
 typedef struct ogs_nas_s_nssai_s {
     uint8_t length;
-    ogs_s_nssai_t s_nssai;
-    ogs_s_nssai_t mapped_s_nssai;
+    uint8_t sst;
+    ogs_uint24_t sd;
 } __attribute__ ((packed)) ogs_nas_s_nssai_t;
 
 /* 9.11.3.1 5GMM capability

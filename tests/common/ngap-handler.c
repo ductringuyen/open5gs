@@ -19,6 +19,51 @@
 
 #include "test-ngap.h"
 
+void testngap_handle_ng_setup_response(
+        test_ue_t *test_ue, ogs_ngap_message_t *message)
+{
+    char buf[OGS_ADDRSTRLEN];
+    int i, j;
+
+    NGAP_SuccessfulOutcome_t *successfulOutcome = NULL;
+    NGAP_NGSetupResponse_t *NGSetupResponse = NULL;
+    NGAP_PLMNSupportList_t *PLMNSupportList = NULL;
+
+    NGAP_NGSetupResponseIEs_t *ie = NULL;
+
+    ogs_assert(test_ue);
+    ogs_assert(message);
+
+    successfulOutcome = message->choice.successfulOutcome;
+    ogs_assert(successfulOutcome);
+    NGSetupResponse = &successfulOutcome->value.choice.NGSetupResponse;
+    ogs_assert(NGSetupResponse);
+
+    ogs_debug("NG setup response");
+
+    for (i = 0; i < NGSetupResponse->protocolIEs.list.count; i++) {
+        ie = NGSetupResponse->protocolIEs.list.array[i];
+        switch (ie->id) {
+        case NGAP_ProtocolIE_ID_id_PLMNSupportList:
+            PLMNSupportList = &ie->value.choice.PLMNSupportList;
+            break;
+        default:
+            break;
+        }
+    }
+
+    for (i = 0; i < PLMNSupportList->list.count; i++) {
+        NGAP_PLMNSupportItem_t *NGAP_PLMNSupportItem = NULL;
+        NGAP_PLMNIdentity_t *pLMNIdentity = NULL;
+        NGAP_SliceSupportList_t *sliceSupportList = NULL;
+
+        sliceSupportList = (NGAP_SliceSupportList_t *)
+            PLMNSupportList->list.array[i];
+        for (j = 0; j < sliceSupportList->list.count; j++) {
+        }
+    }
+}
+
 void testngap_handle_downlink_nas_transport(
         test_ue_t *test_ue, ogs_ngap_message_t *message)
 {
@@ -37,7 +82,6 @@ void testngap_handle_downlink_nas_transport(
     ogs_assert(test_ue);
     ogs_assert(message);
 
-    ogs_assert(message);
     initiatingMessage = message->choice.initiatingMessage;
     ogs_assert(initiatingMessage);
     InitialContextSetupRequest =
@@ -84,7 +128,6 @@ void testngap_handle_initial_context_setup_request(
     ogs_assert(test_ue);
     ogs_assert(message);
 
-    ogs_assert(message);
     initiatingMessage = message->choice.initiatingMessage;
     ogs_assert(initiatingMessage);
     InitialContextSetupRequest =

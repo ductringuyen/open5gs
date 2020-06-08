@@ -29,7 +29,9 @@ ogs_pkbuf_t *testgsm_build_pdu_session_establishment_request(
     ogs_nas_integrity_protection_maximum_data_rate_t
         *integrity_protection_maximum_data_rate = NULL;
     ogs_nas_pdu_session_type_t *pdu_session_type = NULL;
-          
+
+    ogs_s_nssai_t *s_nssai = NULL;
+
     test_ue_t *test_ue = NULL;
     ogs_pkbuf_t *pkbuf = NULL;
 
@@ -57,6 +59,9 @@ ogs_pkbuf_t *testgsm_build_pdu_session_establishment_request(
     pdu_session_establishment_request->presencemask |=
         OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_PRESENT;
     pdu_session_type->value = test_sess->pdn_type;
+
+    s_nssai = &test_self()->plmn_support[0].s_nssai[0];
+    ogs_assert(s_nssai);
 
     return ogs_nas_5gs_plain_encode(&message);
 }

@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+void testngap_handle_ng_setup_response(
+        test_ue_t *test_ue, ogs_ngap_message_t *message);
+
 void testngap_handle_downlink_nas_transport(
         test_ue_t *test_ue, ogs_ngap_message_t *message);
 void testngap_handle_initial_context_setup_request(

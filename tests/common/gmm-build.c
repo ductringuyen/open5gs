@@ -225,6 +225,8 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     ogs_nas_payload_container_type_t *payload_container_type = NULL;
     ogs_nas_payload_container_t *payload_container = NULL;
     ogs_nas_pdu_session_identity_2_t *pdu_session_id = NULL;
+    ogs_nas_request_type_t *request_type = NULL;
+    ogs_nas_s_nssai_t *s_nssai = NULL;
 
     ogs_assert(test_sess);
     test_ue = test_sess->test_ue;
@@ -235,6 +237,8 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     payload_container_type = &ul_nas_transport->payload_container_type;
     payload_container = &ul_nas_transport->payload_container;
     pdu_session_id = &ul_nas_transport->pdu_session_id;
+    request_type = &ul_nas_transport->request_type;
+    s_nssai = &ul_nas_transport->s_nssai;
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type =
@@ -251,11 +255,24 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     payload_container->length = payload->len;
     payload_container->buffer = payload->data;
 
+#if 0
+    ul_nas_transport->presencemask |=
+            OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_PRESENT;
     pdu_session_id->value = test_sess->id;
 
     ul_nas_transport->presencemask |=
-            OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT;
+            OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_PRESENT;
+    request_type->value = OGS_NAS_5GS_REQUEST_TYPE_INITIAL;
+#endif
 
+    ul_nas_transport->presencemask |=
+            OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT;
+    s_nssai->length = test_self()->plmn_support[0].s_nssai[0].len;
+    s_nssai->sst = test_self()->plmn_support[0].s_nssai[0].sst;
+    s_nssai->sd = ogs_htobe24(test_self()->plmn_support[0].s_nssai[0].sd);
+
+    ul_nas_transport->presencemask |=
+            OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT;
     ul_nas_transport->dnn.length = strlen(test_sess->dnn);
     ogs_cpystrn(ul_nas_transport->dnn.value, test_sess->dnn,
             ogs_min(ul_nas_transport->dnn.length, OGS_MAX_DNN_LEN) + 1);
