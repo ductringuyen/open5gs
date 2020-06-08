@@ -29,7 +29,11 @@ bool udm_nudr_dr_handle_subscription_authentication(
     ogs_sbi_header_t header;
     ogs_sbi_response_t *response = NULL;
 
-    const char *tmp = "de8ca9df474091fe4e9263c5daa907e9"; /* For test */
+#if 0
+    const char *tmp = "de8ca9df474091fe4e9263c5daa907e9";
+#else
+    const char *tmp = "cc3766b98a8031a7286a68c7f577ed2e"; /* For test */
+#endif
     uint8_t k[OGS_KEY_LEN];
     uint8_t opc[OGS_KEY_LEN];
     uint8_t amf[OGS_AMF_LEN];
