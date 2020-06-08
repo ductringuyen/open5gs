@@ -393,3 +393,57 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_response(test_ue_t *test_ue)
 
     return ogs_ngap_encode(&pdu);
 }
+
+ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue)
+{
+    int rv;
+
+    NGAP_NGAP_PDU_t pdu;
+    NGAP_UnsuccessfulOutcome_t *unsuccessfulOutcome = NULL;
+    NGAP_InitialContextSetupFailure_t *InitialContextSetupFailure = NULL;
+    ogs_sockaddr_t *addr = NULL;
+
+    NGAP_InitialContextSetupFailureIEs_t *ie = NULL;
+    NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
+    NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+
+    memset(&pdu, 0, sizeof (NGAP_NGAP_PDU_t));
+    pdu.present = NGAP_NGAP_PDU_PR_unsuccessfulOutcome;
+    pdu.choice.unsuccessfulOutcome =
+        CALLOC(1, sizeof(NGAP_UnsuccessfulOutcome_t));
+
+    unsuccessfulOutcome = pdu.choice.unsuccessfulOutcome;
+    unsuccessfulOutcome->procedureCode =
+        NGAP_ProcedureCode_id_InitialContextSetup;
+    unsuccessfulOutcome->criticality = NGAP_Criticality_reject;
+    unsuccessfulOutcome->value.present =
+        NGAP_UnsuccessfulOutcome__value_PR_InitialContextSetupFailure;
+
+    InitialContextSetupFailure =
+        &unsuccessfulOutcome->value.choice.InitialContextSetupFailure;
+
+    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupFailureIEs_t));
+    ASN_SEQUENCE_ADD(&InitialContextSetupFailure->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_ignore;
+    ie->value.present =
+        NGAP_InitialContextSetupFailureIEs__value_PR_AMF_UE_NGAP_ID;
+
+    AMF_UE_NGAP_ID = &ie->value.choice.AMF_UE_NGAP_ID;
+
+    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupFailureIEs_t));
+    ASN_SEQUENCE_ADD(&InitialContextSetupFailure->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_ignore;
+    ie->value.present =
+        NGAP_InitialContextSetupFailureIEs__value_PR_RAN_UE_NGAP_ID;
+
+    RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
+
+    asn_uint642INTEGER(AMF_UE_NGAP_ID, test_ue->amf_ue_ngap_id);
+    *RAN_UE_NGAP_ID = test_ue->ran_ue_ngap_id;
+
+    return ogs_ngap_encode(&pdu);
+}
