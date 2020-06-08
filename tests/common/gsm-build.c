@@ -40,6 +40,7 @@ ogs_pkbuf_t *testgsm_build_pdu_session_establishment_request(
     integrity_protection_maximum_data_rate =
         &pdu_session_establishment_request->
             integrity_protection_maximum_data_rate;
+
     pdu_session_type = &pdu_session_establishment_request->pdu_session_type;
 
     memset(&message, 0, sizeof(message));
@@ -53,6 +54,8 @@ ogs_pkbuf_t *testgsm_build_pdu_session_establishment_request(
     integrity_protection_maximum_data_rate->ul = 0xff;
     integrity_protection_maximum_data_rate->dl = 0xff;
 
+    pdu_session_establishment_request->presencemask |=
+        OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_PRESENT;
     pdu_session_type->value = test_sess->pdn_type;
 
     return ogs_nas_5gs_plain_encode(&message);
