@@ -328,10 +328,9 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
                 /*
                  * If t3555 is timeout, the saved pkbuf is used.
-                 * We don't have to set ack/red.
-                 * So, we just set ack/red to 0
+                 * In this case, ack should be set to 1 for timer expiration
                  */
-                nas_5gs_send_configuration_update_command(amf_ue, 0, 0);
+                nas_5gs_send_configuration_update_command(amf_ue, 1, 0);
             }
             break;
         case AMF_TIMER_T3570:
