@@ -294,8 +294,6 @@ typedef struct ogs_nas_abba_s {
 
 /* 9.11.3.11 Access Type
  * M V 1/2 */
-#define OGS_NAS_NOTIFICATION_ACCESS_TYPE_3GPP           1
-#define OGS_NAS_NOTIFICATION_ACCESS_TYPE_NON_3GPP       2
 typedef struct ogs_nas_access_type_s {
 ED2(uint8_t spare:5;,
     uint8_t value:3;)

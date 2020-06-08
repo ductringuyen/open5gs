@@ -30,8 +30,6 @@ int gmm_handle_registration_request(amf_ue_t *amf_ue,
         ogs_nas_5gs_registration_request_t *registration_request);
 int gmm_handle_authentication_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_authentication_response_t *authentication_response);
-int gmm_handle_registration_complete(amf_ue_t *amf_ue,
-        ogs_nas_5gs_registration_complete_t *registration_complete);
 
 int gmm_handle_identity_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_identity_response_t *identity_response);

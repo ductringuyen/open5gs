@@ -989,14 +989,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:
             ogs_debug("[%s] Registration complete", amf_ue->supi);
 
-            rv = gmm_handle_registration_complete(
-                    amf_ue, &message->gmm.registration_complete);
-            if (rv != OGS_OK) {
-                ogs_error("gmm_handle_registration_complete() failed "
-                        "in gmm_state_initial_context_setup");
-                OGS_FSM_TRAN(s, gmm_state_exception);
-                break;
-            }
+            nas_5gs_send_configuration_update_command(amf_ue);
 
             OGS_FSM_TRAN(s, &gmm_state_registered);
             break;

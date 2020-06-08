@@ -224,6 +224,31 @@ void nas_5gs_send_security_mode_command(amf_ue_t *amf_ue)
     ogs_expect(rv == OGS_OK);
 }
 
+void nas_5gs_send_configuration_update_command(amf_ue_t *amf_ue)
+{
+    int rv;
+    ogs_pkbuf_t *gmmbuf = NULL;
+
+    ogs_assert(amf_ue);
+
+    ogs_debug("[%s] Configuration update command", amf_ue->supi);
+
+    if (amf_ue->t3560.pkbuf) {
+        gmmbuf = amf_ue->t3560.pkbuf;
+        ogs_expect_or_return(gmmbuf);
+    } else {
+        gmmbuf = gmm_build_configuration_update_command(amf_ue);
+        ogs_expect_or_return(gmmbuf);
+    }
+
+    amf_ue->t3560.pkbuf = ogs_pkbuf_copy(gmmbuf);
+    ogs_timer_start(amf_ue->t3560.timer,
+            amf_timer_cfg(AMF_TIMER_T3560)->duration);
+
+    rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
+    ogs_expect(rv == OGS_OK);
+}
+
 #if 0
 void nas_5gs_send_detach_accept(amf_ue_t *amf_ue)
 {

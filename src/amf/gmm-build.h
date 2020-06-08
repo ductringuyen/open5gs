@@ -35,6 +35,8 @@ ogs_pkbuf_t *gmm_build_security_mode_command(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_authentication_request(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_authentication_reject(void);
 
+ogs_pkbuf_t *gmm_build_configuration_update_command(amf_ue_t *amf_ue);
+
 ogs_pkbuf_t *gmm_build_detach_accept(amf_ue_t *amf_ue);
 
 ogs_pkbuf_t *gmm_build_tau_accept(amf_ue_t *amf_ue);
