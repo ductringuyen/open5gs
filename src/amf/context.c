@@ -1073,11 +1073,9 @@ static int amf_ue_new_guti(amf_ue_t *amf_ue)
 
     memset(&amf_ue->guti, 0, sizeof(ogs_nas_5gs_guti_t));
 
-    /* TODO : Use the first configured plmn_id and amf id */
-    ogs_nas_from_plmn_id(&amf_ue->guti.nas_plmn_id,
-            &amf_self()->served_guami[0].plmn_id);
-    memcpy(&amf_ue->guti.amf_id,
-            &amf_self()->served_guami[0].amf_id, sizeof(ogs_amf_id_t));
+    ogs_assert(amf_ue->guami);
+    ogs_nas_from_plmn_id(&amf_ue->guti.nas_plmn_id, &amf_ue->guami->plmn_id);
+    memcpy(&amf_ue->guti.amf_id, &amf_ue->guami->amf_id, sizeof(ogs_amf_id_t));
 
     amf_ue->m_tmsi = amf_m_tmsi_alloc();
     ogs_assert(amf_ue->m_tmsi);
@@ -1104,7 +1102,8 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 
     ogs_list_init(&amf_ue->sess_list);
 
-    /* Initialize NAS context */
+    /* TODO : Hard-coded */
+    amf_ue->guami = &amf_self()->served_guami[0];
     amf_ue->nas.access_type = OGS_NAS_REGISTRATION_RESULT_3GPP_ACCESS;
     amf_ue->abba_len = 2;
 

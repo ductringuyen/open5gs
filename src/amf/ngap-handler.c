@@ -286,10 +286,10 @@ void ngap_handle_initial_ue_message(amf_gnb_t *gnb, ogs_ngap_message_t *message)
 
             memset(&nas_guti, 0, sizeof(ogs_nas_5gs_guti_t));
 
-            /* TODO : Use the first configured plmn_id and amf id */
+            ogs_assert(amf_ue->guami);
             ogs_nas_from_plmn_id(&nas_guti.nas_plmn_id,
-                    &amf_self()->served_guami[0].plmn_id);
-            region = amf_self()->served_guami[0].amf_id.region;
+                    &amf_ue->guami->plmn_id);
+            region = amf_ue->guami->amf_id.region;
 
             /* Getting from 5G-S_TMSI */
             ogs_ngap_AMFSetID_to_uint16(&FiveG_S_TMSI->aMFSetID, &set);

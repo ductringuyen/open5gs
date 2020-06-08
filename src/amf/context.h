@@ -47,6 +47,11 @@ typedef struct amf_ue_s amf_ue_t;
 
 typedef uint32_t amf_m_tmsi_t;
 
+typedef struct amf_guami_s {
+    ogs_plmn_id_t plmn_id;
+    ogs_amf_id_t amf_id;
+} amf_guami_t;
+
 typedef struct amf_context_s {
     ogs_queue_t     *queue;         /* Queue for processing UPF control */
     ogs_timer_mgr_t *timer_mgr;     /* Timer Manager */
@@ -56,10 +61,7 @@ typedef struct amf_context_s {
 
     /* Served GUAMI */
     uint8_t num_of_served_guami;
-    struct {
-        ogs_plmn_id_t plmn_id;
-        ogs_amf_id_t amf_id;
-    } served_guami[MAX_NUM_OF_SERVED_GUAMI];
+    amf_guami_t served_guami[MAX_NUM_OF_SERVED_GUAMI];
 
     /* Served TAI */
     uint8_t num_of_served_tai;
@@ -238,6 +240,7 @@ struct amf_ue_s {
     uint16_t        vlr_ostream_id; /* SCTP output stream id for VLR */
 
     /* UE Info */
+    amf_guami_t *guami;
     ogs_5gs_tai_t   tai;
     ogs_nr_cgi_t    cgi;
     ogs_plmn_id_t   last_visited_plmn_id;

@@ -410,17 +410,18 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     memcpy(NAS_PDU->buf, gmmbuf->data, NAS_PDU->size);
     ogs_pkbuf_free(gmmbuf);
 
+    ogs_assert(amf_ue->guami);
     ogs_asn_buffer_to_OCTET_STRING(
-            &amf_self()->served_guami[0].plmn_id,
+            &amf_ue->guami->plmn_id,
             OGS_PLMN_ID_LEN, &GUAMI->pLMNIdentity);
     ogs_ngap_uint8_to_AMFRegionID(
-            ogs_amf_region_id(&amf_self()->served_guami[0].amf_id),
+            ogs_amf_region_id(&amf_ue->guami->amf_id),
             &GUAMI->aMFRegionID);
     ogs_ngap_uint16_to_AMFSetID(
-            ogs_amf_set_id(&amf_self()->served_guami[0].amf_id),
+            ogs_amf_set_id(&amf_ue->guami->amf_id),
             &GUAMI->aMFSetID);
     ogs_ngap_uint8_to_AMFPointer(
-            ogs_amf_pointer(&amf_self()->served_guami[0].amf_id),
+            ogs_amf_pointer(&amf_ue->guami->amf_id),
             &GUAMI->aMFPointer);
 
 #if 0

@@ -73,9 +73,8 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(
     plmn_id.mcc = ogs_plmn_id_mcc_string(&amf_ue->tai.plmn_id);
     plmn_id.mnc = ogs_plmn_id_mnc_string(&amf_ue->tai.plmn_id);
 
-    /* TODO : Use the first amf_id */
-    guami.amf_id = ogs_amf_id_to_string(
-            &amf_self()->served_guami[0].amf_id, buf);
+    ogs_assert(amf_ue->guami);
+    guami.amf_id = ogs_amf_id_to_string(&amf_ue->guami->amf_id, buf);
     guami.plmn_id = &plmn_id;
     Amf3GppAccessRegistration.guami = &guami;
 
