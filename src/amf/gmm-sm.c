@@ -284,8 +284,13 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
             return;
 #endif
+        case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE:
+            ogs_debug("[%s] Configuration update complete", amf_ue->supi);
+
+            CLEAR_AMF_UE_TIMER(amf_ue->t3555);
+            break;
         default:
-            ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
+            ogs_error("Unknown message[%d]", message->gmm.h.message_type);
             return;
         }
         break;
@@ -320,7 +325,13 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
             } else {
                 amf_ue->t3555.retry_count++;
-                nas_5gs_send_configuration_update_command(amf_ue);
+
+                /*
+                 * If t3555 is timeout, the saved pkbuf is used.
+                 * We don't have to set ack/red.
+                 * So, we just set ack/red to 0
+                 */
+                nas_5gs_send_configuration_update_command(amf_ue, 0, 0);
             }
             break;
         case AMF_TIMER_T3570:
@@ -1002,7 +1013,9 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:
             ogs_debug("[%s] Registration complete", amf_ue->supi);
 
-            nas_5gs_send_configuration_update_command(amf_ue);
+            /* Ack/Red to 0
+             * No need to receive configuration update complete */
+            nas_5gs_send_configuration_update_command(amf_ue, 0, 0);
 
             OGS_FSM_TRAN(s, &gmm_state_registered);
             break;
