@@ -81,10 +81,10 @@ void ngap_state_operational(ogs_fsm_t *s, amf_event_t *e)
             case NGAP_ProcedureCode_id_UplinkNASTransport:
                 ngap_handle_uplink_nas_transport(gnb, pdu);
                 break;
-#if 0
-            case NGAP_ProcedureCode_id_UECapabilityInfoIndication :
-                ngap_handle_ue_capability_info_indication( gnb, pdu);
+            case NGAP_ProcedureCode_id_UERadioCapabilityInfoIndication :
+                ngap_handle_ue_capability_info_indication(gnb, pdu);
                 break;
+#if 0
             case NGAP_ProcedureCode_id_UEContextReleaseRequest:
                 ngap_handle_ue_context_release_request( gnb, pdu);
                 break;
@@ -124,10 +124,10 @@ void ngap_state_operational(ogs_fsm_t *s, amf_event_t *e)
             ogs_assert(successfulOutcome);
 
             switch (successfulOutcome->procedureCode) {
-#if 0
             case NGAP_ProcedureCode_id_InitialContextSetup:
                 ngap_handle_initial_context_setup_response(gnb, pdu);
                 break;
+#if 0
             case NGAP_ProcedureCode_id_UEContextModification:
                 ngap_handle_ue_context_modification_response(gnb, pdu);
                 break;
@@ -163,10 +163,10 @@ void ngap_state_operational(ogs_fsm_t *s, amf_event_t *e)
             ogs_assert(unsuccessfulOutcome);
 
             switch (unsuccessfulOutcome->procedureCode) {
-#if 0
             case NGAP_ProcedureCode_id_InitialContextSetup :
                 ngap_handle_initial_context_setup_failure(gnb, pdu);
                 break;
+#if 0
             case NGAP_ProcedureCode_id_UEContextModification:
                 ngap_handle_ue_context_modification_failure(gnb, pdu);
                 break;

@@ -32,7 +32,6 @@ void ngap_handle_initial_ue_message(
         amf_gnb_t *gnb, ogs_ngap_message_t *message);
 void ngap_handle_uplink_nas_transport(
         amf_gnb_t *gnb, ogs_ngap_message_t *message);
-#if 0
 void ngap_handle_ue_capability_info_indication(
         amf_gnb_t *gnb, ogs_ngap_message_t *message);
 void ngap_handle_initial_context_setup_response(
@@ -74,12 +73,6 @@ void ngap_handle_handover_notification(
 
 void ngap_handle_s1_reset(
         amf_gnb_t *gnb, ogs_ngap_message_t *message);
-
-void ngap_handle_write_replace_warning_response(
-        amf_gnb_t *gnb, ogs_ngap_message_t *message);
-void ngap_handle_kill_response(
-        amf_gnb_t *gnb, ogs_ngap_message_t *message);
-#endif
 
 #ifdef __cplusplus
 }

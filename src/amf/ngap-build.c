@@ -482,7 +482,6 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     SecurityKey->bits_unused = 0;
     memcpy(SecurityKey->buf, amf_ue->kgnb, SecurityKey->size);
 
-#if 0
     if (amf_ue->ueRadioCapability.buf && amf_ue->ueRadioCapability.size) {
         /* Set UeRadioCapability if exists */
         NGAP_UERadioCapability_t *UERadioCapability = NULL;
@@ -498,11 +497,10 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
         UERadioCapability = &ie->value.choice.UERadioCapability;
 
         ogs_assert(UERadioCapability);
-        ogs_ngap_buffer_to_OCTET_STRING(
+        ogs_asn_buffer_to_OCTET_STRING(
                 amf_ue->ueRadioCapability.buf, amf_ue->ueRadioCapability.size,
                 UERadioCapability);
     }
-#endif
 
     return ogs_ngap_encode(&pdu);
 }
@@ -598,7 +596,7 @@ ogs_pkbuf_t *ngap_build_ue_context_modification_request(amf_ue_t *amf_ue)
         LAI = &ie->value.choice.LAI;
         ogs_assert(LAI);
 
-        ogs_ngap_buffer_to_OCTET_STRING(
+        ogs_asn_buffer_to_OCTET_STRING(
             &amf_ue->tai.plmn_id, sizeof(ogs_plmn_id_t), &LAI->pLMNidentity);
         ogs_assert(amf_ue->csmap);
         ogs_assert(amf_ue->p_tmsi);
@@ -1235,7 +1233,7 @@ ogs_pkbuf_t *ngap_build_paging(
 
     tai_item = &item->value.choice.TAIItem;
 
-    ogs_ngap_buffer_to_OCTET_STRING(&amf_ue->tai.plmn_id, sizeof(ogs_plmn_id_t),
+    ogs_asn_buffer_to_OCTET_STRING(&amf_ue->tai.plmn_id, sizeof(ogs_plmn_id_t),
             &tai_item->tAI.pLMNidentity);
     ogs_asn_uint16_to_OCTET_STRING(amf_ue->tai.tac, &tai_item->tAI.tAC);
 
@@ -1607,7 +1605,7 @@ ogs_pkbuf_t *ngap_build_handover_command(ran_ue_t *source_ue)
     Target_ToSource_TransparentContainer =
         &ie->value.choice.Target_ToSource_TransparentContainer;
 
-    ogs_ngap_buffer_to_OCTET_STRING(amf_ue->container.buf,
+    ogs_asn_buffer_to_OCTET_STRING(amf_ue->container.buf,
             amf_ue->container.size, Target_ToSource_TransparentContainer);
 
     return ogs_ngap_encode(&pdu);
@@ -1899,7 +1897,7 @@ ogs_pkbuf_t *ngap_build_handover_request(
         sess = amf_sess_next(sess);
     }
 
-    ogs_ngap_buffer_to_OCTET_STRING(
+    ogs_asn_buffer_to_OCTET_STRING(
             source_totarget_transparentContainer->buf, 
             source_totarget_transparentContainer->size, 
             Source_ToTarget_TransparentContainer);
