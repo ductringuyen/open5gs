@@ -36,34 +36,6 @@ int nas_5gs_send_to_gnb(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)
     return ngap_send_to_ran_ue(ran_ue, pkbuf);
 }
 
-#if 0
-int nas_5gs_send_gmm_to_esm(amf_ue_t *amf_ue,
-        ogs_nas_esm_message_container_t *esm_message_container)
-{
-    int rv;
-    ogs_pkbuf_t *gsmbuf = NULL;
-
-    ogs_assert(amf_ue);
-    ogs_assert(esm_message_container);
-    ogs_assert(esm_message_container->length);
-
-    /* The Packet Buffer(pkbuf_t) for NAS message MUST make a HEADROOM. 
-     * When calculating AES_CMAC, we need to use the headroom of the packet. */
-    gsmbuf = ogs_pkbuf_alloc(NULL,
-            OGS_NAS_HEADROOM+esm_message_container->length);
-    ogs_pkbuf_reserve(gsmbuf, OGS_NAS_HEADROOM);
-    ogs_pkbuf_put_data(gsmbuf,
-            esm_message_container->buffer, esm_message_container->length);
-
-    rv = ngap_send_to_esm(amf_ue, gsmbuf);
-    if (rv != OGS_OK) {
-        ogs_error("ngap_send_to_esm() failed");
-    }
-
-    return rv;
-}
-#endif
-
 int nas_5gs_send_to_downlink_nas_transport(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)
 {
     int rv;
@@ -131,27 +103,13 @@ void nas_5gs_send_nas_reject_from_sbi(amf_ue_t *amf_ue, int status)
     nas_5gs_send_nas_reject(amf_ue, gmm_cause);
 }
 
-#if 0
 void nas_5gs_send_registration_accept(amf_ue_t *amf_ue)
 {
     int rv;
-    amf_sess_t *sess = NULL;
-    amf_bearer_t *bearer = NULL;
     ogs_pkbuf_t *ngapbuf = NULL;
-    ogs_pkbuf_t *gsmbuf = NULL, *gmmbuf = NULL;
+    ogs_pkbuf_t *gmmbuf = NULL;
 
-    ogs_assert(amf_ue);
-    sess = amf_sess_first(amf_ue);
-    ogs_assert(sess);
-    ogs_assert(amf_sess_next(sess) == NULL);
-    bearer = amf_default_bearer_in_sess(sess);
-    ogs_assert(bearer);
-    ogs_assert(amf_bearer_next(bearer) == NULL);
-
-    gsmbuf = esm_build_activate_default_bearer_context_request(sess);
-    ogs_expect_or_return(gsmbuf);
-
-    gmmbuf = gmm_build_registration_accept(amf_ue, gsmbuf);
+    gmmbuf = gmm_build_registration_accept(amf_ue);
     ogs_expect_or_return(gmmbuf);
 
     ngapbuf = ngap_build_initial_context_setup_request(amf_ue, gmmbuf);
@@ -160,7 +118,6 @@ void nas_5gs_send_registration_accept(amf_ue_t *amf_ue)
     rv = nas_5gs_send_to_gnb(amf_ue, ngapbuf);
     ogs_expect_or_return(rv == OGS_OK);
 }
-#endif
 
 void nas_5gs_send_registration_reject(
         amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t gmm_cause)

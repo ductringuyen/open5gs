@@ -288,7 +288,6 @@ ogs_pkbuf_t *ngap_build_downlink_nas_transport(
     return ogs_ngap_encode(&pdu);
 }
 
-#if 0
 ogs_pkbuf_t *ngap_build_initial_context_setup_request(
             amf_ue_t *amf_ue, ogs_pkbuf_t *gmmbuf)
 {
@@ -301,21 +300,17 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     NGAP_InitialContextSetupRequestIEs_t *ie = NULL;
     NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+#if 0
     NGAP_UEAggregateMaximumBitrate_t *UEAggregateMaximumBitrate = NULL;
-    NGAP_E_RABToBeSetupListCtxtSUReq_t *E_RABToBeSetupListCtxtSUReq = NULL;
     NGAP_UESecurityCapabilities_t *UESecurityCapabilities = NULL;
     NGAP_SecurityKey_t *SecurityKey = NULL;
+#endif
 
     ran_ue_t *ran_ue = NULL;
-    amf_sess_t *sess = NULL;
-    amf_bearer_t *bearer = NULL;
-    ogs_diam_s6a_subscription_data_t *subscription_data = NULL;
 
     ogs_assert(amf_ue);
     ran_ue = amf_ue->ran_ue;
     ogs_assert(ran_ue);
-    subscription_data = &amf_ue->subscription_data;
-    ogs_assert(subscription_data);
 
     ogs_debug("Initial context setup request");
 
@@ -354,6 +349,7 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
 
     RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
 
+#if 0
     ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
     ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
 
@@ -373,13 +369,15 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     NGAP_InitialContextSetupRequestIEs__value_PR_E_RABToBeSetupListCtxtSUReq;
 
     E_RABToBeSetupListCtxtSUReq = &ie->value.choice.E_RABToBeSetupListCtxtSUReq;
+#endif
 
-    ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%d]",
-            ran_ue->ran_ue_ngap_id, ran_ue->amf_ue_ngap_id);
+    ogs_debug("    RAN_UE_NGAP_ID[%d] AMF_UE_NGAP_ID[%lld]",
+            ran_ue->ran_ue_ngap_id, (long long)ran_ue->amf_ue_ngap_id);
 
-    *AMF_UE_NGAP_ID = ran_ue->amf_ue_ngap_id;
+    asn_uint642INTEGER(AMF_UE_NGAP_ID, ran_ue->amf_ue_ngap_id);
     *RAN_UE_NGAP_ID = ran_ue->ran_ue_ngap_id;
 
+#if 0
     asn_uint642INTEGER(
             &UEAggregateMaximumBitrate->uEaggregateMaximumBitRateUL, 
             subscription_data->ambr.uplink);
@@ -567,10 +565,12 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
                 amf_ue->ueRadioCapability.buf, amf_ue->ueRadioCapability.size,
                 UERadioCapability);
     }
+#endif
 
     return ogs_ngap_encode(&pdu);
 }
 
+#if 0
 ogs_pkbuf_t *ngap_build_ue_context_modification_request(amf_ue_t *amf_ue)
 {
     NGAP_NGAP_PDU_t pdu;
@@ -1756,7 +1756,7 @@ ogs_pkbuf_t *ngap_build_handover_request(
         NGAP_AMF_UE_NGAP_ID_t *amf_ue_ngap_id,
         NGAP_HandoverType_t *handovertype,
         NGAP_Cause_t *cause,
-        NGAP_Source_ToTarget_TransparentContainer_t
+        NGAP_SourceToTarget_TransparentContainer_t
             *source_totarget_transparentContainer)
 {
     int rv;
@@ -2054,7 +2054,7 @@ ogs_pkbuf_t *ngap_build_handover_cancel_ack(ran_ue_t *source_ue)
 
 ogs_pkbuf_t *ngap_build_amf_status_transfer(
         ran_ue_t *target_ue,
-        NGAP_RAN_StatusTransfer_TransparentContainer_t
+        NGAP_RANStatusTransfer_TransparentContainer_t
             *gnb_statustransfer_transparentContainer)
 {
     int rv;
@@ -2066,7 +2066,7 @@ ogs_pkbuf_t *ngap_build_amf_status_transfer(
     NGAP_AMFStatusTransferIEs_t *ie = NULL;
     NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
-    NGAP_RAN_StatusTransfer_TransparentContainer_t
+    NGAP_RANStatusTransfer_TransparentContainer_t
         *RAN_StatusTransfer_TransparentContainer = NULL;
 
     ogs_assert(target_ue);
@@ -2210,7 +2210,7 @@ ogs_pkbuf_t *ngap_build_error_indication(
 #if 0
 ogs_pkbuf_t *ngap_build_s1_reset(
         NGAP_Cause_PR group, long cause,
-        NGAP_UE_associatedLogicalNG_ConnectionListRes_t *partOfNG_Interface)
+        NGAP_UE_associatedLogicalNG_connectionList_t *partOfNG_Interface)
 {
     NGAP_NGAP_PDU_t pdu;
     NGAP_InitiatingMessage_t *initiatingMessage = NULL;
@@ -2299,7 +2299,7 @@ ogs_pkbuf_t *ngap_build_s1_reset_partial(
 }
 
 ogs_pkbuf_t *ngap_build_s1_reset_ack(
-        NGAP_UE_associatedLogicalNG_ConnectionListRes_t *partOfNG_Interface)
+        NGAP_UE_associatedLogicalNG_connectionList_t *partOfNG_Interface)
 {
     NGAP_NGAP_PDU_t pdu;
     NGAP_SuccessfulOutcome_t *successfulOutcome = NULL;

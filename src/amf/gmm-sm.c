@@ -963,8 +963,9 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
-                ogs_fatal("Next");
+                nas_5gs_send_registration_accept(amf_ue);
                 break;
+
             DEFAULT
             END
 

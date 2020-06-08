@@ -27,10 +27,6 @@ extern "C" {
 #endif
 
 int nas_5gs_send_to_gnb(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf);
-#if 0
-int nas_5gs_send_gmm_to_gsm(
-    amf_ue_t *amf_ue, ogs_nas_5gsm_message_container_t *esm_message_container);
-#endif
 int nas_5gs_send_to_downlink_nas_transport(
         amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf);
 
