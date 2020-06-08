@@ -236,22 +236,22 @@ msg_list["SECURITY MODE COMPLETE"]["table"] = 25
 msg_list["SECURITY MODE REJECT"]["table"] = 26
 msg_list["5GMM STATUS"]["table"] = 28
 
-msg_list["PDU SESSION ESTABLISHMENT REQUEST"]["table"] = 29
-msg_list["PDU SESSION ESTABLISHMENT ACCEPT"]["table"] = 30
-msg_list["PDU SESSION ESTABLISHMENT REJECT"]["table"] = 31
-msg_list["PDU SESSION AUTHENTICATION COMMAND"]["table"] = 32
-msg_list["PDU SESSION AUTHENTICATION COMPLETE"]["table"] = 33
-msg_list["PDU SESSION AUTHENTICATION RESULT"]["table"] = 34
-msg_list["PDU SESSION MODIFICATION REQUEST"]["table"] = 35
-msg_list["PDU SESSION MODIFICATION REJECT"]["table"] = 36
-msg_list["PDU SESSION MODIFICATION COMMAND"]["table"] = 37
-msg_list["PDU SESSION MODIFICATION COMPLETE"]["table"] = 38
-msg_list["PDU SESSION MODIFICATION COMMAND REJECT"]["table"] = 39
-msg_list["PDU SESSION RELEASE REQUEST"]["table"] = 40
-msg_list["PDU SESSION RELEASE REJECT"]["table"] = 41
-msg_list["PDU SESSION RELEASE COMMAND"]["table"] = 42
-msg_list["PDU SESSION RELEASE COMPLETE"]["table"] = 43
-msg_list["5GSM STATUS"]["table"] = 44
+msg_list["PDU SESSION ESTABLISHMENT REQUEST"]["table"] = 33
+msg_list["PDU SESSION ESTABLISHMENT ACCEPT"]["table"] = 34
+msg_list["PDU SESSION ESTABLISHMENT REJECT"]["table"] = 35
+msg_list["PDU SESSION AUTHENTICATION COMMAND"]["table"] = 36
+msg_list["PDU SESSION AUTHENTICATION COMPLETE"]["table"] = 37
+msg_list["PDU SESSION AUTHENTICATION RESULT"]["table"] = 38
+msg_list["PDU SESSION MODIFICATION REQUEST"]["table"] = 39
+msg_list["PDU SESSION MODIFICATION REJECT"]["table"] = 40
+msg_list["PDU SESSION MODIFICATION COMMAND"]["table"] = 41
+msg_list["PDU SESSION MODIFICATION COMPLETE"]["table"] = 42
+msg_list["PDU SESSION MODIFICATION COMMAND REJECT"]["table"] = 43
+msg_list["PDU SESSION RELEASE REQUEST"]["table"] = 44
+msg_list["PDU SESSION RELEASE REJECT"]["table"] = 45
+msg_list["PDU SESSION RELEASE COMMAND"]["table"] = 46
+msg_list["PDU SESSION RELEASE COMPLETE"]["table"] = 47
+msg_list["5GSM STATUS"]["table"] = 48
 
 for key in msg_list.keys():
     if "table" not in msg_list[key].keys():

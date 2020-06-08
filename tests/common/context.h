@@ -124,6 +124,16 @@ typedef struct test_ue_s {
     ogs_nas_5gs_guti_t nas_guti;
 } test_ue_t;
 
+typedef struct test_sess_s {
+    uint8_t id;
+
+    uint8_t pti;
+    uint8_t pdn_type;
+    char *dnn;
+
+    test_ue_t *test_ue;
+} test_sess_t;
+
 void test_context_init(void);
 void test_context_final(void);
 test_context_t *test_self(void);

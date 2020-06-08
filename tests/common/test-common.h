@@ -41,6 +41,7 @@ extern "C" {
 #include "common/application.h"
 #include "common/gmm-build.h"
 #include "common/gmm-handler.h"
+#include "common/gsm-build.h"
 #include "common/nas-path.h"
 #include "common/nas-security.h"
 

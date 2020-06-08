@@ -231,14 +231,18 @@ int ogs_ip_to_sockaddr(ogs_ip_t *ip, uint16_t port, ogs_sockaddr_t **list);
 typedef struct ogs_paa_s {
 ED2(uint8_t spare:5;,
 /* 8.34 PDN Type  */
-#define OGS_GTP_PDN_TYPE_IPV4                           1
-#define OGS_GTP_PDN_TYPE_IPV6                           2
-#define OGS_GTP_PDN_TYPE_IPV4V6                         3
-#define OGS_GTP_PDN_TYPE_NON_IP                         4
-#define OGS_PFCP_PDN_TYPE_IPV4                          OGS_GTP_PDN_TYPE_IPV4
-#define OGS_PFCP_PDN_TYPE_IPV6                          OGS_GTP_PDN_TYPE_IPV6
-#define OGS_PFCP_PDN_TYPE_IPV4V6                        OGS_GTP_PDN_TYPE_IPV4V6
-#define OGS_PFCP_PDN_TYPE_NONIP                         OGS_GTP_PDN_TYPE_NONIP
+#define OGS_PDN_TYPE_IPV4                               1
+#define OGS_PDN_TYPE_IPV6                               2
+#define OGS_PDN_TYPE_IPV4V6                             3
+#define OGS_PDN_TYPE_NON_IP                             4
+#define OGS_GTP_PDN_TYPE_IPV4                           OGS_PDN_TYPE_IPV4
+#define OGS_GTP_PDN_TYPE_IPV6                           OGS_PDN_TYPE_IPV6
+#define OGS_GTP_PDN_TYPE_IPV4V6                         OGS_PDN_TYPE_IPV4V6
+#define OGS_GTP_PDN_TYPE_NON_IP                         OGS_PDN_TYPE_NONIP
+#define OGS_PFCP_PDN_TYPE_IPV4                          OGS_PDN_TYPE_IPV4
+#define OGS_PFCP_PDN_TYPE_IPV6                          OGS_PDN_TYPE_IPV6
+#define OGS_PFCP_PDN_TYPE_IPV4V6                        OGS_PDN_TYPE_IPV4V6
+#define OGS_PFCP_PDN_TYPE_NONIP                         OGS_PDN_TYPE_NONIP
     uint8_t pdn_type:3;)
     union {
         /* GTP_PDN_TYPE_IPV4 */

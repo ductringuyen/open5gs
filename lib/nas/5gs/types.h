@@ -295,7 +295,8 @@ typedef struct ogs_nas_abba_s {
 /* 9.11.3.11 Access Type
  * M V 1/2 */
 typedef struct ogs_nas_access_type_s {
-ED2(uint8_t spare:5;,
+ED3(uint8_t type:4;,
+    uint8_t spare:1;,
     uint8_t value:3;)
 } __attribute__ ((packed)) ogs_nas_access_type_t;
 

@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-03 23:05:14.877346 by acetcom
+ * Created on: 2020-06-08 17:02:29.638000 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1670,7 +1670,7 @@ int ogs_nas_5gs_decode_pdu_session_establishment_request(ogs_nas_5gs_message_t *
 
     ogs_trace("[NAS] Decode PDU_SESSION_ESTABLISHMENT_REQUEST\n");
 
-    size = ogs_nas_5gs_decode_control_plane_service_type(&pdu_session_establishment_request->control_plane_service_type, pkbuf);
+    size = ogs_nas_5gs_decode_integrity_protection_maximum_data_rate(&pdu_session_establishment_request->integrity_protection_maximum_data_rate, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -1683,52 +1683,70 @@ int ogs_nas_5gs_decode_pdu_session_establishment_request(ogs_nas_5gs_message_t *
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_CIOT_SMALL_DATA_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_ciot_small_data_container(&pdu_session_establishment_request->ciot_small_data_container, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_TYPE:
+            size = ogs_nas_5gs_decode_pdu_session_type(&pdu_session_establishment_request->pdu_session_type, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_CIOT_SMALL_DATA_CONTAINER_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PAYLOAD_CONTAINER_TYPE_TYPE:
-            size = ogs_nas_5gs_decode_payload_container_type(&pdu_session_establishment_request->payload_container_type, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SSC_MODE_TYPE:
+            size = ogs_nas_5gs_decode_ssc_mode(&pdu_session_establishment_request->ssc_mode, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PAYLOAD_CONTAINER_TYPE_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SSC_MODE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PAYLOAD_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_payload_container(&pdu_session_establishment_request->payload_container, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_5GSM_CAPABILITY_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_capability(&pdu_session_establishment_request->gsm_capability, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PAYLOAD_CONTAINER_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_5GSM_CAPABILITY_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_STATUS_TYPE:
-            size = ogs_nas_5gs_decode_pdu_session_status(&pdu_session_establishment_request->pdu_session_status, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_TYPE:
+            size = ogs_nas_5gs_decode_maximum_number_of_supported_packet_filters(&pdu_session_establishment_request->maximum_number_of_supported_packet_filters, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_STATUS_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_RELEASE_ASSISTANCE_INDICATION_TYPE:
-            size = ogs_nas_5gs_decode_release_assistance_indication(&pdu_session_establishment_request->release_assistance_indication, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
+            size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_establishment_request->always_on_pdu_session_requested, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_RELEASE_ASSISTANCE_INDICATION_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_UPLINK_DATA_STATUS_TYPE:
-            size = ogs_nas_5gs_decode_uplink_data_status(&pdu_session_establishment_request->uplink_data_status, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SM_PDU_DN_REQUEST_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_sm_pdu_dn_request_container(&pdu_session_establishment_request->sm_pdu_dn_request_container, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_UPLINK_DATA_STATUS_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SM_PDU_DN_REQUEST_CONTAINER_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_NAS_MESSAGE_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_message_container(&pdu_session_establishment_request->nas_message_container, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_establishment_request->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_NAS_MESSAGE_CONTAINER_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ADDITIONAL_INFORMATION_TYPE:
-            size = ogs_nas_5gs_decode_additional_information(&pdu_session_establishment_request->additional_information, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_HEADER_COMPRESSION_CONFIGURATION_TYPE:
+            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_establishment_request->header_compression_configuration, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ADDITIONAL_INFORMATION_PRESENT;
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_DS_TT_ETHERNET_PORT_MAC_ADDRESS_TYPE:
+            size = ogs_nas_5gs_decode_ds_tt_ethernet_port_mac_address(&pdu_session_establishment_request->ds_tt_ethernet_port_mac_address, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_DS_TT_ETHERNET_PORT_MAC_ADDRESS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_UE_DS_TT_RESIDENCE_TIME_TYPE:
+            size = ogs_nas_5gs_decode_ue_ds_tt_residence_time(&pdu_session_establishment_request->ue_ds_tt_residence_time, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_UE_DS_TT_RESIDENCE_TIME_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_establishment_request->port_management_information_container, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
             decoded += size;
             break;
         default:
@@ -1748,64 +1766,15 @@ int ogs_nas_5gs_decode_pdu_session_establishment_accept(ogs_nas_5gs_message_t *m
 
     ogs_trace("[NAS] Decode PDU_SESSION_ESTABLISHMENT_ACCEPT\n");
 
-    size = ogs_nas_5gs_decode_s_nssai(&pdu_session_establishment_accept->s_nssai, pkbuf);
+    size = ogs_nas_5gs_decode_pdu_session_type(&pdu_session_establishment_accept->selected_pdu_session_type, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
-    size = ogs_nas_5gs_decode_eap_message(&pdu_session_establishment_accept->eap_message, pkbuf);
+    size = ogs_nas_5gs_decode_qos_rules(&pdu_session_establishment_accept->authorized_qos_rules, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
-    return decoded;
-}
-
-int ogs_nas_5gs_decode_pdu_session_establishment_reject(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
-{
-    ogs_nas_5gs_pdu_session_establishment_reject_t *pdu_session_establishment_reject = &message->gsm.pdu_session_establishment_reject;
-    int decoded = 0;
-    int size = 0;
-
-    ogs_trace("[NAS] Decode PDU_SESSION_ESTABLISHMENT_REJECT\n");
-
-    size = ogs_nas_5gs_decode_s_nssai(&pdu_session_establishment_reject->s_nssai, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    size = ogs_nas_5gs_decode_eap_message(&pdu_session_establishment_reject->eap_message, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    return decoded;
-}
-
-int ogs_nas_5gs_decode_pdu_session_authentication_command(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
-{
-    ogs_nas_5gs_pdu_session_authentication_command_t *pdu_session_authentication_command = &message->gsm.pdu_session_authentication_command;
-    int decoded = 0;
-    int size = 0;
-
-    ogs_trace("[NAS] Decode PDU_SESSION_AUTHENTICATION_COMMAND\n");
-
-    size = ogs_nas_5gs_decode_s_nssai(&pdu_session_authentication_command->s_nssai, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    size = ogs_nas_5gs_decode_eap_message(&pdu_session_authentication_command->eap_message, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    return decoded;
-}
-
-int ogs_nas_5gs_decode_pdu_session_authentication_complete(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
-{
-    ogs_nas_5gs_pdu_session_authentication_complete_t *pdu_session_authentication_complete = &message->gsm.pdu_session_authentication_complete;
-    int decoded = 0;
-    int size = 0;
-
-    ogs_trace("[NAS] Decode PDU_SESSION_AUTHENTICATION_COMPLETE\n");
-
-    size = ogs_nas_5gs_decode_integrity_protection_maximum_data_rate(&pdu_session_authentication_complete->integrity_protection_maximum_data_rate, pkbuf);
+    size = ogs_nas_5gs_decode_session_ambr(&pdu_session_establishment_accept->session_ambr, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -1818,70 +1787,232 @@ int ogs_nas_5gs_decode_pdu_session_authentication_complete(ogs_nas_5gs_message_t
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_PDU_SESSION_TYPE_TYPE:
-            size = ogs_nas_5gs_decode_pdu_session_type(&pdu_session_authentication_complete->pdu_session_type, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_5GSM_CAUSE_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_establishment_accept->gsm_cause, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_PDU_SESSION_TYPE_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_5GSM_CAUSE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_SSC_MODE_TYPE:
-            size = ogs_nas_5gs_decode_ssc_mode(&pdu_session_authentication_complete->ssc_mode, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_PDU_ADDRESS_TYPE:
+            size = ogs_nas_5gs_decode_pdu_address(&pdu_session_establishment_accept->pdu_address, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_SSC_MODE_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_PDU_ADDRESS_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_5GSM_CAPABILITY_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_capability(&pdu_session_authentication_complete->gsm_capability, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_RQ_TIMER_VALUE_TYPE:
+            size = ogs_nas_5gs_decode_gprs_timer(&pdu_session_establishment_accept->rq_timer_value, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_5GSM_CAPABILITY_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_RQ_TIMER_VALUE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_TYPE:
-            size = ogs_nas_5gs_decode_maximum_number_of_supported_packet_filters(&pdu_session_authentication_complete->maximum_number_of_supported_packet_filters, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_S_NSSAI_TYPE:
+            size = ogs_nas_5gs_decode_s_nssai(&pdu_session_establishment_accept->s_nssai, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_S_NSSAI_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
-            size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_authentication_complete->always_on_pdu_session_requested, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
+            size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_establishment_accept->always_on_pdu_session_indication, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_SM_PDU_DN_REQUEST_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_sm_pdu_dn_request_container(&pdu_session_authentication_complete->sm_pdu_dn_request_container, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
+            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_establishment_accept->mapped_eps_bearer_contexts, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_SM_PDU_DN_REQUEST_CONTAINER_PRESENT;
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
             decoded += size;
             break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_EAP_MESSAGE_TYPE:
+            size = ogs_nas_5gs_decode_eap_message(&pdu_session_establishment_accept->eap_message, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_EAP_MESSAGE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_establishment_accept->authorized_qos_flow_descriptions, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_establishment_accept->extended_protocol_configuration_options, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_DNN_TYPE:
+            size = ogs_nas_5gs_decode_dnn(&pdu_session_establishment_accept->dnn, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_DNN_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_5GSM_NETWORK_FEATURE_SUPPORT_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_network_feature_support(&pdu_session_establishment_accept->gsm_network_feature_support, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_5GSM_NETWORK_FEATURE_SUPPORT_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_SERVING_PLMN_RATE_CONTROL_TYPE:
+            size = ogs_nas_5gs_decode_serving_plmn_rate_control(&pdu_session_establishment_accept->serving_plmn_rate_control, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_SERVING_PLMN_RATE_CONTROL_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ATSSS_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_atsss_container(&pdu_session_establishment_accept->atsss_container, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ATSSS_CONTAINER_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_CONTROL_PLANE_ONLY_INDICATION_TYPE:
+            size = ogs_nas_5gs_decode_control_plane_only_indication(&pdu_session_establishment_accept->control_plane_only_indication, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_CONTROL_PLANE_ONLY_INDICATION_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_HEADER_COMPRESSION_CONFIGURATION_TYPE:
+            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_establishment_accept->header_compression_configuration, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
+            decoded += size;
+            break;
+        default:
+            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            break;
+        }
+    }
+
+    return decoded;
+}
+
+int ogs_nas_5gs_decode_pdu_session_establishment_reject(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
+{
+    ogs_nas_5gs_pdu_session_establishment_reject_t *pdu_session_establishment_reject = &message->gsm.pdu_session_establishment_reject;
+    int decoded = 0;
+    int size = 0;
+
+    ogs_trace("[NAS] Decode PDU_SESSION_ESTABLISHMENT_REJECT\n");
+
+    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_establishment_reject->gsm_cause, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
+    while (pkbuf->len > 0) {
+        uint8_t *buffer = pkbuf->data;
+        uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
+
+        size = sizeof(uint8_t);
+        ogs_assert(ogs_pkbuf_pull(pkbuf, size));
+        decoded += size;
+
+        switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_BACK_OFF_TIMER_VALUE_TYPE:
+            size = ogs_nas_5gs_decode_gprs_timer_3(&pdu_session_establishment_reject->back_off_timer_value, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_BACK_OFF_TIMER_VALUE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_ALLOWED_SSC_MODE_TYPE:
+            size = ogs_nas_5gs_decode_allowed_ssc_mode(&pdu_session_establishment_reject->allowed_ssc_mode, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_ALLOWED_SSC_MODE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_EAP_MESSAGE_TYPE:
+            size = ogs_nas_5gs_decode_eap_message(&pdu_session_establishment_reject->eap_message, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_EAP_MESSAGE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_establishment_reject->extended_protocol_configuration_options, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_RE_ATTEMPT_INDICATOR_TYPE:
+            size = ogs_nas_5gs_decode_re_attempt_indicator(&pdu_session_establishment_reject->re_attempt_indicator, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_RE_ATTEMPT_INDICATOR_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_congestion_re_attempt_indicator(&pdu_session_establishment_reject->gsm_congestion_re_attempt_indicator, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_PRESENT;
+            decoded += size;
+            break;
+        default:
+            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            break;
+        }
+    }
+
+    return decoded;
+}
+
+int ogs_nas_5gs_decode_pdu_session_authentication_command(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
+{
+    ogs_nas_5gs_pdu_session_authentication_command_t *pdu_session_authentication_command = &message->gsm.pdu_session_authentication_command;
+    int decoded = 0;
+    int size = 0;
+
+    ogs_trace("[NAS] Decode PDU_SESSION_AUTHENTICATION_COMMAND\n");
+
+    size = ogs_nas_5gs_decode_eap_message(&pdu_session_authentication_command->eap_message, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
+    while (pkbuf->len > 0) {
+        uint8_t *buffer = pkbuf->data;
+        uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
+
+        size = sizeof(uint8_t);
+        ogs_assert(ogs_pkbuf_pull(pkbuf, size));
+        decoded += size;
+
+        switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_authentication_command->extended_protocol_configuration_options, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_authentication_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        default:
+            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            break;
+        }
+    }
+
+    return decoded;
+}
+
+int ogs_nas_5gs_decode_pdu_session_authentication_complete(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *pkbuf)
+{
+    ogs_nas_5gs_pdu_session_authentication_complete_t *pdu_session_authentication_complete = &message->gsm.pdu_session_authentication_complete;
+    int decoded = 0;
+    int size = 0;
+
+    ogs_trace("[NAS] Decode PDU_SESSION_AUTHENTICATION_COMPLETE\n");
+
+    size = ogs_nas_5gs_decode_eap_message(&pdu_session_authentication_complete->eap_message, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
+    while (pkbuf->len > 0) {
+        uint8_t *buffer = pkbuf->data;
+        uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
+
+        size = sizeof(uint8_t);
+        ogs_assert(ogs_pkbuf_pull(pkbuf, size));
+        decoded += size;
+
+        switch(type) {
         case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_authentication_complete->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_HEADER_COMPRESSION_CONFIGURATION_TYPE:
-            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_authentication_complete->header_compression_configuration, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_DS_TT_ETHERNET_PORT_MAC_ADDRESS_TYPE:
-            size = ogs_nas_5gs_decode_ds_tt_ethernet_port_mac_address(&pdu_session_authentication_complete->ds_tt_ethernet_port_mac_address, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_DS_TT_ETHERNET_PORT_MAC_ADDRESS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_UE_DS_TT_RESIDENCE_TIME_TYPE:
-            size = ogs_nas_5gs_decode_ue_ds_tt_residence_time(&pdu_session_authentication_complete->ue_ds_tt_residence_time, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_UE_DS_TT_RESIDENCE_TIME_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_authentication_complete->port_management_information_container, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_COMPLETE_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
             decoded += size;
             break;
         default:
@@ -1901,18 +2032,6 @@ int ogs_nas_5gs_decode_pdu_session_authentication_result(ogs_nas_5gs_message_t *
 
     ogs_trace("[NAS] Decode PDU_SESSION_AUTHENTICATION_RESULT\n");
 
-    size = ogs_nas_5gs_decode_pdu_session_type(&pdu_session_authentication_result->selected_pdu_session_type, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    size = ogs_nas_5gs_decode_qos_rules(&pdu_session_authentication_result->authorized_qos_rules, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
-    size = ogs_nas_5gs_decode_session_ambr(&pdu_session_authentication_result->session_ambr, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -1922,94 +2041,16 @@ int ogs_nas_5gs_decode_pdu_session_authentication_result(ogs_nas_5gs_message_t *
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_5GSM_CAUSE_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_authentication_result->gsm_cause, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_5GSM_CAUSE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_PDU_ADDRESS_TYPE:
-            size = ogs_nas_5gs_decode_pdu_address(&pdu_session_authentication_result->pdu_address, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_PDU_ADDRESS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_RQ_TIMER_VALUE_TYPE:
-            size = ogs_nas_5gs_decode_gprs_timer(&pdu_session_authentication_result->rq_timer_value, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_RQ_TIMER_VALUE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_S_NSSAI_TYPE:
-            size = ogs_nas_5gs_decode_s_nssai(&pdu_session_authentication_result->s_nssai, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_S_NSSAI_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
-            size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_authentication_result->always_on_pdu_session_indication, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
-            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_authentication_result->mapped_eps_bearer_contexts, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
-            decoded += size;
-            break;
         case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_EAP_MESSAGE_TYPE:
             size = ogs_nas_5gs_decode_eap_message(&pdu_session_authentication_result->eap_message, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_EAP_MESSAGE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_TYPE:
-            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_authentication_result->authorized_qos_flow_descriptions, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_PRESENT;
-            decoded += size;
-            break;
         case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_authentication_result->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_DNN_TYPE:
-            size = ogs_nas_5gs_decode_dnn(&pdu_session_authentication_result->dnn, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_DNN_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_5GSM_NETWORK_FEATURE_SUPPORT_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_network_feature_support(&pdu_session_authentication_result->gsm_network_feature_support, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_5GSM_NETWORK_FEATURE_SUPPORT_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_SERVING_PLMN_RATE_CONTROL_TYPE:
-            size = ogs_nas_5gs_decode_serving_plmn_rate_control(&pdu_session_authentication_result->serving_plmn_rate_control, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_SERVING_PLMN_RATE_CONTROL_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_ATSSS_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_atsss_container(&pdu_session_authentication_result->atsss_container, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_ATSSS_CONTAINER_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_CONTROL_PLANE_ONLY_INDICATION_TYPE:
-            size = ogs_nas_5gs_decode_control_plane_only_indication(&pdu_session_authentication_result->control_plane_only_indication, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_CONTROL_PLANE_ONLY_INDICATION_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_HEADER_COMPRESSION_CONFIGURATION_TYPE:
-            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_authentication_result->header_compression_configuration, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_authentication_result->presencemask |= OGS_NAS_5GS_PDU_SESSION_AUTHENTICATION_RESULT_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
             decoded += size;
             break;
         default:
@@ -2029,10 +2070,6 @@ int ogs_nas_5gs_decode_pdu_session_modification_request(ogs_nas_5gs_message_t *m
 
     ogs_trace("[NAS] Decode PDU_SESSION_MODIFICATION_REQUEST\n");
 
-    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_request->gsm_cause, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2042,22 +2079,52 @@ int ogs_nas_5gs_decode_pdu_session_modification_request(ogs_nas_5gs_message_t *m
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_BACK_OFF_TIMER_VALUE_TYPE:
-            size = ogs_nas_5gs_decode_gprs_timer_3(&pdu_session_modification_request->back_off_timer_value, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CAPABILITY_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_capability(&pdu_session_modification_request->gsm_capability, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_BACK_OFF_TIMER_VALUE_PRESENT;
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CAPABILITY_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALLOWED_SSC_MODE_TYPE:
-            size = ogs_nas_5gs_decode_allowed_ssc_mode(&pdu_session_modification_request->allowed_ssc_mode, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CAUSE_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_request->gsm_cause, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALLOWED_SSC_MODE_PRESENT;
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CAUSE_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_EAP_MESSAGE_TYPE:
-            size = ogs_nas_5gs_decode_eap_message(&pdu_session_modification_request->eap_message, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_TYPE:
+            size = ogs_nas_5gs_decode_maximum_number_of_supported_packet_filters(&pdu_session_modification_request->maximum_number_of_supported_packet_filters, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_EAP_MESSAGE_PRESENT;
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
+            size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_modification_request->always_on_pdu_session_requested, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_INTEGRITY_PROTECTION_MAXIMUM_DATA_RATE_TYPE:
+            size = ogs_nas_5gs_decode_integrity_protection_maximum_data_rate(&pdu_session_modification_request->integrity_protection_maximum_data_rate, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_INTEGRITY_PROTECTION_MAXIMUM_DATA_RATE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_REQUESTED_QOS_RULES_TYPE:
+            size = ogs_nas_5gs_decode_qos_rules(&pdu_session_modification_request->requested_qos_rules, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_REQUESTED_QOS_RULES_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_REQUESTED_QOS_FLOW_DESCRIPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_modification_request->requested_qos_flow_descriptions, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_REQUESTED_QOS_FLOW_DESCRIPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
+            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_modification_request->mapped_eps_bearer_contexts, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
@@ -2066,16 +2133,16 @@ int ogs_nas_5gs_decode_pdu_session_modification_request(ogs_nas_5gs_message_t *m
             pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_RE_ATTEMPT_INDICATOR_TYPE:
-            size = ogs_nas_5gs_decode_re_attempt_indicator(&pdu_session_modification_request->re_attempt_indicator, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_modification_request->port_management_information_container, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_RE_ATTEMPT_INDICATOR_PRESENT;
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_congestion_re_attempt_indicator(&pdu_session_modification_request->gsm_congestion_re_attempt_indicator, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_HEADER_COMPRESSION_CONFIGURATION_TYPE:
+            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_modification_request->header_compression_configuration, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_PRESENT;
+            pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
             decoded += size;
             break;
         default:
@@ -2095,7 +2162,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_reject(ogs_nas_5gs_message_t *me
 
     ogs_trace("[NAS] Decode PDU_SESSION_MODIFICATION_REJECT\n");
 
-    size = ogs_nas_5gs_decode_eap_message(&pdu_session_modification_reject->eap_message, pkbuf);
+    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_reject->gsm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -2108,10 +2175,28 @@ int ogs_nas_5gs_decode_pdu_session_modification_reject(ogs_nas_5gs_message_t *me
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_BACK_OFF_TIMER_VALUE_TYPE:
+            size = ogs_nas_5gs_decode_gprs_timer_3(&pdu_session_modification_reject->back_off_timer_value, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_BACK_OFF_TIMER_VALUE_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_modification_reject->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_RE_ATTEMPT_INDICATOR_TYPE:
+            size = ogs_nas_5gs_decode_re_attempt_indicator(&pdu_session_modification_reject->re_attempt_indicator, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_RE_ATTEMPT_INDICATOR_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_congestion_re_attempt_indicator(&pdu_session_modification_reject->gsm_congestion_re_attempt_indicator, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REJECT_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_PRESENT;
             decoded += size;
             break;
         default:
@@ -2131,10 +2216,6 @@ int ogs_nas_5gs_decode_pdu_session_modification_command(ogs_nas_5gs_message_t *m
 
     ogs_trace("[NAS] Decode PDU_SESSION_MODIFICATION_COMMAND\n");
 
-    size = ogs_nas_5gs_decode_eap_message(&pdu_session_modification_command->eap_message, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2144,10 +2225,76 @@ int ogs_nas_5gs_decode_pdu_session_modification_command(ogs_nas_5gs_message_t *m
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_5GSM_CAUSE_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_command->gsm_cause, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_5GSM_CAUSE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_SESSION_AMBR_TYPE:
+            size = ogs_nas_5gs_decode_session_ambr(&pdu_session_modification_command->session_ambr, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_SESSION_AMBR_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_RQ_TIMER_VALUE_TYPE:
+            size = ogs_nas_5gs_decode_gprs_timer(&pdu_session_modification_command->rq_timer_value, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_RQ_TIMER_VALUE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
+            size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_modification_command->always_on_pdu_session_indication, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_AUTHORIZED_QOS_RULES_TYPE:
+            size = ogs_nas_5gs_decode_qos_rules(&pdu_session_modification_command->authorized_qos_rules, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_AUTHORIZED_QOS_RULES_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
+            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_modification_command->mapped_eps_bearer_contexts, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_TYPE:
+            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_modification_command->authorized_qos_flow_descriptions, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_modification_command->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ATSSS_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_atsss_container(&pdu_session_modification_command->atsss_container, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ATSSS_CONTAINER_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_HEADER_COMPRESSION_CONFIGURATION_TYPE:
+            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_modification_command->header_compression_configuration, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_modification_command->port_management_information_container, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_SERVING_PLMN_RATE_CONTROL_TYPE:
+            size = ogs_nas_5gs_decode_serving_plmn_rate_control(&pdu_session_modification_command->serving_plmn_rate_control, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_SERVING_PLMN_RATE_CONTROL_PRESENT;
             decoded += size;
             break;
         default:
@@ -2176,16 +2323,16 @@ int ogs_nas_5gs_decode_pdu_session_modification_complete(ogs_nas_5gs_message_t *
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_EAP_MESSAGE_TYPE:
-            size = ogs_nas_5gs_decode_eap_message(&pdu_session_modification_complete->eap_message, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_EAP_MESSAGE_PRESENT;
-            decoded += size;
-            break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_modification_complete->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
+            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_modification_complete->port_management_information_container, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_modification_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMPLETE_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
             decoded += size;
             break;
         default:
@@ -2205,6 +2352,10 @@ int ogs_nas_5gs_decode_pdu_session_modification_command_reject(ogs_nas_5gs_messa
 
     ogs_trace("[NAS] Decode PDU_SESSION_MODIFICATION_COMMAND_REJECT\n");
 
+    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_command_reject->gsm_cause, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2214,70 +2365,10 @@ int ogs_nas_5gs_decode_pdu_session_modification_command_reject(ogs_nas_5gs_messa
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_5GSM_CAPABILITY_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_capability(&pdu_session_modification_command_reject->gsm_capability, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_5GSM_CAPABILITY_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_5GSM_CAUSE_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_modification_command_reject->gsm_cause, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_5GSM_CAUSE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_TYPE:
-            size = ogs_nas_5gs_decode_maximum_number_of_supported_packet_filters(&pdu_session_modification_command_reject->maximum_number_of_supported_packet_filters, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_MAXIMUM_NUMBER_OF_SUPPORTED_PACKET_FILTERS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
-            size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_modification_command_reject->always_on_pdu_session_requested, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_INTEGRITY_PROTECTION_MAXIMUM_DATA_RATE_TYPE:
-            size = ogs_nas_5gs_decode_integrity_protection_maximum_data_rate(&pdu_session_modification_command_reject->integrity_protection_maximum_data_rate, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_INTEGRITY_PROTECTION_MAXIMUM_DATA_RATE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_REQUESTED_QOS_RULES_TYPE:
-            size = ogs_nas_5gs_decode_qos_rules(&pdu_session_modification_command_reject->requested_qos_rules, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_REQUESTED_QOS_RULES_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_REQUESTED_QOS_FLOW_DESCRIPTIONS_TYPE:
-            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_modification_command_reject->requested_qos_flow_descriptions, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_REQUESTED_QOS_FLOW_DESCRIPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
-            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_modification_command_reject->mapped_eps_bearer_contexts, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
-            decoded += size;
-            break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_modification_command_reject->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_modification_command_reject->port_management_information_container, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_HEADER_COMPRESSION_CONFIGURATION_TYPE:
-            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_modification_command_reject->header_compression_configuration, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_modification_command_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_REJECT_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
             decoded += size;
             break;
         default:
@@ -2297,10 +2388,6 @@ int ogs_nas_5gs_decode_pdu_session_release_request(ogs_nas_5gs_message_t *messag
 
     ogs_trace("[NAS] Decode PDU_SESSION_RELEASE_REQUEST\n");
 
-    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_request->gsm_cause, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2310,28 +2397,16 @@ int ogs_nas_5gs_decode_pdu_session_release_request(ogs_nas_5gs_message_t *messag
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_BACK_OFF_TIMER_VALUE_TYPE:
-            size = ogs_nas_5gs_decode_gprs_timer_3(&pdu_session_release_request->back_off_timer_value, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_5GSM_CAUSE_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_request->gsm_cause, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_release_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_BACK_OFF_TIMER_VALUE_PRESENT;
+            pdu_session_release_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_5GSM_CAUSE_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_release_request->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_release_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_RE_ATTEMPT_INDICATOR_TYPE:
-            size = ogs_nas_5gs_decode_re_attempt_indicator(&pdu_session_release_request->re_attempt_indicator, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_RE_ATTEMPT_INDICATOR_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_congestion_re_attempt_indicator(&pdu_session_release_request->gsm_congestion_re_attempt_indicator, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REQUEST_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_PRESENT;
             decoded += size;
             break;
         default:
@@ -2351,6 +2426,10 @@ int ogs_nas_5gs_decode_pdu_session_release_reject(ogs_nas_5gs_message_t *message
 
     ogs_trace("[NAS] Decode PDU_SESSION_RELEASE_REJECT\n");
 
+    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_reject->gsm_cause, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2360,76 +2439,10 @@ int ogs_nas_5gs_decode_pdu_session_release_reject(ogs_nas_5gs_message_t *message
         decoded += size;
 
         switch(type) {
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_5GSM_CAUSE_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_reject->gsm_cause, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_5GSM_CAUSE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_SESSION_AMBR_TYPE:
-            size = ogs_nas_5gs_decode_session_ambr(&pdu_session_release_reject->session_ambr, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_SESSION_AMBR_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_RQ_TIMER_VALUE_TYPE:
-            size = ogs_nas_5gs_decode_gprs_timer(&pdu_session_release_reject->rq_timer_value, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_RQ_TIMER_VALUE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
-            size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_release_reject->always_on_pdu_session_indication, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_AUTHORIZED_QOS_RULES_TYPE:
-            size = ogs_nas_5gs_decode_qos_rules(&pdu_session_release_reject->authorized_qos_rules, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_AUTHORIZED_QOS_RULES_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_MAPPED_EPS_BEARER_CONTEXTS_TYPE:
-            size = ogs_nas_5gs_decode_mapped_eps_bearer_contexts(&pdu_session_release_reject->mapped_eps_bearer_contexts, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_MAPPED_EPS_BEARER_CONTEXTS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_TYPE:
-            size = ogs_nas_5gs_decode_qos_flow_descriptions(&pdu_session_release_reject->authorized_qos_flow_descriptions, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_AUTHORIZED_QOS_FLOW_DESCRIPTIONS_PRESENT;
-            decoded += size;
-            break;
         case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_release_reject->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_ATSSS_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_atsss_container(&pdu_session_release_reject->atsss_container, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_ATSSS_CONTAINER_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_HEADER_COMPRESSION_CONFIGURATION_TYPE:
-            size = ogs_nas_5gs_decode_header_compression_configuration(&pdu_session_release_reject->header_compression_configuration, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_HEADER_COMPRESSION_CONFIGURATION_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_release_reject->port_management_information_container, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_SERVING_PLMN_RATE_CONTROL_TYPE:
-            size = ogs_nas_5gs_decode_serving_plmn_rate_control(&pdu_session_release_reject->serving_plmn_rate_control, pkbuf);
-            ogs_assert(size >= 0);
-            pdu_session_release_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_REJECT_SERVING_PLMN_RATE_CONTROL_PRESENT;
             decoded += size;
             break;
         default:
@@ -2449,6 +2462,10 @@ int ogs_nas_5gs_decode_pdu_session_release_command(ogs_nas_5gs_message_t *messag
 
     ogs_trace("[NAS] Decode PDU_SESSION_RELEASE_COMMAND\n");
 
+    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_command->gsm_cause, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
+
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2458,16 +2475,34 @@ int ogs_nas_5gs_decode_pdu_session_release_command(ogs_nas_5gs_message_t *messag
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_BACK_OFF_TIMER_VALUE_TYPE:
+            size = ogs_nas_5gs_decode_gprs_timer_3(&pdu_session_release_command->back_off_timer_value, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_BACK_OFF_TIMER_VALUE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_EAP_MESSAGE_TYPE:
+            size = ogs_nas_5gs_decode_eap_message(&pdu_session_release_command->eap_message, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_EAP_MESSAGE_PRESENT;
+            decoded += size;
+            break;
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_congestion_re_attempt_indicator(&pdu_session_release_command->gsm_congestion_re_attempt_indicator, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_5GSM_CONGESTION_RE_ATTEMPT_INDICATOR_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_release_command->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
             decoded += size;
             break;
-        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_PORT_MANAGEMENT_INFORMATION_CONTAINER_TYPE:
-            size = ogs_nas_5gs_decode_port_management_information_container(&pdu_session_release_command->port_management_information_container, pkbuf);
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_ACCESS_TYPE_TYPE:
+            size = ogs_nas_5gs_decode_access_type(&pdu_session_release_command->access_type, pkbuf);
             ogs_assert(size >= 0);
-            pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_PORT_MANAGEMENT_INFORMATION_CONTAINER_PRESENT;
+            pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_ACCESS_TYPE_PRESENT;
             decoded += size;
             break;
         default:
@@ -2487,10 +2522,6 @@ int ogs_nas_5gs_decode_pdu_session_release_complete(ogs_nas_5gs_message_t *messa
 
     ogs_trace("[NAS] Decode PDU_SESSION_RELEASE_COMPLETE\n");
 
-    size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_complete->gsm_cause, pkbuf);
-    ogs_assert(size >= 0);
-    decoded += size;
-
     while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
@@ -2500,6 +2531,12 @@ int ogs_nas_5gs_decode_pdu_session_release_complete(ogs_nas_5gs_message_t *messa
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMPLETE_5GSM_CAUSE_TYPE:
+            size = ogs_nas_5gs_decode_5gsm_cause(&pdu_session_release_complete->gsm_cause, pkbuf);
+            ogs_assert(size >= 0);
+            pdu_session_release_complete->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMPLETE_5GSM_CAUSE_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMPLETE_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
             size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&pdu_session_release_complete->extended_protocol_configuration_options, pkbuf);
             ogs_assert(size >= 0);
@@ -2523,32 +2560,9 @@ int ogs_nas_5gs_decode_5gsm_status(ogs_nas_5gs_message_t *message, ogs_pkbuf_t *
 
     ogs_trace("[NAS] Decode 5GSM_STATUS\n");
 
-    while (pkbuf->len > 0) {
-        uint8_t *buffer = pkbuf->data;
-        uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
-
-        size = sizeof(uint8_t);
-        ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-        decoded += size;
-
-        switch(type) {
-        case OGS_NAS_5GS_5GSM_STATUS_5GSM_CAUSE_TYPE:
-            size = ogs_nas_5gs_decode_5gsm_cause(&gsm_status->gsm_cause, pkbuf);
-            ogs_assert(size >= 0);
-            gsm_status->presencemask |= OGS_NAS_5GS_5GSM_STATUS_5GSM_CAUSE_PRESENT;
-            decoded += size;
-            break;
-        case OGS_NAS_5GS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
-            size = ogs_nas_5gs_decode_extended_protocol_configuration_options(&gsm_status->extended_protocol_configuration_options, pkbuf);
-            ogs_assert(size >= 0);
-            gsm_status->presencemask |= OGS_NAS_5GS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
-            decoded += size;
-            break;
-        default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
-            break;
-        }
-    }
+    size = ogs_nas_5gs_decode_5gsm_cause(&gsm_status->gsm_cause, pkbuf);
+    ogs_assert(size >= 0);
+    decoded += size;
 
     return decoded;
 }
