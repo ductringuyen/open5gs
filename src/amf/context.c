@@ -64,7 +64,6 @@ void amf_context_init(void)
     self.gnb_addr_hash = ogs_hash_make();
     self.gnb_id_hash = ogs_hash_make();
     self.amf_ue_ngap_id_hash = ogs_hash_make();
-    self.imsi_ue_hash = ogs_hash_make();
     self.guti_ue_hash = ogs_hash_make();
     self.suci_hash = ogs_hash_make();
     self.supi_hash = ogs_hash_make();
@@ -86,8 +85,6 @@ void amf_context_final(void)
 
     ogs_assert(self.amf_ue_ngap_id_hash);
     ogs_hash_destroy(self.amf_ue_ngap_id_hash);
-    ogs_assert(self.imsi_ue_hash);
-    ogs_hash_destroy(self.imsi_ue_hash);
     ogs_assert(self.guti_ue_hash);
     ogs_hash_destroy(self.guti_ue_hash);
     ogs_assert(self.suci_hash);
@@ -1228,25 +1225,6 @@ void amf_ue_remove_all()
 
     ogs_list_for_each_safe(&self.amf_ue_list, next, amf_ue)
         amf_ue_remove(amf_ue);
-}
-
-amf_ue_t *amf_ue_find_by_imsi_bcd(char *imsi_bcd)
-{
-    uint8_t imsi[OGS_MAX_IMSI_LEN];
-    int imsi_len = 0;
-
-    ogs_assert(imsi_bcd);
-
-    ogs_bcd_to_buffer(imsi_bcd, imsi, &imsi_len);
-
-    return amf_ue_find_by_imsi(imsi, imsi_len);
-}
-
-amf_ue_t *amf_ue_find_by_imsi(uint8_t *imsi, int imsi_len)
-{
-    ogs_assert(imsi && imsi_len);
-
-    return (amf_ue_t *)ogs_hash_get(self.imsi_ue_hash, imsi, imsi_len);
 }
 
 amf_ue_t *amf_ue_find_by_guti(ogs_nas_5gs_guti_t *guti)

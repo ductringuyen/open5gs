@@ -111,7 +111,6 @@ typedef struct amf_context_s {
     ogs_hash_t      *gnb_addr_hash; /* hash table for GNB Address */
     ogs_hash_t      *gnb_id_hash;   /* hash table for GNB-ID */
     ogs_hash_t      *amf_ue_ngap_id_hash;   /* hash table for AMF-UE-NGAP-ID */
-    ogs_hash_t      *imsi_ue_hash;          /* hash table (IMSI : AMF_UE) */
     ogs_hash_t      *guti_ue_hash;          /* hash table (GUTI : AMF_UE) */
     ogs_hash_t      *suci_hash;     /* hash table (SUCI) */
     ogs_hash_t      *supi_hash;     /* hash table (SUPI) */
@@ -566,8 +565,6 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue);
 void amf_ue_remove(amf_ue_t *amf_ue);
 void amf_ue_remove_all(void);
 
-amf_ue_t *amf_ue_find_by_imsi(uint8_t *imsi, int imsi_len);
-amf_ue_t *amf_ue_find_by_imsi_bcd(char *imsi_bcd);
 amf_ue_t *amf_ue_find_by_guti(ogs_nas_5gs_guti_t *nas_guti);
 amf_ue_t *amf_ue_find_by_teid(uint32_t teid);
 amf_ue_t *amf_ue_find_by_suci(char *suci);
