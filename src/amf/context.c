@@ -1129,6 +1129,9 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
     amf_ue->t3550.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_t3550_expire, amf_ue);
     amf_ue->t3550.pkbuf = NULL;
+    amf_ue->t3555.timer = ogs_timer_add(
+            self.timer_mgr, amf_timer_t3555_expire, amf_ue);
+    amf_ue->t3555.pkbuf = NULL;
     amf_ue->t3560.timer = ogs_timer_add(
             self.timer_mgr, amf_timer_t3560_expire, amf_ue);
     amf_ue->t3560.pkbuf = NULL;
@@ -1192,6 +1195,7 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     ogs_timer_delete(amf_ue->t3513.timer);
     ogs_timer_delete(amf_ue->t3522.timer);
     ogs_timer_delete(amf_ue->t3550.timer);
+    ogs_timer_delete(amf_ue->t3555.timer);
     ogs_timer_delete(amf_ue->t3560.timer);
     ogs_timer_delete(amf_ue->t3570.timer);
 

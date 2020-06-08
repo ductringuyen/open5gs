@@ -344,6 +344,7 @@ struct amf_ue_s {
         CLEAR_AMF_UE_TIMER((__aMF)->t3513); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3522); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3550); \
+        CLEAR_AMF_UE_TIMER((__aMF)->t3555); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3560); \
         CLEAR_AMF_UE_TIMER((__aMF)->t3570); \
     } while(0);
@@ -360,7 +361,7 @@ struct amf_ue_s {
         ogs_pkbuf_t     *pkbuf;
         ogs_timer_t     *timer;
         uint32_t        retry_count;;
-    } sbi_client_wait, t3513, t3522, t3550, t3560, t3570;
+    } sbi_client_wait, t3513, t3522, t3550, t3555, t3560, t3570;
 
     /* UE Radio Capability */
     OCTET_STRING_t  ueRadioCapability;

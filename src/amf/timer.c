@@ -40,6 +40,10 @@ static amf_timer_cfg_t g_amf_timer_cfg[MAX_NUM_OF_AMF_TIMER] = {
     [AMF_TIMER_T3550] =
         { .max_count = 4, .duration = ogs_time_from_sec(6) },
 
+    /* CONFIGURATION UPDATE COMMAND sent */
+    [AMF_TIMER_T3555] =
+        { .max_count = 4, .duration = ogs_time_from_sec(6) },
+
     /* AUTHENTICATION REQUEST sent
      * SECURITY MODE COMMAND sent */
     [AMF_TIMER_T3560] =
@@ -88,6 +92,8 @@ const char *amf_timer_get_name(amf_timer_e id)
         return "AMF_TIMER_T3522";
     case AMF_TIMER_T3550:
         return "AMF_TIMER_T3550";
+    case AMF_TIMER_T3555:
+        return "AMF_TIMER_T3555";
     case AMF_TIMER_T3560:
         return "AMF_TIMER_T3560";
     case AMF_TIMER_T3570:
@@ -217,6 +223,10 @@ void amf_timer_t3522_expire(void *data)
 void amf_timer_t3550_expire(void *data)
 {
     gmm_timer_event_send(AMF_TIMER_T3550, data);
+}
+void amf_timer_t3555_expire(void *data)
+{
+    gmm_timer_event_send(AMF_TIMER_T3555, data);
 }
 void amf_timer_t3560_expire(void *data)
 {

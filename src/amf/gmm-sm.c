@@ -310,6 +310,19 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 #endif
             }
             break;
+        case AMF_TIMER_T3555:
+            if (amf_ue->t3555.retry_count >=
+                    amf_timer_cfg(AMF_TIMER_T3555)->max_count) {
+                /* Configuration update command failed */
+                ogs_warn("[%s] Configuration update failed. Stop",
+                        amf_ue->supi);
+                CLEAR_AMF_UE_TIMER(amf_ue->t3555);
+
+            } else {
+                amf_ue->t3555.retry_count++;
+                nas_5gs_send_configuration_update_command(amf_ue);
+            }
+            break;
         case AMF_TIMER_T3570:
             if (amf_ue->t3570.retry_count >=
                     amf_timer_cfg(AMF_TIMER_T3570)->max_count) {
