@@ -32,6 +32,7 @@ libtestcommon_sources = files('''
 
     gmm-build.c
     gmm-handler.c
+    gsm-build.c
     nas-path.c
     nas-security.c
 '''.split())
