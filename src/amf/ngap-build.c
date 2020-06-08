@@ -291,7 +291,7 @@ ogs_pkbuf_t *ngap_build_downlink_nas_transport(
 ogs_pkbuf_t *ngap_build_initial_context_setup_request(
             amf_ue_t *amf_ue, ogs_pkbuf_t *gmmbuf)
 {
-    int rv;
+    int i, j;
 
     NGAP_NGAP_PDU_t pdu;
     NGAP_InitiatingMessage_t *initiatingMessage = NULL;
@@ -358,7 +358,6 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
 
     GUAMI = &ie->value.choice.GUAMI;
 
-#if 0
     ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
     ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
 
@@ -388,7 +387,6 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
         NGAP_InitialContextSetupRequestIEs__value_PR_SecurityKey;
 
     SecurityKey = &ie->value.choice.SecurityKey;
-#endif
 
     ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
     ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
@@ -411,62 +409,80 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     ogs_pkbuf_free(gmmbuf);
 
     ogs_assert(amf_ue->guami);
-    ogs_asn_buffer_to_OCTET_STRING(
-            &amf_ue->guami->plmn_id,
-            OGS_PLMN_ID_LEN, &GUAMI->pLMNIdentity);
-    ogs_ngap_uint8_to_AMFRegionID(
-            ogs_amf_region_id(&amf_ue->guami->amf_id),
+    ogs_asn_buffer_to_OCTET_STRING(&amf_ue->guami->plmn_id, OGS_PLMN_ID_LEN,
+            &GUAMI->pLMNIdentity);
+    ogs_ngap_uint8_to_AMFRegionID(ogs_amf_region_id(&amf_ue->guami->amf_id),
             &GUAMI->aMFRegionID);
-    ogs_ngap_uint16_to_AMFSetID(
-            ogs_amf_set_id(&amf_ue->guami->amf_id),
+    ogs_ngap_uint16_to_AMFSetID(ogs_amf_set_id(&amf_ue->guami->amf_id),
             &GUAMI->aMFSetID);
-    ogs_ngap_uint8_to_AMFPointer(
-            ogs_amf_pointer(&amf_ue->guami->amf_id),
+    ogs_ngap_uint8_to_AMFPointer(ogs_amf_pointer(&amf_ue->guami->amf_id),
             &GUAMI->aMFPointer);
 
-#if 0
-    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
-    ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
+    for (i = 0; i < amf_self()->num_of_plmn_support; i++) {
+        if (memcmp(&amf_ue->tai.plmn_id,
+                &amf_self()->plmn_support[i].plmn_id, OGS_PLMN_ID_LEN) != 0)
+            continue;
+        for (j = 0; j < amf_self()->plmn_support[i].num_of_s_nssai; j++) {
+            NGAP_AllowedNSSAI_Item_t *NGAP_AllowedNSSAI_Item = NULL;
+            NGAP_S_NSSAI_t *s_NSSAI = NULL;
+            NGAP_SST_t *sST = NULL;
 
-    ie->id = NGAP_ProtocolIE_ID_id_UESecurityCapabilities;
-    ie->criticality = NGAP_Criticality_reject;
-    ie->value.present =
-        NGAP_InitialContextSetupRequestIEs__value_PR_UESecurityCapabilities;
+            NGAP_AllowedNSSAI_Item = (NGAP_AllowedNSSAI_Item_t *)
+                    CALLOC(1, sizeof(NGAP_AllowedNSSAI_Item_t));
+            s_NSSAI = &NGAP_AllowedNSSAI_Item->s_NSSAI;
+            sST = &s_NSSAI->sST;
 
-    UESecurityCapabilities = &ie->value.choice.UESecurityCapabilities;
+            ogs_asn_uint8_to_OCTET_STRING(
+                amf_self()->plmn_support[i].s_nssai[j].sst, sST);
+            if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
+                    OGS_S_NSSAI_NO_SD_VALUE) {
+                s_NSSAI->sD = CALLOC(1, sizeof(ogs_uint24_t));
+                ogs_asn_uint24_to_OCTET_STRING(
+                    amf_self()->plmn_support[i].s_nssai[j].sd, s_NSSAI->sD);
+            }
 
-    UESecurityCapabilities->encryptionAlgorithms.size = 2;
-    UESecurityCapabilities->encryptionAlgorithms.buf = 
-        CALLOC(UESecurityCapabilities->encryptionAlgorithms.size, 
-                    sizeof(uint8_t));
-    UESecurityCapabilities->encryptionAlgorithms.bits_unused = 0;
-    UESecurityCapabilities->encryptionAlgorithms.buf[0] = 
-        (amf_ue->ue_network_capability.eea << 1);
+            ASN_SEQUENCE_ADD(&AllowedNSSAI->list, NGAP_AllowedNSSAI_Item);
+        }
+    }
 
-    UESecurityCapabilities->integrityProtectionAlgorithms.size = 2;
-    UESecurityCapabilities->integrityProtectionAlgorithms.buf =
+    UESecurityCapabilities->nRencryptionAlgorithms.size = 2;
+    UESecurityCapabilities->nRencryptionAlgorithms.buf =
         CALLOC(UESecurityCapabilities->
-                        integrityProtectionAlgorithms.size, sizeof(uint8_t));
-    UESecurityCapabilities->integrityProtectionAlgorithms.bits_unused = 0;
-    UESecurityCapabilities->integrityProtectionAlgorithms.buf[0] =
-        (amf_ue->ue_network_capability.eia << 1);
+                    nRencryptionAlgorithms.size, sizeof(uint8_t));
+    UESecurityCapabilities->nRencryptionAlgorithms.bits_unused = 0;
+    UESecurityCapabilities->nRencryptionAlgorithms.buf[0] =
+        (amf_ue->ue_security_capability.nea << 1);
 
-    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
-    ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
+    UESecurityCapabilities->nRintegrityProtectionAlgorithms.size = 2;
+    UESecurityCapabilities->nRintegrityProtectionAlgorithms.buf =
+        CALLOC(UESecurityCapabilities->
+                    nRintegrityProtectionAlgorithms.size, sizeof(uint8_t));
+    UESecurityCapabilities->nRintegrityProtectionAlgorithms.bits_unused = 0;
+    UESecurityCapabilities->nRintegrityProtectionAlgorithms.buf[0] =
+        (amf_ue->ue_security_capability.nia << 1);
 
-    ie->id = NGAP_ProtocolIE_ID_id_SecurityKey;
-    ie->criticality = NGAP_Criticality_reject;
-    ie->value.present =
-        NGAP_InitialContextSetupRequestIEs__value_PR_SecurityKey;
+    UESecurityCapabilities->eUTRAencryptionAlgorithms.size = 2;
+    UESecurityCapabilities->eUTRAencryptionAlgorithms.buf =
+        CALLOC(UESecurityCapabilities->
+                    eUTRAencryptionAlgorithms.size, sizeof(uint8_t));
+    UESecurityCapabilities->eUTRAencryptionAlgorithms.bits_unused = 0;
+    UESecurityCapabilities->eUTRAencryptionAlgorithms.buf[0] =
+        (amf_ue->ue_security_capability.eps_ea << 1);
 
-    SecurityKey = &ie->value.choice.SecurityKey;
+    UESecurityCapabilities->eUTRAintegrityProtectionAlgorithms.size = 2;
+    UESecurityCapabilities->eUTRAintegrityProtectionAlgorithms.buf =
+        CALLOC(UESecurityCapabilities->
+                    eUTRAintegrityProtectionAlgorithms.size, sizeof(uint8_t));
+    UESecurityCapabilities->eUTRAintegrityProtectionAlgorithms.bits_unused = 0;
+    UESecurityCapabilities->eUTRAintegrityProtectionAlgorithms.buf[0] =
+        (amf_ue->ue_security_capability.eps_ia << 1);
 
     SecurityKey->size = OGS_SHA256_DIGEST_SIZE;
-    SecurityKey->buf = 
-        CALLOC(SecurityKey->size, sizeof(uint8_t));
+    SecurityKey->buf = CALLOC(SecurityKey->size, sizeof(uint8_t));
     SecurityKey->bits_unused = 0;
     memcpy(SecurityKey->buf, amf_ue->kgnb, SecurityKey->size);
 
+#if 0
     if (amf_ue->ueRadioCapability.buf && amf_ue->ueRadioCapability.size) {
         /* Set UeRadioCapability if exists */
         NGAP_UERadioCapability_t *UERadioCapability = NULL;
@@ -600,7 +616,7 @@ ogs_pkbuf_t *ngap_build_ue_context_modification_request(amf_ue_t *amf_ue)
 
         UESecurityCapabilities->encryptionAlgorithms.size = 2;
         UESecurityCapabilities->encryptionAlgorithms.buf = 
-            CALLOC(UESecurityCapabilities->encryptionAlgorithms.size, 
+            CALLOC(UESecurityCapabilities->encryptionAlgorithms.size,
                         sizeof(uint8_t));
         UESecurityCapabilities->encryptionAlgorithms.bits_unused = 0;
         UESecurityCapabilities->encryptionAlgorithms.buf[0] = 
