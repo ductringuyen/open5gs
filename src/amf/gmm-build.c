@@ -45,7 +45,11 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type = 
+#if 0
         OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED;
+#else
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED;
+#endif
     message.h.extended_protocol_discriminator =
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
 
@@ -53,6 +57,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_REGISTRATION_ACCEPT;
 
+    registration_result->length = 1;
     registration_result->value = amf_ue->nas.access_type;
 
     /* Set T3512 */
@@ -63,7 +68,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     /* Set TAI List */
     registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_TAI_LIST_PRESENT;
 
-    ogs_debug("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
+    ogs_fatal("[%s]    TAI[PLMN_ID:%06x,TAC:%d]", amf_ue->supi,
             ogs_plmn_id_hexdump(&amf_ue->tai.plmn_id), amf_ue->tai.tac.v);
     ogs_debug("[%s]    NR_CGI[PLMN_ID:%06x,CELL_ID:0x%llx]", amf_ue->supi,
             ogs_plmn_id_hexdump(&amf_ue->cgi.plmn_id),

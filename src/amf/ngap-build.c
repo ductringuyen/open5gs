@@ -267,7 +267,7 @@ ogs_pkbuf_t *ngap_build_downlink_nas_transport(
 
     ie = CALLOC(1, sizeof(NGAP_DownlinkNASTransport_IEs_t));
     ASN_SEQUENCE_ADD(&DownlinkNASTransport->protocolIEs, ie);
-    
+
     ie->id = NGAP_ProtocolIE_ID_id_NAS_PDU;
     ie->criticality = NGAP_Criticality_reject;
     ie->value.present = NGAP_DownlinkNASTransport_IEs__value_PR_NAS_PDU;
@@ -300,6 +300,7 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
     NGAP_InitialContextSetupRequestIEs_t *ie = NULL;
     NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
     NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+    NGAP_NAS_PDU_t *NAS_PDU = NULL;
 #if 0
     NGAP_UEAggregateMaximumBitrate_t *UEAggregateMaximumBitrate = NULL;
     NGAP_UESecurityCapabilities_t *UESecurityCapabilities = NULL;
@@ -349,6 +350,15 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
 
     RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
 
+    ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
+    ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_NAS_PDU;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present = NGAP_InitialContextSetupRequestIEs__value_PR_NAS_PDU;
+
+    NAS_PDU = &ie->value.choice.NAS_PDU;
+
 #if 0
     ie = CALLOC(1, sizeof(NGAP_InitialContextSetupRequestIEs_t));
     ASN_SEQUENCE_ADD(&InitialContextSetupRequest->protocolIEs, ie);
@@ -376,6 +386,11 @@ ogs_pkbuf_t *ngap_build_initial_context_setup_request(
 
     asn_uint642INTEGER(AMF_UE_NGAP_ID, ran_ue->amf_ue_ngap_id);
     *RAN_UE_NGAP_ID = ran_ue->ran_ue_ngap_id;
+
+    NAS_PDU->size = gmmbuf->len;
+    NAS_PDU->buf = CALLOC(NAS_PDU->size, sizeof(uint8_t));
+    memcpy(NAS_PDU->buf, gmmbuf->data, NAS_PDU->size);
+    ogs_pkbuf_free(gmmbuf);
 
 #if 0
     asn_uint642INTEGER(

@@ -52,7 +52,7 @@ void ogs_nas_5gs_tai_list_build(
             target0.tai[i].tac[j] = ogs_htobe24(source0->tai[i].tac[j]);
         }
 
-        size = (1 + 3 + 2 * source0->tai[i].num);
+        size = (1 + 3 + 3 * source0->tai[i].num);
         if ((target->length + size) > OGS_NAS_5GS_MAX_TAI_LIST_LEN) {
             ogs_warn("Overflow: Ignore remained TAI LIST(length:%d, size:%d)",
                     target->length, size);
@@ -73,7 +73,7 @@ void ogs_nas_5gs_tai_list_build(
         ogs_assert(source2->num < OGS_MAX_NUM_OF_TAI);
         target2.num = source2->num - 1;
 
-        size = (1 + (3 + 2) * source2->num);
+        size = (1 + (3 + 3) * source2->num);
         if ((target->length + size) > OGS_NAS_5GS_MAX_TAI_LIST_LEN) {
             ogs_warn("Overflow: Ignore remained TAI LIST(length:%d, size:%d)",
                     target->length, size);
