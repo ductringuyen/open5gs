@@ -81,7 +81,7 @@ void ngap_state_operational(ogs_fsm_t *s, amf_event_t *e)
             case NGAP_ProcedureCode_id_UplinkNASTransport:
                 ngap_handle_uplink_nas_transport(gnb, pdu);
                 break;
-            case NGAP_ProcedureCode_id_UERadioCapabilityInfoIndication :
+            case NGAP_ProcedureCode_id_UERadioCapabilityInfoIndication:
                 ngap_handle_ue_radio_capability_info_indication(gnb, pdu);
                 break;
 #if 0

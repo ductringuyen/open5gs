@@ -480,11 +480,9 @@ void ngap_handle_ue_radio_capability_info_indication(
         return;
     }
 
-    if (ran_ue->amf_ue) {
-        ogs_assert(UERadioCapability);
+    if (ran_ue->amf_ue)
         OGS_ASN_STORE_DATA(&ran_ue->amf_ue->ueRadioCapability,
                 UERadioCapability);
-    }
 }
 
 void ngap_handle_initial_context_setup_response(

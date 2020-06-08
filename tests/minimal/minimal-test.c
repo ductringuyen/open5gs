@@ -204,13 +204,11 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_PTR_NOTNULL(tc, recvbuf);
     testngap_recv(&test_ue, recvbuf);
 
-#if 0
-    /* Send UE Capability Info Indication */
-    rv = testngap_build_ue_capability_info_indication(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
+    /* Send UE Radio Capability Info Indication */
+    sendbuf = testngap_build_ue_radio_capability_info_indication(&test_ue);
+    ABTS_PTR_NOTNULL(tc, sendbuf);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
-#endif
 
     ogs_msleep(50);
 

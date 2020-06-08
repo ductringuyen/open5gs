@@ -462,3 +462,73 @@ ogs_pkbuf_t *testngap_build_initial_context_setup_failure(test_ue_t *test_ue,
 
     return ogs_ngap_encode(&pdu);
 }
+
+ogs_pkbuf_t *testngap_build_ue_radio_capability_info_indication(
+        test_ue_t *test_ue)
+{
+    NGAP_NGAP_PDU_t pdu;
+    NGAP_InitiatingMessage_t *initiatingMessage = NULL;
+    NGAP_UERadioCapabilityInfoIndication_t *UERadioCapabilityInfoIndication = NULL;
+
+    NGAP_UERadioCapabilityInfoIndicationIEs_t *ie = NULL;
+    NGAP_AMF_UE_NGAP_ID_t *AMF_UE_NGAP_ID = NULL;
+    NGAP_RAN_UE_NGAP_ID_t *RAN_UE_NGAP_ID = NULL;
+    NGAP_UERadioCapability_t *UERadioCapability = NULL;
+
+    char capability[] = "abcd";
+
+    ogs_assert(test_ue);
+
+    memset(&pdu, 0, sizeof (NGAP_NGAP_PDU_t));
+    pdu.present = NGAP_NGAP_PDU_PR_initiatingMessage;
+    pdu.choice.initiatingMessage =
+        CALLOC(1, sizeof(NGAP_InitiatingMessage_t));
+
+    initiatingMessage = pdu.choice.initiatingMessage;
+    initiatingMessage->procedureCode =
+        NGAP_ProcedureCode_id_UERadioCapabilityInfoIndication;
+    initiatingMessage->criticality = NGAP_Criticality_ignore;
+    initiatingMessage->value.present =
+        NGAP_InitiatingMessage__value_PR_UERadioCapabilityInfoIndication;
+
+    UERadioCapabilityInfoIndication =
+        &initiatingMessage->value.choice.UERadioCapabilityInfoIndication;
+
+    ie = CALLOC(1, sizeof(NGAP_UERadioCapabilityInfoIndicationIEs_t));
+    ASN_SEQUENCE_ADD(&UERadioCapabilityInfoIndication->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present =
+        NGAP_UERadioCapabilityInfoIndicationIEs__value_PR_AMF_UE_NGAP_ID;
+
+    AMF_UE_NGAP_ID = &ie->value.choice.AMF_UE_NGAP_ID;
+
+    ie = CALLOC(1, sizeof(NGAP_UERadioCapabilityInfoIndicationIEs_t));
+    ASN_SEQUENCE_ADD(&UERadioCapabilityInfoIndication->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present =
+        NGAP_UERadioCapabilityInfoIndicationIEs__value_PR_RAN_UE_NGAP_ID;
+
+    RAN_UE_NGAP_ID = &ie->value.choice.RAN_UE_NGAP_ID;
+
+    ie = CALLOC(1, sizeof(NGAP_UERadioCapabilityInfoIndicationIEs_t));
+    ASN_SEQUENCE_ADD(&UERadioCapabilityInfoIndication->protocolIEs, ie);
+
+    ie->id = NGAP_ProtocolIE_ID_id_UERadioCapability;
+    ie->criticality = NGAP_Criticality_reject;
+    ie->value.present = NGAP_UERadioCapabilityInfoIndicationIEs__value_PR_UERadioCapability;
+
+    UERadioCapability = &ie->value.choice.UERadioCapability;
+
+    asn_uint642INTEGER(AMF_UE_NGAP_ID, test_ue->amf_ue_ngap_id);
+    *RAN_UE_NGAP_ID = test_ue->ran_ue_ngap_id;
+
+    UERadioCapability->size = strlen(capability);
+    UERadioCapability->buf = CALLOC(UERadioCapability->size, sizeof(uint8_t));
+    memcpy(UERadioCapability->buf, capability, UERadioCapability->size);
+
+    return ogs_ngap_encode(&pdu);
+}
