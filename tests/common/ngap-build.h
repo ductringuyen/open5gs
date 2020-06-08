@@ -29,6 +29,8 @@ ogs_pkbuf_t *testngap_build_initial_ue_message(ogs_pkbuf_t *gmmbuf);
 ogs_pkbuf_t *testngap_build_uplink_nas_transport(
         test_ue_t *test_ue, ogs_pkbuf_t *gmmbuf);
 
+ogs_pkbuf_t *testngap_build_initial_context_setup_response(test_ue_t *test_ue);
+
 #ifdef __cplusplus
 }
 #endif

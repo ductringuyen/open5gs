@@ -199,56 +199,30 @@ static void test1_func(abts_case *tc, void *data)
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
     ogs_pkbuf_free(nasbuf);
 
-    ogs_msleep(300);
+    /* Receive Initial Context Setup Request */
+    recvbuf = testgnb_ngap_read(ngap);
+    ABTS_PTR_NOTNULL(tc, recvbuf);
+    ogs_pkbuf_free(recvbuf);
+
 #if 0
-
-    /* Send Security mode Complete */
-    rv = testngap_build_security_mode_complete(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-    rv = testgnb_ngap_send(ngap, sendbuf);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-
-    /* Receive ESM Information Request */
-    recvbuf = testgnb_ngap_read(ngap);
-    ABTS_PTR_NOTNULL(tc, recvbuf);
-    ABTS_TRUE(tc, memcmp(recvbuf->data, 
-        OGS_HEX(_esm_information_request, strlen(_security_mode_command), tmp),
-        recvbuf->len) == 0);
-    ogs_pkbuf_free(recvbuf);
-
-    /* Send ESM Information Response */
-    rv = testngap_build_esm_information_response(&sendbuf, msgindex);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-    rv = testgnb_ngap_send(ngap, sendbuf);
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
-
-    /* Receive Initial Context Setup Request + 
-     * Attach Accept + 
-     * Activate Default Bearer Context Request */
-    recvbuf = testgnb_ngap_read(ngap);
-    ABTS_PTR_NOTNULL(tc, recvbuf);
-    OGS_HEX(_initial_context_setup_request,
-            strlen(_initial_context_setup_request), tmp);
-    ABTS_TRUE(tc, memcmp(recvbuf->data, tmp, 62) == 0);
-    ABTS_TRUE(tc, memcmp(recvbuf->data+66, tmp+66, 78) == 0);
-    ABTS_TRUE(tc, memcmp(recvbuf->data+148, tmp+148, 50) == 0);
-    ogs_pkbuf_free(recvbuf);
-
     /* Send UE Capability Info Indication */
     rv = testngap_build_ue_capability_info_indication(&sendbuf, msgindex);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
+#endif
 
     ogs_msleep(50);
 
     /* Send Initial Context Setup Response */
-    rv = testngap_build_initial_context_setup_response(&sendbuf,
-            27263233, 24, 5, 1, "127.0.0.5");
-    ABTS_INT_EQUAL(tc, OGS_OK, rv);
+    sendbuf = testngap_build_initial_context_setup_response(&test_ue);
+    ABTS_PTR_NOTNULL(tc, sendbuf);
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
+    ogs_msleep(300);
+
+#if 0
     /* Send Attach Complete + Activate default EPS bearer cotext accept */
     rv = testngap_build_attach_complete(&sendbuf, msgindex);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);

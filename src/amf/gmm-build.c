@@ -44,11 +44,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type = 
-#if 0
         OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED;
-#else
-        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED;
-#endif
     message.h.extended_protocol_discriminator =
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
 
