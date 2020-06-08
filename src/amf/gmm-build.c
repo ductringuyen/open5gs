@@ -37,9 +37,6 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     ogs_nas_nssai_t *allowed_nssai = &registration_accept->allowed_nssai;
     int i, j, num_of_nssai;
     ogs_nas_gprs_timer_3_t *t3512_value = &registration_accept->t3512_value;
-#if 0
-    ogs_nas_gprs_timer_2_t *t3502_value = &registration_accept->t3502_value;
-#endif
 
     ogs_assert(amf_ue);
 
@@ -147,6 +144,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
 #if 0
     /* Set T3502 */
     registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_T3502_VALUE_PRESENT;
+    registration_accept->t3502_value.length = 1;
     registration_accept->t3502_value.unit = OGS_NAS_GRPS_TIMER_UNIT_MULTIPLES_OF_1_MM;
     registration_accept->t3502_value.value = 12;
 #endif

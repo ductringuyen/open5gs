@@ -333,7 +333,8 @@ ED2(uint8_t unit:3;,
  * O TLV 3 */
 typedef struct ogs_nas_gprs_timer_2_s {
     uint8_t length;
-    uint8_t gprs_timer_2_value;
+ED2(uint8_t unit:3;,
+    uint8_t value:5;)
 } __attribute__ ((packed)) ogs_nas_gprs_timer_2_t;
 
 /* 9.9.3.16B GPRS timer 3
