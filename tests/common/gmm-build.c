@@ -161,3 +161,25 @@ ogs_pkbuf_t *testgmm_build_security_mode_complete(
 
     return test_nas_5gs_security_encode(test_ue, &message);
 }
+
+ogs_pkbuf_t *testgmm_build_registration_complete(test_ue_t *test_ue)
+{
+    ogs_nas_5gs_message_t message;
+    ogs_pkbuf_t *pkbuf = NULL;
+    ogs_nas_5gs_registration_accept_t *registration_accept =
+            &message.gmm.registration_accept;
+
+    ogs_assert(test_ue);
+
+    memset(&message, 0, sizeof(message));
+    message.h.security_header_type =
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT;
+    message.h.extended_protocol_discriminator =
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+
+    message.gmm.h.extended_protocol_discriminator =
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+    message.gmm.h.message_type = OGS_NAS_5GS_REGISTRATION_COMPLETE;
+
+    return test_nas_5gs_security_encode(test_ue, &message);
+}

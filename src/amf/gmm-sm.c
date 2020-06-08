@@ -982,6 +982,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         message = e->nas.message;
         ogs_assert(message);
 
+        ogs_fatal("asdfkljasdfasdf");
 #if 0
         switch (message->gmm.h.message_type) {
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:

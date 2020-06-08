@@ -218,6 +218,16 @@ static void test1_func(abts_case *tc, void *data)
     rv = testgnb_ngap_send(ngap, sendbuf);
     ABTS_INT_EQUAL(tc, OGS_OK, rv);
 
+    /* Send Registration Complete */
+    gmmbuf = testgmm_build_registration_complete(&test_ue);
+    ABTS_PTR_NOTNULL(tc, gmmbuf);
+    sendbuf = testngap_build_uplink_nas_transport(&test_ue, gmmbuf);
+    ABTS_PTR_NOTNULL(tc, sendbuf);
+    rv = testgnb_ngap_send(ngap, sendbuf);
+    ABTS_INT_EQUAL(tc, OGS_OK, rv);
+
+    ogs_msleep(50);
+
     ogs_msleep(300);
 
 #if 0
