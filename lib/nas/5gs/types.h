@@ -374,6 +374,8 @@ typedef struct ogs_nas_ciphering_key_data_s {
 
 /* 9.11.3.18D Control plane service type
  * M V 1/2 */
+#define OGS_NAS_5GS_CONTROL_PLANE_SERVICE_TYPE_MO 0
+#define OGS_NAS_5GS_CONTROL_PLANE_SERVICE_TYPE_MT 1
 typedef struct ogs_nas_control_plane_service_type_s {
 ED3(uint8_t type:4;,
     uint8_t spare:1;,

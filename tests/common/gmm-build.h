@@ -30,6 +30,7 @@ ogs_pkbuf_t *testgmm_build_authentication_response(test_ue_t *test_ue);
 ogs_pkbuf_t *testgmm_build_security_mode_complete(
         test_ue_t *test_ue, ogs_pkbuf_t *nasbuf);
 ogs_pkbuf_t *testgmm_build_registration_complete(test_ue_t *test_ue);
+ogs_pkbuf_t *testgmm_build_configuration_update_complete(test_ue_t *test_ue);
 
 #ifdef __cplusplus
 }
