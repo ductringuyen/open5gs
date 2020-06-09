@@ -287,7 +287,6 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
             curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
 
             if (request->http.gsmbuf) {
-                struct curl_slist *slist = NULL;
                 part = curl_mime_addpart(conn->mime);
                 ogs_assert(part);
                 curl_mime_data(part,
@@ -297,7 +296,7 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
                 conn->mime_header_list =
                         curl_slist_append(conn->mime_header_list,
                         "Content-Id: n1msg");
-                curl_mime_headers(part, slist, 1);
+                curl_mime_headers(part, conn->mime_header_list, 1);
                 curl_mime_type(part, OGS_SBI_CONTENT_5GNAS_TYPE);
             }
         }
