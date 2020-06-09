@@ -136,9 +136,13 @@ extern "C" {
 #define OGS_SBI_CONTENT_PATCH_TYPE                  \
         "application/json-patch+json"
 #define OGS_SBI_CONTENT_3GPPHAL_TYPE                "application/3gppHal+json"
+
 #define OGS_SBI_CONTENT_MULTIPART_TYPE              "multipart/related"
 #define OGS_SBI_CONTENT_5GNAS_TYPE                  "application/vnd.3gpp.5gnas"
 #define OGS_SBI_CONTENT_NGAP_TYPE                   "application/vnd.3gpp.ngap"
+
+#define OGS_SBI_CONTENT_ID                          "Content-Id"
+#define OGS_SBI_MULTIPART_5GSM_ID                   "nas-5gsm"
 
 typedef struct ogs_sbi_header_s {
     char *method;
@@ -213,10 +217,7 @@ typedef struct ogs_sbi_http_message_s {
     char *content;
     size_t content_length;
 
-    struct {
-        char *content_id;
-        ogs_pkbuf_t *buf;
-    } gsm;
+    ogs_pkbuf_t *gsmbuf;
 } ogs_sbi_http_message_t;
 
 typedef struct ogs_sbi_request_s {

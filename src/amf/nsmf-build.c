@@ -76,7 +76,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     SMContextCreateData.sm_context_status_uri =
         ogs_sbi_server_uri(server, &header);
 
-    n1_sm_msg.content_id = (char *)"n1msg";
+    n1_sm_msg.content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
     SMContextCreateData.n1_sm_msg = &n1_sm_msg;
 
     sbi_message.SMContextCreateData = &SMContextCreateData;

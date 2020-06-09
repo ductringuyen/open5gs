@@ -208,8 +208,8 @@ static void http_message_free(ogs_sbi_http_message_t *http)
     if (http->content)
         ogs_free(http->content);
 
-    if (http->gsm.buf)
-        ogs_pkbuf_free(http->gsm.buf);
+    if (http->gsmbuf)
+        ogs_pkbuf_free(http->gsmbuf);
 }
 
 ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
@@ -267,13 +267,13 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     /* HTTP Message */
     request->http.content = ogs_sbi_build_content(message);
     if (message->gsmbuf)
-        request->http.gsm.buf = ogs_pkbuf_copy(message->gsmbuf);
+        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
 
     if (message->http.content_type) {
         ogs_sbi_header_set(request->http.headers,
                 OGS_SBI_CONTENT_TYPE, message->http.content_type);
     } else {
-        if (request->http.gsm.buf) {
+        if (request->http.gsmbuf) {
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
         } else if (request->http.content) {
@@ -292,7 +292,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
                 OGS_SBI_CONTENT_PROBLEM_TYPE);
             break;
         DEFAULT
-            if (request->http.gsm.buf)
+            if (request->http.gsmbuf)
                 ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
                     OGS_SBI_CONTENT_MULTIPART_TYPE ","
                             OGS_SBI_CONTENT_PROBLEM_TYPE);
