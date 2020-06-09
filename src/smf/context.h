@@ -88,22 +88,6 @@ typedef struct smf_context_s {
     uint16_t        mtu;            /* MTU to advertise in PCO */
 
     ogs_list_t      sess_list;
-
-#define SMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
-    do { \
-        ogs_assert(_nFInstance); \
-        if ((_nFInstance)->reference_count == 1) { \
-            ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
-            smf_nf_fsm_fini((_nFInstance)); \
-        } else { \
-            /* There is an assocation with other context */ \
-            ogs_info("[%s:%d] (%s) NF suspended", \
-                    _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
-            OGS_FSM_TRAN(&_nFInstance->sm, smf_nf_state_de_registered); \
-            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
-        } \
-        ogs_sbi_nf_instance_remove(_nFInstance); \
-    } while(0)
 } smf_context_t;
 
 typedef struct smf_sess_s {
@@ -149,6 +133,31 @@ typedef struct smf_sess_s {
     /* Related Context */
     ogs_gtp_node_t  *gnode;
     ogs_pfcp_node_t *pfcp_node;
+
+    struct {
+        OpenAPI_nf_type_e nf_type;
+        ogs_sbi_request_t *request;
+        ogs_timer_t *client_wait_timer;
+    } sbi;
+
+#define SMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
+    do { \
+        ogs_assert(_nFInstance); \
+        if ((_nFInstance)->reference_count == 1) { \
+            ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
+            smf_nf_fsm_fini((_nFInstance)); \
+        } else { \
+            /* There is an assocation with other context */ \
+            ogs_info("[%s:%d] (%s) NF suspended", \
+                    _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
+            OGS_FSM_TRAN(&_nFInstance->sm, smf_nf_state_de_registered); \
+            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
+        } \
+        ogs_sbi_nf_instance_remove(_nFInstance); \
+    } while(0)
+
+    ogs_sbi_nf_types_t nf_types;
+    ogs_sbi_session_t *session;
 } smf_sess_t;
 
 #define SMF_BEARER(pfcp_sess) ogs_container_of(pfcp_sess, smf_bearer_t, pfcp)

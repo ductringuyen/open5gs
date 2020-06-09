@@ -639,6 +639,10 @@ smf_sess_t *smf_sess_add(
     ogs_list_for_each(&bearer->pfcp.pdr_list, pdr)
         pdr->precedence = 0xffffffff;
 
+    /* Setup SBI */
+    sess->sbi.client_wait_timer = ogs_timer_add(
+            self.timer_mgr, smf_timer_sbi_client_wait_expire, sess);
+
     ogs_list_add(&self.sess_list, sess);
     
     stats_add_session();
@@ -653,6 +657,8 @@ int smf_sess_remove(smf_sess_t *sess)
     ogs_assert(sess);
 
     ogs_list_remove(&self.sess_list, sess);
+
+    ogs_timer_delete(sess->sbi.client_wait_timer);
 
     OGS_TLV_CLEAR_DATA(&sess->ue_pco);
     OGS_TLV_CLEAR_DATA(&sess->user_location_information);

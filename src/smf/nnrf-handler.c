@@ -217,12 +217,19 @@ bool smf_nnrf_handle_nf_status_notify(
     return true;
 }
 
-void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
+void smf_nnrf_handle_nf_discover(
+        smf_sess_t *sess, ogs_sbi_message_t *message)
 {
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_session_t *session = NULL;
+
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
     bool handled;
 
+    ogs_assert(sess);
+    session = sess->session;
+    ogs_assert(session);
     ogs_assert(message);
 
     SearchResult = message->SearchResult;
@@ -233,7 +240,6 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
 
     OpenAPI_list_for_each(SearchResult->nf_instances, node) {
         OpenAPI_nf_profile_t *NFProfile = NULL;
-        ogs_sbi_nf_instance_t *nf_instance = NULL;
 
         if (!node->data) continue;
 
@@ -245,6 +251,7 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             ogs_assert(nf_instance);
 
             smf_nf_fsm_init(nf_instance);
+
             ogs_info("[%s] (NF-discover) NF registered", nf_instance->id);
         } else {
             OGS_FSM_TRAN(&nf_instance->sm, smf_nf_state_registered);
@@ -258,7 +265,7 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
             handled = ogs_sbi_nnrf_handle_nf_profile(
                         nf_instance, NFProfile, NULL, NULL);
             if (!handled) {
-                ogs_error("[%s] ogs_sbi_nnrf_handle_nf_profile() failed",
+                ogs_error("ogs_sbi_nnrf_handle_nf_profile() failed [%s]",
                         nf_instance->id);
                 SMF_NF_INSTANCE_CLEAR("NRF-discover", nf_instance);
                 continue;
@@ -273,15 +280,10 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
 
             smf_sbi_setup_client_callback(nf_instance);
 
-#if 0
             if (!OGS_SBI_NF_INSTANCE_GET(
-                        amf_ue->nf_types, nf_instance->nf_type))
-                ogs_sbi_nf_types_associate(amf_ue->nf_types,
-                        nf_instance->nf_type, amf_nf_state_registered);
-#else
-            ogs_assert_if_reached(); /* TODO implement */
-#endif
-
+                        sess->nf_types, nf_instance->nf_type))
+                ogs_sbi_nf_types_associate(sess->nf_types,
+                        nf_instance->nf_type, smf_nf_state_registered);
 
             /* TIME : Update validity from NRF */
             if (SearchResult->validity_period) {
@@ -297,5 +299,19 @@ void smf_nnrf_handle_nf_discover(ogs_sbi_message_t *message)
 
             ogs_info("[%s] (NF-discover) NF Profile updated", nf_instance->id);
         }
+    }
+
+    ogs_assert(sess->sbi.nf_type);
+    nf_instance = OGS_SBI_NF_INSTANCE_GET(
+            sess->nf_types, sess->sbi.nf_type);
+    if (!nf_instance) {
+        ogs_error("[%s] (NF discover) No [%s]", sess->imsi_bcd,
+                OpenAPI_nf_type_ToString(sess->sbi.nf_type));
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                "(NF discover) No NF", sess->imsi_bcd);
+        smf_sess_remove(sess);
+    } else {
+        smf_sbi_send(sess, nf_instance);
     }
 }

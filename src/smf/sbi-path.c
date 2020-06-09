@@ -114,3 +114,87 @@ void smf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance)
             client->cb = client_cb;
     }
 }
+
+static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(smf_sess_t *sess)
+{
+    ogs_sbi_session_t *session = NULL;
+    bool nrf = true;
+    bool nf = true;
+
+    ogs_assert(sess);
+    session = sess->session;
+    ogs_assert(session);
+    ogs_assert(sess->sbi.nf_type);
+
+    if (!OGS_SBI_NF_INSTANCE_GET(sess->nf_types, OpenAPI_nf_type_NRF))
+        nrf = ogs_sbi_nf_types_associate(sess->nf_types,
+                OpenAPI_nf_type_NRF, smf_nf_state_registered);
+    if (!OGS_SBI_NF_INSTANCE_GET(sess->nf_types,
+                sess->sbi.nf_type))
+        nf = ogs_sbi_nf_types_associate(sess->nf_types,
+                sess->sbi.nf_type, smf_nf_state_registered);
+
+    if (nrf == false && nf == false) {
+        ogs_error("[%s] Cannot discover [%s]", sess->imsi_bcd,
+                OpenAPI_nf_type_ToString(sess->sbi.nf_type));
+        ogs_sbi_server_send_error(session,
+                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE, NULL,
+                "Cannot discover", sess->imsi_bcd);
+        return NULL;
+    }
+
+    if (nf == false) {
+        ogs_warn("[%s] Try to discover [%s]", sess->imsi_bcd,
+                OpenAPI_nf_type_ToString(sess->sbi.nf_type));
+        ogs_timer_start(sess->sbi.client_wait_timer,
+                smf_timer_cfg(SMF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+        ogs_nnrf_disc_send_nf_discover(
+            sess->nf_types[OpenAPI_nf_type_NRF].nf_instance,
+            sess->sbi.nf_type, OpenAPI_nf_type_SMF, sess);
+
+        return NULL;
+    }
+
+    return sess->nf_types[sess->sbi.nf_type].nf_instance;
+}
+
+void smf_sbi_send(smf_sess_t *sess, ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(sess);
+    request = sess->sbi.request;
+    ogs_assert(request);
+
+    ogs_assert(nf_instance);
+
+    ogs_timer_start(sess->sbi.client_wait_timer,
+            smf_timer_cfg(SMF_TIMER_SBI_CLIENT_WAIT)->duration);
+
+    ogs_sbi_client_send_request_to_nf_instance(
+            nf_instance, sess->sbi.request, sess);
+}
+
+void smf_sbi_discover_and_send(
+        OpenAPI_nf_type_e nf_type, smf_sess_t *sess, void *data,
+        ogs_sbi_request_t *(*build)(smf_sess_t *sess, void *data))
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(sess);
+    ogs_assert(nf_type);
+    ogs_assert(build);
+
+    sess->sbi.nf_type = nf_type;
+    if (sess->sbi.request)
+        ogs_sbi_request_free(sess->sbi.request);
+    sess->sbi.request = (*build)(sess, data);
+
+    if (!nf_instance)
+        nf_instance = find_or_discover_nf_instance(sess);
+
+    if (!nf_instance) return;
+
+    return smf_sbi_send(sess, nf_instance);
+}

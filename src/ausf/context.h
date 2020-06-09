@@ -93,7 +93,6 @@ struct ausf_ue_s {
     } while(0)
 
     ogs_sbi_nf_types_t nf_types;
-
     ogs_sbi_session_t *session;
 };
 
