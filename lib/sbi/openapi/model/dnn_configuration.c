@@ -119,7 +119,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         goto end;
     }
 
-    if (dnn_configuration->iwk_eps_ind >= 0) {
+    if (dnn_configuration->iwk_eps_ind) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", dnn_configuration->iwk_eps_ind) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [iwk_eps_ind]");
             goto end;
@@ -199,7 +199,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->invoke_nef_selection >= 0) {
+    if (dnn_configuration->invoke_nef_selection) {
         if (cJSON_AddBoolToObject(item, "invokeNefSelection", dnn_configuration->invoke_nef_selection) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [invoke_nef_selection]");
             goto end;
@@ -226,7 +226,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->redundant_session_allowed >= 0) {
+    if (dnn_configuration->redundant_session_allowed) {
         if (cJSON_AddBoolToObject(item, "redundantSessionAllowed", dnn_configuration->redundant_session_allowed) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [redundant_session_allowed]");
             goto end;
@@ -286,7 +286,7 @@ cJSON *OpenAPI_dnn_configuration_convertToJSON(OpenAPI_dnn_configuration_t *dnn_
         }
     }
 
-    if (dnn_configuration->atsss_allowed >= 0) {
+    if (dnn_configuration->atsss_allowed) {
         if (cJSON_AddBoolToObject(item, "atsssAllowed", dnn_configuration->atsss_allowed) == NULL) {
             ogs_error("OpenAPI_dnn_configuration_convertToJSON() failed [atsss_allowed]");
             goto end;
@@ -492,21 +492,21 @@ OpenAPI_dnn_configuration_t *OpenAPI_dnn_configuration_parseFromJSON(cJSON *dnn_
     dnn_configuration_local_var = OpenAPI_dnn_configuration_create (
         pdu_session_types_local_nonprim,
         ssc_modes_local_nonprim,
-        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
+        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
         _5g_qos_profile ? _5g_qos_profile_local_nonprim : NULL,
         session_ambr ? session_ambr_local_nonprim : NULL,
         _3gpp_charging_characteristics ? ogs_strdup(_3gpp_charging_characteristics->valuestring) : NULL,
         static_ip_address ? static_ip_addressList : NULL,
         up_security ? up_security_local_nonprim : NULL,
         pdu_session_continuity_ind ? pdu_session_continuity_indVariable : 0,
-        invoke_nef_selection ? invoke_nef_selection->valueint : -1,
+        invoke_nef_selection ? invoke_nef_selection->valueint : 0,
         nidd_nef_id ? ogs_strdup(nidd_nef_id->valuestring) : NULL,
         nidd_info ? nidd_info_local_nonprim : NULL,
-        redundant_session_allowed ? redundant_session_allowed->valueint : -1,
+        redundant_session_allowed ? redundant_session_allowed->valueint : 0,
         acs_info ? acs_info_local_nonprim : NULL,
         ipv4_frame_route_list ? ipv4_frame_route_listList : NULL,
         ipv6_frame_route_list ? ipv6_frame_route_listList : NULL,
-        atsss_allowed ? atsss_allowed->valueint : -1
+        atsss_allowed ? atsss_allowed->valueint : 0
         );
 
     return dnn_configuration_local_var;

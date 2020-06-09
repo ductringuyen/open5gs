@@ -38,14 +38,14 @@ cJSON *OpenAPI_atsss_capability_convertToJSON(OpenAPI_atsss_capability_t *atsss_
     }
 
     item = cJSON_CreateObject();
-    if (atsss_capability->atsss_ll >= 0) {
+    if (atsss_capability->atsss_ll) {
         if (cJSON_AddBoolToObject(item, "atsssLL", atsss_capability->atsss_ll) == NULL) {
             ogs_error("OpenAPI_atsss_capability_convertToJSON() failed [atsss_ll]");
             goto end;
         }
     }
 
-    if (atsss_capability->mptcp >= 0) {
+    if (atsss_capability->mptcp) {
         if (cJSON_AddBoolToObject(item, "mptcp", atsss_capability->mptcp) == NULL) {
             ogs_error("OpenAPI_atsss_capability_convertToJSON() failed [mptcp]");
             goto end;
@@ -78,8 +78,8 @@ OpenAPI_atsss_capability_t *OpenAPI_atsss_capability_parseFromJSON(cJSON *atsss_
     }
 
     atsss_capability_local_var = OpenAPI_atsss_capability_create (
-        atsss_ll ? atsss_ll->valueint : -1,
-        mptcp ? mptcp->valueint : -1
+        atsss_ll ? atsss_ll->valueint : 0,
+        mptcp ? mptcp->valueint : 0
         );
 
     return atsss_capability_local_var;

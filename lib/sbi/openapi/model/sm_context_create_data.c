@@ -236,7 +236,7 @@ cJSON *OpenAPI_sm_context_create_data_convertToJSON(OpenAPI_sm_context_create_da
         }
     }
 
-    if (sm_context_create_data->unauthenticated_supi >= 0) {
+    if (sm_context_create_data->unauthenticated_supi) {
         if (cJSON_AddBoolToObject(item, "unauthenticatedSupi", sm_context_create_data->unauthenticated_supi) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [unauthenticated_supi]");
             goto end;
@@ -642,7 +642,7 @@ cJSON *OpenAPI_sm_context_create_data_convertToJSON(OpenAPI_sm_context_create_da
         }
     }
 
-    if (sm_context_create_data->indirect_forwarding_flag >= 0) {
+    if (sm_context_create_data->indirect_forwarding_flag) {
         if (cJSON_AddBoolToObject(item, "indirectForwardingFlag", sm_context_create_data->indirect_forwarding_flag) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [indirect_forwarding_flag]");
             goto end;
@@ -669,35 +669,35 @@ cJSON *OpenAPI_sm_context_create_data_convertToJSON(OpenAPI_sm_context_create_da
         }
     }
 
-    if (sm_context_create_data->cp_ciot_enabled >= 0) {
+    if (sm_context_create_data->cp_ciot_enabled) {
         if (cJSON_AddBoolToObject(item, "cpCiotEnabled", sm_context_create_data->cp_ciot_enabled) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [cp_ciot_enabled]");
             goto end;
         }
     }
 
-    if (sm_context_create_data->cp_only_ind >= 0) {
+    if (sm_context_create_data->cp_only_ind) {
         if (cJSON_AddBoolToObject(item, "cpOnlyInd", sm_context_create_data->cp_only_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [cp_only_ind]");
             goto end;
         }
     }
 
-    if (sm_context_create_data->invoke_nef >= 0) {
+    if (sm_context_create_data->invoke_nef) {
         if (cJSON_AddBoolToObject(item, "invokeNef", sm_context_create_data->invoke_nef) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [invoke_nef]");
             goto end;
         }
     }
 
-    if (sm_context_create_data->ma_request_ind >= 0) {
+    if (sm_context_create_data->ma_request_ind) {
         if (cJSON_AddBoolToObject(item, "maRequestInd", sm_context_create_data->ma_request_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [ma_request_ind]");
             goto end;
         }
     }
 
-    if (sm_context_create_data->ma_nw_upgrade_ind >= 0) {
+    if (sm_context_create_data->ma_nw_upgrade_ind) {
         if (cJSON_AddBoolToObject(item, "maNwUpgradeInd", sm_context_create_data->ma_nw_upgrade_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [ma_nw_upgrade_ind]");
             goto end;
@@ -802,14 +802,14 @@ cJSON *OpenAPI_sm_context_create_data_convertToJSON(OpenAPI_sm_context_create_da
         }
     }
 
-    if (sm_context_create_data->extended_nas_sm_timer_ind >= 0) {
+    if (sm_context_create_data->extended_nas_sm_timer_ind) {
         if (cJSON_AddBoolToObject(item, "extendedNasSmTimerInd", sm_context_create_data->extended_nas_sm_timer_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [extended_nas_sm_timer_ind]");
             goto end;
         }
     }
 
-    if (sm_context_create_data->dl_data_waiting_ind >= 0) {
+    if (sm_context_create_data->dl_data_waiting_ind) {
         if (cJSON_AddBoolToObject(item, "dlDataWaitingInd", sm_context_create_data->dl_data_waiting_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [dl_data_waiting_ind]");
             goto end;
@@ -829,7 +829,7 @@ cJSON *OpenAPI_sm_context_create_data_convertToJSON(OpenAPI_sm_context_create_da
         }
     }
 
-    if (sm_context_create_data->smf_transfer_ind >= 0) {
+    if (sm_context_create_data->smf_transfer_ind) {
         if (cJSON_AddBoolToObject(item, "smfTransferInd", sm_context_create_data->smf_transfer_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_create_data_convertToJSON() failed [smf_transfer_ind]");
             goto end;
@@ -1507,7 +1507,7 @@ OpenAPI_sm_context_create_data_t *OpenAPI_sm_context_create_data_parseFromJSON(c
 
     sm_context_create_data_local_var = OpenAPI_sm_context_create_data_create (
         supi ? ogs_strdup(supi->valuestring) : NULL,
-        unauthenticated_supi ? unauthenticated_supi->valueint : -1,
+        unauthenticated_supi ? unauthenticated_supi->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         gpsi ? ogs_strdup(gpsi->valuestring) : NULL,
         pdu_session_id ? pdu_session_id->valuedouble : 0,
@@ -1547,14 +1547,14 @@ OpenAPI_sm_context_create_data_t *OpenAPI_sm_context_create_data_parseFromJSON(c
         udm_group_id ? ogs_strdup(udm_group_id->valuestring) : NULL,
         routing_indicator ? ogs_strdup(routing_indicator->valuestring) : NULL,
         eps_interworking_ind ? eps_interworking_ind_local_nonprim : NULL,
-        indirect_forwarding_flag ? indirect_forwarding_flag->valueint : -1,
+        indirect_forwarding_flag ? indirect_forwarding_flag->valueint : 0,
         target_id ? target_id_local_nonprim : NULL,
         eps_bearer_ctx_status ? ogs_strdup(eps_bearer_ctx_status->valuestring) : NULL,
-        cp_ciot_enabled ? cp_ciot_enabled->valueint : -1,
-        cp_only_ind ? cp_only_ind->valueint : -1,
-        invoke_nef ? invoke_nef->valueint : -1,
-        ma_request_ind ? ma_request_ind->valueint : -1,
-        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : -1,
+        cp_ciot_enabled ? cp_ciot_enabled->valueint : 0,
+        cp_only_ind ? cp_only_ind->valueint : 0,
+        invoke_nef ? invoke_nef->valueint : 0,
+        ma_request_ind ? ma_request_ind->valueint : 0,
+        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : 0,
         n2_sm_info ? n2_sm_info_local_nonprim : NULL,
         n2_sm_info_type ? n2_sm_info_type_local_nonprim : NULL,
         n2_sm_info_ext1 ? n2_sm_info_ext1_local_nonprim : NULL,
@@ -1563,10 +1563,10 @@ OpenAPI_sm_context_create_data_t *OpenAPI_sm_context_create_data_parseFromJSON(c
         up_cnx_state ? up_cnx_state_local_nonprim : NULL,
         small_data_rate_status ? small_data_rate_status_local_nonprim : NULL,
         apn_rate_status ? apn_rate_status_local_nonprim : NULL,
-        extended_nas_sm_timer_ind ? extended_nas_sm_timer_ind->valueint : -1,
-        dl_data_waiting_ind ? dl_data_waiting_ind->valueint : -1,
+        extended_nas_sm_timer_ind ? extended_nas_sm_timer_ind->valueint : 0,
+        dl_data_waiting_ind ? dl_data_waiting_ind->valueint : 0,
         ddn_failure_subs ? ddn_failure_subs_local_nonprim : NULL,
-        smf_transfer_ind ? smf_transfer_ind->valueint : -1,
+        smf_transfer_ind ? smf_transfer_ind->valueint : 0,
         old_smf_id ? ogs_strdup(old_smf_id->valuestring) : NULL,
         old_sm_context_ref ? ogs_strdup(old_sm_context_ref->valuestring) : NULL,
         w_agf_info ? w_agf_info_local_nonprim : NULL,

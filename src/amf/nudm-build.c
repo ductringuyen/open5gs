@@ -48,13 +48,6 @@ ogs_sbi_request_t *amf_nudm_uecm_build_registration(
 
     memset(&Amf3GppAccessRegistration, 0, sizeof(Amf3GppAccessRegistration));
 
-    /* Disable boolean type */
-    Amf3GppAccessRegistration.purge_flag = -1;
-    Amf3GppAccessRegistration.initial_registration_ind = -1;
-    Amf3GppAccessRegistration.dr_flag = -1;
-    Amf3GppAccessRegistration.urrp_indicator = -1;
-    Amf3GppAccessRegistration.ue_srvcc_capability = -1;
-
     Amf3GppAccessRegistration.amf_instance_id = ogs_sbi_self()->nf_instance_id;
 
     server = ogs_list_first(&ogs_sbi_self()->server_list);

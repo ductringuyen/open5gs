@@ -89,7 +89,7 @@ cJSON *OpenAPI_eutra_location_convertToJSON(OpenAPI_eutra_location_t *eutra_loca
         goto end;
     }
 
-    if (eutra_location->ignore_ecgi >= 0) {
+    if (eutra_location->ignore_ecgi) {
         if (cJSON_AddBoolToObject(item, "ignoreEcgi", eutra_location->ignore_ecgi) == NULL) {
             ogs_error("OpenAPI_eutra_location_convertToJSON() failed [ignore_ecgi]");
             goto end;
@@ -239,7 +239,7 @@ OpenAPI_eutra_location_t *OpenAPI_eutra_location_parseFromJSON(cJSON *eutra_loca
     eutra_location_local_var = OpenAPI_eutra_location_create (
         tai_local_nonprim,
         ecgi_local_nonprim,
-        ignore_ecgi ? ignore_ecgi->valueint : -1,
+        ignore_ecgi ? ignore_ecgi->valueint : 0,
         age_of_location_information ? age_of_location_information->valuedouble : 0,
         ue_location_timestamp ? ogs_strdup(ue_location_timestamp->valuestring) : NULL,
         geographical_information ? ogs_strdup(geographical_information->valuestring) : NULL,

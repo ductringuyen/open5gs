@@ -336,7 +336,7 @@ cJSON *OpenAPI_hsmf_update_data_convertToJSON(OpenAPI_hsmf_update_data_t *hsmf_u
         }
     }
 
-    if (hsmf_update_data->pause_charging >= 0) {
+    if (hsmf_update_data->pause_charging) {
         if (cJSON_AddBoolToObject(item, "pauseCharging", hsmf_update_data->pause_charging) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [pause_charging]");
             goto end;
@@ -452,7 +452,7 @@ cJSON *OpenAPI_hsmf_update_data_convertToJSON(OpenAPI_hsmf_update_data_t *hsmf_u
         }
     }
 
-    if (hsmf_update_data->ho_preparation_indication >= 0) {
+    if (hsmf_update_data->ho_preparation_indication) {
         if (cJSON_AddBoolToObject(item, "hoPreparationIndication", hsmf_update_data->ho_preparation_indication) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [ho_preparation_indication]");
             goto end;
@@ -508,7 +508,7 @@ cJSON *OpenAPI_hsmf_update_data_convertToJSON(OpenAPI_hsmf_update_data_t *hsmf_u
         }
     }
 
-    if (hsmf_update_data->always_on_requested >= 0) {
+    if (hsmf_update_data->always_on_requested) {
         if (cJSON_AddBoolToObject(item, "alwaysOnRequested", hsmf_update_data->always_on_requested) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [always_on_requested]");
             goto end;
@@ -568,7 +568,7 @@ cJSON *OpenAPI_hsmf_update_data_convertToJSON(OpenAPI_hsmf_update_data_t *hsmf_u
         }
     }
 
-    if (hsmf_update_data->an_type_can_be_changed >= 0) {
+    if (hsmf_update_data->an_type_can_be_changed) {
         if (cJSON_AddBoolToObject(item, "anTypeCanBeChanged", hsmf_update_data->an_type_can_be_changed) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [an_type_can_be_changed]");
             goto end;
@@ -588,14 +588,14 @@ cJSON *OpenAPI_hsmf_update_data_convertToJSON(OpenAPI_hsmf_update_data_t *hsmf_u
         }
     }
 
-    if (hsmf_update_data->ma_nw_upgrade_ind >= 0) {
+    if (hsmf_update_data->ma_nw_upgrade_ind) {
         if (cJSON_AddBoolToObject(item, "maNwUpgradeInd", hsmf_update_data->ma_nw_upgrade_ind) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [ma_nw_upgrade_ind]");
             goto end;
         }
     }
 
-    if (hsmf_update_data->ma_request_ind >= 0) {
+    if (hsmf_update_data->ma_request_ind) {
         if (cJSON_AddBoolToObject(item, "maRequestInd", hsmf_update_data->ma_request_ind) == NULL) {
             ogs_error("OpenAPI_hsmf_update_data_convertToJSON() failed [ma_request_ind]");
             goto end;
@@ -1401,7 +1401,7 @@ OpenAPI_hsmf_update_data_t *OpenAPI_hsmf_update_data_parseFromJSON(cJSON *hsmf_u
         ue_location ? ue_location_local_nonprim : NULL,
         ue_time_zone ? ogs_strdup(ue_time_zone->valuestring) : NULL,
         add_ue_location ? add_ue_location_local_nonprim : NULL,
-        pause_charging ? pause_charging->valueint : -1,
+        pause_charging ? pause_charging->valueint : 0,
         pti ? pti->valuedouble : 0,
         n1_sm_info_from_ue ? n1_sm_info_from_ue_local_nonprim : NULL,
         unknown_n1_sm_info ? unknown_n1_sm_info_local_nonprim : NULL,
@@ -1409,19 +1409,19 @@ OpenAPI_hsmf_update_data_t *OpenAPI_hsmf_update_data_parseFromJSON(cJSON *hsmf_u
         qos_flows_notify_list ? qos_flows_notify_listList : NULL,
         notify_list ? notify_listList : NULL,
         eps_bearer_id ? eps_bearer_idList : NULL,
-        ho_preparation_indication ? ho_preparation_indication->valueint : -1,
+        ho_preparation_indication ? ho_preparation_indication->valueint : 0,
         revoke_ebi_list ? revoke_ebi_listList : NULL,
         cause ? cause_local_nonprim : NULL,
         ng_ap_cause ? ng_ap_cause_local_nonprim : NULL,
         _5g_mm_cause_value ? _5g_mm_cause_value->valuedouble : 0,
-        always_on_requested ? always_on_requested->valueint : -1,
+        always_on_requested ? always_on_requested->valueint : 0,
         eps_interworking_ind ? eps_interworking_ind_local_nonprim : NULL,
         secondary_rat_usage_report ? secondary_rat_usage_reportList : NULL,
         secondary_rat_usage_info ? secondary_rat_usage_infoList : NULL,
-        an_type_can_be_changed ? an_type_can_be_changed->valueint : -1,
+        an_type_can_be_changed ? an_type_can_be_changed->valueint : 0,
         ma_release_ind ? ma_release_ind_local_nonprim : NULL,
-        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : -1,
-        ma_request_ind ? ma_request_ind->valueint : -1,
+        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : 0,
+        ma_request_ind ? ma_request_ind->valueint : 0,
         unavailable_access_ind ? unavailable_access_ind_local_nonprim : NULL,
         psa_info ? psa_infoList : NULL,
         ulcl_bp_info ? ulcl_bp_info_local_nonprim : NULL,

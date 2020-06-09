@@ -282,14 +282,6 @@ bool udr_nudr_dr_handle_subscription_provisioned(
     CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
         memset(&sendmsg, 0, sizeof(sendmsg));
 
-        AccessAndMobilitySubscriptionData.mps_priority = -1;
-        AccessAndMobilitySubscriptionData.mcs_priority = -1;
-        AccessAndMobilitySubscriptionData.sor_info_expect_ind = -1;
-        AccessAndMobilitySubscriptionData.soraf_retrieval = -1;
-        AccessAndMobilitySubscriptionData.mico_allowed = -1;
-        AccessAndMobilitySubscriptionData.nssai_inclusion_allowed = -1;
-        AccessAndMobilitySubscriptionData.iab_operation_allowed = -1;
-
         subscribed_ue_ambr.uplink = ogs_sbi_bitrate_to_string(
                 subscription_data.ambr.uplink, OGS_SBI_BITRATE_KBPS);
         subscribed_ue_ambr.downlink = ogs_sbi_bitrate_to_string(

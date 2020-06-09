@@ -56,14 +56,14 @@ cJSON *OpenAPI_pfd_change_notification_convertToJSON(OpenAPI_pfd_change_notifica
         goto end;
     }
 
-    if (pfd_change_notification->removal_flag >= 0) {
+    if (pfd_change_notification->removal_flag) {
         if (cJSON_AddBoolToObject(item, "removalFlag", pfd_change_notification->removal_flag) == NULL) {
             ogs_error("OpenAPI_pfd_change_notification_convertToJSON() failed [removal_flag]");
             goto end;
         }
     }
 
-    if (pfd_change_notification->partial_flag >= 0) {
+    if (pfd_change_notification->partial_flag) {
         if (cJSON_AddBoolToObject(item, "partialFlag", pfd_change_notification->partial_flag) == NULL) {
             ogs_error("OpenAPI_pfd_change_notification_convertToJSON() failed [partial_flag]");
             goto end;
@@ -152,8 +152,8 @@ OpenAPI_pfd_change_notification_t *OpenAPI_pfd_change_notification_parseFromJSON
 
     pfd_change_notification_local_var = OpenAPI_pfd_change_notification_create (
         ogs_strdup(application_id->valuestring),
-        removal_flag ? removal_flag->valueint : -1,
-        partial_flag ? partial_flag->valueint : -1,
+        removal_flag ? removal_flag->valueint : 0,
+        partial_flag ? partial_flag->valueint : 0,
         pfds ? pfdsList : NULL
         );
 

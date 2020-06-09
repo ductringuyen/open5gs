@@ -123,7 +123,7 @@ cJSON *OpenAPI_authentication_subscription_convertToJSON(OpenAPI_authentication_
         }
     }
 
-    if (authentication_subscription->vector_generation_in_hss >= 0) {
+    if (authentication_subscription->vector_generation_in_hss) {
         if (cJSON_AddBoolToObject(item, "vectorGenerationInHss", authentication_subscription->vector_generation_in_hss) == NULL) {
             ogs_error("OpenAPI_authentication_subscription_convertToJSON() failed [vector_generation_in_hss]");
             goto end;
@@ -230,7 +230,7 @@ OpenAPI_authentication_subscription_t *OpenAPI_authentication_subscription_parse
         algorithm_id ? ogs_strdup(algorithm_id->valuestring) : NULL,
         enc_opc_key ? ogs_strdup(enc_opc_key->valuestring) : NULL,
         enc_topc_key ? ogs_strdup(enc_topc_key->valuestring) : NULL,
-        vector_generation_in_hss ? vector_generation_in_hss->valueint : -1
+        vector_generation_in_hss ? vector_generation_in_hss->valueint : 0
         );
 
     return authentication_subscription_local_var;

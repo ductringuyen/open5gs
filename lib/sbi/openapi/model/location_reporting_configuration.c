@@ -49,7 +49,7 @@ cJSON *OpenAPI_location_reporting_configuration_convertToJSON(OpenAPI_location_r
         goto end;
     }
 
-    if (location_reporting_configuration->one_time >= 0) {
+    if (location_reporting_configuration->one_time) {
         if (cJSON_AddBoolToObject(item, "oneTime", location_reporting_configuration->one_time) == NULL) {
             ogs_error("OpenAPI_location_reporting_configuration_convertToJSON() failed [one_time]");
             goto end;
@@ -126,7 +126,7 @@ OpenAPI_location_reporting_configuration_t *OpenAPI_location_reporting_configura
 
     location_reporting_configuration_local_var = OpenAPI_location_reporting_configuration_create (
         current_location->valueint,
-        one_time ? one_time->valueint : -1,
+        one_time ? one_time->valueint : 0,
         accuracy ? accuracy_local_nonprim : NULL,
         n3gpp_accuracy ? n3gpp_accuracy_local_nonprim : NULL
         );

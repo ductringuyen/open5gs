@@ -40,21 +40,21 @@ cJSON *OpenAPI_exemption_ind_convertToJSON(OpenAPI_exemption_ind_t *exemption_in
     }
 
     item = cJSON_CreateObject();
-    if (exemption_ind->dnn_congestion >= 0) {
+    if (exemption_ind->dnn_congestion) {
         if (cJSON_AddBoolToObject(item, "dnnCongestion", exemption_ind->dnn_congestion) == NULL) {
             ogs_error("OpenAPI_exemption_ind_convertToJSON() failed [dnn_congestion]");
             goto end;
         }
     }
 
-    if (exemption_ind->snssai_only_congestion >= 0) {
+    if (exemption_ind->snssai_only_congestion) {
         if (cJSON_AddBoolToObject(item, "snssaiOnlyCongestion", exemption_ind->snssai_only_congestion) == NULL) {
             ogs_error("OpenAPI_exemption_ind_convertToJSON() failed [snssai_only_congestion]");
             goto end;
         }
     }
 
-    if (exemption_ind->snssai_dnn_congestion >= 0) {
+    if (exemption_ind->snssai_dnn_congestion) {
         if (cJSON_AddBoolToObject(item, "snssaiDnnCongestion", exemption_ind->snssai_dnn_congestion) == NULL) {
             ogs_error("OpenAPI_exemption_ind_convertToJSON() failed [snssai_dnn_congestion]");
             goto end;
@@ -96,9 +96,9 @@ OpenAPI_exemption_ind_t *OpenAPI_exemption_ind_parseFromJSON(cJSON *exemption_in
     }
 
     exemption_ind_local_var = OpenAPI_exemption_ind_create (
-        dnn_congestion ? dnn_congestion->valueint : -1,
-        snssai_only_congestion ? snssai_only_congestion->valueint : -1,
-        snssai_dnn_congestion ? snssai_dnn_congestion->valueint : -1
+        dnn_congestion ? dnn_congestion->valueint : 0,
+        snssai_only_congestion ? snssai_only_congestion->valueint : 0,
+        snssai_dnn_congestion ? snssai_dnn_congestion->valueint : 0
         );
 
     return exemption_ind_local_var;

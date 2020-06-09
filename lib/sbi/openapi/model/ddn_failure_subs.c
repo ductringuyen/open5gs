@@ -42,7 +42,7 @@ cJSON *OpenAPI_ddn_failure_subs_convertToJSON(OpenAPI_ddn_failure_subs_t *ddn_fa
     }
 
     item = cJSON_CreateObject();
-    if (ddn_failure_subs->ddn_failure_subs_ind >= 0) {
+    if (ddn_failure_subs->ddn_failure_subs_ind) {
         if (cJSON_AddBoolToObject(item, "ddnFailureSubsInd", ddn_failure_subs->ddn_failure_subs_ind) == NULL) {
             ogs_error("OpenAPI_ddn_failure_subs_convertToJSON() failed [ddn_failure_subs_ind]");
             goto end;
@@ -109,7 +109,7 @@ OpenAPI_ddn_failure_subs_t *OpenAPI_ddn_failure_subs_parseFromJSON(cJSON *ddn_fa
     }
 
     ddn_failure_subs_local_var = OpenAPI_ddn_failure_subs_create (
-        ddn_failure_subs_ind ? ddn_failure_subs_ind->valueint : -1,
+        ddn_failure_subs_ind ? ddn_failure_subs_ind->valueint : 0,
         ddd_traffic_descriptor_list ? ddd_traffic_descriptor_listList : NULL
         );
 

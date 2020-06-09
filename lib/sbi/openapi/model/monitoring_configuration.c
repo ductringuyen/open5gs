@@ -63,7 +63,7 @@ cJSON *OpenAPI_monitoring_configuration_convertToJSON(OpenAPI_monitoring_configu
         goto end;
     }
 
-    if (monitoring_configuration->immediate_flag >= 0) {
+    if (monitoring_configuration->immediate_flag) {
         if (cJSON_AddBoolToObject(item, "immediateFlag", monitoring_configuration->immediate_flag) == NULL) {
             ogs_error("OpenAPI_monitoring_configuration_convertToJSON() failed [immediate_flag]");
             goto end;
@@ -158,7 +158,7 @@ OpenAPI_monitoring_configuration_t *OpenAPI_monitoring_configuration_parseFromJS
 
     monitoring_configuration_local_var = OpenAPI_monitoring_configuration_create (
         event_type_local_nonprim,
-        immediate_flag ? immediate_flag->valueint : -1,
+        immediate_flag ? immediate_flag->valueint : 0,
         location_reporting_configuration ? location_reporting_configuration_local_nonprim : NULL,
         association_type ? association_type_local_nonprim : NULL,
         datalink_report_cfg ? datalink_report_cfg_local_nonprim : NULL

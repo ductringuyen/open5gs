@@ -60,7 +60,7 @@ cJSON *OpenAPI_cag_info_convertToJSON(OpenAPI_cag_info_t *cag_info)
         }
     }
 
-    if (cag_info->cag_only_indicator >= 0) {
+    if (cag_info->cag_only_indicator) {
         if (cJSON_AddBoolToObject(item, "cagOnlyIndicator", cag_info->cag_only_indicator) == NULL) {
             ogs_error("OpenAPI_cag_info_convertToJSON() failed [cag_only_indicator]");
             goto end;
@@ -108,7 +108,7 @@ OpenAPI_cag_info_t *OpenAPI_cag_info_parseFromJSON(cJSON *cag_infoJSON)
 
     cag_info_local_var = OpenAPI_cag_info_create (
         allowed_cag_listList,
-        cag_only_indicator ? cag_only_indicator->valueint : -1
+        cag_only_indicator ? cag_only_indicator->valueint : 0
         );
 
     return cag_info_local_var;

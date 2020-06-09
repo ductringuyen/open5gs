@@ -80,7 +80,7 @@ cJSON *OpenAPI_sdm_subscription_convertToJSON(OpenAPI_sdm_subscription_t *sdm_su
         goto end;
     }
 
-    if (sdm_subscription->implicit_unsubscribe >= 0) {
+    if (sdm_subscription->implicit_unsubscribe) {
         if (cJSON_AddBoolToObject(item, "implicitUnsubscribe", sdm_subscription->implicit_unsubscribe) == NULL) {
             ogs_error("OpenAPI_sdm_subscription_convertToJSON() failed [implicit_unsubscribe]");
             goto end;
@@ -168,7 +168,7 @@ cJSON *OpenAPI_sdm_subscription_convertToJSON(OpenAPI_sdm_subscription_t *sdm_su
         }
     }
 
-    if (sdm_subscription->immediate_report >= 0) {
+    if (sdm_subscription->immediate_report) {
         if (cJSON_AddBoolToObject(item, "immediateReport", sdm_subscription->immediate_report) == NULL) {
             ogs_error("OpenAPI_sdm_subscription_convertToJSON() failed [immediate_report]");
             goto end;
@@ -319,7 +319,7 @@ OpenAPI_sdm_subscription_t *OpenAPI_sdm_subscription_parseFromJSON(cJSON *sdm_su
 
     sdm_subscription_local_var = OpenAPI_sdm_subscription_create (
         ogs_strdup(nf_instance_id->valuestring),
-        implicit_unsubscribe ? implicit_unsubscribe->valueint : -1,
+        implicit_unsubscribe ? implicit_unsubscribe->valueint : 0,
         expires ? ogs_strdup(expires->valuestring) : NULL,
         ogs_strdup(callback_reference->valuestring),
         amf_service_name ? ogs_strdup(amf_service_name->valuestring) : NULL,
@@ -328,7 +328,7 @@ OpenAPI_sdm_subscription_t *OpenAPI_sdm_subscription_parseFromJSON(cJSON *sdm_su
         dnn ? ogs_strdup(dnn->valuestring) : NULL,
         subscription_id ? ogs_strdup(subscription_id->valuestring) : NULL,
         plmn_id ? plmn_id_local_nonprim : NULL,
-        immediate_report ? immediate_report->valueint : -1,
+        immediate_report ? immediate_report->valueint : 0,
         report ? report_local_nonprim : NULL
         );
 

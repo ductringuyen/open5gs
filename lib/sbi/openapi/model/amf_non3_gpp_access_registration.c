@@ -107,7 +107,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_convertToJSON(OpenAPI_amf_non3_g
         }
     }
 
-    if (amf_non3_gpp_access_registration->purge_flag >= 0) {
+    if (amf_non3_gpp_access_registration->purge_flag) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf_non3_gpp_access_registration->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [purge_flag]");
             goto end;
@@ -210,7 +210,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_convertToJSON(OpenAPI_amf_non3_g
         goto end;
     }
 
-    if (amf_non3_gpp_access_registration->urrp_indicator >= 0) {
+    if (amf_non3_gpp_access_registration->urrp_indicator) {
         if (cJSON_AddBoolToObject(item, "urrpIndicator", amf_non3_gpp_access_registration->urrp_indicator) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_convertToJSON() failed [urrp_indicator]");
             goto end;
@@ -467,7 +467,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
     amf_non3_gpp_access_registration_local_var = OpenAPI_amf_non3_gpp_access_registration_create (
         ogs_strdup(amf_instance_id->valuestring),
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
-        purge_flag ? purge_flag->valueint : -1,
+        purge_flag ? purge_flag->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         ims_vo_ps_local_nonprim,
         ogs_strdup(dereg_callback_uri->valuestring),
@@ -477,7 +477,7 @@ OpenAPI_amf_non3_gpp_access_registration_t *OpenAPI_amf_non3_gpp_access_registra
         guami_local_nonprim,
         backup_amf_info ? backup_amf_infoList : NULL,
         rat_typeVariable,
-        urrp_indicator ? urrp_indicator->valueint : -1,
+        urrp_indicator ? urrp_indicator->valueint : 0,
         amf_ee_subscription_id ? ogs_strdup(amf_ee_subscription_id->valuestring) : NULL,
         nid ? ogs_strdup(nid->valuestring) : NULL,
         registration_time ? ogs_strdup(registration_time->valuestring) : NULL,

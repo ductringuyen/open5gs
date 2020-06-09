@@ -57,7 +57,7 @@ cJSON *OpenAPI_rg_auth_ctx_convertToJSON(OpenAPI_rg_auth_ctx_t *rg_auth_ctx)
         }
     }
 
-    if (rg_auth_ctx->auth_ind >= 0) {
+    if (rg_auth_ctx->auth_ind) {
         if (cJSON_AddBoolToObject(item, "authInd", rg_auth_ctx->auth_ind) == NULL) {
             ogs_error("OpenAPI_rg_auth_ctx_convertToJSON() failed [auth_ind]");
             goto end;
@@ -106,7 +106,7 @@ OpenAPI_rg_auth_ctx_t *OpenAPI_rg_auth_ctx_parseFromJSON(cJSON *rg_auth_ctxJSON)
     rg_auth_ctx_local_var = OpenAPI_rg_auth_ctx_create (
         auth_resultVariable,
         supi ? ogs_strdup(supi->valuestring) : NULL,
-        auth_ind ? auth_ind->valueint : -1
+        auth_ind ? auth_ind->valueint : 0
         );
 
     return rg_auth_ctx_local_var;

@@ -148,7 +148,7 @@ cJSON *OpenAPI_hsmf_updated_data_convertToJSON(OpenAPI_hsmf_updated_data_t *hsmf
         }
     }
 
-    if (hsmf_updated_data->ipv6_multi_homing_ind >= 0) {
+    if (hsmf_updated_data->ipv6_multi_homing_ind) {
         if (cJSON_AddBoolToObject(item, "ipv6MultiHomingInd", hsmf_updated_data->ipv6_multi_homing_ind) == NULL) {
             ogs_error("OpenAPI_hsmf_updated_data_convertToJSON() failed [ipv6_multi_homing_ind]");
             goto end;
@@ -243,7 +243,7 @@ OpenAPI_hsmf_updated_data_t *OpenAPI_hsmf_updated_data_parseFromJSON(cJSON *hsmf
         dnai_list ? dnai_listList : NULL,
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
         roaming_charging_profile ? roaming_charging_profile_local_nonprim : NULL,
-        ipv6_multi_homing_ind ? ipv6_multi_homing_ind->valueint : -1
+        ipv6_multi_homing_ind ? ipv6_multi_homing_ind->valueint : 0
         );
 
     return hsmf_updated_data_local_var;

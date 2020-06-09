@@ -96,7 +96,7 @@ cJSON *OpenAPI_parameter_over_pc5_convertToJSON(OpenAPI_parameter_over_pc5_t *pa
         }
     }
 
-    if (parameter_over_pc5->auth_not_served >= 0) {
+    if (parameter_over_pc5->auth_not_served) {
         if (cJSON_AddBoolToObject(item, "authNotServed", parameter_over_pc5->auth_not_served) == NULL) {
             ogs_error("OpenAPI_parameter_over_pc5_convertToJSON() failed [auth_not_served]");
             goto end;
@@ -323,7 +323,7 @@ OpenAPI_parameter_over_pc5_t *OpenAPI_parameter_over_pc5_parseFromJSON(cJSON *pa
     parameter_over_pc5_local_var = OpenAPI_parameter_over_pc5_create (
         expiry ? ogs_strdup(expiry->valuestring) : NULL,
         plmm_rat_served ? plmm_rat_servedList : NULL,
-        auth_not_served ? auth_not_served->valueint : -1,
+        auth_not_served ? auth_not_served->valueint : 0,
         radio_params_not_served ? radio_params_not_servedList : NULL,
         ser_to_tx ? ser_to_txList : NULL,
         privacy_params ? privacy_paramsList : NULL,

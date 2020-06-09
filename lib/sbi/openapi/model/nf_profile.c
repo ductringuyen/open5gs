@@ -1028,7 +1028,7 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->nf_service_persistence >= 0) {
+    if (nf_profile->nf_service_persistence) {
         if (cJSON_AddBoolToObject(item, "nfServicePersistence", nf_profile->nf_service_persistence) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_service_persistence]");
             goto end;
@@ -1055,14 +1055,14 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->nf_profile_changes_support_ind >= 0) {
+    if (nf_profile->nf_profile_changes_support_ind) {
         if (cJSON_AddBoolToObject(item, "nfProfileChangesSupportInd", nf_profile->nf_profile_changes_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_profile_changes_support_ind]");
             goto end;
         }
     }
 
-    if (nf_profile->nf_profile_changes_ind >= 0) {
+    if (nf_profile->nf_profile_changes_ind) {
         if (cJSON_AddBoolToObject(item, "nfProfileChangesInd", nf_profile->nf_profile_changes_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [nf_profile_changes_ind]");
             goto end;
@@ -1147,14 +1147,14 @@ cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile)
         }
     }
 
-    if (nf_profile->lc_h_support_ind >= 0) {
+    if (nf_profile->lc_h_support_ind) {
         if (cJSON_AddBoolToObject(item, "lcHSupportInd", nf_profile->lc_h_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [lc_h_support_ind]");
             goto end;
         }
     }
 
-    if (nf_profile->olc_h_support_ind >= 0) {
+    if (nf_profile->olc_h_support_ind) {
         if (cJSON_AddBoolToObject(item, "olcHSupportInd", nf_profile->olc_h_support_ind) == NULL) {
             ogs_error("OpenAPI_nf_profile_convertToJSON() failed [olc_h_support_ind]");
             goto end;
@@ -2132,17 +2132,17 @@ OpenAPI_nf_profile_t *OpenAPI_nf_profile_parseFromJSON(cJSON *nf_profileJSON)
         hss_info ? hss_infoList : NULL,
         custom_info ? custom_info_local_object : NULL,
         recovery_time ? ogs_strdup(recovery_time->valuestring) : NULL,
-        nf_service_persistence ? nf_service_persistence->valueint : -1,
+        nf_service_persistence ? nf_service_persistence->valueint : 0,
         nf_services ? nf_servicesList : NULL,
-        nf_profile_changes_support_ind ? nf_profile_changes_support_ind->valueint : -1,
-        nf_profile_changes_ind ? nf_profile_changes_ind->valueint : -1,
+        nf_profile_changes_support_ind ? nf_profile_changes_support_ind->valueint : 0,
+        nf_profile_changes_ind ? nf_profile_changes_ind->valueint : 0,
         default_notification_subscriptions ? default_notification_subscriptionsList : NULL,
         lmf_info ? lmf_info_local_nonprim : NULL,
         gmlc_info ? gmlc_info_local_nonprim : NULL,
         nf_set_id_list ? nf_set_id_listList : NULL,
         serving_scope ? serving_scopeList : NULL,
-        lc_h_support_ind ? lc_h_support_ind->valueint : -1,
-        olc_h_support_ind ? olc_h_support_ind->valueint : -1
+        lc_h_support_ind ? lc_h_support_ind->valueint : 0,
+        olc_h_support_ind ? olc_h_support_ind->valueint : 0
         );
 
     return nf_profile_local_var;

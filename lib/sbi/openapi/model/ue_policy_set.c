@@ -176,7 +176,7 @@ cJSON *OpenAPI_ue_policy_set_convertToJSON(OpenAPI_ue_policy_set_t *ue_policy_se
         }
     }
 
-    if (ue_policy_set->andsp_ind >= 0) {
+    if (ue_policy_set->andsp_ind) {
         if (cJSON_AddBoolToObject(item, "andspInd", ue_policy_set->andsp_ind) == NULL) {
             ogs_error("OpenAPI_ue_policy_set_convertToJSON() failed [andsp_ind]");
             goto end;
@@ -366,7 +366,7 @@ OpenAPI_ue_policy_set_t *OpenAPI_ue_policy_set_parseFromJSON(cJSON *ue_policy_se
         ue_policy_sections ? ue_policy_sectionsList : NULL,
         upsis ? upsisList : NULL,
         allowed_route_sel_descs ? allowed_route_sel_descsList : NULL,
-        andsp_ind ? andsp_ind->valueint : -1,
+        andsp_ind ? andsp_ind->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         os_ids ? os_idsList : NULL
         );

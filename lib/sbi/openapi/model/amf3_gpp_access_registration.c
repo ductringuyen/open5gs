@@ -113,7 +113,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->purge_flag >= 0) {
+    if (amf3_gpp_access_registration->purge_flag) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf3_gpp_access_registration->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [purge_flag]");
             goto end;
@@ -170,7 +170,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->initial_registration_ind >= 0) {
+    if (amf3_gpp_access_registration->initial_registration_ind) {
         if (cJSON_AddBoolToObject(item, "initialRegistrationInd", amf3_gpp_access_registration->initial_registration_ind) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [initial_registration_ind]");
             goto end;
@@ -212,7 +212,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->dr_flag >= 0) {
+    if (amf3_gpp_access_registration->dr_flag) {
         if (cJSON_AddBoolToObject(item, "drFlag", amf3_gpp_access_registration->dr_flag) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [dr_flag]");
             goto end;
@@ -228,7 +228,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         goto end;
     }
 
-    if (amf3_gpp_access_registration->urrp_indicator >= 0) {
+    if (amf3_gpp_access_registration->urrp_indicator) {
         if (cJSON_AddBoolToObject(item, "urrpIndicator", amf3_gpp_access_registration->urrp_indicator) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [urrp_indicator]");
             goto end;
@@ -242,7 +242,7 @@ cJSON *OpenAPI_amf3_gpp_access_registration_convertToJSON(OpenAPI_amf3_gpp_acces
         }
     }
 
-    if (amf3_gpp_access_registration->ue_srvcc_capability >= 0) {
+    if (amf3_gpp_access_registration->ue_srvcc_capability) {
         if (cJSON_AddBoolToObject(item, "ueSrvccCapability", amf3_gpp_access_registration->ue_srvcc_capability) == NULL) {
             ogs_error("OpenAPI_amf3_gpp_access_registration_convertToJSON() failed [ue_srvcc_capability]");
             goto end;
@@ -516,21 +516,21 @@ OpenAPI_amf3_gpp_access_registration_t *OpenAPI_amf3_gpp_access_registration_par
     amf3_gpp_access_registration_local_var = OpenAPI_amf3_gpp_access_registration_create (
         ogs_strdup(amf_instance_id->valuestring),
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
-        purge_flag ? purge_flag->valueint : -1,
+        purge_flag ? purge_flag->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         ims_vo_ps ? ims_vo_ps_local_nonprim : NULL,
         ogs_strdup(dereg_callback_uri->valuestring),
         amf_service_name_dereg ? ogs_strdup(amf_service_name_dereg->valuestring) : NULL,
         pcscf_restoration_callback_uri ? ogs_strdup(pcscf_restoration_callback_uri->valuestring) : NULL,
         amf_service_name_pcscf_rest ? ogs_strdup(amf_service_name_pcscf_rest->valuestring) : NULL,
-        initial_registration_ind ? initial_registration_ind->valueint : -1,
+        initial_registration_ind ? initial_registration_ind->valueint : 0,
         guami_local_nonprim,
         backup_amf_info ? backup_amf_infoList : NULL,
-        dr_flag ? dr_flag->valueint : -1,
+        dr_flag ? dr_flag->valueint : 0,
         rat_typeVariable,
-        urrp_indicator ? urrp_indicator->valueint : -1,
+        urrp_indicator ? urrp_indicator->valueint : 0,
         amf_ee_subscription_id ? ogs_strdup(amf_ee_subscription_id->valuestring) : NULL,
-        ue_srvcc_capability ? ue_srvcc_capability->valueint : -1,
+        ue_srvcc_capability ? ue_srvcc_capability->valueint : 0,
         nid ? ogs_strdup(nid->valuestring) : NULL,
         registration_time ? ogs_strdup(registration_time->valuestring) : NULL,
         vgmlc_address_ipv4 ? ogs_strdup(vgmlc_address_ipv4->valuestring) : NULL,

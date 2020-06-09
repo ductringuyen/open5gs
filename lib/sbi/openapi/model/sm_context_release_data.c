@@ -127,7 +127,7 @@ cJSON *OpenAPI_sm_context_release_data_convertToJSON(OpenAPI_sm_context_release_
         }
     }
 
-    if (sm_context_release_data->vsmf_release_only >= 0) {
+    if (sm_context_release_data->vsmf_release_only) {
         if (cJSON_AddBoolToObject(item, "vsmfReleaseOnly", sm_context_release_data->vsmf_release_only) == NULL) {
             ogs_error("OpenAPI_sm_context_release_data_convertToJSON() failed [vsmf_release_only]");
             goto end;
@@ -160,7 +160,7 @@ cJSON *OpenAPI_sm_context_release_data_convertToJSON(OpenAPI_sm_context_release_
         }
     }
 
-    if (sm_context_release_data->ismf_release_only >= 0) {
+    if (sm_context_release_data->ismf_release_only) {
         if (cJSON_AddBoolToObject(item, "ismfReleaseOnly", sm_context_release_data->ismf_release_only) == NULL) {
             ogs_error("OpenAPI_sm_context_release_data_convertToJSON() failed [ismf_release_only]");
             goto end;
@@ -259,10 +259,10 @@ OpenAPI_sm_context_release_data_t *OpenAPI_sm_context_release_data_parseFromJSON
         ue_location ? ue_location_local_nonprim : NULL,
         ue_time_zone ? ogs_strdup(ue_time_zone->valuestring) : NULL,
         add_ue_location ? add_ue_location_local_nonprim : NULL,
-        vsmf_release_only ? vsmf_release_only->valueint : -1,
+        vsmf_release_only ? vsmf_release_only->valueint : 0,
         n2_sm_info ? n2_sm_info_local_nonprim : NULL,
         n2_sm_info_type ? n2_sm_info_type_local_nonprim : NULL,
-        ismf_release_only ? ismf_release_only->valueint : -1
+        ismf_release_only ? ismf_release_only->valueint : 0
         );
 
     return sm_context_release_data_local_var;

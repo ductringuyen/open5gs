@@ -396,14 +396,14 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->mps_priority >= 0) {
+    if (access_and_mobility_subscription_data->mps_priority) {
         if (cJSON_AddBoolToObject(item, "mpsPriority", access_and_mobility_subscription_data->mps_priority) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mps_priority]");
             goto end;
         }
     }
 
-    if (access_and_mobility_subscription_data->mcs_priority >= 0) {
+    if (access_and_mobility_subscription_data->mcs_priority) {
         if (cJSON_AddBoolToObject(item, "mcsPriority", access_and_mobility_subscription_data->mcs_priority) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mcs_priority]");
             goto end;
@@ -437,14 +437,14 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->sor_info_expect_ind >= 0) {
+    if (access_and_mobility_subscription_data->sor_info_expect_ind) {
         if (cJSON_AddBoolToObject(item, "sorInfoExpectInd", access_and_mobility_subscription_data->sor_info_expect_ind) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [sor_info_expect_ind]");
             goto end;
         }
     }
 
-    if (access_and_mobility_subscription_data->soraf_retrieval >= 0) {
+    if (access_and_mobility_subscription_data->soraf_retrieval) {
         if (cJSON_AddBoolToObject(item, "sorafRetrieval", access_and_mobility_subscription_data->soraf_retrieval) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [soraf_retrieval]");
             goto end;
@@ -479,7 +479,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->mico_allowed >= 0) {
+    if (access_and_mobility_subscription_data->mico_allowed) {
         if (cJSON_AddBoolToObject(item, "micoAllowed", access_and_mobility_subscription_data->mico_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [mico_allowed]");
             goto end;
@@ -585,7 +585,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->nssai_inclusion_allowed >= 0) {
+    if (access_and_mobility_subscription_data->nssai_inclusion_allowed) {
         if (cJSON_AddBoolToObject(item, "nssaiInclusionAllowed", access_and_mobility_subscription_data->nssai_inclusion_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [nssai_inclusion_allowed]");
             goto end;
@@ -748,7 +748,7 @@ cJSON *OpenAPI_access_and_mobility_subscription_data_convertToJSON(OpenAPI_acces
         }
     }
 
-    if (access_and_mobility_subscription_data->iab_operation_allowed >= 0) {
+    if (access_and_mobility_subscription_data->iab_operation_allowed) {
         if (cJSON_AddBoolToObject(item, "iabOperationAllowed", access_and_mobility_subscription_data->iab_operation_allowed) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_subscription_data_convertToJSON() failed [iab_operation_allowed]");
             goto end;
@@ -1434,16 +1434,16 @@ OpenAPI_access_and_mobility_subscription_data_t *OpenAPI_access_and_mobility_sub
         rfsp_index ? rfsp_index->valuedouble : 0,
         subs_reg_timer ? subs_reg_timer->valuedouble : 0,
         ue_usage_type ? ue_usage_type->valuedouble : 0,
-        mps_priority ? mps_priority->valueint : -1,
-        mcs_priority ? mcs_priority->valueint : -1,
+        mps_priority ? mps_priority->valueint : 0,
+        mcs_priority ? mcs_priority->valueint : 0,
         active_time ? active_time->valuedouble : 0,
         dl_packet_count ? dl_packet_count->valuedouble : 0,
         sor_info ? sor_info_local_nonprim : NULL,
-        sor_info_expect_ind ? sor_info_expect_ind->valueint : -1,
-        soraf_retrieval ? soraf_retrieval->valueint : -1,
+        sor_info_expect_ind ? sor_info_expect_ind->valueint : 0,
+        soraf_retrieval ? soraf_retrieval->valueint : 0,
         sor_update_indicator_list ? sor_update_indicator_listList : NULL,
         upu_info ? upu_info_local_nonprim : NULL,
-        mico_allowed ? mico_allowed->valueint : -1,
+        mico_allowed ? mico_allowed->valueint : 0,
         shared_am_data_ids ? shared_am_data_idsList : NULL,
         odb_packet_services ? odb_packet_services_local_nonprim : NULL,
         subscribed_dnn_list ? subscribed_dnn_listList : NULL,
@@ -1453,7 +1453,7 @@ OpenAPI_access_and_mobility_subscription_data_t *OpenAPI_access_and_mobility_sub
         stn_sr ? ogs_strdup(stn_sr->valuestring) : NULL,
         c_msisdn ? ogs_strdup(c_msisdn->valuestring) : NULL,
         nb_io_t_ue_priority ? nb_io_t_ue_priority->valuedouble : 0,
-        nssai_inclusion_allowed ? nssai_inclusion_allowed->valueint : -1,
+        nssai_inclusion_allowed ? nssai_inclusion_allowed->valueint : 0,
         rg_wireline_characteristics ? rg_wireline_characteristics->valueint : 0,
         rg_tmbr ? rg_tmbr_local_nonprim : NULL,
         ec_restriction_data ? ec_restriction_data_local_nonprim : NULL,
@@ -1464,7 +1464,7 @@ OpenAPI_access_and_mobility_subscription_data_t *OpenAPI_access_and_mobility_sub
         secondary_rat_restrictions ? secondary_rat_restrictionsList : NULL,
         edrx_parameters_list ? edrx_parameters_listList : NULL,
         ptw_parameters_list ? ptw_parameters_listList : NULL,
-        iab_operation_allowed ? iab_operation_allowed->valueint : -1,
+        iab_operation_allowed ? iab_operation_allowed->valueint : 0,
         nr_v2x_services_auth ? nr_v2x_services_auth_local_nonprim : NULL,
         lte_v2x_services_auth ? lte_v2x_services_auth_local_nonprim : NULL,
         nr_ue_pc5_ambr ? ogs_strdup(nr_ue_pc5_ambr->valuestring) : NULL,

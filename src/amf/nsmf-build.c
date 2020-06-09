@@ -42,16 +42,6 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
         (char *)OGS_SBI_RESOURCE_NAME_SM_CONTEXTS;
 
     memset(&SMContextCreateData, 0, sizeof(SMContextCreateData));
-    SMContextCreateData.unauthenticated_supi = -1;
-    SMContextCreateData.indirect_forwarding_flag = -1;
-    SMContextCreateData.cp_ciot_enabled = -1;
-    SMContextCreateData.cp_only_ind = -1;
-    SMContextCreateData.invoke_nef = -1;
-    SMContextCreateData.ma_request_ind = -1;
-    SMContextCreateData.ma_nw_upgrade_ind = -1;
-    SMContextCreateData.extended_nas_sm_timer_ind = -1;
-    SMContextCreateData.dl_data_waiting_ind = -1;
-    SMContextCreateData.smf_transfer_ind = -1;
 
     SMContextCreateData.serving_nf_id = ogs_sbi_self()->nf_instance_id;
 

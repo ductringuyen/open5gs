@@ -490,7 +490,7 @@ cJSON *OpenAPI_nf_service_convertToJSON(OpenAPI_nf_service_t *nf_service)
         }
     }
 
-    if (nf_service->oauth2_required >= 0) {
+    if (nf_service->oauth2_required) {
         if (cJSON_AddBoolToObject(item, "oauth2Required", nf_service->oauth2_required) == NULL) {
             ogs_error("OpenAPI_nf_service_convertToJSON() failed [oauth2_required]");
             goto end;
@@ -956,7 +956,7 @@ OpenAPI_nf_service_t *OpenAPI_nf_service_parseFromJSON(cJSON *nf_serviceJSON)
         per_plmn_snssai_list ? per_plmn_snssai_listList : NULL,
         vendor_id ? ogs_strdup(vendor_id->valuestring) : NULL,
         supported_vendor_specific_features ? supported_vendor_specific_featuresList : NULL,
-        oauth2_required ? oauth2_required->valueint : -1
+        oauth2_required ? oauth2_required->valueint : 0
         );
 
     return nf_service_local_var;

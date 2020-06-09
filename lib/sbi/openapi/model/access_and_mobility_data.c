@@ -230,7 +230,7 @@ cJSON *OpenAPI_access_and_mobility_data_convertToJSON(OpenAPI_access_and_mobilit
         }
     }
 
-    if (access_and_mobility_data->roaming_status >= 0) {
+    if (access_and_mobility_data->roaming_status) {
         if (cJSON_AddBoolToObject(item, "roamingStatus", access_and_mobility_data->roaming_status) == NULL) {
             ogs_error("OpenAPI_access_and_mobility_data_convertToJSON() failed [roaming_status]");
             goto end;
@@ -513,7 +513,7 @@ OpenAPI_access_and_mobility_data_t *OpenAPI_access_and_mobility_data_parseFromJS
         reachability_status_ts ? ogs_strdup(reachability_status_ts->valuestring) : NULL,
         sms_over_nas_status ? sms_over_nas_status_local_nonprim : NULL,
         sms_over_nas_status_ts ? ogs_strdup(sms_over_nas_status_ts->valuestring) : NULL,
-        roaming_status ? roaming_status->valueint : -1,
+        roaming_status ? roaming_status->valueint : 0,
         roaming_status_ts ? ogs_strdup(roaming_status_ts->valuestring) : NULL,
         current_plmn ? current_plmn_local_nonprim : NULL,
         current_plmn_ts ? ogs_strdup(current_plmn_ts->valuestring) : NULL,

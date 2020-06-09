@@ -127,7 +127,7 @@ cJSON *OpenAPI_smf_registration_convertToJSON(OpenAPI_smf_registration_t *smf_re
         }
     }
 
-    if (smf_registration->emergency_services >= 0) {
+    if (smf_registration->emergency_services) {
         if (cJSON_AddBoolToObject(item, "emergencyServices", smf_registration->emergency_services) == NULL) {
             ogs_error("OpenAPI_smf_registration_convertToJSON() failed [emergency_services]");
             goto end;
@@ -163,7 +163,7 @@ cJSON *OpenAPI_smf_registration_convertToJSON(OpenAPI_smf_registration_t *smf_re
         }
     }
 
-    if (smf_registration->epdg_ind >= 0) {
+    if (smf_registration->epdg_ind) {
         if (cJSON_AddBoolToObject(item, "epdgInd", smf_registration->epdg_ind) == NULL) {
             ogs_error("OpenAPI_smf_registration_convertToJSON() failed [epdg_ind]");
             goto end;
@@ -343,11 +343,11 @@ OpenAPI_smf_registration_t *OpenAPI_smf_registration_parseFromJSON(cJSON *smf_re
         pdu_session_id->valuedouble,
         single_nssai_local_nonprim,
         dnn ? ogs_strdup(dnn->valuestring) : NULL,
-        emergency_services ? emergency_services->valueint : -1,
+        emergency_services ? emergency_services->valueint : 0,
         pcscf_restoration_callback_uri ? ogs_strdup(pcscf_restoration_callback_uri->valuestring) : NULL,
         plmn_id_local_nonprim,
         pgw_fqdn ? ogs_strdup(pgw_fqdn->valuestring) : NULL,
-        epdg_ind ? epdg_ind->valueint : -1,
+        epdg_ind ? epdg_ind->valueint : 0,
         dereg_callback_uri ? ogs_strdup(dereg_callback_uri->valuestring) : NULL,
         registration_reason ? registration_reason_local_nonprim : NULL,
         registration_time ? ogs_strdup(registration_time->valuestring) : NULL

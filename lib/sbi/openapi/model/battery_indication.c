@@ -40,21 +40,21 @@ cJSON *OpenAPI_battery_indication_convertToJSON(OpenAPI_battery_indication_t *ba
     }
 
     item = cJSON_CreateObject();
-    if (battery_indication->battery_ind >= 0) {
+    if (battery_indication->battery_ind) {
         if (cJSON_AddBoolToObject(item, "batteryInd", battery_indication->battery_ind) == NULL) {
             ogs_error("OpenAPI_battery_indication_convertToJSON() failed [battery_ind]");
             goto end;
         }
     }
 
-    if (battery_indication->replaceable_ind >= 0) {
+    if (battery_indication->replaceable_ind) {
         if (cJSON_AddBoolToObject(item, "replaceableInd", battery_indication->replaceable_ind) == NULL) {
             ogs_error("OpenAPI_battery_indication_convertToJSON() failed [replaceable_ind]");
             goto end;
         }
     }
 
-    if (battery_indication->rechargeable_ind >= 0) {
+    if (battery_indication->rechargeable_ind) {
         if (cJSON_AddBoolToObject(item, "rechargeableInd", battery_indication->rechargeable_ind) == NULL) {
             ogs_error("OpenAPI_battery_indication_convertToJSON() failed [rechargeable_ind]");
             goto end;
@@ -96,9 +96,9 @@ OpenAPI_battery_indication_t *OpenAPI_battery_indication_parseFromJSON(cJSON *ba
     }
 
     battery_indication_local_var = OpenAPI_battery_indication_create (
-        battery_ind ? battery_ind->valueint : -1,
-        replaceable_ind ? replaceable_ind->valueint : -1,
-        rechargeable_ind ? rechargeable_ind->valueint : -1
+        battery_ind ? battery_ind->valueint : 0,
+        replaceable_ind ? replaceable_ind->valueint : 0,
+        rechargeable_ind ? rechargeable_ind->valueint : 0
         );
 
     return battery_indication_local_var;

@@ -36,7 +36,7 @@ cJSON *OpenAPI_preferred_search_convertToJSON(OpenAPI_preferred_search_t *prefer
     }
 
     item = cJSON_CreateObject();
-    if (preferred_search->preferred_tai_match_ind >= 0) {
+    if (preferred_search->preferred_tai_match_ind) {
         if (cJSON_AddBoolToObject(item, "preferredTaiMatchInd", preferred_search->preferred_tai_match_ind) == NULL) {
             ogs_error("OpenAPI_preferred_search_convertToJSON() failed [preferred_tai_match_ind]");
             goto end;
@@ -60,7 +60,7 @@ OpenAPI_preferred_search_t *OpenAPI_preferred_search_parseFromJSON(cJSON *prefer
     }
 
     preferred_search_local_var = OpenAPI_preferred_search_create (
-        preferred_tai_match_ind ? preferred_tai_match_ind->valueint : -1
+        preferred_tai_match_ind ? preferred_tai_match_ind->valueint : 0
         );
 
     return preferred_search_local_var;

@@ -54,28 +54,28 @@ cJSON *OpenAPI_dnn_info_convertToJSON(OpenAPI_dnn_info_t *dnn_info)
         goto end;
     }
 
-    if (dnn_info->default_dnn_indicator >= 0) {
+    if (dnn_info->default_dnn_indicator) {
         if (cJSON_AddBoolToObject(item, "defaultDnnIndicator", dnn_info->default_dnn_indicator) == NULL) {
             ogs_error("OpenAPI_dnn_info_convertToJSON() failed [default_dnn_indicator]");
             goto end;
         }
     }
 
-    if (dnn_info->lbo_roaming_allowed >= 0) {
+    if (dnn_info->lbo_roaming_allowed) {
         if (cJSON_AddBoolToObject(item, "lboRoamingAllowed", dnn_info->lbo_roaming_allowed) == NULL) {
             ogs_error("OpenAPI_dnn_info_convertToJSON() failed [lbo_roaming_allowed]");
             goto end;
         }
     }
 
-    if (dnn_info->iwk_eps_ind >= 0) {
+    if (dnn_info->iwk_eps_ind) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", dnn_info->iwk_eps_ind) == NULL) {
             ogs_error("OpenAPI_dnn_info_convertToJSON() failed [iwk_eps_ind]");
             goto end;
         }
     }
 
-    if (dnn_info->dnn_barred >= 0) {
+    if (dnn_info->dnn_barred) {
         if (cJSON_AddBoolToObject(item, "dnnBarred", dnn_info->dnn_barred) == NULL) {
             ogs_error("OpenAPI_dnn_info_convertToJSON() failed [dnn_barred]");
             goto end;
@@ -139,10 +139,10 @@ OpenAPI_dnn_info_t *OpenAPI_dnn_info_parseFromJSON(cJSON *dnn_infoJSON)
 
     dnn_info_local_var = OpenAPI_dnn_info_create (
         ogs_strdup(dnn->valuestring),
-        default_dnn_indicator ? default_dnn_indicator->valueint : -1,
-        lbo_roaming_allowed ? lbo_roaming_allowed->valueint : -1,
-        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
-        dnn_barred ? dnn_barred->valueint : -1
+        default_dnn_indicator ? default_dnn_indicator->valueint : 0,
+        lbo_roaming_allowed ? lbo_roaming_allowed->valueint : 0,
+        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
+        dnn_barred ? dnn_barred->valueint : 0
         );
 
     return dnn_info_local_var;

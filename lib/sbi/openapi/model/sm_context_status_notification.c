@@ -98,7 +98,7 @@ cJSON *OpenAPI_sm_context_status_notification_convertToJSON(OpenAPI_sm_context_s
         }
     }
 
-    if (sm_context_status_notification->ddn_failure_status >= 0) {
+    if (sm_context_status_notification->ddn_failure_status) {
         if (cJSON_AddBoolToObject(item, "ddnFailureStatus", sm_context_status_notification->ddn_failure_status) == NULL) {
             ogs_error("OpenAPI_sm_context_status_notification_convertToJSON() failed [ddn_failure_status]");
             goto end;
@@ -213,7 +213,7 @@ OpenAPI_sm_context_status_notification_t *OpenAPI_sm_context_status_notification
         status_info_local_nonprim,
         small_data_rate_status ? small_data_rate_status_local_nonprim : NULL,
         apn_rate_status ? apn_rate_status_local_nonprim : NULL,
-        ddn_failure_status ? ddn_failure_status->valueint : -1,
+        ddn_failure_status ? ddn_failure_status->valueint : 0,
         new_smf_id ? ogs_strdup(new_smf_id->valuestring) : NULL,
         new_smf_set_id ? ogs_strdup(new_smf_set_id->valuestring) : NULL,
         old_smf_id ? ogs_strdup(old_smf_id->valuestring) : NULL,

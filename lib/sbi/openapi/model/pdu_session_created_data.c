@@ -260,7 +260,7 @@ cJSON *OpenAPI_pdu_session_created_data_convertToJSON(OpenAPI_pdu_session_create
         }
     }
 
-    if (pdu_session_created_data->enable_pause_charging >= 0) {
+    if (pdu_session_created_data->enable_pause_charging) {
         if (cJSON_AddBoolToObject(item, "enablePauseCharging", pdu_session_created_data->enable_pause_charging) == NULL) {
             ogs_error("OpenAPI_pdu_session_created_data_convertToJSON() failed [enable_pause_charging]");
             goto end;
@@ -347,7 +347,7 @@ cJSON *OpenAPI_pdu_session_created_data_convertToJSON(OpenAPI_pdu_session_create
         }
     }
 
-    if (pdu_session_created_data->always_on_granted >= 0) {
+    if (pdu_session_created_data->always_on_granted) {
         if (cJSON_AddBoolToObject(item, "alwaysOnGranted", pdu_session_created_data->always_on_granted) == NULL) {
             ogs_error("OpenAPI_pdu_session_created_data_convertToJSON() failed [always_on_granted]");
             goto end;
@@ -424,14 +424,14 @@ cJSON *OpenAPI_pdu_session_created_data_convertToJSON(OpenAPI_pdu_session_create
         }
     }
 
-    if (pdu_session_created_data->ipv6_multi_homing_ind >= 0) {
+    if (pdu_session_created_data->ipv6_multi_homing_ind) {
         if (cJSON_AddBoolToObject(item, "ipv6MultiHomingInd", pdu_session_created_data->ipv6_multi_homing_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_created_data_convertToJSON() failed [ipv6_multi_homing_ind]");
             goto end;
         }
     }
 
-    if (pdu_session_created_data->ma_accepted_ind >= 0) {
+    if (pdu_session_created_data->ma_accepted_ind) {
         if (cJSON_AddBoolToObject(item, "maAcceptedInd", pdu_session_created_data->ma_accepted_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_created_data_convertToJSON() failed [ma_accepted_ind]");
             goto end;
@@ -445,7 +445,7 @@ cJSON *OpenAPI_pdu_session_created_data_convertToJSON(OpenAPI_pdu_session_create
         }
     }
 
-    if (pdu_session_created_data->nef_ext_buf_support_ind >= 0) {
+    if (pdu_session_created_data->nef_ext_buf_support_ind) {
         if (cJSON_AddBoolToObject(item, "nefExtBufSupportInd", pdu_session_created_data->nef_ext_buf_support_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_created_data_convertToJSON() failed [nef_ext_buf_support_ind]");
             goto end;
@@ -773,7 +773,7 @@ OpenAPI_pdu_session_created_data_t *OpenAPI_pdu_session_created_data_parseFromJS
         smf_instance_id ? ogs_strdup(smf_instance_id->valuestring) : NULL,
         pdu_session_id ? pdu_session_id->valuedouble : 0,
         s_nssai ? s_nssai_local_nonprim : NULL,
-        enable_pause_charging ? enable_pause_charging->valueint : -1,
+        enable_pause_charging ? enable_pause_charging->valueint : 0,
         ue_ipv4_address ? ogs_strdup(ue_ipv4_address->valuestring) : NULL,
         ue_ipv6_prefix ? ogs_strdup(ue_ipv6_prefix->valuestring) : NULL,
         n1_sm_info_to_ue ? n1_sm_info_to_ue_local_nonprim : NULL,
@@ -781,7 +781,7 @@ OpenAPI_pdu_session_created_data_t *OpenAPI_pdu_session_created_data_parseFromJS
         eps_bearer_info ? eps_bearer_infoList : NULL,
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
         max_integrity_protected_data_rate ? max_integrity_protected_data_rate_local_nonprim : NULL,
-        always_on_granted ? always_on_granted->valueint : -1,
+        always_on_granted ? always_on_granted->valueint : 0,
         gpsi ? ogs_strdup(gpsi->valuestring) : NULL,
         up_security ? up_security_local_nonprim : NULL,
         roaming_charging_profile ? roaming_charging_profile_local_nonprim : NULL,
@@ -789,10 +789,10 @@ OpenAPI_pdu_session_created_data_t *OpenAPI_pdu_session_created_data_parseFromJS
         smf_service_instance_id ? ogs_strdup(smf_service_instance_id->valuestring) : NULL,
         recovery_time ? ogs_strdup(recovery_time->valuestring) : NULL,
         dnai_list ? dnai_listList : NULL,
-        ipv6_multi_homing_ind ? ipv6_multi_homing_ind->valueint : -1,
-        ma_accepted_ind ? ma_accepted_ind->valueint : -1,
+        ipv6_multi_homing_ind ? ipv6_multi_homing_ind->valueint : 0,
+        ma_accepted_ind ? ma_accepted_ind->valueint : 0,
         home_provided_charging_id ? ogs_strdup(home_provided_charging_id->valuestring) : NULL,
-        nef_ext_buf_support_ind ? nef_ext_buf_support_ind->valueint : -1
+        nef_ext_buf_support_ind ? nef_ext_buf_support_ind->valueint : 0
         );
 
     return pdu_session_created_data_local_var;

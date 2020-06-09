@@ -66,7 +66,7 @@ cJSON *OpenAPI_amf_non3_gpp_access_registration_modification_convertToJSON(OpenA
         goto end;
     }
 
-    if (amf_non3_gpp_access_registration_modification->purge_flag >= 0) {
+    if (amf_non3_gpp_access_registration_modification->purge_flag) {
         if (cJSON_AddBoolToObject(item, "purgeFlag", amf_non3_gpp_access_registration_modification->purge_flag) == NULL) {
             ogs_error("OpenAPI_amf_non3_gpp_access_registration_modification_convertToJSON() failed [purge_flag]");
             goto end;
@@ -180,7 +180,7 @@ OpenAPI_amf_non3_gpp_access_registration_modification_t *OpenAPI_amf_non3_gpp_ac
 
     amf_non3_gpp_access_registration_modification_local_var = OpenAPI_amf_non3_gpp_access_registration_modification_create (
         guami_local_nonprim,
-        purge_flag ? purge_flag->valueint : -1,
+        purge_flag ? purge_flag->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         ims_vo_ps ? ims_vo_ps_local_nonprim : NULL,
         backup_amf_info ? backup_amf_infoList : NULL

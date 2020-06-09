@@ -331,7 +331,7 @@ cJSON *OpenAPI_sm_context_convertToJSON(OpenAPI_sm_context_t *sm_context)
         }
     }
 
-    if (sm_context->enable_pause_charging >= 0) {
+    if (sm_context->enable_pause_charging) {
         if (cJSON_AddBoolToObject(item, "enablePauseCharging", sm_context->enable_pause_charging) == NULL) {
             ogs_error("OpenAPI_sm_context_convertToJSON() failed [enable_pause_charging]");
             goto end;
@@ -398,7 +398,7 @@ cJSON *OpenAPI_sm_context_convertToJSON(OpenAPI_sm_context_t *sm_context)
         }
     }
 
-    if (sm_context->always_on_granted >= 0) {
+    if (sm_context->always_on_granted) {
         if (cJSON_AddBoolToObject(item, "alwaysOnGranted", sm_context->always_on_granted) == NULL) {
             ogs_error("OpenAPI_sm_context_convertToJSON() failed [always_on_granted]");
             goto end;
@@ -439,7 +439,7 @@ cJSON *OpenAPI_sm_context_convertToJSON(OpenAPI_sm_context_t *sm_context)
         }
     }
 
-    if (sm_context->forwarding_ind >= 0) {
+    if (sm_context->forwarding_ind) {
         if (cJSON_AddBoolToObject(item, "forwardingInd", sm_context->forwarding_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_convertToJSON() failed [forwarding_ind]");
             goto end;
@@ -492,7 +492,7 @@ cJSON *OpenAPI_sm_context_convertToJSON(OpenAPI_sm_context_t *sm_context)
         }
     }
 
-    if (sm_context->nef_ext_buf_support_ind >= 0) {
+    if (sm_context->nef_ext_buf_support_ind) {
         if (cJSON_AddBoolToObject(item, "nefExtBufSupportInd", sm_context->nef_ext_buf_support_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_convertToJSON() failed [nef_ext_buf_support_ind]");
             goto end;
@@ -874,23 +874,23 @@ OpenAPI_sm_context_t *OpenAPI_sm_context_parseFromJSON(cJSON *sm_contextJSON)
         qos_flows_listList,
         h_smf_instance_id ? ogs_strdup(h_smf_instance_id->valuestring) : NULL,
         smf_instance_id ? ogs_strdup(smf_instance_id->valuestring) : NULL,
-        enable_pause_charging ? enable_pause_charging->valueint : -1,
+        enable_pause_charging ? enable_pause_charging->valueint : 0,
         ue_ipv4_address ? ogs_strdup(ue_ipv4_address->valuestring) : NULL,
         ue_ipv6_prefix ? ogs_strdup(ue_ipv6_prefix->valuestring) : NULL,
         eps_pdn_cnx_info ? eps_pdn_cnx_info_local_nonprim : NULL,
         eps_bearer_info ? eps_bearer_infoList : NULL,
         max_integrity_protected_data_rate ? max_integrity_protected_data_rate_local_nonprim : NULL,
-        always_on_granted ? always_on_granted->valueint : -1,
+        always_on_granted ? always_on_granted->valueint : 0,
         up_security ? up_security_local_nonprim : NULL,
         h_smf_service_instance_id ? ogs_strdup(h_smf_service_instance_id->valuestring) : NULL,
         smf_service_instance_id ? ogs_strdup(smf_service_instance_id->valuestring) : NULL,
         recovery_time ? ogs_strdup(recovery_time->valuestring) : NULL,
-        forwarding_ind ? forwarding_ind->valueint : -1,
+        forwarding_ind ? forwarding_ind->valueint : 0,
         psa_tunnel_info ? psa_tunnel_info_local_nonprim : NULL,
         home_provided_charging_id ? ogs_strdup(home_provided_charging_id->valuestring) : NULL,
         charging_info ? charging_info_local_nonprim : NULL,
         roaming_charging_profile ? roaming_charging_profile_local_nonprim : NULL,
-        nef_ext_buf_support_ind ? nef_ext_buf_support_ind->valueint : -1
+        nef_ext_buf_support_ind ? nef_ext_buf_support_ind->valueint : 0
         );
 
     return sm_context_local_var;

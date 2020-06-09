@@ -209,7 +209,7 @@ cJSON *OpenAPI_pdu_session_create_data_convertToJSON(OpenAPI_pdu_session_create_
         }
     }
 
-    if (pdu_session_create_data->unauthenticated_supi >= 0) {
+    if (pdu_session_create_data->unauthenticated_supi) {
         if (cJSON_AddBoolToObject(item, "unauthenticatedSupi", pdu_session_create_data->unauthenticated_supi) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [unauthenticated_supi]");
             goto end;
@@ -507,7 +507,7 @@ cJSON *OpenAPI_pdu_session_create_data_convertToJSON(OpenAPI_pdu_session_create_
         }
     }
 
-    if (pdu_session_create_data->ho_preparation_indication >= 0) {
+    if (pdu_session_create_data->ho_preparation_indication) {
         if (cJSON_AddBoolToObject(item, "hoPreparationIndication", pdu_session_create_data->ho_preparation_indication) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [ho_preparation_indication]");
             goto end;
@@ -527,7 +527,7 @@ cJSON *OpenAPI_pdu_session_create_data_convertToJSON(OpenAPI_pdu_session_create_
         }
     }
 
-    if (pdu_session_create_data->always_on_requested >= 0) {
+    if (pdu_session_create_data->always_on_requested) {
         if (cJSON_AddBoolToObject(item, "alwaysOnRequested", pdu_session_create_data->always_on_requested) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [always_on_requested]");
             goto end;
@@ -636,35 +636,35 @@ cJSON *OpenAPI_pdu_session_create_data_convertToJSON(OpenAPI_pdu_session_create_
         }
     }
 
-    if (pdu_session_create_data->cp_ciot_enabled >= 0) {
+    if (pdu_session_create_data->cp_ciot_enabled) {
         if (cJSON_AddBoolToObject(item, "cpCiotEnabled", pdu_session_create_data->cp_ciot_enabled) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [cp_ciot_enabled]");
             goto end;
         }
     }
 
-    if (pdu_session_create_data->cp_only_ind >= 0) {
+    if (pdu_session_create_data->cp_only_ind) {
         if (cJSON_AddBoolToObject(item, "cpOnlyInd", pdu_session_create_data->cp_only_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [cp_only_ind]");
             goto end;
         }
     }
 
-    if (pdu_session_create_data->invoke_nef >= 0) {
+    if (pdu_session_create_data->invoke_nef) {
         if (cJSON_AddBoolToObject(item, "invokeNef", pdu_session_create_data->invoke_nef) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [invoke_nef]");
             goto end;
         }
     }
 
-    if (pdu_session_create_data->ma_request_ind >= 0) {
+    if (pdu_session_create_data->ma_request_ind) {
         if (cJSON_AddBoolToObject(item, "maRequestInd", pdu_session_create_data->ma_request_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [ma_request_ind]");
             goto end;
         }
     }
 
-    if (pdu_session_create_data->ma_nw_upgrade_ind >= 0) {
+    if (pdu_session_create_data->ma_nw_upgrade_ind) {
         if (cJSON_AddBoolToObject(item, "maNwUpgradeInd", pdu_session_create_data->ma_nw_upgrade_ind) == NULL) {
             ogs_error("OpenAPI_pdu_session_create_data_convertToJSON() failed [ma_nw_upgrade_ind]");
             goto end;
@@ -1299,7 +1299,7 @@ OpenAPI_pdu_session_create_data_t *OpenAPI_pdu_session_create_data_parseFromJSON
 
     pdu_session_create_data_local_var = OpenAPI_pdu_session_create_data_create (
         supi ? ogs_strdup(supi->valuestring) : NULL,
-        unauthenticated_supi ? unauthenticated_supi->valueint : -1,
+        unauthenticated_supi ? unauthenticated_supi->valueint : 0,
         pei ? ogs_strdup(pei->valuestring) : NULL,
         pdu_session_id ? pdu_session_id->valuedouble : 0,
         ogs_strdup(dnn->valuestring),
@@ -1330,9 +1330,9 @@ OpenAPI_pdu_session_create_data_t *OpenAPI_pdu_session_create_data_parseFromJSON
         pcf_id ? ogs_strdup(pcf_id->valuestring) : NULL,
         pcf_group_id ? ogs_strdup(pcf_group_id->valuestring) : NULL,
         pcf_set_id ? ogs_strdup(pcf_set_id->valuestring) : NULL,
-        ho_preparation_indication ? ho_preparation_indication->valueint : -1,
+        ho_preparation_indication ? ho_preparation_indication->valueint : 0,
         sel_mode ? sel_mode_local_nonprim : NULL,
-        always_on_requested ? always_on_requested->valueint : -1,
+        always_on_requested ? always_on_requested->valueint : 0,
         udm_group_id ? ogs_strdup(udm_group_id->valuestring) : NULL,
         routing_indicator ? ogs_strdup(routing_indicator->valuestring) : NULL,
         eps_interworking_ind ? eps_interworking_ind_local_nonprim : NULL,
@@ -1345,11 +1345,11 @@ OpenAPI_pdu_session_create_data_t *OpenAPI_pdu_session_create_data_parseFromJSON
         eps_bearer_ctx_status ? ogs_strdup(eps_bearer_ctx_status->valuestring) : NULL,
         amf_nf_id ? ogs_strdup(amf_nf_id->valuestring) : NULL,
         guami ? guami_local_nonprim : NULL,
-        cp_ciot_enabled ? cp_ciot_enabled->valueint : -1,
-        cp_only_ind ? cp_only_ind->valueint : -1,
-        invoke_nef ? invoke_nef->valueint : -1,
-        ma_request_ind ? ma_request_ind->valueint : -1,
-        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : -1,
+        cp_ciot_enabled ? cp_ciot_enabled->valueint : 0,
+        cp_only_ind ? cp_only_ind->valueint : 0,
+        invoke_nef ? invoke_nef->valueint : 0,
+        ma_request_ind ? ma_request_ind->valueint : 0,
+        ma_nw_upgrade_ind ? ma_nw_upgrade_ind->valueint : 0,
         dnai_list ? dnai_listList : NULL,
         presence_in_ladn ? presence_in_ladn_local_nonprim : NULL,
         secondary_rat_usage_info ? secondary_rat_usage_infoList : NULL,

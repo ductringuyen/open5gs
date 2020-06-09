@@ -96,7 +96,7 @@ cJSON *OpenAPI_sm_context_retrieved_data_convertToJSON(OpenAPI_sm_context_retrie
         }
     }
 
-    if (sm_context_retrieved_data->dl_data_waiting_ind >= 0) {
+    if (sm_context_retrieved_data->dl_data_waiting_ind) {
         if (cJSON_AddBoolToObject(item, "dlDataWaitingInd", sm_context_retrieved_data->dl_data_waiting_ind) == NULL) {
             ogs_error("OpenAPI_sm_context_retrieved_data_convertToJSON() failed [dl_data_waiting_ind]");
             goto end;
@@ -157,7 +157,7 @@ OpenAPI_sm_context_retrieved_data_t *OpenAPI_sm_context_retrieved_data_parseFrom
         sm_context ? sm_context_local_nonprim : NULL,
         small_data_rate_status ? small_data_rate_status_local_nonprim : NULL,
         apn_rate_status ? apn_rate_status_local_nonprim : NULL,
-        dl_data_waiting_ind ? dl_data_waiting_ind->valueint : -1
+        dl_data_waiting_ind ? dl_data_waiting_ind->valueint : 0
         );
 
     return sm_context_retrieved_data_local_var;

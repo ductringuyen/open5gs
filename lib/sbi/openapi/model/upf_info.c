@@ -142,7 +142,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->iwk_eps_ind >= 0) {
+    if (upf_info->iwk_eps_ind) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", upf_info->iwk_eps_ind) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [iwk_eps_ind]");
             goto end;
@@ -182,7 +182,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->ue_ip_addr_ind >= 0) {
+    if (upf_info->ue_ip_addr_ind) {
         if (cJSON_AddBoolToObject(item, "ueIpAddrInd", upf_info->ue_ip_addr_ind) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [ue_ip_addr_ind]");
             goto end;
@@ -255,7 +255,7 @@ cJSON *OpenAPI_upf_info_convertToJSON(OpenAPI_upf_info_t *upf_info)
         }
     }
 
-    if (upf_info->redundant_gtpu >= 0) {
+    if (upf_info->redundant_gtpu) {
         if (cJSON_AddBoolToObject(item, "redundantGtpu", upf_info->redundant_gtpu) == NULL) {
             ogs_error("OpenAPI_upf_info_convertToJSON() failed [redundant_gtpu]");
             goto end;
@@ -452,16 +452,16 @@ OpenAPI_upf_info_t *OpenAPI_upf_info_parseFromJSON(cJSON *upf_infoJSON)
         s_nssai_upf_info_listList,
         smf_serving_area ? smf_serving_areaList : NULL,
         interface_upf_info_list ? interface_upf_info_listList : NULL,
-        iwk_eps_ind ? iwk_eps_ind->valueint : -1,
+        iwk_eps_ind ? iwk_eps_ind->valueint : 0,
         pdu_session_types ? pdu_session_typesList : NULL,
         atsss_capability ? atsss_capability_local_nonprim : NULL,
-        ue_ip_addr_ind ? ue_ip_addr_ind->valueint : -1,
+        ue_ip_addr_ind ? ue_ip_addr_ind->valueint : 0,
         tai_list ? tai_listList : NULL,
         w_agf_info ? w_agf_info_local_nonprim : NULL,
         tngf_info ? tngf_info_local_nonprim : NULL,
         twif_info ? twif_info_local_nonprim : NULL,
         priority ? priority->valuedouble : 0,
-        redundant_gtpu ? redundant_gtpu->valueint : -1
+        redundant_gtpu ? redundant_gtpu->valueint : 0
         );
 
     return upf_info_local_var;

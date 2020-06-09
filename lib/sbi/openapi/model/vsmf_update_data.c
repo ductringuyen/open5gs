@@ -284,7 +284,7 @@ cJSON *OpenAPI_vsmf_update_data_convertToJSON(OpenAPI_vsmf_update_data_t *vsmf_u
         }
     }
 
-    if (vsmf_update_data->always_on_granted >= 0) {
+    if (vsmf_update_data->always_on_granted) {
         if (cJSON_AddBoolToObject(item, "alwaysOnGranted", vsmf_update_data->always_on_granted) == NULL) {
             ogs_error("OpenAPI_vsmf_update_data_convertToJSON() failed [always_on_granted]");
             goto end;
@@ -345,7 +345,7 @@ cJSON *OpenAPI_vsmf_update_data_convertToJSON(OpenAPI_vsmf_update_data_t *vsmf_u
         }
     }
 
-    if (vsmf_update_data->ma_accepted_ind >= 0) {
+    if (vsmf_update_data->ma_accepted_ind) {
         if (cJSON_AddBoolToObject(item, "maAcceptedInd", vsmf_update_data->ma_accepted_ind) == NULL) {
             ogs_error("OpenAPI_vsmf_update_data_convertToJSON() failed [ma_accepted_ind]");
             goto end;
@@ -722,14 +722,14 @@ OpenAPI_vsmf_update_data_t *OpenAPI_vsmf_update_data_parseFromJSON(cJSON *vsmf_u
         modified_ebi_list ? modified_ebi_listList : NULL,
         pti ? pti->valuedouble : 0,
         n1_sm_info_to_ue ? n1_sm_info_to_ue_local_nonprim : NULL,
-        always_on_granted ? always_on_granted->valueint : -1,
+        always_on_granted ? always_on_granted->valueint : 0,
         hsmf_pdu_session_uri ? ogs_strdup(hsmf_pdu_session_uri->valuestring) : NULL,
         supported_features ? ogs_strdup(supported_features->valuestring) : NULL,
         cause ? cause_local_nonprim : NULL,
         n1sm_cause ? ogs_strdup(n1sm_cause->valuestring) : NULL,
         back_off_timer ? back_off_timer->valuedouble : 0,
         ma_release_ind ? ma_release_ind_local_nonprim : NULL,
-        ma_accepted_ind ? ma_accepted_ind->valueint : -1,
+        ma_accepted_ind ? ma_accepted_ind->valueint : 0,
         additional_cn_tunnel_info ? additional_cn_tunnel_info_local_nonprim : NULL,
         dnai_list ? dnai_listList : NULL,
         n4_info ? n4_info_local_nonprim : NULL,

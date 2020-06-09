@@ -159,14 +159,14 @@ cJSON *OpenAPI_sm_policy_dnn_data_convertToJSON(OpenAPI_sm_policy_dnn_data_t *sm
         }
     }
 
-    if (sm_policy_dnn_data->adc_support >= 0) {
+    if (sm_policy_dnn_data->adc_support) {
         if (cJSON_AddBoolToObject(item, "adcSupport", sm_policy_dnn_data->adc_support) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [adc_support]");
             goto end;
         }
     }
 
-    if (sm_policy_dnn_data->subsc_spending_limits >= 0) {
+    if (sm_policy_dnn_data->subsc_spending_limits) {
         if (cJSON_AddBoolToObject(item, "subscSpendingLimits", sm_policy_dnn_data->subsc_spending_limits) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [subsc_spending_limits]");
             goto end;
@@ -187,14 +187,14 @@ cJSON *OpenAPI_sm_policy_dnn_data_convertToJSON(OpenAPI_sm_policy_dnn_data_t *sm
         }
     }
 
-    if (sm_policy_dnn_data->offline >= 0) {
+    if (sm_policy_dnn_data->offline) {
         if (cJSON_AddBoolToObject(item, "offline", sm_policy_dnn_data->offline) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [offline]");
             goto end;
         }
     }
 
-    if (sm_policy_dnn_data->online >= 0) {
+    if (sm_policy_dnn_data->online) {
         if (cJSON_AddBoolToObject(item, "online", sm_policy_dnn_data->online) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [online]");
             goto end;
@@ -235,21 +235,21 @@ cJSON *OpenAPI_sm_policy_dnn_data_convertToJSON(OpenAPI_sm_policy_dnn_data_t *sm
         }
     }
 
-    if (sm_policy_dnn_data->mps_priority >= 0) {
+    if (sm_policy_dnn_data->mps_priority) {
         if (cJSON_AddBoolToObject(item, "mpsPriority", sm_policy_dnn_data->mps_priority) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [mps_priority]");
             goto end;
         }
     }
 
-    if (sm_policy_dnn_data->mcs_priority >= 0) {
+    if (sm_policy_dnn_data->mcs_priority) {
         if (cJSON_AddBoolToObject(item, "mcsPriority", sm_policy_dnn_data->mcs_priority) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [mcs_priority]");
             goto end;
         }
     }
 
-    if (sm_policy_dnn_data->ims_signalling_prio >= 0) {
+    if (sm_policy_dnn_data->ims_signalling_prio) {
         if (cJSON_AddBoolToObject(item, "imsSignallingPrio", sm_policy_dnn_data->ims_signalling_prio) == NULL) {
             ogs_error("OpenAPI_sm_policy_dnn_data_convertToJSON() failed [ims_signalling_prio]");
             goto end;
@@ -558,17 +558,17 @@ OpenAPI_sm_policy_dnn_data_t *OpenAPI_sm_policy_dnn_data_parseFromJSON(cJSON *sm
         subsc_cats ? subsc_catsList : NULL,
         gbr_ul ? ogs_strdup(gbr_ul->valuestring) : NULL,
         gbr_dl ? ogs_strdup(gbr_dl->valuestring) : NULL,
-        adc_support ? adc_support->valueint : -1,
-        subsc_spending_limits ? subsc_spending_limits->valueint : -1,
+        adc_support ? adc_support->valueint : 0,
+        subsc_spending_limits ? subsc_spending_limits->valueint : 0,
         ipv4_index ? ipv4_index->valuedouble : 0,
         ipv6_index ? ipv6_index->valuedouble : 0,
-        offline ? offline->valueint : -1,
-        online ? online->valueint : -1,
+        offline ? offline->valueint : 0,
+        online ? online->valueint : 0,
         chf_info ? chf_info_local_nonprim : NULL,
         ref_um_data_limit_ids ? ref_um_data_limit_idsList : NULL,
-        mps_priority ? mps_priority->valueint : -1,
-        mcs_priority ? mcs_priority->valueint : -1,
-        ims_signalling_prio ? ims_signalling_prio->valueint : -1,
+        mps_priority ? mps_priority->valueint : 0,
+        mcs_priority ? mcs_priority->valueint : 0,
+        ims_signalling_prio ? ims_signalling_prio->valueint : 0,
         mps_priority_level ? mps_priority_level->valuedouble : 0,
         mcs_priority_level ? mcs_priority_level->valuedouble : 0,
         pra_infos ? pra_infosList : NULL,

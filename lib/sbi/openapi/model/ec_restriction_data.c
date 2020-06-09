@@ -38,14 +38,14 @@ cJSON *OpenAPI_ec_restriction_data_convertToJSON(OpenAPI_ec_restriction_data_t *
     }
 
     item = cJSON_CreateObject();
-    if (ec_restriction_data->ec_mode_a_restricted >= 0) {
+    if (ec_restriction_data->ec_mode_a_restricted) {
         if (cJSON_AddBoolToObject(item, "ecModeARestricted", ec_restriction_data->ec_mode_a_restricted) == NULL) {
             ogs_error("OpenAPI_ec_restriction_data_convertToJSON() failed [ec_mode_a_restricted]");
             goto end;
         }
     }
 
-    if (ec_restriction_data->ec_mode_b_restricted >= 0) {
+    if (ec_restriction_data->ec_mode_b_restricted) {
         if (cJSON_AddBoolToObject(item, "ecModeBRestricted", ec_restriction_data->ec_mode_b_restricted) == NULL) {
             ogs_error("OpenAPI_ec_restriction_data_convertToJSON() failed [ec_mode_b_restricted]");
             goto end;
@@ -78,8 +78,8 @@ OpenAPI_ec_restriction_data_t *OpenAPI_ec_restriction_data_parseFromJSON(cJSON *
     }
 
     ec_restriction_data_local_var = OpenAPI_ec_restriction_data_create (
-        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : -1,
-        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : -1
+        ec_mode_a_restricted ? ec_mode_a_restricted->valueint : 0,
+        ec_mode_b_restricted ? ec_mode_b_restricted->valueint : 0
         );
 
     return ec_restriction_data_local_var;

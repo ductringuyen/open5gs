@@ -39,7 +39,7 @@ cJSON *OpenAPI_sms_subscription_data_convertToJSON(OpenAPI_sms_subscription_data
     }
 
     item = cJSON_CreateObject();
-    if (sms_subscription_data->sms_subscribed >= 0) {
+    if (sms_subscription_data->sms_subscribed) {
         if (cJSON_AddBoolToObject(item, "smsSubscribed", sms_subscription_data->sms_subscribed) == NULL) {
             ogs_error("OpenAPI_sms_subscription_data_convertToJSON() failed [sms_subscribed]");
             goto end;
@@ -79,7 +79,7 @@ OpenAPI_sms_subscription_data_t *OpenAPI_sms_subscription_data_parseFromJSON(cJS
     }
 
     sms_subscription_data_local_var = OpenAPI_sms_subscription_data_create (
-        sms_subscribed ? sms_subscribed->valueint : -1,
+        sms_subscribed ? sms_subscribed->valueint : 0,
         shared_sms_subs_data_id ? ogs_strdup(shared_sms_subs_data_id->valuestring) : NULL
         );
 

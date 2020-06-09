@@ -140,7 +140,7 @@ cJSON *OpenAPI_pcf_info_convertToJSON(OpenAPI_pcf_info_t *pcf_info)
         }
     }
 
-    if (pcf_info->v2x_support_ind >= 0) {
+    if (pcf_info->v2x_support_ind) {
         if (cJSON_AddBoolToObject(item, "v2xSupportInd", pcf_info->v2x_support_ind) == NULL) {
             ogs_error("OpenAPI_pcf_info_convertToJSON() failed [v2x_support_ind]");
             goto end;
@@ -263,7 +263,7 @@ OpenAPI_pcf_info_t *OpenAPI_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
         gpsi_ranges ? gpsi_rangesList : NULL,
         rx_diam_host ? ogs_strdup(rx_diam_host->valuestring) : NULL,
         rx_diam_realm ? ogs_strdup(rx_diam_realm->valuestring) : NULL,
-        v2x_support_ind ? v2x_support_ind->valueint : -1
+        v2x_support_ind ? v2x_support_ind->valueint : 0
         );
 
     return pcf_info_local_var;
