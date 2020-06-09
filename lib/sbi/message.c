@@ -646,7 +646,8 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
                 CASE(OGS_SBI_HTTP_METHOD_PUT)
                     if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                         message->ConfirmationDataResponse =
-                            OpenAPI_confirmation_data_response_parseFromJSON(item);
+                            OpenAPI_confirmation_data_response_parseFromJSON(
+                                    item);
                         if (!message->ConfirmationDataResponse) {
                             rv = OGS_ERROR;
                             ogs_error("JSON parse error");
@@ -749,7 +750,8 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
             SWITCH(message->h.resource.component[1])
             CASE(OGS_SBI_RESOURCE_NAME_AM_DATA)
                 message->AccessAndMobilitySubscriptionData =
-                    OpenAPI_access_and_mobility_subscription_data_parseFromJSON(item);
+                    OpenAPI_access_and_mobility_subscription_data_parseFromJSON(
+                            item);
                 if (!message->AccessAndMobilitySubscriptionData) {
                     rv = OGS_ERROR;
                     ogs_error("JSON parse error");
@@ -846,7 +848,8 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
 
                         CASE(OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA)
                             message->UeContextInSmfData =
-                                OpenAPI_ue_context_in_smf_data_parseFromJSON(item);
+                                OpenAPI_ue_context_in_smf_data_parseFromJSON(
+                                        item);
                             if (!message->UeContextInSmfData) {
                                 rv = OGS_ERROR;
                                 ogs_error("JSON parse error");
@@ -978,4 +981,3 @@ void *ogs_sbi_header_get(ogs_hash_t *ht, const void *key)
 {
     return ogs_hash_get(ht, key, strlen(key));
 }
-
