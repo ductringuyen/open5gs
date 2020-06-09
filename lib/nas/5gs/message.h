@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-08 17:02:29.630346 by acetcom
+ * Created on: 2020-06-08 19:58:19.199271 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -578,14 +578,16 @@ typedef struct ogs_nas_5gs_configuration_update_command_s {
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_CIOT_SMALL_DATA_CONTAINER_PRESENT ((uint64_t)1<<0)
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_TYPE_PRESENT ((uint64_t)1<<1)
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_PRESENT ((uint64_t)1<<2)
-#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_PRESENT ((uint64_t)1<<3)
-#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_RELEASE_ASSISTANCE_INDICATION_PRESENT ((uint64_t)1<<4)
-#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_UPLINK_DATA_STATUS_PRESENT ((uint64_t)1<<5)
-#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_NAS_MESSAGE_CONTAINER_PRESENT ((uint64_t)1<<6)
-#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<7)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_PRESENT ((uint64_t)1<<3)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_PRESENT ((uint64_t)1<<4)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_RELEASE_ASSISTANCE_INDICATION_PRESENT ((uint64_t)1<<5)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_UPLINK_DATA_STATUS_PRESENT ((uint64_t)1<<6)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_NAS_MESSAGE_CONTAINER_PRESENT ((uint64_t)1<<7)
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<8)
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_CIOT_SMALL_DATA_CONTAINER_TYPE 0x6F
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_TYPE_TYPE 0x80
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_TYPE 0x7B
+#define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_TYPE 0x12
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_TYPE 0x50
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_RELEASE_ASSISTANCE_INDICATION_TYPE 0xF0
 #define OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_UPLINK_DATA_STATUS_TYPE 0x40
@@ -817,13 +819,15 @@ typedef struct ogs_nas_5gs_notification_response_s {
 /*******************************************************
  * UL NAS TRANSPORT
  ******************************************************/
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_PRESENT ((uint64_t)1<<0)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_PRESENT ((uint64_t)1<<1)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT ((uint64_t)1<<2)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT ((uint64_t)1<<3)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<4)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_MA_PDU_SESSION_INFORMATION_PRESENT ((uint64_t)1<<5)
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_RELEASE_ASSISTANCE_INDICATION_PRESENT ((uint64_t)1<<6)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT ((uint64_t)1<<0)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_PRESENT ((uint64_t)1<<1)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_PRESENT ((uint64_t)1<<2)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT ((uint64_t)1<<3)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT ((uint64_t)1<<4)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<5)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_MA_PDU_SESSION_INFORMATION_PRESENT ((uint64_t)1<<6)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_RELEASE_ASSISTANCE_INDICATION_PRESENT ((uint64_t)1<<7)
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE 0x12
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_TYPE 0x59
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_TYPE 0x8
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_TYPE 0x22
@@ -836,10 +840,10 @@ typedef struct ogs_nas_5gs_ul_nas_transport_s {
     /* Mandatory fields */
     ogs_nas_payload_container_type_t payload_container_type;
     ogs_nas_payload_container_t payload_container;
-    ogs_nas_pdu_session_identity_2_t pdu_session_id;
 
     /* Optional fields */
     uint64_t presencemask;
+    ogs_nas_pdu_session_identity_2_t pdu_session_id;
     ogs_nas_pdu_session_identity_2_t old_pdu_session_id;
     ogs_nas_request_type_t request_type;
     ogs_nas_s_nssai_t s_nssai;
@@ -853,9 +857,11 @@ typedef struct ogs_nas_5gs_ul_nas_transport_s {
 /*******************************************************
  * DL NAS TRANSPORT
  ******************************************************/
-#define OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<0)
-#define OGS_NAS_5GS_DL_NAS_TRANSPORT_5GMM_CAUSE_PRESENT ((uint64_t)1<<1)
-#define OGS_NAS_5GS_DL_NAS_TRANSPORT_BACK_OFF_TIMER_VALUE_PRESENT ((uint64_t)1<<2)
+#define OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT ((uint64_t)1<<0)
+#define OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_PRESENT ((uint64_t)1<<1)
+#define OGS_NAS_5GS_DL_NAS_TRANSPORT_5GMM_CAUSE_PRESENT ((uint64_t)1<<2)
+#define OGS_NAS_5GS_DL_NAS_TRANSPORT_BACK_OFF_TIMER_VALUE_PRESENT ((uint64_t)1<<3)
+#define OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE 0x12
 #define OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_TYPE 0x24
 #define OGS_NAS_5GS_DL_NAS_TRANSPORT_5GMM_CAUSE_TYPE 0x58
 #define OGS_NAS_5GS_DL_NAS_TRANSPORT_BACK_OFF_TIMER_VALUE_TYPE 0x37
@@ -864,10 +870,10 @@ typedef struct ogs_nas_5gs_dl_nas_transport_s {
     /* Mandatory fields */
     ogs_nas_payload_container_type_t payload_container_type;
     ogs_nas_payload_container_t payload_container;
-    ogs_nas_pdu_session_identity_2_t pdu_session_id;
 
     /* Optional fields */
     uint64_t presencemask;
+    ogs_nas_pdu_session_identity_2_t pdu_session_id;
     ogs_nas_additional_information_t additional_information;
     ogs_nas_5gmm_cause_t gmm_cause;
     ogs_nas_gprs_timer_3_t back_off_timer_value;

@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-08 17:02:29.638000 by acetcom
+ * Created on: 2020-06-08 19:58:19.207085 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1072,6 +1072,12 @@ int ogs_nas_5gs_decode_configuration_update_complete(ogs_nas_5gs_message_t *mess
             configuration_update_complete->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_PRESENT;
             decoded += size;
             break;
+        case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_TYPE:
+            size = ogs_nas_5gs_decode_pdu_session_identity_2(&configuration_update_complete->pdu_session_id, pkbuf);
+            ogs_assert(size >= 0);
+            configuration_update_complete->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_TYPE:
             size = ogs_nas_5gs_decode_pdu_session_status(&configuration_update_complete->pdu_session_status, pkbuf);
             ogs_assert(size >= 0);
@@ -1559,6 +1565,12 @@ int ogs_nas_5gs_decode_ul_nas_transport(ogs_nas_5gs_message_t *message, ogs_pkbu
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE:
+            size = ogs_nas_5gs_decode_pdu_session_identity_2(&ul_nas_transport->pdu_session_id, pkbuf);
+            ogs_assert(size >= 0);
+            ul_nas_transport->presencemask |= OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_TYPE:
             size = ogs_nas_5gs_decode_pdu_session_identity_2(&ul_nas_transport->old_pdu_session_id, pkbuf);
             ogs_assert(size >= 0);
@@ -1635,6 +1647,12 @@ int ogs_nas_5gs_decode_dl_nas_transport(ogs_nas_5gs_message_t *message, ogs_pkbu
         decoded += size;
 
         switch(type) {
+        case OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE:
+            size = ogs_nas_5gs_decode_pdu_session_identity_2(&dl_nas_transport->pdu_session_id, pkbuf);
+            ogs_assert(size >= 0);
+            dl_nas_transport->presencemask |= OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT;
+            decoded += size;
+            break;
         case OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_TYPE:
             size = ogs_nas_5gs_decode_additional_information(&dl_nas_transport->additional_information, pkbuf);
             ogs_assert(size >= 0);

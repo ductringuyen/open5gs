@@ -505,10 +505,7 @@ ED2(uint8_t type:4;,
 
 /* 9.11.3.41 PDU session identity 2
  * C TV 2 */
-typedef struct ogs_nas_pdu_session_identity_2_s {
-    uint8_t type;
-    uint8_t value;
-}  __attribute__ ((packed)) ogs_nas_pdu_session_identity_2_t;
+typedef uint8_t ogs_nas_pdu_session_identity_2_t;
 
 /* 9.11.3.42 PDU session reactivation result
  * O TLV 4-34 */

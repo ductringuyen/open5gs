@@ -242,7 +242,11 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
 
     memset(&message, 0, sizeof(message));
     message.h.security_header_type =
+#if 0
         OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED;
+#else
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED;
+#endif
     message.h.extended_protocol_discriminator =
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
 
@@ -255,11 +259,11 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
     payload_container->length = payload->len;
     payload_container->buffer = payload->data;
 
-#if 0
     ul_nas_transport->presencemask |=
-            OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_PRESENT;
-    pdu_session_id->value = test_sess->id;
+            OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT;
+    *pdu_session_id = test_sess->id;
 
+#if 0
     ul_nas_transport->presencemask |=
             OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_PRESENT;
     request_type->value = OGS_NAS_5GS_REQUEST_TYPE_INITIAL;

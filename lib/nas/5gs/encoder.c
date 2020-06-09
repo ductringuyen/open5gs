@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-08 17:02:29.648934 by acetcom
+ * Created on: 2020-06-08 19:58:19.218142 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1356,6 +1356,16 @@ int ogs_nas_5gs_encode_configuration_update_complete(ogs_pkbuf_t *pkbuf, ogs_nas
         encoded += size;
     }
 
+    if (configuration_update_complete->presencemask & OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_PRESENT) {
+        size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_ID_TYPE);
+        ogs_assert(size >= 0);
+        encoded += size;
+
+        size = ogs_nas_5gs_encode_pdu_session_identity_2(pkbuf, &configuration_update_complete->pdu_session_id);
+        ogs_assert(size >= 0);
+        encoded += size;
+    }
+
     if (configuration_update_complete->presencemask & OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_PRESENT) {
         size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PDU_SESSION_STATUS_TYPE);
         ogs_assert(size >= 0);
@@ -1796,6 +1806,16 @@ int ogs_nas_5gs_encode_ul_nas_transport(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_message_
     ogs_assert(size >= 0);
     encoded += size;
 
+    if (ul_nas_transport->presencemask & OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT) {
+        size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE);
+        ogs_assert(size >= 0);
+        encoded += size;
+
+        size = ogs_nas_5gs_encode_pdu_session_identity_2(pkbuf, &ul_nas_transport->pdu_session_id);
+        ogs_assert(size >= 0);
+        encoded += size;
+    }
+
     if (ul_nas_transport->presencemask & OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_PRESENT) {
         size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_TYPE);
         ogs_assert(size >= 0);
@@ -1878,6 +1898,16 @@ int ogs_nas_5gs_encode_dl_nas_transport(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_message_
     size = ogs_nas_5gs_encode_payload_container(pkbuf, &dl_nas_transport->payload_container);
     ogs_assert(size >= 0);
     encoded += size;
+
+    if (dl_nas_transport->presencemask & OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT) {
+        size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_DL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE);
+        ogs_assert(size >= 0);
+        encoded += size;
+
+        size = ogs_nas_5gs_encode_pdu_session_identity_2(pkbuf, &dl_nas_transport->pdu_session_id);
+        ogs_assert(size >= 0);
+        encoded += size;
+    }
 
     if (dl_nas_transport->presencemask & OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_PRESENT) {
         size = ogs_nas_5gs_encode_optional_type(pkbuf, OGS_NAS_5GS_DL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_TYPE);
