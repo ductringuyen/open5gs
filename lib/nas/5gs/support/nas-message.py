@@ -123,6 +123,10 @@ def get_cells(cells):
     format = cells[4].text.encode('ascii', 'ignore')
     length = cells[5].text.encode('ascii', 'ignore')
 
+# Spec errata - workaround
+    if (type == "Request type" and value == "Request type"):
+        iei = "8-"
+
     return { "iei" : iei, "value" : value, "type" : type, "reference" : reference, "presence" : presence, "format" : format, "length" : length }
 
 def write_cells_to_file(name, cells):

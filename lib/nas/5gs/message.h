@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-08 19:58:19.199271 by acetcom
+ * Created on: 2020-06-08 20:18:57.853662 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -829,7 +829,7 @@ typedef struct ogs_nas_5gs_notification_response_s {
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_RELEASE_ASSISTANCE_INDICATION_PRESENT ((uint64_t)1<<7)
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_TYPE 0x12
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_OLD_PDU_SESSION_ID_TYPE 0x59
-#define OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_TYPE 0x8
+#define OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_TYPE 0x80
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_TYPE 0x22
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_TYPE 0x25
 #define OGS_NAS_5GS_UL_NAS_TRANSPORT_ADDITIONAL_INFORMATION_TYPE 0x24
