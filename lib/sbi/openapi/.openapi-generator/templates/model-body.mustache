@@ -522,7 +522,7 @@ OpenAPI_{{classname}}_t *OpenAPI_{{classname}}_parseFromJSON(cJSON *{{classname}
                 }
             {{/isByteArray}}
             {{#isBinary}}
-                OpenAPI_binary_t* decoded_str_{{{name}}} = OpenAPI_malloc(sizeof(struct binary_t));
+                OpenAPI_binary_t* decoded_str_{{{name}}} = OpenAPI_malloc(sizeof(OpenAPI_binary_t));
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
                     ogs_error("OpenAPI_{{classname}}_parseFromJSON() failed [{{{name}}}]");

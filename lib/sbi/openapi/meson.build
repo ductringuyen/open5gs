@@ -18,6 +18,7 @@
 libsbi_openapi_sources = files('''
     src/list.c
     src/apiKey.c
+    src/binary.c
     external/cJSON.c
     model/object.c
     model/access_type.c
@@ -462,6 +463,103 @@ libsbi_openapi_sources = files('''
     model/usage_mon_level.c
     model/usage_threshold.c
     model/v2x_rat_type.c
+
+    model/additional_qos_flow_info.c
+    model/apn_rate_status.c
+    model/cause.c
+    model/cn_assisted_ran_para.c
+    model/ddn_failure_subs.c
+    model/dnai_information.c
+    model/dnn_selection_mode.c
+    model/dynamic5_qi.c
+    model/ebi_arp_mapping.c
+    model/eps_bearer_info.c
+    model/eps_interworking_indication.c
+    model/eps_pdn_cnx_info.c
+    model/exemption_ind.c
+    model/gbr_qos_flow_information.c
+    model/ho_state.c
+    model/hsmf_update_data.c
+    model/hsmf_update_error.c
+    model/hsmf_updated_data.c
+    model/indirect_data_forwarding_tunnel_info.c
+    model/inline_object.c
+    model/inline_object_1.c
+    model/inline_object_2.c
+    model/inline_object_3.c
+    model/inline_object_4.c
+    model/ma_release_indication.c
+    model/max_integrity_protected_data_rate.c
+    model/mme_capabilities.c
+    model/mo_exception_data_flag.c
+    model/mo_exp_data_counter.c
+    model/n2_sm_info_type.c
+    model/n4_information.c
+    model/n4_message_type.c
+    model/ng_ap_cause.c
+    model/ng_ran_target_id.c
+    model/non_dynamic5_qi.c
+    model/notification_cause.c
+    model/notification_control.c
+    model/partial_record_method.c
+    model/pdu_session_create_data.c
+    model/pdu_session_create_error.c
+    model/pdu_session_created_data.c
+    model/pdu_session_notify_item.c
+    model/psa_indication.c
+    model/psa_information.c
+    model/qos_flow_access_type.c
+    model/qos_flow_add_modify_request_item.c
+    model/qos_flow_item.c
+    model/qos_flow_notify_item.c
+    model/qos_flow_profile.c
+    model/qos_flow_release_request_item.c
+    model/qos_flow_setup_item.c
+    model/qos_flow_usage_report.c
+    model/qos_resource_type.c
+    model/ref_to_binary_data.c
+    model/reflective_qo_s_attribute.c
+    model/release_data.c
+    model/released_data.c
+    model/request_indication.c
+    model/request_type.c
+    model/resource_status.c
+    model/roaming_charging_profile.c
+    model/secondary_rat_usage_info.c
+    model/secondary_rat_usage_report.c
+    model/send_mo_data_req_data.c
+    model/sm_context.c
+    model/sm_context_create_data.c
+    model/sm_context_create_error.c
+    model/sm_context_created_data.c
+    model/sm_context_release_data.c
+    model/sm_context_released_data.c
+    model/sm_context_retrieve_data.c
+    model/sm_context_retrieved_data.c
+    model/sm_context_status_notification.c
+    model/sm_context_type.c
+    model/sm_context_update_data.c
+    model/sm_context_update_error.c
+    model/sm_context_updated_data.c
+    model/small_data_rate_status.c
+    model/status_info.c
+    model/status_notification.c
+    model/transfer_mo_data_req_data.c
+    model/transfer_mt_data_add_info.c
+    model/transfer_mt_data_error.c
+    model/transfer_mt_data_req_data.c
+    model/trigger.c
+    model/trigger_category.c
+    model/trigger_type.c
+    model/tunnel_info.c
+    model/ulcl_bp_information.c
+    model/unavailable_access_indication.c
+    model/up_cnx_state.c
+    model/volume_timed_report.c
+    model/vplmn_qos.c
+    model/vsmf_update_data.c
+    model/vsmf_update_error.c
+    model/vsmf_updated_data.c
 
 '''.split())
 
