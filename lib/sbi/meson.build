@@ -18,6 +18,7 @@
 subdir('openapi')
 
 libsbi_sources = files('''
+    contrib/multipart_parser.c
     custom/links.c
 
     yuarel.c
