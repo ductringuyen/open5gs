@@ -272,30 +272,29 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     ogs_assert(conn->easy);
 
     /* HTTP Method */
-    if (request->http.gsm.buf) {
+    if (request->http.content && request->http.gsm.buf) {
         curl_mimepart *part;
+        struct curl_slist *slist = NULL;
 
         conn->mime = curl_mime_init(conn->easy);
         ogs_assert(conn->mime);
 
-        if (request->http.content) {
+        part = curl_mime_addpart(conn->mime);
+        ogs_assert(part);
+        curl_mime_data(part,
+            request->http.content, strlen(request->http.content));
+        curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
+
+        if (request->http.gsm.buf) {
             part = curl_mime_addpart(conn->mime);
             ogs_assert(part);
-            curl_mime_data(part,
-                request->http.content, strlen(request->http.content));
-            curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
 
-            if (request->http.gsm.buf) {
-                struct curl_slist *slist = NULL;
-                part = curl_mime_addpart(conn->mime);
-                ogs_assert(part);
-                curl_mime_data(part,
-                    (const void *)request->http.gsm.buf->data,
-                    request->http.gsm.buf->len);
-                slist = curl_slist_append(NULL, "Content-Id: n1msg");
-                curl_mime_headers(part, slist, 1);
-                curl_mime_type(part, OGS_SBI_CONTENT_5GNAS_TYPE);
-            }
+            curl_mime_data(part,
+                (const void *)request->http.gsm.buf->data,
+                request->http.gsm.buf->len);
+            slist = curl_slist_append(NULL, "Content-Id: n1msg");
+            curl_mime_headers(part, slist, 1);
+            curl_mime_type(part, OGS_SBI_CONTENT_5GNAS_TYPE);
         }
 
         curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
