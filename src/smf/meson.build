@@ -53,6 +53,7 @@ libsmf_sources = files('''
     timer.c
     context.c
     smf-sm.c
+    gsm-sm.c
     pfcp-sm.c
     gtp-path.c
     s5c-build.c

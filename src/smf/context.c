@@ -530,6 +530,8 @@ smf_sess_t *smf_sess_add(
         uint8_t *imsi, int imsi_len, char *apn, 
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *paa)
 {
+    smf_event_t e;
+
     char buf1[OGS_ADDRSTRLEN];
     char buf2[OGS_ADDRSTRLEN];
     smf_sess_t *sess = NULL;
@@ -643,6 +645,10 @@ smf_sess_t *smf_sess_add(
     sess->sbi.client_wait_timer = ogs_timer_add(
             self.timer_mgr, smf_timer_sbi_client_wait_expire, sess);
 
+    e.sess = sess;
+    ogs_fsm_create(&sess->sm, smf_gsm_state_initial, smf_gsm_state_final);
+    ogs_fsm_init(&sess->sm, &e);
+
     ogs_list_add(&self.sess_list, sess);
     
     stats_add_session();
@@ -653,10 +659,15 @@ smf_sess_t *smf_sess_add(
 int smf_sess_remove(smf_sess_t *sess)
 {
     int i;
+    smf_event_t e;
 
     ogs_assert(sess);
 
     ogs_list_remove(&self.sess_list, sess);
+
+    e.sess = sess;
+    ogs_fsm_fini(&sess->sm, &e);
+    ogs_fsm_delete(&sess->sm);
 
     ogs_timer_delete(sess->sbi.client_wait_timer);
 

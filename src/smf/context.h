@@ -93,6 +93,7 @@ typedef struct smf_context_s {
 typedef struct smf_sess_s {
     ogs_lnode_t     lnode;
     uint32_t        index;          /**< An index of this node */
+    ogs_fsm_t       sm;             /* A state machine */
 
     uint32_t        smf_n4_teid;    /* SMF-N4-TEID is derived from INDEX */
     uint32_t        sgw_s5c_teid;   /* SGW-S5C-TEID is received from SGW */
