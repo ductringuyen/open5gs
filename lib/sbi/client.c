@@ -48,6 +48,7 @@ typedef struct connection_s {
 
     ogs_timer_t *timer;
     CURL *easy;
+    curl_mime *mime;
     char error[CURL_ERROR_SIZE];
 
     ogs_sbi_client_t *client;
@@ -271,15 +272,33 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     ogs_assert(conn->easy);
 
     /* HTTP Method */
-    if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
-        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PATCH) == 0 ||
-        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_DELETE) == 0 ||
-        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_POST) == 0) {
+    if (request->http.gsmbuf) {
+        curl_mimepart *part;
 
-        curl_easy_setopt(conn->easy, CURLOPT_CUSTOMREQUEST, request->h.method);
+        conn->mime = curl_mime_init(conn->easy);
+        ogs_assert(conn->mime);
+
+        part = curl_mime_addpart(conn->mime);
+        ogs_assert(part);
         if (request->http.content) {
-            curl_easy_setopt(conn->easy, CURLOPT_POSTFIELDS,
-                    request->http.content);
+            curl_mime_data(part,
+                request->http.content, strlen(request->http.content));
+        }
+        curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
+
+        curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
+    } else {
+        if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
+            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PATCH) == 0 ||
+            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_DELETE) == 0 ||
+            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_POST) == 0) {
+
+            curl_easy_setopt(conn->easy,
+                    CURLOPT_CUSTOMREQUEST, request->h.method);
+            if (request->http.content) {
+                curl_easy_setopt(conn->easy,
+                        CURLOPT_POSTFIELDS, request->http.content);
+            }
         }
     }
 
@@ -329,6 +348,9 @@ static void connection_remove(connection_t *conn)
     ogs_assert(client->multi);
     curl_multi_remove_handle(client->multi, conn->easy);
     curl_easy_cleanup(conn->easy);
+
+    if (conn->mime)
+        curl_mime_free(conn->mime);
 
     ogs_assert(conn->method);
     ogs_free(conn->method);
