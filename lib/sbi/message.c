@@ -205,7 +205,11 @@ static void http_message_free(ogs_sbi_http_message_t *http)
         }
         ogs_hash_destroy(http->headers);
     }
-    if (http->content) ogs_free(http->content);
+    if (http->content)
+        ogs_free(http->content);
+
+    if (http->gsmbuf)
+        ogs_pkbuf_free(http->gsmbuf);
 }
 
 ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
@@ -290,6 +294,10 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     if (message->http.content_encoding)
         ogs_sbi_header_set(request->http.headers,
                 OGS_SBI_ACCEPT_ENCODING, message->http.content_encoding);
+
+    /* NAS-5GSM packet */
+    if (message->gsmbuf)
+        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
 
     return request;
 }
