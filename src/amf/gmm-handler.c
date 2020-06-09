@@ -624,3 +624,45 @@ int gmm_handle_security_mode_complete(amf_ue_t *amf_ue,
 
     return OGS_OK;
 }
+
+int gmm_handle_ul_nas_transport(amf_ue_t *amf_ue,
+        ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport)
+{
+    ogs_nas_payload_container_type_t *payload_container_type = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(ul_nas_transport);
+
+    payload_container_type = &ul_nas_transport->payload_container_type;
+
+    if (!payload_container_type->value) {
+        ogs_error("[%s] No Payload container type", amf_ue->supi);
+        nas_5gs_send_gmm_status(
+                amf_ue, OGS_5GMM_CAUSE_INVALID_MANDATORY_INFORMATION);
+        return OGS_ERROR;
+    }
+
+    switch (payload_container_type->value) {
+    case OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION:
+        if ((ul_nas_transport->presencemask &
+                OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT) == 0) {
+            ogs_error("[%s] No PDU session ID", amf_ue->supi);
+            nas_5gs_send_gmm_status(amf_ue,
+                OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
+            break;
+        }
+
+        amf_sbi_discover_and_send(OpenAPI_nf_type_SMF, amf_ue, ul_nas_transport,
+            amf_nsmf_pdu_session_build_create_sm_context);
+
+        return OGS_OK;
+    default:
+        ogs_error("[%s] Unknown Payload container type [%d]",
+            amf_ue->supi, payload_container_type->value);
+        nas_5gs_send_gmm_status(amf_ue,
+            OGS_5GMM_CAUSE_INFORMATION_ELEMENT_NON_EXISTENT_OR_NOT_IMPLEMENTED);
+        break;
+    }
+
+    return OGS_ERROR;
+}

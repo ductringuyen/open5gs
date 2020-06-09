@@ -51,6 +51,8 @@ ogs_pkbuf_t *gmm_build_cs_service_notification(amf_ue_t *amf_ue);
 ogs_pkbuf_t *gmm_build_downlink_nas_transport(
         amf_ue_t *amf_ue, uint8_t *buffer, uint8_t length);
 
+ogs_pkbuf_t *gmm_build_status(amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t cause);
+
 #ifdef __cplusplus
 }
 #endif

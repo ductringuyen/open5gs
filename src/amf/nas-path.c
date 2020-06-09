@@ -252,6 +252,22 @@ void nas_5gs_send_configuration_update_command(
     ogs_expect(rv == OGS_OK);
 }
 
+void nas_5gs_send_gmm_status(amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t cause)
+{
+    int rv;
+    ogs_pkbuf_t *gmmbuf = NULL;
+
+    ogs_assert(amf_ue);
+
+    ogs_debug("[%s] 5GMM status", amf_ue->supi);
+
+    gmmbuf = gmm_build_status(amf_ue, cause);
+    ogs_expect_or_return(gmmbuf);
+
+    rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
+    ogs_expect(rv == OGS_OK);
+}
+
 #if 0
 void nas_5gs_send_detach_accept(amf_ue_t *amf_ue)
 {

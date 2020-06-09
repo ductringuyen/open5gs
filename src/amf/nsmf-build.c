@@ -22,7 +22,9 @@
 ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
         amf_ue_t *amf_ue, void *data)
 {
-    ogs_sbi_message_t message;
+    ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport = data;
+
+    ogs_sbi_message_t sbi_message;
     ogs_sbi_request_t *request = NULL;
 
     ogs_sbi_server_t *server = NULL;
@@ -33,12 +35,13 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->nas.access_type);
+    ogs_assert(ul_nas_transport);
 
-    memset(&message, 0, sizeof(message));
-    message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
-    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION;
-    message.h.api.version = (char *)OGS_SBI_API_V1;
-    message.h.resource.component[0] =
+    memset(&sbi_message, 0, sizeof(sbi_message));
+    sbi_message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
+    sbi_message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION;
+    sbi_message.h.api.version = (char *)OGS_SBI_API_V1;
+    sbi_message.h.resource.component[0] =
         (char *)OGS_SBI_RESOURCE_NAME_SM_CONTEXTS;
 
     memset(&SMContextCreateData, 0, sizeof(SMContextCreateData));
@@ -65,9 +68,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     SMContextCreateData.sm_context_status_uri =
         ogs_sbi_server_uri(server, &header);
 
-    message.SMContextCreateData = &SMContextCreateData;
+    sbi_message.SMContextCreateData = &SMContextCreateData;
 
-    request = ogs_sbi_build_request(&message);
+    request = ogs_sbi_build_request(&sbi_message);
     ogs_assert(request);
 
     ogs_free(plmn_id_nid.mcc);

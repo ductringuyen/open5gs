@@ -641,3 +641,27 @@ ogs_pkbuf_t *gmm_build_downlink_nas_transport(
     return nas_5gs_security_encode(amf_ue, &message);
 }
 #endif
+
+ogs_pkbuf_t *gmm_build_status(amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t cause)
+{
+    ogs_nas_5gs_message_t message;
+    ogs_nas_5gs_5gmm_status_t *gmm_status = &message.gmm.gmm_status;
+    ogs_nas_5gmm_cause_t *gmm_cause = &gmm_status->gmm_cause;
+
+    ogs_assert(amf_ue);
+    ogs_assert(cause);
+
+    memset(&message, 0, sizeof(message));
+    message.h.security_header_type =
+        OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHERED;
+    message.h.extended_protocol_discriminator =
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+
+    message.gmm.h.extended_protocol_discriminator =
+        OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
+    message.gmm.h.message_type = OGS_NAS_5GS_5GMM_STATUS;
+
+    *gmm_cause = cause;
+
+    return nas_5gs_security_encode(amf_ue, &message);
+}

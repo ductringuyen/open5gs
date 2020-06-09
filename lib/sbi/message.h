@@ -199,6 +199,8 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_sm_context_create_data_t *SMContextCreateData;
 
     ogs_sbi_links_t *links;
+
+    ogs_pkbuf_t *gsmbuf;
 } ogs_sbi_message_t;
 
 typedef struct ogs_sbi_http_message_s {
@@ -213,6 +215,8 @@ typedef struct ogs_sbi_request_s {
     ogs_sbi_header_t h;
     ogs_sbi_http_message_t http;
 
+    ogs_pkbuf_t *gsmbuf;
+
     /* Used in microhttpd */
     bool suspended;
     ogs_poll_t *poll;
@@ -221,6 +225,8 @@ typedef struct ogs_sbi_request_s {
 typedef struct ogs_sbi_response_s {
     ogs_sbi_header_t h;
     ogs_sbi_http_message_t http;
+
+    ogs_pkbuf_t *gsmbuf;
 
     int status;
 } ogs_sbi_response_t;

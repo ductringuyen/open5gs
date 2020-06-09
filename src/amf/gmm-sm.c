@@ -96,7 +96,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
     amf_ue_t *amf_ue = NULL;
     ran_ue_t *ran_ue = NULL;
-    ogs_nas_5gs_message_t *message = NULL;
+    ogs_nas_5gs_message_t *nas_message = NULL;
 #if 0
     NGAP_ProcedureCode_t procedureCode;
 #endif
@@ -115,18 +115,18 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
     case OGS_FSM_EXIT_SIG:
         return;
     case AMF_EVT_5GMM_MESSAGE:
-        message = e->nas.message;
-        ogs_assert(message);
+        nas_message = e->nas.message;
+        ogs_assert(nas_message);
 
         ran_ue = amf_ue->ran_ue;
         ogs_assert(ran_ue);
 
 #if 0
-        if (message->gmm.h.security_header_type
+        if (nas_message->gmm.h.security_header_type
                 == OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE) {
             ogs_debug("Service request");
             rv = gmm_handle_service_request(
-                    amf_ue, &message->gmm.service_request);
+                    amf_ue, &nas_message->gmm.service_request);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_service_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -162,14 +162,14 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         }
 #endif
 
-        switch (message->gmm.h.message_type) {
+        switch (nas_message->gmm.h.message_type) {
 #if 0
         case OGS_NAS_5GS_IDENTITY_RESPONSE:
             ogs_debug("Identity response");
             CLEAR_AMF_UE_TIMER(amf_ue->t3570);
 
             rv = gmm_handle_identity_response(amf_ue,
-                    &message->gmm.identity_response);
+                    &nas_message->gmm.identity_response);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_identity_response() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -188,7 +188,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
             ogs_debug("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
-                    amf_ue, &message->gmm.registration_request);
+                    amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_registration_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -199,7 +199,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_TRACKING_AREA_UPDATE_REQUEST:
             ogs_debug("Tracking area update request");
             rv = gmm_handle_tau_request(
-                    amf_ue, &message->gmm.tracking_area_update_request);
+                    amf_ue, &nas_message->gmm.tracking_area_update_request);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_tau_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -222,7 +222,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_EXTENDED_SERVICE_REQUEST:
             ogs_debug("Extended service request");
             rv = gmm_handle_extended_service_request(
-                    amf_ue, &message->gmm.extended_service_request);
+                    amf_ue, &nas_message->gmm.extended_service_request);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_extended_service_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -241,7 +241,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 #endif
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]", amf_ue->suci,
-                    message->gmm.gmm_status.gmm_cause);
+                    nas_message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             return;
 #if 0
@@ -249,7 +249,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
             rv = gmm_handle_deregistration_request(
-                    amf_ue, &message->gmm.deregistration_request_from_ue);
+                    amf_ue, &nas_message->gmm.deregistration_request_from_ue);
             if (rv != OGS_OK)
             {
                 ogs_error("gmm_handle_registration_request() failed");
@@ -265,27 +265,6 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
             OGS_FSM_TRAN(s, &gmm_state_de_registered);
             return;
-        case OGS_NAS_5GS_UPLINK_NAS_TRANSPORT:
-            ogs_debug("Uplink NAS Transport");
-            ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
-            if (AMF_SGSAP_IS_CONNECTED(amf_ue)) {
-                sgsap_send_uplink_unitdata(amf_ue, &message->gmm.
-                        uplink_nas_transport.nas_message_container);
-            } else {
-                NGAP_AMF_UE_NGAP_ID_t AMF_UE_NGAP_ID;
-                NGAP_ENB_UE_NGAP_ID_t ENB_UE_NGAP_ID;
-
-                ogs_warn("No connection of MSC/VLR");
-                AMF_UE_NGAP_ID = ran_ue->amf_ue_ngap_id;
-                ENB_UE_NGAP_ID = ran_ue->ran_ue_ngap_id;
-
-                ngap_send_error_indication(ran_ue->gnb, 
-                        &AMF_UE_NGAP_ID, &ENB_UE_NGAP_ID,
-                        NGAP_Cause_PR_transport,
-                        NGAP_CauseTransport_transport_resource_unavailable);
-            }
-
-            return;
 #endif
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE:
             ogs_debug("[%s] Configuration update complete", amf_ue->supi);
@@ -295,12 +274,12 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_UL_NAS_TRANSPORT:
             ogs_fatal("ul transport");
-            amf_sbi_discover_and_send(OpenAPI_nf_type_SMF, amf_ue, message,
-                    amf_nsmf_pdu_session_build_create_sm_context);
-
+            gmm_handle_ul_nas_transport(
+                    amf_ue, &nas_message->gmm.ul_nas_transport);
             return;
+
         default:
-            ogs_error("Unknown message[%d]", message->gmm.h.message_type);
+            ogs_error("Unknown message[%d]", nas_message->gmm.h.message_type);
             return;
         }
         break;
@@ -581,7 +560,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
     amf_ue_t *amf_ue = NULL;
-    ogs_nas_5gs_message_t *message = NULL;
+    ogs_nas_5gs_message_t *nas_message = NULL;
 
     ogs_sbi_response_t *sbi_response = NULL;
     ogs_sbi_message_t *sbi_message = NULL;
@@ -600,13 +579,13 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
     case OGS_FSM_EXIT_SIG:
         break;
     case AMF_EVT_5GMM_MESSAGE:
-        message = e->nas.message;
-        ogs_assert(message);
+        nas_message = e->nas.message;
+        ogs_assert(nas_message);
 
-        switch (message->gmm.h.message_type) {
+        switch (nas_message->gmm.h.message_type) {
         case OGS_NAS_5GS_AUTHENTICATION_RESPONSE:
             rv = gmm_handle_authentication_response(
-                    amf_ue, &message->gmm.authentication_response);
+                    amf_ue, &nas_message->gmm.authentication_response);
 
             if (rv != OGS_OK) {
                 nas_5gs_send_authentication_reject(amf_ue);
@@ -620,7 +599,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             ogs_assert_if_reached();
 #if 0
             ogs_nas_5gs_authentication_failure_t *authentication_failure =
-                &message->gmm.authentication_failure;
+                &nas_message->gmm.authentication_failure;
             ogs_nas_authentication_failure_parameter_t
                 *authentication_failure_parameter = 
                     &authentication_failure->
@@ -661,7 +640,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
             ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
-                    amf_ue, &message->gmm.registration_request);
+                    amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
                 ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -674,7 +653,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
-                    amf_ue->suci, message->gmm.gmm_status.gmm_cause);
+                    amf_ue->suci, nas_message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
 
@@ -682,7 +661,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("[%s] Deregistration request", amf_ue->suci);
 #if 0
             rv = gmm_handle_deregistration_request(
-                    amf_ue, &message->gmm.deregistration_request_from_ue);
+                    amf_ue, &nas_message->gmm.deregistration_request_from_ue);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_registration_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -694,7 +673,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             OGS_FSM_TRAN(s, &gmm_state_de_registered);
             break;
         default:
-            ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
+            ogs_warn("Unknown message[%d]", nas_message->gmm.h.message_type);
             break;
         }
         break;
@@ -780,7 +759,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
     amf_ue_t *amf_ue = NULL;
-    ogs_nas_5gs_message_t *message = NULL;
+    ogs_nas_5gs_message_t *nas_message = NULL;
     ogs_nas_security_header_type_t h;
 
     ogs_assert(s);
@@ -799,11 +778,11 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
     case OGS_FSM_EXIT_SIG:
         break;
     case AMF_EVT_5GMM_MESSAGE:
-        message = e->nas.message;
-        ogs_assert(message);
+        nas_message = e->nas.message;
+        ogs_assert(nas_message);
 
 #if 0
-        if (message->gmm.h.security_header_type
+        if (nas_message->gmm.h.security_header_type
                 == OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE) {
             ogs_debug("Service request");
             nas_5gs_send_service_reject(amf_ue,
@@ -813,7 +792,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         }
 #endif
 
-        switch (message->gmm.h.message_type) {
+        switch (nas_message->gmm.h.message_type) {
         case OGS_NAS_5GS_SECURITY_MODE_COMPLETE:
             ogs_debug("[%s] Security mode complete", amf_ue->supi);
 
@@ -840,7 +819,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             }
 
             gmm_handle_security_mode_complete(
-                    amf_ue, &message->gmm.security_mode_complete);
+                    amf_ue, &nas_message->gmm.security_mode_complete);
 
             ogs_kdf_kgnb_and_kn3iwf(
                     amf_ue->kamf, amf_ue->ul_count.i32,
@@ -866,14 +845,14 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_SECURITY_MODE_REJECT:
             ogs_warn("[%s] Security mode reject : Cause[%d]",
                     amf_ue->supi,
-                    message->gmm.security_mode_reject.gmm_cause);
+                    nas_message->gmm.security_mode_reject.gmm_cause);
             CLEAR_AMF_UE_TIMER(amf_ue->t3560);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
             ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
-                    amf_ue, &message->gmm.registration_request);
+                    amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
                 ogs_error("[%s] Cannot handle NAS message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -896,7 +875,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
-                    amf_ue->supi, message->gmm.gmm_status.gmm_cause);
+                    amf_ue->supi, nas_message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
 
@@ -905,7 +884,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
             rv = gmm_handle_deregistration_request(
-                    amf_ue, &message->gmm.deregistration_request_from_ue);
+                    amf_ue, &nas_message->gmm.deregistration_request_from_ue);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_registration_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -917,7 +896,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
 #endif
             break;
         default:
-            ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
+            ogs_warn("Unknown message[%d]", nas_message->gmm.h.message_type);
             break;
         }
         break;
@@ -951,7 +930,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 {
     int rv;
     amf_ue_t *amf_ue = NULL;
-    ogs_nas_5gs_message_t *message = NULL;
+    ogs_nas_5gs_message_t *nas_message = NULL;
 
     ogs_sbi_response_t *sbi_response = NULL;
     ogs_sbi_message_t *sbi_message = NULL;
@@ -1059,10 +1038,10 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         END
         break;
     case AMF_EVT_5GMM_MESSAGE:
-        message = e->nas.message;
-        ogs_assert(message);
+        nas_message = e->nas.message;
+        ogs_assert(nas_message);
 
-        switch (message->gmm.h.message_type) {
+        switch (nas_message->gmm.h.message_type) {
         case OGS_NAS_5GS_REGISTRATION_COMPLETE:
             ogs_debug("[%s] Registration complete", amf_ue->supi);
 
@@ -1076,7 +1055,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         case OGS_NAS_5GS_REGISTRATION_REQUEST:
             ogs_warn("[%s] Registration request", amf_ue->suci);
             rv = gmm_handle_registration_request(
-                    amf_ue, &message->gmm.registration_request);
+                    amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
                 ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -1091,7 +1070,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_5GMM_STATUS:
             ogs_warn("[%s] 5GMM STATUS : Cause[%d]",
-                    amf_ue->supi, message->gmm.gmm_status.gmm_cause);
+                    amf_ue->supi, nas_message->gmm.gmm_status.gmm_cause);
             OGS_FSM_TRAN(s, &gmm_state_exception);
             break;
 
@@ -1100,7 +1079,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("Deregistration request");
             ogs_debug("    IMSI[%s]", amf_ue->imsi_bcd);
             rv = gmm_handle_deregistration_request(
-                    amf_ue, &message->gmm.deregistration_request_from_ue);
+                    amf_ue, &nas_message->gmm.deregistration_request_from_ue);
             if (rv != OGS_OK) {
                 ogs_error("gmm_handle_registration_request() failed");
                 OGS_FSM_TRAN(s, gmm_state_exception);
@@ -1112,7 +1091,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             break;
 #endif
         default:
-            ogs_warn("Unknown message[%d]", message->gmm.h.message_type);
+            ogs_warn("Unknown message[%d]", nas_message->gmm.h.message_type);
             break;
         }
         break;
