@@ -70,6 +70,12 @@ extern "C" {
 #define OGS_GNUC_NORETURN
 #endif
 
+#if __GNUC__ > 6
+#define OGS_GNUC_FALLTHROUGH __attribute__ ((fallthrough))
+#else
+#define OGS_GNUC_FALLTHROUGH
+#endif
+
 #if defined(_WIN32)
 #define htole16(x) (x)
 #define htole32(x) (x)

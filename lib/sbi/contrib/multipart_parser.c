@@ -3,11 +3,8 @@
  * MIT License - http://www.opensource.org/licenses/mit-license.php
  */
 
+#include "ogs-core.h"
 #include "multipart_parser.h"
-
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 
 static void multipart_log(const char * format, ...)
 {
@@ -124,6 +121,7 @@ size_t multipart_parser_execute(multipart_parser* p, const char *buf, size_t len
         p->state = s_start_boundary;
 
       /* fallthrough */
+        OGS_GNUC_FALLTHROUGH;
       case s_start_boundary:
         multipart_log("s_start_boundary");
         if (p->index == p->boundary_length) {
@@ -153,6 +151,7 @@ size_t multipart_parser_execute(multipart_parser* p, const char *buf, size_t len
         p->state = s_header_field;
 
       /* fallthrough */
+        OGS_GNUC_FALLTHROUGH;
       case s_header_field:
         multipart_log("s_header_field");
         if (c == CR) {
@@ -194,6 +193,7 @@ size_t multipart_parser_execute(multipart_parser* p, const char *buf, size_t len
         p->state = s_header_value;
 
       /* fallthrough */
+        OGS_GNUC_FALLTHROUGH;
       case s_header_value:
         multipart_log("s_header_value");
         if (c == CR) {
@@ -220,6 +220,7 @@ size_t multipart_parser_execute(multipart_parser* p, const char *buf, size_t len
         p->state = s_part_data;
 
       /* fallthrough */
+        OGS_GNUC_FALLTHROUGH;
       case s_part_data:
         multipart_log("s_part_data");
         if (c == CR) {
