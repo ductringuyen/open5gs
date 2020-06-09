@@ -108,6 +108,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
                 message->SmfSelectionSubscriptionData);
     if (message->UeContextInSmfData)
         OpenAPI_ue_context_in_smf_data_free(message->UeContextInSmfData);
+    if (message->SMContextCreateData)
+        OpenAPI_sm_context_create_data_free(message->SMContextCreateData);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -501,6 +503,10 @@ char *ogs_sbi_build_content(ogs_sbi_message_t *message)
         item = OpenAPI_ue_context_in_smf_data_convertToJSON(
                 message->UeContextInSmfData);
         ogs_assert(item);
+    } else if (message->SMContextCreateData) {
+        item = OpenAPI_sm_context_create_data_convertToJSON(
+                message->SMContextCreateData);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -861,6 +867,23 @@ int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION)
+            SWITCH(message->h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
+                message->SMContextCreateData =
+                    OpenAPI_sm_context_create_data_parseFromJSON(item);
+                if (!message->SMContextCreateData) {
+                    rv = OGS_ERROR;
+                    ogs_error("JSON parse error");
+                }
+                break;
+
+            DEFAULT
+                rv = OGS_ERROR;
+                ogs_error("Unknown resource name [%s]",
+                        message->h.resource.component[0]);
+            END
+            break;
 
         DEFAULT
             rv = OGS_ERROR;

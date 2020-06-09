@@ -100,6 +100,9 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 #if 0
     NGAP_ProcedureCode_t procedureCode;
 #endif
+
+    ogs_sbi_response_t *sbi_response = NULL;
+    ogs_sbi_message_t *sbi_message = NULL;
     
     ogs_assert(e);
         
@@ -292,12 +295,58 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         case OGS_NAS_5GS_UL_NAS_TRANSPORT:
             ogs_fatal("ul transport");
+            amf_sbi_discover_and_send(OpenAPI_nf_type_SMF, amf_ue, message,
+                    amf_nsmf_pdu_session_build_create_sm_context);
 
             return;
         default:
             ogs_error("Unknown message[%d]", message->gmm.h.message_type);
             return;
         }
+        break;
+
+    case AMF_EVT_SBI_CLIENT:
+        sbi_response = e->sbi.response;
+        ogs_assert(sbi_response);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
+
+        SWITCH(sbi_message->h.resource.component[0])
+        CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
+            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+
+            if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
+                sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
+                ogs_error("[%s] HTTP response error [%d]",
+                        amf_ue->supi, sbi_message->res_status);
+                OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                break;
+            }
+
+            SWITCH(sbi_message->h.method)
+            CASE(OGS_SBI_HTTP_METHOD_POST)
+                ogs_fatal("TODO");
+#if 0
+                rv = amf_nausf_auth_handle_authenticate(amf_ue, sbi_message);
+                if (rv != OGS_OK) {
+                    ogs_error("[%s] Cannot handle SBI message", amf_ue->suci);
+                    nas_5gs_send_authentication_reject(amf_ue);
+                    OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
+                }
+#endif
+                break;
+            DEFAULT
+                ogs_error("[%s] Invalid HTTP method [%s]",
+                        amf_ue->suci, sbi_message->h.method);
+                ogs_assert_if_reached();
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid resource name [%s]",
+                    sbi_message->h.resource.component[0]);
+            ogs_assert_if_reached();
+        END
         break;
     case AMF_EVT_5GMM_TIMER:
         switch (e->timer_id) {

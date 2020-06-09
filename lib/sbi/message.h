@@ -115,7 +115,12 @@ extern "C" {
 #define OGS_SBI_RESOURCE_NAME_PROVISIONED_DATA      "provisioned-data"
 
 #define OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION        "nsmf-pdusession"
+#define OGS_SBI_RESOURCE_NAME_SM_CONTEXTS           "sm-contexts"
 #define OGS_SBI_SERVICE_NAME_NSMF_EVENT_EXPOSURE    "nsmf-event-exposure"
+
+#define OGS_SBI_SERVICE_NAME_NAMF_COMM              "namf-comm"
+#define OGS_SBI_SERVICE_NAME_NAMF_CALLBACK          "namf-callback"
+#define OGS_SBI_RESOURCE_NAME_SM_CONTEXT_STATUS     "sm-context-status"
 
 #define OGS_SBI_PARAM_NF_TYPE                       "nf-type"
 #define OGS_SBI_PARAM_TARGET_NF_TYPE                "target-nf-type"
@@ -191,6 +196,7 @@ typedef struct ogs_sbi_message_s {
         *AccessAndMobilitySubscriptionData;
     OpenAPI_smf_selection_subscription_data_t *SmfSelectionSubscriptionData;
     OpenAPI_ue_context_in_smf_data_t *UeContextInSmfData;
+    OpenAPI_sm_context_create_data_t *SMContextCreateData;
 
     ogs_sbi_links_t *links;
 } ogs_sbi_message_t;

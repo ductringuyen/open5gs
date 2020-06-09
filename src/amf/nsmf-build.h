@@ -17,29 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef AMF_SBI_PATH_H
-#define AMF_SBI_PATH_H
+#ifndef AMF_NSMF_BUILD_H
+#define AMF_NSMF_BUILD_H
 
-#include "nausf-build.h"
-#include "nudm-build.h"
-#include "nsmf-build.h"
+#include "context.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int amf_sbi_open(void);
-void amf_sbi_close(void);
-
-void amf_sbi_setup_client_callback(ogs_sbi_nf_instance_t *nf_instance);
-
-void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance);
-void amf_sbi_discover_and_send(
-        OpenAPI_nf_type_e nf_type, amf_ue_t *amf_ue, void *data,
-        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue, void *data));
+ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
+        amf_ue_t *amf_ue, void *data);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* AMF_SBI_PATH_H */
+#endif /* AMF_NSMF_BUILD_H */

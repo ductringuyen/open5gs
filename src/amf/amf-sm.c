@@ -310,6 +310,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
         CASE(OGS_SBI_SERVICE_NAME_NAUSF_AUTH)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_UECM)
         CASE(OGS_SBI_SERVICE_NAME_NUDM_SDM)
+        CASE(OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION)
             amf_ue = e->sbi.data;
             ogs_assert(amf_ue);
             ogs_assert(OGS_FSM_STATE(&amf_ue->sm));
