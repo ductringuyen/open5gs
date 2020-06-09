@@ -302,6 +302,34 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION)
+            SWITCH(sbi_message.h.resource.component[0])
+            CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
+                SWITCH(sbi_message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_POST)
+                    ogs_fatal("POST");
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid HTTP method [%s]",
+                            sbi_message.h.method);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                            &sbi_message,
+                            "Invalid HTTP method", sbi_message.h.method);
+                END
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        sbi_message.h.resource.component[0]);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &sbi_message,
+                        "Unknown resource name",
+                        sbi_message.h.resource.component[0]);
+            END
+            break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
             ogs_sbi_server_send_error(session,
