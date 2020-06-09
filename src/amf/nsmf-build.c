@@ -23,6 +23,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
         amf_ue_t *amf_ue, void *data)
 {
     ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport = data;
+    ogs_nas_payload_container_t *payload_container = NULL;
+    ogs_nas_pdu_session_identity_2_t *pdu_session_id = NULL;
+    ogs_pkbuf_t *gsmbuf = NULL;
 
     ogs_sbi_message_t sbi_message;
     ogs_sbi_request_t *request = NULL;
@@ -36,6 +39,10 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->nas.access_type);
     ogs_assert(ul_nas_transport);
+    payload_container = &ul_nas_transport->payload_container;
+    ogs_assert(payload_container);
+    pdu_session_id = &ul_nas_transport->pdu_session_id;
+    ogs_assert(pdu_session_id);
 
     memset(&sbi_message, 0, sizeof(sbi_message));
     sbi_message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
@@ -61,7 +68,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     header.resource.component[0] = amf_ue->supi;
     header.resource.component[1] =
         (char *)OGS_SBI_RESOURCE_NAME_SM_CONTEXT_STATUS;
-    header.resource.component[2] = (char*)"10";
+    header.resource.component[2] = ogs_msprintf("%d", *pdu_session_id);
 
     server = ogs_list_first(&ogs_sbi_self()->server_list);
     ogs_assert(server);
@@ -70,12 +77,21 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     sbi_message.SMContextCreateData = &SMContextCreateData;
 
+    gsmbuf = ogs_pkbuf_alloc(NULL, OGS_NAS_HEADROOM+payload_container->length);
+    ogs_pkbuf_reserve(gsmbuf, OGS_NAS_HEADROOM);
+    ogs_pkbuf_put_data(gsmbuf,
+            payload_container->buffer, payload_container->length);
+
+    sbi_message.gsmbuf = gsmbuf;
+
     request = ogs_sbi_build_request(&sbi_message);
     ogs_assert(request);
 
     ogs_free(plmn_id_nid.mcc);
     ogs_free(plmn_id_nid.mnc);
     ogs_free(SMContextCreateData.sm_context_status_uri);
+    ogs_free(header.resource.component[2]);
+    ogs_pkbuf_free(gsmbuf);
 
     return request;
 }
