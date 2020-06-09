@@ -213,7 +213,10 @@ typedef struct ogs_sbi_http_message_s {
     char *content;
     size_t content_length;
 
-    ogs_pkbuf_t *gsmbuf;
+    struct {
+        char *content_id;
+        ogs_pkbuf_t *buf;
+    } gsm;
 } ogs_sbi_http_message_t;
 
 typedef struct ogs_sbi_request_s {

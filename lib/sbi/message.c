@@ -208,8 +208,8 @@ static void http_message_free(ogs_sbi_http_message_t *http)
     if (http->content)
         ogs_free(http->content);
 
-    if (http->gsmbuf)
-        ogs_pkbuf_free(http->gsmbuf);
+    if (http->gsm.buf)
+        ogs_pkbuf_free(http->gsm.buf);
 }
 
 ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
@@ -267,9 +267,9 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     /* HTTP Message */
     request->http.content = ogs_sbi_build_content(message);
     if (message->gsmbuf)
-        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
+        request->http.gsm.buf = ogs_pkbuf_copy(message->gsmbuf);
 
-    if (request->http.gsmbuf) {
+    if (request->http.gsm.buf) {
         if (message->http.content_type)
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, message->http.content_type);
