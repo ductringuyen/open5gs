@@ -266,7 +266,17 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 
     /* HTTP Message */
     request->http.content = ogs_sbi_build_content(message);
-    if (request->http.content) {
+    if (message->gsmbuf)
+        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
+
+    if (request->http.gsmbuf) {
+        if (message->http.content_type)
+            ogs_sbi_header_set(request->http.headers,
+                    OGS_SBI_CONTENT_TYPE, message->http.content_type);
+        else
+            ogs_sbi_header_set(request->http.headers,
+                    OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
+    } else if (request->http.content) {
         if (message->http.content_type)
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, message->http.content_type);
@@ -294,10 +304,6 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     if (message->http.content_encoding)
         ogs_sbi_header_set(request->http.headers,
                 OGS_SBI_ACCEPT_ENCODING, message->http.content_encoding);
-
-    /* NAS-5GSM packet */
-    if (message->gsmbuf)
-        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
 
     return request;
 }

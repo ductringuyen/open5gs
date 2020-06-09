@@ -40,6 +40,7 @@ typedef struct connection_s {
     int num_of_header;
     char **headers;
     struct curl_slist *header_list;
+    struct curl_slist *mime_header_list;
 
     char *memory;
     size_t size;
@@ -278,13 +279,28 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
         conn->mime = curl_mime_init(conn->easy);
         ogs_assert(conn->mime);
 
-        part = curl_mime_addpart(conn->mime);
-        ogs_assert(part);
         if (request->http.content) {
+            part = curl_mime_addpart(conn->mime);
+            ogs_assert(part);
             curl_mime_data(part,
                 request->http.content, strlen(request->http.content));
+            curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
+
+            if (request->http.gsmbuf) {
+                struct curl_slist *slist = NULL;
+                part = curl_mime_addpart(conn->mime);
+                ogs_assert(part);
+                curl_mime_data(part,
+                    (const void *)request->http.gsmbuf->data,
+                    request->http.gsmbuf->len);
+                ogs_assert(conn->mime_header_list == NULL);
+                conn->mime_header_list =
+                        curl_slist_append(conn->mime_header_list,
+                        "Content-Id: n1msg");
+                curl_mime_headers(part, slist, 1);
+                curl_mime_type(part, OGS_SBI_CONTENT_5GNAS_TYPE);
+            }
         }
-        curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
 
         curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
     } else {
@@ -364,6 +380,7 @@ static void connection_remove(connection_t *conn)
         ogs_free(conn->headers);
     }
     curl_slist_free_all(conn->header_list);
+    curl_slist_free_all(conn->mime_header_list);
 
     if (conn->memory)
         ogs_free(conn->memory);

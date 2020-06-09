@@ -35,6 +35,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     OpenAPI_sm_context_create_data_t SMContextCreateData;
     OpenAPI_plmn_id_nid_t plmn_id_nid;
+    OpenAPI_ref_to_binary_data_t n1_sm_msg;
 
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->nas.access_type);
@@ -74,6 +75,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_assert(server);
     SMContextCreateData.sm_context_status_uri =
         ogs_sbi_server_uri(server, &header);
+
+    n1_sm_msg.content_id = (char *)"n1msg";
+    SMContextCreateData.n1_sm_msg = &n1_sm_msg;
 
     sbi_message.SMContextCreateData = &SMContextCreateData;
 

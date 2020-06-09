@@ -136,6 +136,9 @@ extern "C" {
 #define OGS_SBI_CONTENT_PATCH_TYPE                  \
         "application/json-patch+json"
 #define OGS_SBI_CONTENT_3GPPHAL_TYPE                "application/3gppHal+json"
+#define OGS_SBI_CONTENT_MULTIPART_TYPE              "multipart/related"
+#define OGS_SBI_CONTENT_5GNAS_TYPE                  "application/vnd.3gpp.5gnas"
+#define OGS_SBI_CONTENT_NGAP_TYPE                   "application/vnd.3gpp.ngap"
 
 typedef struct ogs_sbi_header_s {
     char *method;
