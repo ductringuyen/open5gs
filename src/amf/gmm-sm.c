@@ -288,7 +288,12 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             ogs_debug("[%s] Configuration update complete", amf_ue->supi);
 
             CLEAR_AMF_UE_TIMER(amf_ue->t3555);
-            break;
+            return;
+
+        case OGS_NAS_5GS_UL_NAS_TRANSPORT:
+            ogs_fatal("ul transport");
+
+            return;
         default:
             ogs_error("Unknown message[%d]", message->gmm.h.message_type);
             return;
