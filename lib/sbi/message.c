@@ -28,6 +28,8 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static char *build_json(ogs_sbi_message_t *message);
+static int build_multipart(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *sbi_message);
 static int build_content(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
 
@@ -476,8 +478,7 @@ static int build_multipart(
     GMimePart *part = NULL;
     GMimeStream *stream = NULL;
     GMimeDataWrapper *content = NULL;
-
-    char buf[8192];
+    GByteArray *array = NULL;
 
     ogs_assert(sbi_message);
     ogs_assert(http);
@@ -491,6 +492,9 @@ static int build_multipart(
     }
     http->num_of_part = sbi_message->num_of_part;
 
+    multipart = g_mime_multipart_new_with_subtype(
+                    OGS_SBI_MULTIPART_RELATED_TYPE);
+
     stream = g_mime_stream_mem_new_with_buffer(
             http->content, strlen(http->content));
     content = g_mime_data_wrapper_new_with_stream(stream,
@@ -502,13 +506,35 @@ static int build_multipart(
     g_mime_part_set_content(part, content);
     g_object_unref(content);
 
-    multipart = g_mime_multipart_new_with_subtype(
-                    OGS_SBI_MULTIPART_RELATED_TYPE);
     g_mime_multipart_add(multipart, (GMimeObject *)part);
     g_object_unref(part);
 
-    char *string = g_mime_object_to_string((GMimeObject *)multipart, NULL);
-    ogs_fatal("buf = [%s]", string);
+
+    stream = g_mime_stream_mem_new_with_buffer(
+            (char *)http->part[0].pkbuf->data,
+            http->part[0].pkbuf->len);
+    content = g_mime_data_wrapper_new_with_stream(stream,
+            GMIME_CONTENT_ENCODING_DEFAULT);
+    g_object_unref(stream);
+
+    part = g_mime_part_new_with_type(
+            OGS_SBI_APPLICATION_TYPE, OGS_SBI_APPLICATION_5GNAS_TYPE);
+    g_mime_part_set_content(part, content);
+    g_object_unref(content);
+
+    g_mime_multipart_add(multipart, (GMimeObject *)part);
+    g_object_unref(part);
+
+
+
+    array = g_byte_array_new();
+    stream = g_mime_stream_mem_new();
+    g_mime_stream_mem_set_byte_array(GMIME_STREAM_MEM(stream), array);
+    g_mime_object_write_to_stream((GMimeObject *)multipart, NULL, stream);
+    g_object_unref(stream);
+
+    ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
+    g_byte_array_free(array, FALSE);
 
     g_object_unref(multipart);
 
