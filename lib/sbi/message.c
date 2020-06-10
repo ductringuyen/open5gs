@@ -26,6 +26,7 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static char *build_content(ogs_sbi_message_t *message);
+static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json);
 static int parse_content(ogs_sbi_message_t *message, char *content);
 
 static void header_free(ogs_sbi_header_t *h);
@@ -550,26 +551,39 @@ static char *build_content(ogs_sbi_message_t *message)
 
 static int parse_content(ogs_sbi_message_t *message, char *content)
 {
+    if (message->http.content_type &&
+        !strncmp(message->http.content_type, OGS_SBI_CONTENT_MULTIPART_TYPE,
+            strlen(OGS_SBI_CONTENT_MULTIPART_TYPE))) {
+        /* TODO */
+
+        return OGS_OK;
+    } else {
+        return parse_json(message, message->http.content_type, content);
+    }
+}
+
+static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json)
+{
     int rv = OGS_OK;
     cJSON *item = NULL;
 
     ogs_assert(message);
 
-    if (!content)
+    if (!json)
         return OGS_OK;
 
-    item = cJSON_Parse(content);
+    item = cJSON_Parse(json);
     if (!item) {
         ogs_error("JSON parse error");
         return OGS_ERROR;
     }
 
-    if (message->http.content_type &&
-        !strncmp(message->http.content_type, OGS_SBI_CONTENT_PROBLEM_TYPE,
+    if (json_type &&
+        !strncmp(json_type, OGS_SBI_CONTENT_PROBLEM_TYPE,
             strlen(OGS_SBI_CONTENT_PROBLEM_TYPE))) {
         message->ProblemDetails = OpenAPI_problem_details_parseFromJSON(item);
-    } else if (message->http.content_type &&
-                !strncmp(message->http.content_type, OGS_SBI_CONTENT_PATCH_TYPE,
+    } else if (json_type &&
+                !strncmp(json_type, OGS_SBI_CONTENT_PATCH_TYPE,
                     strlen(OGS_SBI_CONTENT_PATCH_TYPE))) {
         if (item) {
             OpenAPI_patch_item_t *patch_item = NULL;
