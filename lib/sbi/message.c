@@ -572,164 +572,168 @@ static int parse_content(ogs_sbi_message_t *message,
 static void
 count_foreach_callback (GMimeObject *parent, GMimeObject *part, gpointer user_data)
 {
-	int *count = user_data;
-	
-	(*count)++;
-	
-	/* 'part' points to the current part node that
-	 * g_mime_message_foreach() is iterating over */
-	
-	/* find out what class 'part' is... */
-	if (GMIME_IS_MESSAGE_PART (part)) {
-		/* message/rfc822 or message/news */
-		GMimeMessage *message;
-		
-		/* g_mime_message_foreach() won't descend into
+    int *count = user_data;
+    
+    (*count)++;
+    
+    /* 'part' points to the current part node that
+     * g_mime_message_foreach() is iterating over */
+    
+    /* find out what class 'part' is... */
+    if (GMIME_IS_MESSAGE_PART (part)) {
+        /* message/rfc822 or message/news */
+        GMimeMessage *message;
+        
+        /* g_mime_message_foreach() won't descend into
                    child message parts, so if we want to count any
                    subparts of this child message, we'll have to call
                    g_mime_message_foreach() again here. */
-		
-		message = g_mime_message_part_get_message ((GMimeMessagePart *) part);
-		g_mime_message_foreach (message, count_foreach_callback, count);
-	} else if (GMIME_IS_MESSAGE_PARTIAL (part)) {
-		/* message/partial */
-		
-		/* this is an incomplete message part, probably a
+        
+        message = g_mime_message_part_get_message ((GMimeMessagePart *) part);
+        g_mime_message_foreach (message, count_foreach_callback, count);
+    } else if (GMIME_IS_MESSAGE_PARTIAL (part)) {
+        /* message/partial */
+        
+        /* this is an incomplete message part, probably a
                    large message that the sender has broken into
                    smaller parts and is sending us bit by bit. we
                    could save some info about it so that we could
                    piece this back together again once we get all the
                    parts? */
-	} else if (GMIME_IS_MULTIPART (part)) {
-		/* multipart/mixed, multipart/alternative,
-		 * multipart/related, multipart/signed,
-		 * multipart/encrypted, etc... */
-		
-		/* we'll get to finding out if this is a
-		 * signed/encrypted multipart later... */
-	} else if (GMIME_IS_PART (part)) {
-		/* a normal leaf part, could be text/plain or
-		 * image/jpeg etc */
-	} else {
-		g_assert_not_reached ();
-	}
+    } else if (GMIME_IS_MULTIPART (part)) {
+        /* multipart/mixed, multipart/alternative,
+         * multipart/related, multipart/signed,
+         * multipart/encrypted, etc... */
+        
+        /* we'll get to finding out if this is a
+         * signed/encrypted multipart later... */
+    } else if (GMIME_IS_PART (part)) {
+        /* a normal leaf part, could be text/plain or
+         * image/jpeg etc */
+    } else {
+        g_assert_not_reached ();
+    }
 }
 
 static void
 print_depth (int depth)
 {
-	int i;
-	
-	for (i = 0; i < depth; i++)
-		fprintf (stdout, "   ");
+    int i;
+    
+    for (i = 0; i < depth; i++)
+        fprintf (stdout, "   ");
 }
 
 static void
 print_mime_struct (GMimeObject *part, int depth)
 {
-	const GMimeContentType *type;
-	GMimeMultipart *multipart;
-	GMimeMessagePart *mpart;
-	GMimeObject *subpart;
-	gboolean has_md5;
-	int i, n;
-	
-	print_depth (depth);
-	type = g_mime_object_get_content_type (part);
-	has_md5 = g_mime_object_get_header (part, "Content-Md5") != NULL;
-	fprintf (stdout, "Content-Type: %s/%s%s", type->type, type->subtype,
-		 has_md5 ? "; md5sum=" : "\n");
-	
-	if (GMIME_IS_MULTIPART (part)) {
-		multipart = (GMimeMultipart *) part;
-		
-		n = g_mime_multipart_get_count (multipart);
-		for (i = 0; i < n; i++) {
-			subpart = g_mime_multipart_get_part (multipart, i);
-			print_mime_struct (subpart, depth + 1);
-		}
-	} else if (GMIME_IS_MESSAGE_PART (part)) {
-		mpart = (GMimeMessagePart *) part;
-		
-		if (mpart->message)
-			print_mime_struct (mpart->message->mime_part, depth + 1);
-	} else if (has_md5) {
-		/* validate the Md5 sum */
-		if (g_mime_part_verify_content_md5 ((GMimePart *) part))
-			fprintf (stdout, "GOOD\n");
-		else
-			fprintf (stdout, "BAD\n");
-	}
+    const GMimeContentType *type;
+    GMimeMultipart *multipart;
+    GMimeMessagePart *mpart;
+    GMimeObject *subpart;
+    gboolean has_md5;
+    int i, n;
+    
+    ogs_fatal("depth = %d", depth);
+    print_depth (depth);
+    type = g_mime_object_get_content_type (part);
+    has_md5 = g_mime_object_get_header (part, "Content-Md5") != NULL;
+    ogs_fatal("Content-Type: %s/%s%s", type->type, type->subtype,
+         has_md5 ? "; md5sum=" : "\n");
+    
+    if (GMIME_IS_MULTIPART (part)) {
+        ogs_fatal("multipart");
+        multipart = (GMimeMultipart *) part;
+        
+        n = g_mime_multipart_get_count (multipart);
+        for (i = 0; i < n; i++) {
+            subpart = g_mime_multipart_get_part (multipart, i);
+            print_mime_struct (subpart, depth + 1);
+        }
+    } else if (GMIME_IS_MESSAGE_PART (part)) {
+        mpart = (GMimeMessagePart *) part;
+        ogs_fatal("message_part");
+        
+        if (mpart->message)
+            print_mime_struct (mpart->message->mime_part, depth + 1);
+    } else if (has_md5) {
+        /* validate the Md5 sum */
+        if (g_mime_part_verify_content_md5 ((GMimePart *) part))
+            fprintf (stdout, "GOOD\n");
+        else
+            fprintf (stdout, "BAD\n");
+    }
 }
 
 static void
 print_mime_part_info (const char *path, GMimeObject *object)
 {
-	const GMimeContentType *type;
-	gboolean has_md5;
-	
-	type = g_mime_object_get_content_type (object);
-	
-	if (GMIME_IS_PART (object))
-		has_md5 = g_mime_object_get_header (object, "Content-Md5") != NULL;
-	else
-		has_md5 = FALSE;
-	
-	fprintf (stdout, "%s\tContent-Type: %s/%s%s", path,
-		 type->type, type->subtype, has_md5 ? "; md5sum=" : "\n");
-	
-	if (has_md5) {
-		/* validate the Md5 sum */
-		if (g_mime_part_verify_content_md5 ((GMimePart *) object))
-			fprintf (stdout, "GOOD\n");
-		else
-			fprintf (stdout, "BAD\n");
-	}
+    const GMimeContentType *type;
+    gboolean has_md5;
+    
+    type = g_mime_object_get_content_type (object);
+    
+    if (GMIME_IS_PART (object))
+        has_md5 = g_mime_object_get_header (object, "Content-Md5") != NULL;
+    else
+        has_md5 = FALSE;
+    
+    fprintf (stdout, "%s\tContent-Type: %s/%s%s", path,
+         type->type, type->subtype, has_md5 ? "; md5sum=" : "\n");
+    
+    if (has_md5) {
+        /* validate the Md5 sum */
+        if (g_mime_part_verify_content_md5 ((GMimePart *) object))
+            fprintf (stdout, "GOOD\n");
+        else
+            fprintf (stdout, "BAD\n");
+    }
 }
 
 static void
 print_mime_struct_iter (GMimeMessage *message)
 {
-	//const char *jump_to = "4.2.2.2";
-	GMimePartIter *iter;
-	GMimeObject *parent;
-	GMimeObject *part;
-	char *path;
-	
-	iter = g_mime_part_iter_new ((GMimeObject *) message);
-	if (g_mime_part_iter_is_valid (iter)) {
-		if ((parent = g_mime_part_iter_get_parent (iter)))
-			print_mime_part_info ("TEXT", parent);
-		
-		do {
-			part = g_mime_part_iter_get_current (iter);
-			path = g_mime_part_iter_get_path (iter);
-			print_mime_part_info (parent ? path : "TEXT", part);
-			g_free (path);
-		} while (g_mime_part_iter_next (iter));
-		
+    //const char *jump_to = "4.2.2.2";
+    GMimePartIter *iter;
+    GMimeObject *parent;
+    GMimeObject *part;
+    char *path;
+    
+    iter = g_mime_part_iter_new ((GMimeObject *) message);
+    if (g_mime_part_iter_is_valid (iter)) {
+        if ((parent = g_mime_part_iter_get_parent (iter)))
+            print_mime_part_info ("TEXT", parent);
+        
+        do {
+            part = g_mime_part_iter_get_current (iter);
+            path = g_mime_part_iter_get_path (iter);
+            print_mime_part_info (parent ? path : "TEXT", part);
+            g_free (path);
+        } while (g_mime_part_iter_next (iter));
+        
 #if 0
-		fprintf (stdout, "Jumping to %s\n", jump_to);
-		if (g_mime_part_iter_jump_to (iter, jump_to)) {
-			part = g_mime_part_iter_get_current (iter);
-			path = g_mime_part_iter_get_path (iter);
-			print_mime_part_info (path, part);
-			g_free (path);
-		} else {
-			fprintf (stdout, "Failed to jump to %s\n", jump_to);
-		}
+        fprintf (stdout, "Jumping to %s\n", jump_to);
+        if (g_mime_part_iter_jump_to (iter, jump_to)) {
+            part = g_mime_part_iter_get_current (iter);
+            path = g_mime_part_iter_get_path (iter);
+            print_mime_part_info (path, part);
+            g_free (path);
+        } else {
+            fprintf (stdout, "Failed to jump to %s\n", jump_to);
+        }
 #endif
-	}
-	
-	g_mime_part_iter_free (iter);
+    }
+    
+    g_mime_part_iter_free (iter);
 }
 
 static int parse_multipart(ogs_sbi_message_t *sbi_message,
         char *content, size_t content_length)
 {
-    GMimeMessage *mime_message;
-    GMimeParser *parser;
-    GMimeStream *stream;
+    int rv = OGS_ERROR;
+    GMimeMessage *mime_message = NULL;
+    GMimeParser *parser = NULL;
+    GMimeStream *stream = NULL;
     char *buffer = NULL;
 
     ogs_assert(sbi_message);
@@ -737,44 +741,87 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     if (!content)
         return OGS_OK;
 
-    if (!sbi_message->http.content_type)
-        return OGS_OK;
+    ogs_assert(sbi_message->http.content_type);
+    ogs_assert(content_length);
 
     buffer = ogs_msprintf("%s: %s\r\n\r\n%s", OGS_SBI_CONTENT_TYPE,
             sbi_message->http.content_type, content);
+    ogs_assert(buffer);
 
     stream = g_mime_stream_mem_new_with_buffer(buffer,
                 strlen(OGS_SBI_CONTENT_TYPE) + strlen(": ") +
                 strlen(sbi_message->http.content_type) + strlen("\r\n\r\n") +
                 content_length);
+    if (!stream) {
+        ogs_error("g_mime_stream_mem_new_with_buffer() failed");
+        goto cleanup;
+    }
 
     parser = g_mime_parser_new_with_stream(stream);
-    g_object_unref(stream);
+    if (!parser) {
+        ogs_error("g_mime_parser_new_with_stream() failed");
+        goto cleanup;
+    }
 
     mime_message = g_mime_parser_construct_message(parser, NULL);
-    g_object_unref(parser);
+    if (!mime_message) {
+        ogs_error("g_mime_parser_new_with_stream() failed");
+        goto cleanup;
+    }
 
+    if (GMIME_IS_MULTIPART(mime_message->mime_part)) {
+        GMimeMultipart *multipart = (GMimeMultipart *)mime_message->mime_part;
+        GMimeObject *subpart = NULL;
+        const GMimeContentType *type = NULL;
+        int i, n;
+
+        ogs_assert(multipart);
+
+        n = g_mime_multipart_get_count (multipart);
+        for (i = 0; i < n; i++) {
+            subpart = g_mime_multipart_get_part(multipart, i);
+            if (!subpart) continue;
+
+            type = g_mime_object_get_content_type(subpart);
+            if (!type) continue;
+            if (!type->subtype) continue;
+
+            SWITCH(type->subtype)
+            CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
+            ogs_fatal("type = %s, %s", type->type, type->subtype);
+        }
+
+    }
+
+#if 0
     {
         int count = 0;
         g_mime_message_foreach(mime_message, count_foreach_callback, &count);
         ogs_fatal("coutn = %d", count);
     }
+#endif
 #if 0
     {
-        GMimeFormatOptions *format = g_mime_format_options_get_default ();
         char *text;
-        text = g_mime_object_to_string ((GMimeObject *) mime_message, format);
+        text = g_mime_object_to_string ((GMimeObject *)mime_message, NULL);
         ogs_fatal("text = %s", text);
     }
 #endif
 #if 0
-	print_mime_struct (mime_message->mime_part, 0);
+    print_mime_struct (mime_message->mime_part, 0);
+    print_mime_struct_iter (mime_message);
 #endif
-	print_mime_struct_iter (mime_message);
 
+    rv = OGS_OK;
+
+cleanup:
+
+    g_object_unref(stream);
+    g_object_unref(parser);
+    g_object_unref(mime_message);
     ogs_free(buffer);
 
-    return OGS_OK;
+    return rv;
 }
 
 static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json)
