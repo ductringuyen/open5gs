@@ -26,7 +26,9 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static char *build_content(ogs_sbi_message_t *message);
+
 static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json);
+static int parse_multipart(ogs_sbi_message_t *message, char *content);
 static int parse_content(ogs_sbi_message_t *message, char *content);
 
 static void header_free(ogs_sbi_header_t *h);
@@ -554,12 +556,15 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
     if (message->http.content_type &&
         !strncmp(message->http.content_type, OGS_SBI_CONTENT_MULTIPART_TYPE,
             strlen(OGS_SBI_CONTENT_MULTIPART_TYPE))) {
-        /* TODO */
-
-        return OGS_OK;
+        return parse_multipart(message, content);
     } else {
         return parse_json(message, message->http.content_type, content);
     }
+}
+
+static int parse_multipart(ogs_sbi_message_t *message, char *content)
+{
+    return OGS_OK;
 }
 
 static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json)
