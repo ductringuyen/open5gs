@@ -28,6 +28,9 @@ static int parse_header(
 static char *build_content(ogs_sbi_message_t *message);
 static int parse_content(ogs_sbi_message_t *message, char *content);
 
+static void header_free(ogs_sbi_header_t *h);
+static void http_message_free(ogs_sbi_http_message_t *http);
+
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool)
 {
     ogs_pool_init(&request_pool, num_of_request_pool);
@@ -127,9 +130,6 @@ ogs_sbi_response_t *ogs_sbi_response_new(void)
     return response;
 }
 
-static void sbi_header_free(ogs_sbi_header_t *h);
-static void http_message_free(ogs_sbi_http_message_t *http);
-
 void ogs_sbi_request_free(ogs_sbi_request_t *request)
 {
     ogs_assert(request);
@@ -137,7 +137,7 @@ void ogs_sbi_request_free(ogs_sbi_request_t *request)
     if (request->h.uri)
         ogs_free(request->h.uri);
 
-    sbi_header_free(&request->h);
+    header_free(&request->h);
     http_message_free(&request->http);
 
     ogs_pool_free(&request_pool, request);
@@ -150,52 +150,10 @@ void ogs_sbi_response_free(ogs_sbi_response_t *response)
     if (response->h.uri)
         ogs_free(response->h.uri);
 
-    sbi_header_free(&response->h);
+    header_free(&response->h);
     http_message_free(&response->http);
 
     ogs_pool_free(&response_pool, response);
-}
-
-static void sbi_header_free(ogs_sbi_header_t *h)
-{
-    int i;
-    ogs_assert(h);
-
-    if (h->method) ogs_free(h->method);
-    if (h->service.name) ogs_free(h->service.name);
-    if (h->api.version) ogs_free(h->api.version);
-
-    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
-                        h->resource.component[i]; i++)
-        ogs_free(h->resource.component[i]);
-}
-
-static void http_message_free(ogs_sbi_http_message_t *http)
-{
-    ogs_assert(http);
-
-    if (http->params) {
-        ogs_hash_index_t *hi;
-        for (hi = ogs_hash_first(http->params); hi; hi = ogs_hash_next(hi)) {
-            char *val = ogs_hash_this_val(hi);
-            ogs_free(val);
-        }
-        ogs_hash_destroy(http->params);
-    }
-
-    if (http->headers) {
-        ogs_hash_index_t *hi;
-        for (hi = ogs_hash_first(http->headers); hi; hi = ogs_hash_next(hi)) {
-            char *val = ogs_hash_this_val(hi);
-            ogs_free(val);
-        }
-        ogs_hash_destroy(http->headers);
-    }
-    if (http->content)
-        ogs_free(http->content);
-
-    if (http->gsmbuf)
-        ogs_pkbuf_free(http->gsmbuf);
 }
 
 ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
@@ -971,4 +929,46 @@ cleanup:
 
     cJSON_Delete(item);
     return rv;
+}
+
+static void header_free(ogs_sbi_header_t *h)
+{
+    int i;
+    ogs_assert(h);
+
+    if (h->method) ogs_free(h->method);
+    if (h->service.name) ogs_free(h->service.name);
+    if (h->api.version) ogs_free(h->api.version);
+
+    for (i = 0; i < OGS_SBI_MAX_NUM_OF_RESOURCE_COMPONENT &&
+                        h->resource.component[i]; i++)
+        ogs_free(h->resource.component[i]);
+}
+
+static void http_message_free(ogs_sbi_http_message_t *http)
+{
+    ogs_assert(http);
+
+    if (http->params) {
+        ogs_hash_index_t *hi;
+        for (hi = ogs_hash_first(http->params); hi; hi = ogs_hash_next(hi)) {
+            char *val = ogs_hash_this_val(hi);
+            ogs_free(val);
+        }
+        ogs_hash_destroy(http->params);
+    }
+
+    if (http->headers) {
+        ogs_hash_index_t *hi;
+        for (hi = ogs_hash_first(http->headers); hi; hi = ogs_hash_next(hi)) {
+            char *val = ogs_hash_this_val(hi);
+            ogs_free(val);
+        }
+        ogs_hash_destroy(http->headers);
+    }
+    if (http->content)
+        ogs_free(http->content);
+
+    if (http->gsmbuf)
+        ogs_pkbuf_free(http->gsmbuf);
 }
