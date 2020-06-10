@@ -786,8 +786,10 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
             if (!type) continue;
             if (!type->subtype) continue;
 
+#if 0
             SWITCH(type->subtype)
             CASE(OGS_SBI_SERVICE_NAME_NNRF_NFM)
+#endif
             ogs_fatal("type = %s, %s", type->type, type->subtype);
         }
 

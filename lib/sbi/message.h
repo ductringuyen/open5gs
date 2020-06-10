@@ -131,15 +131,31 @@ extern "C" {
 #define OGS_SBI_ACCEPT_ENCODING                     "Accept-Encoding"
 #define OGS_SBI_CONTENT_TYPE                        "Content-Type"
 #define OGS_SBI_LOCATION                            "Location"
-#define OGS_SBI_CONTENT_JSON_TYPE                   "application/json"
-#define OGS_SBI_CONTENT_PROBLEM_TYPE                "application/problem+json"
-#define OGS_SBI_CONTENT_PATCH_TYPE                  \
-        "application/json-patch+json"
-#define OGS_SBI_CONTENT_3GPPHAL_TYPE                "application/3gppHal+json"
+#define OGS_SBI_APPLICATION_TYPE                    "application"
+#define OGS_SBI_APPLICATION_JSON_TYPE               "json"
+#define OGS_SBI_APPLICATION_PROBLEM_TYPE            "problem+json"
+#define OGS_SBI_APPLICATION_PATCH_TYPE              "json-patch+json"
+#define OGS_SBI_APPLICATION_3GPPHAL_TYPE            "3gppHal+json"
+#define OGS_SBI_APPLICATION_5GNAS_TYPE              "vnd.3gpp.5gnas"
+#define OGS_SBI_APPLICATION_NGAP_TYPE               "vnd.3gpp.ngap"
 
-#define OGS_SBI_CONTENT_MULTIPART_TYPE              "multipart/related"
-#define OGS_SBI_CONTENT_5GNAS_TYPE                  "application/vnd.3gpp.5gnas"
-#define OGS_SBI_CONTENT_NGAP_TYPE                   "application/vnd.3gpp.ngap"
+#define OGS_SBI_CONTENT_JSON_TYPE                   \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_JSON_TYPE
+#define OGS_SBI_CONTENT_PROBLEM_TYPE                \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_PROBLEM_TYPE
+#define OGS_SBI_CONTENT_PATCH_TYPE                  \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_PATCH_TYPE
+#define OGS_SBI_CONTENT_3GPPHAL_TYPE                \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_3GPPHAL_TYPE
+#define OGS_SBI_CONTENT_5GNAS_TYPE                  \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_5GNAS_TYPE
+#define OGS_SBI_CONTENT_NGAP_TYPE                   \
+    OGS_SBI_APPLICATION_TYPE "/" OGS_SBI_APPLICATION_NGAP_TYPE
+
+#define OGS_SBI_MULTIPART_TYPE                      "multipart"
+#define OGS_SBI_MULTIPART_RELATED_TYPE              "related"
+#define OGS_SBI_CONTENT_MULTIPART_TYPE              \
+    OGS_SBI_MULTIPART_TYPE "/" OGS_SBI_MULTIPART_RELATED_TYPE
 
 #define OGS_SBI_CONTENT_ID                          "Content-Id"
 #define OGS_SBI_MULTIPART_5GSM_ID                   "nas-5gsm"
