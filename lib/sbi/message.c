@@ -20,6 +20,8 @@
 #include "ogs-sbi.h"
 #include "yuarel.h"
 
+#include "gmime/gmime.h"
+
 static OGS_POOL(request_pool, ogs_sbi_request_t);
 static OGS_POOL(response_pool, ogs_sbi_response_t);
 
@@ -28,8 +30,10 @@ static int parse_header(
 static char *build_content(ogs_sbi_message_t *message);
 
 static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json);
-static int parse_multipart(ogs_sbi_message_t *message, char *content);
-static int parse_content(ogs_sbi_message_t *message, char *content);
+static int parse_multipart(ogs_sbi_message_t *message,
+        char *content, size_t content_length);
+static int parse_content(ogs_sbi_message_t *message,
+        char *content, size_t content_length);
 
 static void header_free(ogs_sbi_header_t *h);
 static void http_message_free(ogs_sbi_http_message_t *http);
@@ -338,7 +342,8 @@ int ogs_sbi_parse_request(
         }
     }
 
-    if (parse_content(message, request->http.content) != OGS_OK) {
+    if (parse_content(message,
+            request->http.content, request->http.content_length) != OGS_OK) {
         ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
@@ -371,7 +376,8 @@ int ogs_sbi_parse_response(
 
     message->res_status = response->status;
 
-    if (parse_content(message, response->http.content) != OGS_OK) {
+    if (parse_content(message,
+            response->http.content, response->http.content_length) != OGS_OK) {
         ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
@@ -551,19 +557,52 @@ static char *build_content(ogs_sbi_message_t *message)
     return content;
 }
 
-static int parse_content(ogs_sbi_message_t *message, char *content)
+static int parse_content(ogs_sbi_message_t *message,
+        char *content, size_t content_length)
 {
     if (message->http.content_type &&
         !strncmp(message->http.content_type, OGS_SBI_CONTENT_MULTIPART_TYPE,
             strlen(OGS_SBI_CONTENT_MULTIPART_TYPE))) {
-        return parse_multipart(message, content);
+        return parse_multipart(message, content, content_length);
     } else {
         return parse_json(message, message->http.content_type, content);
     }
 }
 
-static int parse_multipart(ogs_sbi_message_t *message, char *content)
+static int parse_multipart(ogs_sbi_message_t *sbi_message,
+        char *content, size_t content_length)
 {
+    GMimeMessage *mime_message;
+    GMimeParser *parser;
+    GMimeStream *stream;
+    char *buffer = NULL;
+
+    ogs_assert(sbi_message);
+
+    if (!content)
+        return OGS_OK;
+
+    if (!sbi_message->http.content_type)
+        return OGS_OK;
+
+    buffer = ogs_msprintf("%s: %s%s", OGS_SBI_CONTENT_TYPE,
+            sbi_message->http.content_type, content);
+
+    stream = g_mime_stream_mem_new_with_buffer(buffer,
+                strlen(OGS_SBI_CONTENT_TYPE) + strlen(": ") +
+                strlen(sbi_message->http.content_type) +
+                content_length);
+
+    parser = g_mime_parser_new_with_stream(stream);
+    g_object_unref(stream);
+
+    mime_message = g_mime_parser_construct_message(parser, NULL);
+    g_object_unref(parser);
+
+    ogs_fatal("%p", mime_message);
+
+    ogs_free(buffer);
+
     return OGS_OK;
 }
 

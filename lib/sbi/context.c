@@ -20,6 +20,8 @@
 #include "app/ogs-app.h"
 #include "ogs-sbi.h"
 
+#include "gmime/gmime.h"
+
 int __ogs_sbi_domain;
 
 static OGS_POOL(nf_instance_pool, ogs_sbi_nf_instance_t);
@@ -59,12 +61,18 @@ void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr)
     ogs_uuid_get(&self.uuid);
     ogs_uuid_format(self.nf_instance_id, &self.uuid);
 
+	/* init the gmime library */
+    g_mime_init();
+
     context_initialized = 1;
 }
 
 void ogs_sbi_context_final(void)
 {
     ogs_assert(context_initialized == 1);
+
+    /* showdown the gmime library */
+    g_mime_shutdown();
 
     ogs_sbi_subscription_remove_all();
     ogs_pool_final(&subscription_pool);
