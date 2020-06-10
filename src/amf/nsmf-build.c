@@ -86,7 +86,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_pkbuf_put_data(gsmbuf,
             payload_container->buffer, payload_container->length);
 
-    sbi_message.gsmbuf = gsmbuf;
+    sbi_message.gsm.buf = gsmbuf;
 
     request = ogs_sbi_build_request(&sbi_message);
     ogs_assert(request);

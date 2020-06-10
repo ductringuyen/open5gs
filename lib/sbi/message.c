@@ -218,8 +218,8 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 
     /* HTTP Message */
     request->http.content = build_content(message);
-    if (message->gsmbuf)
-        request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
+    if (message->gsm.buf)
+        request->http.gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
 
     if (message->http.content_type) {
         ogs_sbi_header_set(request->http.headers,
