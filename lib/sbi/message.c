@@ -20,6 +20,9 @@
 #include "ogs-sbi.h"
 #include "yuarel.h"
 
+static char *build_content(ogs_sbi_message_t *message);
+static int parse_content(ogs_sbi_message_t *message, char *content);
+
 static OGS_POOL(request_pool, ogs_sbi_request_t);
 static OGS_POOL(response_pool, ogs_sbi_response_t);
 
@@ -33,25 +36,6 @@ void ogs_sbi_message_final(void)
 {
     ogs_pool_final(&request_pool);
     ogs_pool_final(&response_pool);
-}
-
-void ogs_sbi_message_copy(ogs_sbi_message_t *dst, ogs_sbi_message_t *src)
-{
-    char *content = NULL;
-
-    ogs_assert(src);
-    ogs_assert(dst);
-
-    memcpy(dst, src, sizeof(ogs_sbi_message_t));
-
-    content = ogs_sbi_build_content(src);
-    if (content == NULL) {
-        ogs_error("ogs_sbi_build_content() failed");
-        return;
-    }
-
-    ogs_sbi_parse_content(dst, content);
-    ogs_free(content);
 }
 
 void ogs_sbi_message_free(ogs_sbi_message_t *message)
@@ -265,7 +249,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     /* HTTP Message */
-    request->http.content = ogs_sbi_build_content(message);
+    request->http.content = build_content(message);
     if (message->gsmbuf)
         request->http.gsmbuf = ogs_pkbuf_copy(message->gsmbuf);
 
@@ -324,7 +308,7 @@ ogs_sbi_response_t *ogs_sbi_build_response(
 
     /* HTTP Message */
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
-        response->http.content = ogs_sbi_build_content(message);
+        response->http.content = build_content(message);
         if (response->http.content) {
             if (message->http.content_type)
                 ogs_sbi_header_set(response->http.headers,
@@ -394,8 +378,8 @@ int ogs_sbi_parse_request(
         }
     }
 
-    if (ogs_sbi_parse_content(message, request->http.content) != OGS_OK) {
-        ogs_error("ogs_sbi_parse_content() failed");
+    if (parse_content(message, request->http.content) != OGS_OK) {
+        ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
 
@@ -427,15 +411,15 @@ int ogs_sbi_parse_response(
 
     message->res_status = response->status;
 
-    if (ogs_sbi_parse_content(message, response->http.content) != OGS_OK) {
-        ogs_error("ogs_sbi_parse_content() failed");
+    if (parse_content(message, response->http.content) != OGS_OK) {
+        ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
 
     return OGS_OK;
 }
 
-char *ogs_sbi_build_content(ogs_sbi_message_t *message)
+static char *build_content(ogs_sbi_message_t *message)
 {
     char *content = NULL;
     cJSON *item = NULL;
@@ -534,7 +518,7 @@ char *ogs_sbi_build_content(ogs_sbi_message_t *message)
     return content;
 }
 
-int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content)
+static int parse_content(ogs_sbi_message_t *message, char *content)
 {
     int rv = OGS_OK;
     cJSON *item = NULL;

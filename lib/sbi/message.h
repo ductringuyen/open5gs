@@ -239,7 +239,6 @@ typedef struct ogs_sbi_response_s {
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool);
 void ogs_sbi_message_final(void);
 
-void ogs_sbi_message_copy(ogs_sbi_message_t *dst, ogs_sbi_message_t *src);
 void ogs_sbi_message_free(ogs_sbi_message_t *message);
 
 ogs_sbi_request_t *ogs_sbi_request_new(void);
@@ -254,9 +253,6 @@ ogs_sbi_response_t *ogs_sbi_build_response(
         ogs_sbi_message_t *message, int status);
 int ogs_sbi_parse_response(
         ogs_sbi_message_t *message, ogs_sbi_response_t *response);
-
-char *ogs_sbi_build_content(ogs_sbi_message_t *message);
-int ogs_sbi_parse_content(ogs_sbi_message_t *message, char *content);
 
 void ogs_sbi_header_set(ogs_hash_t *ht, const void *key, const void *val);
 void *ogs_sbi_header_get(ogs_hash_t *ht, const void *key);
