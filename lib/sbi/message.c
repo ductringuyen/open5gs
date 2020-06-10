@@ -575,6 +575,11 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     GMimeMessage *mime_message = NULL;
     GMimeParser *parser = NULL;
     GMimeStream *stream = NULL;
+
+    GMimePartIter *iter = NULL;
+    GPtrArray *attachments = NULL;
+    GPtrArray *multiparts = NULL;
+
     ogs_pkbuf_t *pkbuf = NULL;
 
     ogs_assert(sbi_message);
@@ -599,6 +604,68 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     mime_message = g_mime_parser_construct_message(parser, NULL);
     g_object_unref(parser);
 
+    iter = g_mime_part_iter_new(mime_message->mime_part);
+    if (g_mime_part_iter_is_valid(iter)) {
+        GMimeObject *parent = g_mime_part_iter_get_parent(iter);
+
+        do {
+            GMimeObject *current = g_mime_part_iter_get_current(iter);
+            GMimePart *part = (GMimePart *)current;
+            const GMimeContentType *type = NULL;
+            GMimeDataWrapper *content = NULL;
+            int n;
+            unsigned char buf[8192];
+
+            if (GMIME_IS_MULTIPART(parent) && GMIME_IS_PART(current)) {
+
+                type = g_mime_object_get_content_type(current);
+                if (!type) {
+                    ogs_error("No Content-Type");
+                    break;
+                }
+
+                content = g_mime_part_get_content(part);
+                if (!content) {
+                    ogs_error("No Content");
+                    break;
+                }
+
+                stream = g_mime_data_wrapper_get_stream(content);
+                ogs_assert(stream);
+                n = g_mime_stream_read(stream, (char*)buf, sizeof(buf));
+
+                ogs_fatal("len = %ld", g_mime_stream_length(stream));
+
+                SWITCH(type->subtype)
+                CASE(OGS_SBI_APPLICATION_JSON_TYPE)
+                    ogs_fatal("josn");
+                    ogs_log_hexdump(OGS_LOG_FATAL, buf, n);
+#if 0
+                    ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
+                    text = g_mime_object_to_string(subpart, NULL);
+                    ogs_fatal("text = [%s]", text);
+#endif
+                    break;
+                CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
+                    ogs_fatal("5gnas");
+                    ogs_log_hexdump(OGS_LOG_FATAL, buf, n);
+#if 0
+                    ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
+#endif
+                    break;
+                DEFAULT
+                    ogs_error("Unknown subtype [%s]", type->subtype);
+                END
+
+            }
+        } while (g_mime_part_iter_next(iter));
+    }
+
+    g_mime_part_iter_free (iter);
+
+
+
+#if 0
     if (GMIME_IS_MULTIPART(mime_message->mime_part)) {
         GMimeMultipart *multipart = (GMimeMultipart *)mime_message->mime_part;
         GMimeObject *subpart = NULL;
@@ -650,6 +717,7 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
         }
 
     }
+#endif
 
     g_object_unref(mime_message);
     ogs_pkbuf_free(pkbuf);
