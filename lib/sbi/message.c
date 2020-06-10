@@ -533,7 +533,9 @@ static int build_multipart(
     g_mime_object_write_to_stream((GMimeObject *)multipart, NULL, stream);
     g_object_unref(stream);
 
+#if 0
     ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
+#endif
     g_byte_array_free(array, FALSE);
 
     g_object_unref(multipart);
