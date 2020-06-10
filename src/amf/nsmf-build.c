@@ -88,6 +88,10 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     sbi_message.gsm.buf = gsmbuf;
 
+    sbi_message.part[0].content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
+    sbi_message.part[0].pkbuf = ogs_pkbuf_copy(gsmbuf);
+    sbi_message.num_of_part = 1;
+
     request = ogs_sbi_build_request(&sbi_message);
     ogs_assert(request);
 
@@ -96,6 +100,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_free(SMContextCreateData.sm_context_status_uri);
     ogs_free(header.resource.component[2]);
     ogs_pkbuf_free(gsmbuf);
+    ogs_pkbuf_free(sbi_message.part[0].pkbuf);
 
     return request;
 }

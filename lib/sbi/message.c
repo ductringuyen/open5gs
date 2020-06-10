@@ -27,9 +27,8 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
-static void build_json(
-        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
-static void build_content(
+static char *build_json(ogs_sbi_message_t *message);
+static int build_content(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
 
 static int parse_json(ogs_sbi_message_t *message,
@@ -468,25 +467,46 @@ static int parse_header(
     return OGS_OK;
 }
 
-static void build_content(
+static int build_multipart(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
+{
+    int i;
+    ogs_assert(message);
+    ogs_assert(http);
+
+    http->content = build_json(message);
+    http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
+
+    for (i = 0; i < message->num_of_part; i++) {
+        http->part[i].content_id = ogs_strdup(message->part[i].content_id);
+        http->part[i].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
+    }
+    http->num_of_part = message->num_of_part;
+
+    return OGS_OK;
+}
+
+static int build_content(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     ogs_assert(message);
     ogs_assert(http);
 
-    build_json(http, message);
+    if (message->num_of_part) {
+        build_multipart(http, message);
+    } else {
+        http->content = build_json(message);
+    }
 
-    if (message->gsm.buf)
-        http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
+    return OGS_OK;
 }
 
-static void build_json(
-        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
+static char *build_json(ogs_sbi_message_t *message)
 {
+    char *content = NULL;
     cJSON *item = NULL;
 
     ogs_assert(message);
-    ogs_assert(http);
 
     if (message->ProblemDetails) {
         item = OpenAPI_problem_details_convertToJSON(message->ProblemDetails);
@@ -573,10 +593,12 @@ static void build_json(
     }
 
     if (item) {
-        http->content = cJSON_Print(item);
-        ogs_assert(http->content);
+        content = cJSON_Print(item);
+        ogs_assert(content);
         cJSON_Delete(item);
     }
+
+    return content;
 }
 
 static int parse_content(
