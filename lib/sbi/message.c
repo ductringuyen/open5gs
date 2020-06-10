@@ -27,7 +27,10 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
-static char *build_content(ogs_sbi_message_t *message);
+static void build_json(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
+static void build_content(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
 
 static int parse_json(ogs_sbi_message_t *message,
         char *content_type, char *json);
@@ -227,9 +230,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     /* HTTP Message */
-    request->http.content = build_content(message);
-    if (message->gsm.buf)
-        request->http.gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
+    build_content(&request->http, message);
 
     if (message->http.content_type) {
         ogs_sbi_header_set(request->http.headers,
@@ -286,7 +287,7 @@ ogs_sbi_response_t *ogs_sbi_build_response(
 
     /* HTTP Message */
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
-        response->http.content = build_content(message);
+        build_content(&response->http, message);
         if (response->http.content) {
             if (message->http.content_type)
                 ogs_sbi_header_set(response->http.headers,
@@ -467,11 +468,25 @@ static int parse_header(
     return OGS_OK;
 }
 
-static char *build_content(ogs_sbi_message_t *message)
+static void build_content(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
-    char *content = NULL;
-    cJSON *item = NULL;
     ogs_assert(message);
+    ogs_assert(http);
+
+    build_json(http, message);
+
+    if (message->gsm.buf)
+        http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
+}
+
+static void build_json(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
+{
+    cJSON *item = NULL;
+
+    ogs_assert(message);
+    ogs_assert(http);
 
     if (message->ProblemDetails) {
         item = OpenAPI_problem_details_convertToJSON(message->ProblemDetails);
@@ -558,12 +573,10 @@ static char *build_content(ogs_sbi_message_t *message)
     }
 
     if (item) {
-        content = cJSON_Print(item);
-        ogs_assert(content);
+        http->content = cJSON_Print(item);
+        ogs_assert(http->content);
         cJSON_Delete(item);
     }
-
-    return content;
 }
 
 static int parse_content(
