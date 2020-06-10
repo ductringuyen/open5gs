@@ -468,20 +468,49 @@ static int parse_header(
 }
 
 static int build_multipart(
-        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *sbi_message)
 {
     int i;
-    ogs_assert(message);
+
+    GMimeMultipart *multipart = NULL;
+    GMimePart *part = NULL;
+    GMimeStream *stream = NULL;
+    GMimeDataWrapper *content = NULL;
+
+    char buf[8192];
+
+    ogs_assert(sbi_message);
     ogs_assert(http);
 
-    http->content = build_json(message);
-    http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
+    http->content = build_json(sbi_message);
+    http->gsmbuf = ogs_pkbuf_copy(sbi_message->gsm.buf);
 
-    for (i = 0; i < message->num_of_part; i++) {
-        http->part[i].content_id = ogs_strdup(message->part[i].content_id);
-        http->part[i].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
+    for (i = 0; i < sbi_message->num_of_part; i++) {
+        http->part[i].content_id = ogs_strdup(sbi_message->part[i].content_id);
+        http->part[i].pkbuf = ogs_pkbuf_copy(sbi_message->part[i].pkbuf);
     }
-    http->num_of_part = message->num_of_part;
+    http->num_of_part = sbi_message->num_of_part;
+
+    stream = g_mime_stream_mem_new_with_buffer(
+            http->content, strlen(http->content));
+    content = g_mime_data_wrapper_new_with_stream(stream,
+            GMIME_CONTENT_ENCODING_DEFAULT);
+    g_object_unref(stream);
+
+    part = g_mime_part_new_with_type(
+            OGS_SBI_APPLICATION_TYPE, OGS_SBI_APPLICATION_JSON_TYPE);
+    g_mime_part_set_content(part, content);
+    g_object_unref(content);
+
+    multipart = g_mime_multipart_new_with_subtype(
+                    OGS_SBI_MULTIPART_RELATED_TYPE);
+    g_mime_multipart_add(multipart, (GMimeObject *)part);
+    g_object_unref(part);
+
+    char *string = g_mime_object_to_string((GMimeObject *)multipart, NULL);
+    ogs_fatal("buf = [%s]", string);
+
+    g_object_unref(multipart);
 
     return OGS_OK;
 }
