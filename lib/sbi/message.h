@@ -179,6 +179,12 @@ typedef struct ogs_sbi_header_s {
 
 } ogs_sbi_header_t;
 
+typedef struct ogs_sbi_part_s {
+    char *content_id;
+    char *content_subtype;
+    ogs_pkbuf_t *pkbuf;
+} ogs_sbi_part_t;
+
 typedef struct ogs_sbi_message_s {
     ogs_sbi_header_t h;
 
@@ -230,10 +236,7 @@ typedef struct ogs_sbi_message_s {
 
 #define OGS_SBI_MAX_NUM_OF_PART 8
     int num_of_part;
-    struct {
-        char *content_id;
-        ogs_pkbuf_t *pkbuf;
-    } part[OGS_SBI_MAX_NUM_OF_PART];
+    ogs_sbi_part_t part[OGS_SBI_MAX_NUM_OF_PART];
 } ogs_sbi_message_t;
 
 typedef struct ogs_sbi_http_message_s {
@@ -244,10 +247,7 @@ typedef struct ogs_sbi_http_message_s {
     size_t content_length;
 
     int num_of_part;
-    struct {
-        char *content_id;
-        ogs_pkbuf_t *pkbuf;
-    } part[OGS_SBI_MAX_NUM_OF_PART];
+    ogs_sbi_part_t part[OGS_SBI_MAX_NUM_OF_PART];
 
     ogs_pkbuf_t *gsmbuf;
 } ogs_sbi_http_message_t;

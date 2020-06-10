@@ -488,6 +488,8 @@ static int build_multipart(
 
     for (i = 0; i < sbi_message->num_of_part; i++) {
         http->part[i].content_id = ogs_strdup(sbi_message->part[i].content_id);
+        http->part[i].content_subtype =
+            ogs_strdup(sbi_message->part[i].content_subtype);
         http->part[i].pkbuf = ogs_pkbuf_copy(sbi_message->part[i].pkbuf);
     }
     http->num_of_part = sbi_message->num_of_part;
@@ -673,6 +675,7 @@ static int parse_content(
         message->num_of_part = http->num_of_part;
         for (i = 0; i < message->num_of_part; i++) {
             message->part[i].content_id = http->part[i].content_id;
+            message->part[i].content_subtype = http->part[i].content_subtype;
             message->part[i].pkbuf = ogs_pkbuf_copy(http->part[i].pkbuf);
         }
 
@@ -725,7 +728,6 @@ static int parse_multipart(
             const GMimeContentType *type = NULL;
             const char *content_id = NULL;
             GMimeDataWrapper *content = NULL;
-            char *content_type = NULL;
             char buf[OGS_HUGE_LEN];
             int len, n;
 
@@ -745,9 +747,6 @@ static int parse_multipart(
 
                 content_id = g_mime_object_get_content_id(current);
 
-                content_type = ogs_msprintf("%s/%s", type->type, type->subtype);
-                ogs_assert(content_type);
-
                 stream = g_mime_data_wrapper_get_stream(content);
                 ogs_assert(stream);
                 len = g_mime_stream_length(stream);
@@ -762,15 +761,19 @@ static int parse_multipart(
                     break;
                 }
 
-                SWITCH(content_type)
-                CASE(OGS_SBI_CONTENT_JSON_TYPE)
-                    parse_json(sbi_message, content_type, buf);
+                SWITCH(type->subtype)
+                CASE(OGS_SBI_APPLICATION_JSON_TYPE)
+                    parse_json(sbi_message,
+                            (char *)OGS_SBI_CONTENT_JSON_TYPE, buf);
                     break;
 
-                CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
+                CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
+                CASE(OGS_SBI_APPLICATION_NGAP_TYPE)
                     if (http->num_of_part < OGS_SBI_MAX_NUM_OF_PART) {
                         http->part[http->num_of_part].content_id =
                                 ogs_strdup(content_id);
+                        http->part[http->num_of_part].content_subtype =
+                                ogs_strdup(type->subtype);
                         http->part[http->num_of_part].pkbuf =
                                 ogs_pkbuf_alloc(NULL, n);
                         ogs_pkbuf_put_data(
@@ -782,8 +785,6 @@ static int parse_multipart(
                 DEFAULT
                     ogs_error("Unknown subtype [%s]", type->subtype);
                 END
-
-                ogs_free(content_type);
             }
         } while (g_mime_part_iter_next(iter));
     }
@@ -1227,5 +1228,7 @@ static void http_message_free(ogs_sbi_http_message_t *http)
             ogs_pkbuf_free(http->part[i].pkbuf);
         if (http->part[i].content_id)
             ogs_free(http->part[i].content_id);
+        if (http->part[i].content_subtype)
+            ogs_free(http->part[i].content_subtype);
     }
 }
