@@ -483,46 +483,50 @@ static int build_multipart(
     ogs_assert(sbi_message);
     ogs_assert(http);
 
-    http->content = build_json(sbi_message);
     http->gsmbuf = ogs_pkbuf_copy(sbi_message->gsm.buf);
 
-    for (i = 0; i < sbi_message->num_of_part; i++) {
-        ogs_assert(sbi_message->part[i].pkbuf);
-        http->part[i].pkbuf = ogs_pkbuf_copy(sbi_message->part[i].pkbuf);
-    }
-    http->num_of_part = sbi_message->num_of_part;
+    http->content = build_json(sbi_message);
+    ogs_assert(http->content);
 
     multipart = g_mime_multipart_new_with_subtype(
                     OGS_SBI_MULTIPART_RELATED_TYPE);
-
-    stream = g_mime_stream_mem_new_with_buffer(
-            http->content, strlen(http->content));
-    content = g_mime_data_wrapper_new_with_stream(stream,
-            GMIME_CONTENT_ENCODING_DEFAULT);
-    g_object_unref(stream);
+    ogs_assert(multipart);
 
     part = g_mime_part_new_with_type(
             OGS_SBI_APPLICATION_TYPE, OGS_SBI_APPLICATION_JSON_TYPE);
+    ogs_assert(part);
+
+    stream = g_mime_stream_mem_new_with_buffer(
+            http->content, strlen(http->content));
+    ogs_assert(stream);
+    content = g_mime_data_wrapper_new_with_stream(stream,
+            GMIME_CONTENT_ENCODING_DEFAULT);
+    ogs_assert(content);
+    g_object_unref(stream);
+
     g_mime_part_set_content(part, content);
     g_object_unref(content);
 
     g_mime_multipart_add(multipart, (GMimeObject *)part);
     g_object_unref(part);
 
-    for (i = 0; i < http->num_of_part; i++) {
-        stream = g_mime_stream_mem_new_with_buffer(
-                (char *)http->part[i].pkbuf->data,
-                http->part[i].pkbuf->len);
-        content = g_mime_data_wrapper_new_with_stream(stream,
-                GMIME_CONTENT_ENCODING_DEFAULT);
-        g_object_unref(stream);
-
+    for (i = 0; i < sbi_message->num_of_part; i++) {
         ogs_assert(sbi_message->part[i].content_subtype);
         part = g_mime_part_new_with_type(
                 OGS_SBI_APPLICATION_TYPE, sbi_message->part[i].content_subtype);
+        ogs_assert(part);
 
         ogs_assert(sbi_message->part[i].content_id);
         g_mime_part_set_content_id(part, sbi_message->part[i].content_id);
+
+        stream = g_mime_stream_mem_new_with_buffer(
+                (char *)sbi_message->part[i].pkbuf->data,
+                sbi_message->part[i].pkbuf->len);
+        ogs_assert(stream);
+        content = g_mime_data_wrapper_new_with_stream(stream,
+                GMIME_CONTENT_ENCODING_DEFAULT);
+        ogs_assert(content);
+        g_object_unref(stream);
 
         g_mime_part_set_content(part, content);
         g_object_unref(content);
@@ -532,7 +536,9 @@ static int build_multipart(
     }
 
     array = g_byte_array_new();
+    ogs_assert(array);
     stream = g_mime_stream_mem_new();
+    ogs_assert(stream);
     g_mime_stream_mem_set_byte_array(GMIME_STREAM_MEM(stream), array);
     g_mime_object_write_to_stream((GMimeObject *)multipart, NULL, stream);
     g_object_unref(stream);
@@ -715,9 +721,21 @@ static int parse_multipart(
 
     stream = g_mime_stream_mem_new_with_buffer(
             (const char *)pkbuf->data, pkbuf->len);
+    if (!stream) {
+        ogs_error("g_mime_stream_mem_new_with_buffer() failed");
+        return OGS_ERROR;
+    }
     parser = g_mime_parser_new_with_stream(stream);
+    if (!parser) {
+        ogs_error("g_mime_parser_new_with_stream() failed");
+        return OGS_ERROR;
+    }
     g_object_unref(stream);
     mime_message = g_mime_parser_construct_message(parser, NULL);
+    if (!mime_message) {
+        ogs_error("g_mime_parser_construct_message() failed");
+        return OGS_ERROR;
+    }
     g_object_unref(parser);
 
     iter = g_mime_part_iter_new(mime_message->mime_part);
