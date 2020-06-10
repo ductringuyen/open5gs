@@ -227,6 +227,13 @@ typedef struct ogs_sbi_message_s {
         char *content_id;
         ogs_pkbuf_t *buf;
     } gsm;
+
+#define OGS_SBI_MAX_NUM_OF_PART 8
+    int num_of_part;
+    struct {
+        char *content_id;
+        ogs_pkbuf_t *pkbuf;
+    } part[OGS_SBI_MAX_NUM_OF_PART];
 } ogs_sbi_message_t;
 
 typedef struct ogs_sbi_http_message_s {
@@ -235,6 +242,12 @@ typedef struct ogs_sbi_http_message_s {
 
     char *content;
     size_t content_length;
+
+    int num_of_part;
+    struct {
+        char *content_id;
+        ogs_pkbuf_t *pkbuf;
+    } part[OGS_SBI_MAX_NUM_OF_PART];
 
     ogs_pkbuf_t *gsmbuf;
 } ogs_sbi_http_message_t;

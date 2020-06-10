@@ -308,6 +308,13 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
                     ogs_fatal("POST");
+#if 0
+                    ogs_fatal("%d", sbi_message.num_of_part);
+                    ogs_fatal("%s", sbi_message.part[0].content_id);
+                    ogs_log_hexdump(OGS_LOG_FATAL,
+                            sbi_message.part[0].pkbuf->data,
+                            sbi_message.part[0].pkbuf->len);
+#endif
                     break;
 
                 DEFAULT

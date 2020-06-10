@@ -31,10 +31,10 @@ static char *build_content(ogs_sbi_message_t *message);
 
 static int parse_json(ogs_sbi_message_t *message,
         char *content_type, char *json);
-static int parse_multipart(ogs_sbi_message_t *message,
-        char *content, size_t content_length);
-static int parse_content(ogs_sbi_message_t *message,
-        char *content, size_t content_length);
+static int parse_multipart(
+        ogs_sbi_message_t *sbi_message, ogs_sbi_http_message_t *http);
+static int parse_content(
+        ogs_sbi_message_t *message, ogs_sbi_http_message_t *http);
 
 static void header_free(ogs_sbi_header_t *h);
 static void http_message_free(ogs_sbi_http_message_t *http);
@@ -53,6 +53,8 @@ void ogs_sbi_message_final(void)
 
 void ogs_sbi_message_free(ogs_sbi_message_t *message)
 {
+    int i;
+
     ogs_assert(message);
 
     if (message->NFProfile)
@@ -108,10 +110,13 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->SMContextCreateData)
         OpenAPI_sm_context_create_data_free(message->SMContextCreateData);
 
-    if (message->gsm.content_id)
-        ogs_free(message->gsm.content_id);
     if (message->gsm.buf)
         ogs_pkbuf_free(message->gsm.buf);
+
+    for (i = 0; i < message->num_of_part; i++) {
+        if (message->part[i].pkbuf)
+            ogs_pkbuf_free(message->part[i].pkbuf);
+    }
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -348,8 +353,7 @@ int ogs_sbi_parse_request(
         }
     }
 
-    if (parse_content(message,
-            request->http.content, request->http.content_length) != OGS_OK) {
+    if (parse_content(message, &request->http) != OGS_OK) {
         ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
@@ -382,8 +386,7 @@ int ogs_sbi_parse_response(
 
     message->res_status = response->status;
 
-    if (parse_content(message,
-            response->http.content, response->http.content_length) != OGS_OK) {
+    if (parse_content(message, &response->http) != OGS_OK) {
         ogs_error("parse_content() failed");
         return OGS_ERROR;
     }
@@ -563,20 +566,32 @@ static char *build_content(ogs_sbi_message_t *message)
     return content;
 }
 
-static int parse_content(ogs_sbi_message_t *message,
-        char *content, size_t content_length)
+static int parse_content(
+        ogs_sbi_message_t *message, ogs_sbi_http_message_t *http)
 {
+    ogs_assert(message);
+    ogs_assert(http);
+
     if (message->http.content_type &&
         !strncmp(message->http.content_type, OGS_SBI_CONTENT_MULTIPART_TYPE,
             strlen(OGS_SBI_CONTENT_MULTIPART_TYPE))) {
-        return parse_multipart(message, content, content_length);
+        int rv, i;
+
+        rv = parse_multipart(message, http);
+        message->num_of_part = http->num_of_part;
+        for (i = 0; i < message->num_of_part; i++) {
+            message->part[i].content_id = http->part[i].content_id;
+            message->part[i].pkbuf = ogs_pkbuf_copy(http->part[i].pkbuf);
+        }
+
+        return rv;
     } else {
-        return parse_json(message, message->http.content_type, content);
+        return parse_json(message, message->http.content_type, http->content);
     }
 }
 
-static int parse_multipart(ogs_sbi_message_t *sbi_message,
-        char *content, size_t content_length)
+static int parse_multipart(
+        ogs_sbi_message_t *sbi_message, ogs_sbi_http_message_t *http)
 {
     GMimeMessage *mime_message = NULL;
     GMimeParser *parser = NULL;
@@ -586,19 +601,20 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     ogs_pkbuf_t *pkbuf = NULL;
 
     ogs_assert(sbi_message);
+    ogs_assert(http);
 
-    if (!content)
+    if (!http->content)
         return OGS_OK;
 
     ogs_assert(sbi_message->http.content_type);
-    ogs_assert(content_length);
+    ogs_assert(http->content_length);
 
     pkbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
     ogs_pkbuf_put(pkbuf, OGS_MAX_SDU_LEN);
     ogs_snprintf((char *)pkbuf->data, OGS_MAX_SDU_LEN, "%s: %s\r\n\r\n",
             OGS_SBI_CONTENT_TYPE, sbi_message->http.content_type);
     ogs_pkbuf_trim(pkbuf, strlen((char*)pkbuf->data));
-    ogs_pkbuf_put_data(pkbuf, content, content_length);
+    ogs_pkbuf_put_data(pkbuf, http->content, http->content_length);
 
     stream = g_mime_stream_mem_new_with_buffer(
             (const char *)pkbuf->data, pkbuf->len);
@@ -660,11 +676,15 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
                     break;
 
                 CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
-                    if (content_id)
-                        sbi_message->gsm.content_id = ogs_strdup(content_id);
-
-                    sbi_message->gsm.buf = ogs_pkbuf_alloc(NULL, n);
-                    ogs_pkbuf_put_data(sbi_message->gsm.buf, buf, n);
+                    if (http->num_of_part < OGS_SBI_MAX_NUM_OF_PART) {
+                        http->part[http->num_of_part].content_id =
+                                ogs_strdup(content_id);
+                        http->part[http->num_of_part].pkbuf =
+                                ogs_pkbuf_alloc(NULL, n);
+                        ogs_pkbuf_put_data(
+                                http->part[http->num_of_part].pkbuf, buf, n);
+                        http->num_of_part++;
+                    }
                     break;
 
                 DEFAULT
@@ -1084,6 +1104,7 @@ static void header_free(ogs_sbi_header_t *h)
 
 static void http_message_free(ogs_sbi_http_message_t *http)
 {
+    int i;
     ogs_assert(http);
 
     if (http->params) {
@@ -1108,4 +1129,11 @@ static void http_message_free(ogs_sbi_http_message_t *http)
 
     if (http->gsmbuf)
         ogs_pkbuf_free(http->gsmbuf);
+
+    for (i = 0; i < http->num_of_part; i++) {
+        if (http->part[i].pkbuf)
+            ogs_pkbuf_free(http->part[i].pkbuf);
+        if (http->part[i].content_id)
+            ogs_free(http->part[i].content_id);
+    }
 }
