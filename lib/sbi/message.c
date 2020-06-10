@@ -575,17 +575,12 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     GMimeMessage *mime_message = NULL;
     GMimeParser *parser = NULL;
     GMimeStream *stream = NULL;
-    GMimeFormatOptions *options = NULL;
     ogs_pkbuf_t *pkbuf = NULL;
 
     ogs_assert(sbi_message);
 
     if (!content)
         return OGS_OK;
-
-    options = g_mime_format_options_clone(NULL);
-    g_mime_format_options_set_newline_format(
-            options, GMIME_NEWLINE_FORMAT_UNIX);
 
     ogs_assert(sbi_message->http.content_type);
     ogs_assert(content_length);
@@ -614,7 +609,6 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
         n = g_mime_multipart_get_count (multipart);
         for (i = 0; i < n; i++) {
             GByteArray *array = NULL;
-            GMimeStream *ostream = NULL;
 
             subpart = g_mime_multipart_get_part(multipart, i);
             type = g_mime_object_get_content_type(subpart);
@@ -630,13 +624,13 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
             }
 
             array = g_byte_array_new();
-            ostream = g_mime_stream_mem_new();
-            g_mime_stream_mem_set_byte_array((GMimeStreamMem *)ostream, array);
-            g_mime_object_write_to_stream(subpart, options, ostream);
+            stream = g_mime_stream_mem_new();
+            g_mime_stream_mem_set_byte_array((GMimeStreamMem *)stream, array);
+            g_mime_object_write_to_stream(subpart, NULL, stream);
 #if 0
             g_object_unref(subpart);
 #endif
-            g_object_unref(ostream);
+            g_object_unref(stream);
 
             SWITCH(type->subtype)
             CASE(OGS_SBI_APPLICATION_JSON_TYPE)
