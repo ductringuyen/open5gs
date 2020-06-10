@@ -107,6 +107,11 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
         OpenAPI_ue_context_in_smf_data_free(message->UeContextInSmfData);
     if (message->SMContextCreateData)
         OpenAPI_sm_context_create_data_free(message->SMContextCreateData);
+
+    if (message->gsm.content_id)
+        ogs_free(message->gsm.content_id);
+    if (message->gsm.buf)
+        ogs_pkbuf_free(message->gsm.buf);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -610,6 +615,7 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
             GMimeObject *current = g_mime_part_iter_get_current(iter);
             GMimePart *part = (GMimePart *)current;
             const GMimeContentType *type = NULL;
+            const char *content_id = NULL;
             GMimeDataWrapper *content = NULL;
             char *content_type = NULL;
             char buf[OGS_HUGE_LEN];
@@ -628,6 +634,8 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
                     ogs_error("No Content");
                     break;
                 }
+
+                content_id = g_mime_object_get_content_id(current);
 
                 content_type = ogs_msprintf("%s/%s", type->type, type->subtype);
                 ogs_assert(content_type);
@@ -652,8 +660,11 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
                     break;
 
                 CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
-                    ogs_fatal("5gnas");
-                    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)buf, n);
+                    if (content_id)
+                        sbi_message->gsm.content_id = ogs_strdup(content_id);
+
+                    sbi_message->gsm.buf = ogs_pkbuf_alloc(NULL, n);
+                    ogs_pkbuf_put_data(sbi_message->gsm.buf, buf, n);
                     break;
 
                 DEFAULT
