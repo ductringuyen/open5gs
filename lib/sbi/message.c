@@ -29,7 +29,8 @@ static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static char *build_content(ogs_sbi_message_t *message);
 
-static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json);
+static int parse_json(ogs_sbi_message_t *message,
+        char *content_type, char *json);
 static int parse_multipart(ogs_sbi_message_t *message,
         char *content, size_t content_length);
 static int parse_content(ogs_sbi_message_t *message,
@@ -575,10 +576,7 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     GMimeMessage *mime_message = NULL;
     GMimeParser *parser = NULL;
     GMimeStream *stream = NULL;
-
     GMimePartIter *iter = NULL;
-    GPtrArray *attachments = NULL;
-    GPtrArray *multiparts = NULL;
 
     ogs_pkbuf_t *pkbuf = NULL;
 
@@ -613,8 +611,9 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
             GMimePart *part = (GMimePart *)current;
             const GMimeContentType *type = NULL;
             GMimeDataWrapper *content = NULL;
-            int n;
-            unsigned char buf[8192];
+            char *content_type = NULL;
+            char buf[OGS_HUGE_LEN];
+            int len, n;
 
             if (GMIME_IS_MULTIPART(parent) && GMIME_IS_PART(current)) {
 
@@ -630,94 +629,43 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
                     break;
                 }
 
+                content_type = ogs_msprintf("%s/%s", type->type, type->subtype);
+                ogs_assert(content_type);
+
                 stream = g_mime_data_wrapper_get_stream(content);
                 ogs_assert(stream);
-                n = g_mime_stream_read(stream, (char*)buf, sizeof(buf));
-
-                ogs_fatal("len = %ld", g_mime_stream_length(stream));
-
-                SWITCH(type->subtype)
-                CASE(OGS_SBI_APPLICATION_JSON_TYPE)
-                    ogs_fatal("josn");
-                    ogs_log_hexdump(OGS_LOG_FATAL, buf, n);
-#if 0
-                    ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
-                    text = g_mime_object_to_string(subpart, NULL);
-                    ogs_fatal("text = [%s]", text);
-#endif
+                len = g_mime_stream_length(stream);
+                if (len == -1) {
+                    ogs_error("Unable to get length");
                     break;
-                CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
+                }
+
+                n = g_mime_stream_read(stream, buf, sizeof(buf));
+                if (len != n) {
+                    ogs_error("Invalid length [%d != %d]", n, len);
+                    break;
+                }
+
+                SWITCH(content_type)
+                CASE(OGS_SBI_CONTENT_JSON_TYPE)
+                    parse_json(sbi_message, content_type, buf);
+                    break;
+
+                CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
                     ogs_fatal("5gnas");
-                    ogs_log_hexdump(OGS_LOG_FATAL, buf, n);
-#if 0
-                    ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
-#endif
+                    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)buf, n);
                     break;
+
                 DEFAULT
                     ogs_error("Unknown subtype [%s]", type->subtype);
                 END
 
+                ogs_free(content_type);
             }
         } while (g_mime_part_iter_next(iter));
     }
 
-    g_mime_part_iter_free (iter);
-
-
-
-#if 0
-    if (GMIME_IS_MULTIPART(mime_message->mime_part)) {
-        GMimeMultipart *multipart = (GMimeMultipart *)mime_message->mime_part;
-        GMimeObject *subpart = NULL;
-        const GMimeContentType *type = NULL;
-        int i, n;
-        char *text;
-
-        n = g_mime_multipart_get_count (multipart);
-        for (i = 0; i < n; i++) {
-            GByteArray *array = NULL;
-
-            subpart = g_mime_multipart_get_part(multipart, i);
-            type = g_mime_object_get_content_type(subpart);
-
-            if (!type || !type->type || !type->subtype) {
-                ogs_error("No Content-Type");
-                continue;
-            }
-
-            if (strcmp(type->type, OGS_SBI_APPLICATION_TYPE) != 0) {
-                ogs_error("Unknown type [%s]", type->type);
-                continue;
-            }
-
-            array = g_byte_array_new();
-            stream = g_mime_stream_mem_new();
-            g_mime_stream_mem_set_byte_array((GMimeStreamMem *)stream, array);
-            g_mime_object_write_to_stream(subpart, NULL, stream);
-#if 0
-            g_object_unref(subpart);
-#endif
-            g_object_unref(stream);
-
-            SWITCH(type->subtype)
-            CASE(OGS_SBI_APPLICATION_JSON_TYPE)
-                ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
-#if 0
-                text = g_mime_object_to_string(subpart, NULL);
-                ogs_fatal("text = [%s]", text);
-#endif
-                break;
-            CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
-                ogs_fatal("5gnas");
-                ogs_log_hexdump(OGS_LOG_FATAL, array->data, array->len);
-                break;
-            DEFAULT
-                ogs_error("Unknown subtype [%s]", type->subtype);
-            END
-        }
-
-    }
-#endif
+    g_mime_part_iter_free(iter);
 
     g_object_unref(mime_message);
     ogs_pkbuf_free(pkbuf);
@@ -725,7 +673,8 @@ static int parse_multipart(ogs_sbi_message_t *sbi_message,
     return OGS_OK;
 }
 
-static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json)
+static int parse_json(ogs_sbi_message_t *message,
+        char *content_type, char *json)
 {
     int rv = OGS_OK;
     cJSON *item = NULL;
@@ -741,12 +690,12 @@ static int parse_json(ogs_sbi_message_t *message, char *json_type, char *json)
         return OGS_ERROR;
     }
 
-    if (json_type &&
-        !strncmp(json_type, OGS_SBI_CONTENT_PROBLEM_TYPE,
+    if (content_type &&
+        !strncmp(content_type, OGS_SBI_CONTENT_PROBLEM_TYPE,
             strlen(OGS_SBI_CONTENT_PROBLEM_TYPE))) {
         message->ProblemDetails = OpenAPI_problem_details_parseFromJSON(item);
-    } else if (json_type &&
-                !strncmp(json_type, OGS_SBI_CONTENT_PATCH_TYPE,
+    } else if (content_type &&
+                !strncmp(content_type, OGS_SBI_CONTENT_PATCH_TYPE,
                     strlen(OGS_SBI_CONTENT_PATCH_TYPE))) {
         if (item) {
             OpenAPI_patch_item_t *patch_item = NULL;
