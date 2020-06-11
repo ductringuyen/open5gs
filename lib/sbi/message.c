@@ -936,12 +936,14 @@ static void build_multipart(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     int i;
+#if 0
     size_t size;
 
     GMimeMultipart *multipart = NULL;
     GMimePart *part = NULL;
     GMimeStream *stream = NULL;
     GMimeDataWrapper *content = NULL;
+#endif
 
     char *json = NULL;
 
@@ -967,6 +969,7 @@ static void build_multipart(
     }
     http->num_of_part = message->num_of_part+1;
 
+#if 0
     multipart = g_mime_multipart_new_with_subtype(
                     OGS_SBI_MULTIPART_RELATED_TYPE);
     ogs_assert(multipart);
@@ -1040,6 +1043,7 @@ static void build_multipart(
 
     g_object_unref(stream);
     g_object_unref(multipart);
+#endif
 }
 
 static int parse_multipart(
