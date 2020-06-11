@@ -290,9 +290,9 @@ ogs_sbi_response_t *ogs_sbi_build_response(
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
         build_content(&response->http, message);
         if (response->http.content) {
-            if (message->http.content_type)
+            if (response->http.content_type)
                 ogs_sbi_header_set(response->http.headers,
-                        OGS_SBI_CONTENT_TYPE, message->http.content_type);
+                        OGS_SBI_CONTENT_TYPE, response->http.content_type);
             else
                 ogs_sbi_header_set(response->http.headers,
                         OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
