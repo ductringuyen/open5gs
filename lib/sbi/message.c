@@ -563,7 +563,12 @@ static void build_multipart(
 
     for (i = 0; i < message->num_of_part; i++) {
         ogs_assert(message->part[i].pkbuf);
+        ogs_assert(message->part[i].content_id);
+        ogs_assert(message->part[i].content_subtype);
         http->part[i].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
+        http->part[i].content_id = ogs_strdup(message->part[i].content_id);
+        http->part[i].content_subtype =
+            ogs_strdup(message->part[i].content_subtype);
     }
     http->num_of_part = message->num_of_part;
 }
