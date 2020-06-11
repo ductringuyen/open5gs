@@ -362,7 +362,7 @@ void ogs_sbi_server_send_response(
 
     if (response->http.content) {
         mhd_response = MHD_create_response_from_buffer(
-                strlen(response->http.content), response->http.content,
+                response->http.content_length, response->http.content,
                 MHD_RESPMEM_PERSISTENT);
         ogs_assert(mhd_response);
     } else {

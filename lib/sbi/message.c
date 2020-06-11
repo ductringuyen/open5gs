@@ -232,7 +232,6 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
         ogs_sbi_header_set(request->http.params, OGS_SBI_PARAM_LIMIT, v);
     }
 
-    /* HTTP Message */
     build_content(&request->http, message);
 
     if (message->http.content_type) {
@@ -287,7 +286,6 @@ ogs_sbi_response_t *ogs_sbi_build_response(
 
     response->status = status;
 
-    /* HTTP Message */
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
         build_content(&response->http, message);
         if (response->http.content) {
@@ -897,10 +895,13 @@ static void build_content(
     ogs_assert(message);
     ogs_assert(http);
 
-    if (message->num_of_part)
+    if (message->num_of_part) {
         build_multipart(http, message);
-    else
+    } else {
         http->content = build_json(message);
+        if (http->content)
+            http->content_length = strlen(http->content);
+    }
 }
 
 static int parse_content(
