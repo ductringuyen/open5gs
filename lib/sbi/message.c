@@ -473,11 +473,16 @@ static int build_multipart(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *sbi_message)
 {
     int i;
+    size_t size;
 
     GMimeMultipart *multipart = NULL;
     GMimePart *part = NULL;
     GMimeStream *stream = NULL;
     GMimeDataWrapper *content = NULL;
+
+    char *content_type = NULL;
+    size_t content_length;
+    char *tmp = NULL;
 
     ogs_assert(sbi_message);
     ogs_assert(http);
@@ -536,11 +541,21 @@ static int build_multipart(
 
     stream = g_mime_stream_mem_new();
     ogs_assert(stream);
-    g_mime_object_write_to_stream((GMimeObject *)multipart, NULL, stream);
+
+    ogs_assert(GMIME_OBJECT(multipart)->headers);
+    size = g_mime_header_list_write_to_stream(
+            GMIME_OBJECT(multipart)->headers, NULL, stream);
+    ogs_assert(size > 0);
+
     ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
+    content_type = ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data);
+    ogs_assert(content_type);
 
+    g_mime_header_list_clear(GMIME_OBJECT(multipart)->headers);
+    g_mime_stream_reset(stream);
+    g_mime_object_write_to_stream(GMIME_OBJECT(multipart), NULL, stream);
 
-#if 1
+#if 0
     ogs_log_hexdump(OGS_LOG_FATAL,
                 GMIME_STREAM_MEM(stream)->buffer->data,
                 GMIME_STREAM_MEM(stream)->buffer->len);
@@ -548,6 +563,8 @@ static int build_multipart(
     g_object_unref(stream);
 
     g_object_unref(multipart);
+
+    ogs_free(content_type);
 
     return OGS_OK;
 }
