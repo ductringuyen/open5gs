@@ -746,10 +746,8 @@ static int parse_multipart(
             GMimeObject *current = g_mime_part_iter_get_current(iter);
             GMimePart *part = (GMimePart *)current;
             const GMimeContentType *type = NULL;
-            const char *content_id = NULL;
             GMimeDataWrapper *content = NULL;
-            char buf[OGS_HUGE_LEN];
-            int len, n;
+            int len;
 
             if (GMIME_IS_MULTIPART(parent) && GMIME_IS_PART(current)) {
 
@@ -765,39 +763,35 @@ static int parse_multipart(
                     break;
                 }
 
-                content_id = g_mime_object_get_content_id(current);
-
-                stream = g_mime_data_wrapper_get_stream(content);
+                stream = g_mime_stream_mem_new();
                 ogs_assert(stream);
-                len = g_mime_stream_length(stream);
-                if (len == -1) {
-                    ogs_error("Unable to get length");
-                    break;
-                }
-
-                n = g_mime_stream_read(stream, buf, sizeof(buf));
-                if (len != n) {
-                    ogs_error("Invalid length [%d != %d]", n, len);
-                    break;
-                }
+                g_mime_data_wrapper_write_to_stream(content, stream);
 
                 SWITCH(type->subtype)
                 CASE(OGS_SBI_APPLICATION_JSON_TYPE)
                     parse_json(sbi_message,
-                            (char *)OGS_SBI_CONTENT_JSON_TYPE, buf);
+                            (char *)OGS_SBI_CONTENT_JSON_TYPE,
+                            (char *)GMIME_STREAM_MEM(stream)->buffer->data);
                     break;
 
                 CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
                 CASE(OGS_SBI_APPLICATION_NGAP_TYPE)
                     if (http->num_of_part < OGS_SBI_MAX_NUM_OF_PART) {
+                        len = GMIME_STREAM_MEM(stream)->buffer->len;
+                        if (!len) {
+                            ogs_error("No content length");
+                            break;
+                        }
+
                         http->part[http->num_of_part].content_id =
-                                ogs_strdup(content_id);
+                            ogs_strdup(g_mime_object_get_content_id(current));
                         http->part[http->num_of_part].content_subtype =
-                                ogs_strdup(type->subtype);
+                            ogs_strdup(type->subtype);
                         http->part[http->num_of_part].pkbuf =
-                                ogs_pkbuf_alloc(NULL, n);
+                            ogs_pkbuf_alloc(NULL, len);
                         ogs_pkbuf_put_data(
-                                http->part[http->num_of_part].pkbuf, buf, n);
+                            http->part[http->num_of_part].pkbuf,
+                            GMIME_STREAM_MEM(stream)->buffer->data, len);
                         http->num_of_part++;
                     }
                     break;
