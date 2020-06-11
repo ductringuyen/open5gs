@@ -1024,8 +1024,10 @@ static void build_multipart(
 
     ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
     http->content_type =
-        ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data);
+        ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data +
+                strlen(OGS_SBI_CONTENT_TYPE ": "));
     ogs_assert(http->content_type);
+    http->content_type[strlen(http->content_type)-1] = 0; /* remove newline */
 
     g_mime_header_list_clear(GMIME_OBJECT(multipart)->headers);
     g_mime_stream_reset(stream);
