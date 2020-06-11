@@ -731,6 +731,7 @@ static int parse_multipart(
         return OGS_ERROR;
     }
     g_object_unref(stream);
+
     mime_message = g_mime_parser_construct_message(parser, NULL);
     if (!mime_message) {
         ogs_error("g_mime_parser_construct_message() failed");
@@ -745,11 +746,11 @@ static int parse_multipart(
         do {
             GMimeObject *current = g_mime_part_iter_get_current(iter);
             GMimePart *part = (GMimePart *)current;
-            const GMimeContentType *type = NULL;
-            GMimeDataWrapper *content = NULL;
-            int len;
 
             if (GMIME_IS_MULTIPART(parent) && GMIME_IS_PART(current)) {
+                const GMimeContentType *type = NULL;
+                GMimeDataWrapper *content = NULL;
+                int len;
 
                 type = g_mime_object_get_content_type(current);
                 if (!type) {
@@ -799,6 +800,8 @@ static int parse_multipart(
                 DEFAULT
                     ogs_error("Unknown subtype [%s]", type->subtype);
                 END
+
+                g_object_unref(stream);
             }
         } while (g_mime_part_iter_next(iter));
     }
