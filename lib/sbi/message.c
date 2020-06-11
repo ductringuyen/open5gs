@@ -28,9 +28,9 @@ static OGS_POOL(response_pool, ogs_sbi_response_t);
 static int parse_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static char *build_json(ogs_sbi_message_t *message);
-static int build_multipart(
-        ogs_sbi_http_message_t *http, ogs_sbi_message_t *sbi_message);
-static int build_content(
+static void build_multipart(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
+static void build_content(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message);
 
 static int parse_json(ogs_sbi_message_t *message,
@@ -469,8 +469,8 @@ static int parse_header(
     return OGS_OK;
 }
 
-static int build_multipart(
-        ogs_sbi_http_message_t *http, ogs_sbi_message_t *sbi_message)
+static void build_multipart(
+        ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     int i;
     size_t size;
@@ -481,15 +481,13 @@ static int build_multipart(
     GMimeDataWrapper *content = NULL;
 
     char *content_type = NULL;
-    size_t content_length;
-    char *tmp = NULL;
 
-    ogs_assert(sbi_message);
+    ogs_assert(message);
     ogs_assert(http);
 
-    http->gsmbuf = ogs_pkbuf_copy(sbi_message->gsm.buf);
+    http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
 
-    http->content = build_json(sbi_message);
+    http->content = build_json(message);
     ogs_assert(http->content);
 
     multipart = g_mime_multipart_new_with_subtype(
@@ -514,18 +512,18 @@ static int build_multipart(
     g_mime_multipart_add(multipart, (GMimeObject *)part);
     g_object_unref(part);
 
-    for (i = 0; i < sbi_message->num_of_part; i++) {
-        ogs_assert(sbi_message->part[i].content_subtype);
+    for (i = 0; i < message->num_of_part; i++) {
+        ogs_assert(message->part[i].content_subtype);
         part = g_mime_part_new_with_type(
-                OGS_SBI_APPLICATION_TYPE, sbi_message->part[i].content_subtype);
+                OGS_SBI_APPLICATION_TYPE, message->part[i].content_subtype);
         ogs_assert(part);
 
-        ogs_assert(sbi_message->part[i].content_id);
-        g_mime_part_set_content_id(part, sbi_message->part[i].content_id);
+        ogs_assert(message->part[i].content_id);
+        g_mime_part_set_content_id(part, message->part[i].content_id);
 
         stream = g_mime_stream_mem_new_with_buffer(
-                (char *)sbi_message->part[i].pkbuf->data,
-                sbi_message->part[i].pkbuf->len);
+                (char *)message->part[i].pkbuf->data,
+                message->part[i].pkbuf->len);
         ogs_assert(stream);
         content = g_mime_data_wrapper_new_with_stream(stream,
                 GMIME_CONTENT_ENCODING_DEFAULT);
@@ -565,11 +563,9 @@ static int build_multipart(
     g_object_unref(multipart);
 
     ogs_free(content_type);
-
-    return OGS_OK;
 }
 
-static int build_content(
+static void build_content(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     ogs_assert(message);
@@ -580,8 +576,6 @@ static int build_content(
     } else {
         http->content = build_json(message);
     }
-
-    return OGS_OK;
 }
 
 static char *build_json(ogs_sbi_message_t *message)
