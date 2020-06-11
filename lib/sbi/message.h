@@ -248,8 +248,6 @@ typedef struct ogs_sbi_http_message_s {
 
     int num_of_part;
     ogs_sbi_part_t part[OGS_SBI_MAX_NUM_OF_PART];
-
-    ogs_pkbuf_t *gsmbuf;
 } ogs_sbi_http_message_t;
 
 typedef struct ogs_sbi_request_s {

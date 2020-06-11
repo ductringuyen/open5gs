@@ -237,13 +237,12 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
         ogs_sbi_header_set(request->http.headers,
                 OGS_SBI_CONTENT_TYPE, message->http.content_type);
     } else {
-        if (request->http.gsmbuf) {
+        if (request->http.num_of_part)
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
-        } else if (request->http.content) {
+        else if (request->http.content)
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
-        }
     }
 
     if (message->http.accept) {
@@ -256,7 +255,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
                 OGS_SBI_CONTENT_PROBLEM_TYPE);
             break;
         DEFAULT
-            if (request->http.gsmbuf)
+            if (request->http.num_of_part)
                 ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
                     OGS_SBI_CONTENT_MULTIPART_TYPE ","
                             OGS_SBI_CONTENT_PROBLEM_TYPE);
@@ -485,8 +484,6 @@ static void build_multipart(
     ogs_assert(message);
     ogs_assert(http);
 
-    http->gsmbuf = ogs_pkbuf_copy(message->gsm.buf);
-
     http->content = build_json(message);
     ogs_assert(http->content);
 
@@ -563,6 +560,12 @@ static void build_multipart(
     g_object_unref(multipart);
 
     ogs_free(content_type);
+
+    for (i = 0; i < message->num_of_part; i++) {
+        ogs_assert(message->part[i].pkbuf);
+        http->part[i].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
+    }
+    http->num_of_part = message->num_of_part;
 }
 
 static void build_content(
@@ -1247,9 +1250,6 @@ static void http_message_free(ogs_sbi_http_message_t *http)
     }
     if (http->content)
         ogs_free(http->content);
-
-    if (http->gsmbuf)
-        ogs_pkbuf_free(http->gsmbuf);
 
     for (i = 0; i < http->num_of_part; i++) {
         if (http->part[i].pkbuf)
