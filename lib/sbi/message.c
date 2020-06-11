@@ -768,6 +768,7 @@ static int parse_multipart(
                 ogs_assert(stream);
                 g_mime_data_wrapper_write_to_stream(content, stream);
 
+                ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
                 SWITCH(type->subtype)
                 CASE(OGS_SBI_APPLICATION_JSON_TYPE)
                     parse_json(sbi_message,
