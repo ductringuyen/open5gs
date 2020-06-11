@@ -286,12 +286,6 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
         conn->mime = curl_mime_init(conn->easy);
         ogs_assert(conn->mime);
 
-        part = curl_mime_addpart(conn->mime);
-        ogs_assert(part);
-        curl_mime_data(part,
-            request->http.content, strlen(request->http.content));
-        curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
-
         conn->num_of_part = request->http.num_of_part;
         for (i = 0; i < request->http.num_of_part; i++) {
             part = curl_mime_addpart(conn->mime);

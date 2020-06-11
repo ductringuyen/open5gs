@@ -479,13 +479,30 @@ static void build_multipart(
     GMimeStream *stream = NULL;
     GMimeDataWrapper *content = NULL;
 
+    char *json = NULL;
     char *content_type = NULL;
 
     ogs_assert(message);
     ogs_assert(http);
 
-    http->content = build_json(message);
-    ogs_assert(http->content);
+    json = build_json(message);
+    ogs_assert(json);
+
+    http->part[0].pkbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
+    ogs_pkbuf_put_data(http->part[0].pkbuf, json, strlen(json));
+    ogs_free(json);
+    http->part[0].content_subtype = ogs_strdup(OGS_SBI_APPLICATION_JSON_TYPE);
+
+    for (i = 0; i < message->num_of_part; i++) {
+        ogs_assert(message->part[i].pkbuf);
+        ogs_assert(message->part[i].content_id);
+        ogs_assert(message->part[i].content_subtype);
+        http->part[i+1].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
+        http->part[i+1].content_id = ogs_strdup(message->part[i].content_id);
+        http->part[i+1].content_subtype =
+            ogs_strdup(message->part[i].content_subtype);
+    }
+    http->num_of_part = message->num_of_part+1;
 
     multipart = g_mime_multipart_new_with_subtype(
                     OGS_SBI_MULTIPART_RELATED_TYPE);
@@ -496,7 +513,7 @@ static void build_multipart(
     ogs_assert(part);
 
     stream = g_mime_stream_mem_new_with_buffer(
-            http->content, strlen(http->content));
+            (const char *)http->part[0].pkbuf->data, http->part[0].pkbuf->len);
     ogs_assert(stream);
     content = g_mime_data_wrapper_new_with_stream(stream,
             GMIME_CONTENT_ENCODING_DEFAULT);
@@ -550,27 +567,14 @@ static void build_multipart(
     g_mime_stream_reset(stream);
     g_mime_object_write_to_stream(GMIME_OBJECT(multipart), NULL, stream);
 
-#if 0
-    ogs_log_hexdump(OGS_LOG_FATAL,
-                GMIME_STREAM_MEM(stream)->buffer->data,
-                GMIME_STREAM_MEM(stream)->buffer->len);
-#endif
+    http->content_length = GMIME_STREAM_MEM(stream)->buffer->len;
+    ogs_assert(http->content_length);
+    http->content = ogs_memdup(
+            GMIME_STREAM_MEM(stream)->buffer->data, http->content_length);
+
     g_object_unref(stream);
-
     g_object_unref(multipart);
-
     ogs_free(content_type);
-
-    for (i = 0; i < message->num_of_part; i++) {
-        ogs_assert(message->part[i].pkbuf);
-        ogs_assert(message->part[i].content_id);
-        ogs_assert(message->part[i].content_subtype);
-        http->part[i].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
-        http->part[i].content_id = ogs_strdup(message->part[i].content_id);
-        http->part[i].content_subtype =
-            ogs_strdup(message->part[i].content_subtype);
-    }
-    http->num_of_part = message->num_of_part;
 }
 
 static void build_content(
@@ -579,11 +583,10 @@ static void build_content(
     ogs_assert(message);
     ogs_assert(http);
 
-    if (message->num_of_part) {
+    if (message->num_of_part)
         build_multipart(http, message);
-    } else {
+    else
         http->content = build_json(message);
-    }
 }
 
 static char *build_json(ogs_sbi_message_t *message)
