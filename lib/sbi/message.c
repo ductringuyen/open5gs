@@ -234,16 +234,17 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 
     build_content(&request->http, message);
 
-    if (message->http.content_type) {
+    if (request->http.num_of_part) {
         ogs_sbi_header_set(request->http.headers,
-                OGS_SBI_CONTENT_TYPE, message->http.content_type);
+                OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
     } else {
-        if (request->http.num_of_part)
+        if (request->http.content_type) {
             ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
-        else if (request->http.content)
+                    OGS_SBI_CONTENT_TYPE, request->http.content_type);
+        } else if (request->http.content) {
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
+        }
     }
 
     if (message->http.accept) {
@@ -901,6 +902,8 @@ static void build_content(
         http->content = build_json(message);
         if (http->content)
             http->content_length = strlen(http->content);
+        if (message->http.content_type)
+            http->content_type = ogs_strdup(message->http.content_type);
     }
 }
 
