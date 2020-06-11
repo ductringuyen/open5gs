@@ -285,16 +285,19 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
             request->http.content, strlen(request->http.content));
         curl_mime_type(part, OGS_SBI_CONTENT_JSON_TYPE);
 
+        for (i = 0; i < request->http.num_of_part; i++) {
             part = curl_mime_addpart(conn->mime);
             ogs_assert(part);
 
+            ogs_assert(request->http.part[i].pkbuf);
             curl_mime_data(part,
-                (const void *)request->http.part[0].pkbuf->data,
-                request->http.part[0].pkbuf->len);
+                (const void *)request->http.part[i].pkbuf->data,
+                request->http.part[i].pkbuf->len);
             slist = curl_slist_append(NULL,
                     OGS_SBI_CONTENT_ID ": " OGS_SBI_MULTIPART_5GSM_ID);
             curl_mime_headers(part, slist, 1);
             curl_mime_type(part, OGS_SBI_CONTENT_5GNAS_TYPE);
+        }
 
         curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
     } else {
