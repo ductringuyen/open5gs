@@ -302,21 +302,21 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
                 (const void *)request->http.part[i].pkbuf->data,
                 request->http.part[i].pkbuf->len);
 
-            ogs_assert(request->http.part[i].content_id);
-            conn->part[i].content_id = ogs_msprintf("%s: %s",
-                    OGS_SBI_CONTENT_ID, request->http.part[i].content_id);
-            ogs_assert(conn->part[i].content_id);
-
             ogs_assert(request->http.part[i].content_subtype);
             conn->part[i].content_type = ogs_msprintf("%s/%s",
                     OGS_SBI_APPLICATION_TYPE,
                     request->http.part[i].content_subtype);
             ogs_assert(conn->part[i].content_type);
 
-            slist = curl_slist_append(NULL, conn->part[i].content_id);
-            ogs_assert(slist);
-            curl_mime_headers(part, slist, 1);
             curl_mime_type(part, conn->part[i].content_type);
+            if (request->http.part[i].content_id) {
+                conn->part[i].content_id = ogs_msprintf("%s: %s",
+                        OGS_SBI_CONTENT_ID, request->http.part[i].content_id);
+                ogs_assert(conn->part[i].content_id);
+                slist = curl_slist_append(NULL, conn->part[i].content_id);
+                ogs_assert(slist);
+                curl_mime_headers(part, slist, 1);
+            }
         }
 
         curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
