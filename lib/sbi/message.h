@@ -245,6 +245,7 @@ typedef struct ogs_sbi_http_message_s {
     ogs_hash_t *headers;
 
     char *content;
+    char *content_type;
     size_t content_length;
 
     int num_of_part;

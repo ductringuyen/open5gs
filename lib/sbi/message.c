@@ -941,7 +941,6 @@ static void build_multipart(
     GMimeDataWrapper *content = NULL;
 
     char *json = NULL;
-    char *content_type = NULL;
 
     ogs_assert(message);
     ogs_assert(http);
@@ -1021,8 +1020,9 @@ static void build_multipart(
     ogs_assert(size > 0);
 
     ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
-    content_type = ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data);
-    ogs_assert(content_type);
+    http->content_type =
+        ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data);
+    ogs_assert(http->content_type);
 
     g_mime_header_list_clear(GMIME_OBJECT(multipart)->headers);
     g_mime_stream_reset(stream);
@@ -1035,7 +1035,6 @@ static void build_multipart(
 
     g_object_unref(stream);
     g_object_unref(multipart);
-    ogs_free(content_type);
 }
 
 static int parse_multipart(
@@ -1261,6 +1260,8 @@ static void http_message_free(ogs_sbi_http_message_t *http)
     }
     if (http->content)
         ogs_free(http->content);
+    if (http->content_type)
+        ogs_free(http->content_type);
 
     for (i = 0; i < http->num_of_part; i++) {
         if (http->part[i].pkbuf)
