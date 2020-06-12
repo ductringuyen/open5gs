@@ -171,6 +171,15 @@ ogs_amf_id_t *ogs_amf_id_build(ogs_amf_id_t *amf_id,
     return amf_id;
 }
 
+char *ogs_s_nssai_sd_string(ogs_s_nssai_t *s_nssai)
+{
+    ogs_assert(s_nssai);
+    if (s_nssai->sd.v != OGS_S_NSSAI_NO_SD_VALUE)
+        return ogs_msprintf("%x", s_nssai->sd.v);
+    else
+        return NULL;
+}
+
 char *ogs_supi_from_suci(char *suci)
 {
 #define MAX_SUCI_TOKEN 16

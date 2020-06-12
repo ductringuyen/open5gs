@@ -36,6 +36,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     OpenAPI_sm_context_create_data_t SMContextCreateData;
     OpenAPI_plmn_id_nid_t plmn_id_nid;
+    OpenAPI_snssai_t s_nssai;
     OpenAPI_ref_to_binary_data_t n1_sm_msg;
 
     ogs_assert(amf_ue);
@@ -69,6 +70,13 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     SMContextCreateData.pei = amf_ue->pei;
     SMContextCreateData.pdu_session_id = sess->psi;
     SMContextCreateData.dnn = sess->dnn;
+
+    memset(&s_nssai, 0, sizeof(s_nssai));
+    if (sess->s_nssai) {
+        s_nssai.sst = sess->s_nssai->sst;
+        s_nssai.sd = ogs_s_nssai_sd_string(sess->s_nssai);
+        SMContextCreateData.s_nssai = &s_nssai;
+    }
 
     SMContextCreateData.an_type = amf_ue->nas.access_type; 
 
@@ -106,6 +114,8 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_free(plmn_id_nid.mnc);
     ogs_free(SMContextCreateData.sm_context_status_uri);
     ogs_free(header.resource.component[2]);
+    if (s_nssai.sd)
+        ogs_free(s_nssai.sd);
     ogs_pkbuf_free(sbi_message.part[0].pkbuf);
 
     return request;

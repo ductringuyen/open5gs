@@ -200,6 +200,8 @@ typedef struct ogs_s_nssai_s {
     ogs_uint24_t sd;
 } __attribute__ ((packed)) ogs_s_nssai_t;
 
+char *ogs_s_nssai_sd_string(ogs_s_nssai_t *s_nssai);
+
 /**************************************************
  * Common Structure
  * S1AP : 9.2.2.1 Transport Layer Address, See 36.414
