@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-06-12 13:03:36.348270 by acetcom
+ * Created on: 2020-06-12 14:07:33.442515 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -102,6 +102,8 @@ int ogs_nas_5gs_decode_registration_request(ogs_nas_5gs_message_t *message, ogs_
 
         switch(type) {
         case OGS_NAS_5GS_REGISTRATION_REQUEST_NON_CURRENT_NATIVE_NAS_KEY_SET_IDENTIFIER_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_key_set_identifier(&registration_request->non_current_native_nas_key_set_identifier, pkbuf);
             ogs_assert(size >= 0);
             registration_request->presencemask |= OGS_NAS_5GS_REGISTRATION_REQUEST_NON_CURRENT_NATIVE_NAS_KEY_SET_IDENTIFIER_PRESENT;
@@ -150,6 +152,8 @@ int ogs_nas_5gs_decode_registration_request(ogs_nas_5gs_message_t *message, ogs_
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST_MICO_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_mico_indication(&registration_request->mico_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_request->presencemask |= OGS_NAS_5GS_REGISTRATION_REQUEST_MICO_INDICATION_PRESENT;
@@ -198,6 +202,8 @@ int ogs_nas_5gs_decode_registration_request(ogs_nas_5gs_message_t *message, ogs_
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_payload_container_type(&registration_request->payload_container_type, pkbuf);
             ogs_assert(size >= 0);
             registration_request->presencemask |= OGS_NAS_5GS_REGISTRATION_REQUEST_PAYLOAD_CONTAINER_TYPE_PRESENT;
@@ -210,6 +216,8 @@ int ogs_nas_5gs_decode_registration_request(ogs_nas_5gs_message_t *message, ogs_
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_network_slicing_indication(&registration_request->network_slicing_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_request->presencemask |= OGS_NAS_5GS_REGISTRATION_REQUEST_NETWORK_SLICING_INDICATION_PRESENT;
@@ -282,13 +290,15 @@ int ogs_nas_5gs_decode_registration_request(ogs_nas_5gs_message_t *message, ogs_
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_REQUEST_N5GC_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_n5gc_indication(&registration_request->n5gc_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_request->presencemask |= OGS_NAS_5GS_REGISTRATION_REQUEST_N5GC_INDICATION_PRESENT;
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -384,12 +394,16 @@ int ogs_nas_5gs_decode_registration_accept(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_ACCEPT_MICO_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_mico_indication(&registration_accept->mico_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_MICO_INDICATION_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_network_slicing_indication(&registration_accept->network_slicing_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_NETWORK_SLICING_INDICATION_PRESENT;
@@ -444,6 +458,8 @@ int ogs_nas_5gs_decode_registration_accept(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_nssai_inclusion_mode(&registration_accept->nssai_inclusion_mode, pkbuf);
             ogs_assert(size >= 0);
             registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_NSSAI_INCLUSION_MODE_PRESENT;
@@ -462,6 +478,8 @@ int ogs_nas_5gs_decode_registration_accept(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_ACCEPT_NON_3GPP_NW_POLICIES_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_non_3gpp_nw_provided_policies(&registration_accept->non_3gpp_nw_policies, pkbuf);
             ogs_assert(size >= 0);
             registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_NON_3GPP_NW_POLICIES_PRESENT;
@@ -504,6 +522,8 @@ int ogs_nas_5gs_decode_registration_accept(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         case OGS_NAS_5GS_REGISTRATION_ACCEPT_UE_RADIO_CAPABILITY_ID_DELETION_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_ue_radio_capability_id_deletion_indication(&registration_accept->ue_radio_capability_id_deletion_indication, pkbuf);
             ogs_assert(size >= 0);
             registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_UE_RADIO_CAPABILITY_ID_DELETION_INDICATION_PRESENT;
@@ -540,7 +560,7 @@ int ogs_nas_5gs_decode_registration_accept(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -572,7 +592,7 @@ int ogs_nas_5gs_decode_registration_complete(ogs_nas_5gs_message_t *message, ogs
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -626,7 +646,7 @@ int ogs_nas_5gs_decode_registration_reject(ogs_nas_5gs_message_t *message, ogs_p
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -693,7 +713,7 @@ int ogs_nas_5gs_decode_deregistration_request_to_ue(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -751,7 +771,7 @@ int ogs_nas_5gs_decode_service_request(ogs_nas_5gs_message_t *message, ogs_pkbuf
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -805,7 +825,7 @@ int ogs_nas_5gs_decode_service_reject(ogs_nas_5gs_message_t *message, ogs_pkbuf_
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -861,7 +881,7 @@ int ogs_nas_5gs_decode_service_accept(ogs_nas_5gs_message_t *message, ogs_pkbuf_
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -887,6 +907,8 @@ int ogs_nas_5gs_decode_configuration_update_command(ogs_nas_5gs_message_t *messa
 
         switch(type) {
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_CONFIGURATION_UPDATE_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_configuration_update_indication(&configuration_update_command->configuration_update_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_command->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_CONFIGURATION_UPDATE_INDICATION_PRESENT;
@@ -953,12 +975,16 @@ int ogs_nas_5gs_decode_configuration_update_command(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_MICO_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_mico_indication(&configuration_update_command->mico_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_command->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_MICO_INDICATION_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_NETWORK_SLICING_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_network_slicing_indication(&configuration_update_command->network_slicing_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_command->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_NETWORK_SLICING_INDICATION_PRESENT;
@@ -983,6 +1009,8 @@ int ogs_nas_5gs_decode_configuration_update_command(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_SMS_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_sms_indication(&configuration_update_command->sms_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_command->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_SMS_INDICATION_PRESENT;
@@ -1007,6 +1035,8 @@ int ogs_nas_5gs_decode_configuration_update_command(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_UE_RADIO_CAPABILITY_ID_DELETION_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_ue_radio_capability_id_deletion_indication(&configuration_update_command->ue_radio_capability_id_deletion_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_command->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMMAND_UE_RADIO_CAPABILITY_ID_DELETION_INDICATION_PRESENT;
@@ -1025,7 +1055,7 @@ int ogs_nas_5gs_decode_configuration_update_command(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1061,6 +1091,8 @@ int ogs_nas_5gs_decode_configuration_update_complete(ogs_nas_5gs_message_t *mess
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_TYPE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_payload_container_type(&configuration_update_complete->payload_container_type, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_complete->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_PAYLOAD_CONTAINER_TYPE_PRESENT;
@@ -1085,6 +1117,8 @@ int ogs_nas_5gs_decode_configuration_update_complete(ogs_nas_5gs_message_t *mess
             decoded += size;
             break;
         case OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_RELEASE_ASSISTANCE_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_release_assistance_indication(&configuration_update_complete->release_assistance_indication, pkbuf);
             ogs_assert(size >= 0);
             configuration_update_complete->presencemask |= OGS_NAS_5GS_CONFIGURATION_UPDATE_COMPLETE_RELEASE_ASSISTANCE_INDICATION_PRESENT;
@@ -1109,7 +1143,7 @@ int ogs_nas_5gs_decode_configuration_update_complete(ogs_nas_5gs_message_t *mess
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1161,7 +1195,7 @@ int ogs_nas_5gs_decode_authentication_request(ogs_nas_5gs_message_t *message, og
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1199,7 +1233,7 @@ int ogs_nas_5gs_decode_authentication_response(ogs_nas_5gs_message_t *message, o
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1231,7 +1265,7 @@ int ogs_nas_5gs_decode_authentication_reject(ogs_nas_5gs_message_t *message, ogs
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1267,7 +1301,7 @@ int ogs_nas_5gs_decode_authentication_failure(ogs_nas_5gs_message_t *message, og
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1307,7 +1341,7 @@ int ogs_nas_5gs_decode_authentication_result(ogs_nas_5gs_message_t *message, ogs
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1375,6 +1409,8 @@ int ogs_nas_5gs_decode_security_mode_command(ogs_nas_5gs_message_t *message, ogs
 
         switch(type) {
         case OGS_NAS_5GS_SECURITY_MODE_COMMAND_IMEISV_REQUEST_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_imeisv_request(&security_mode_command->imeisv_request, pkbuf);
             ogs_assert(size >= 0);
             security_mode_command->presencemask |= OGS_NAS_5GS_SECURITY_MODE_COMMAND_IMEISV_REQUEST_PRESENT;
@@ -1411,7 +1447,7 @@ int ogs_nas_5gs_decode_security_mode_command(ogs_nas_5gs_message_t *message, ogs
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1455,7 +1491,7 @@ int ogs_nas_5gs_decode_security_mode_complete(ogs_nas_5gs_message_t *message, og
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1532,7 +1568,7 @@ int ogs_nas_5gs_decode_notification_response(ogs_nas_5gs_message_t *message, ogs
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1578,6 +1614,8 @@ int ogs_nas_5gs_decode_ul_nas_transport(ogs_nas_5gs_message_t *message, ogs_pkbu
             decoded += size;
             break;
         case OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_request_type(&ul_nas_transport->request_type, pkbuf);
             ogs_assert(size >= 0);
             ul_nas_transport->presencemask |= OGS_NAS_5GS_UL_NAS_TRANSPORT_REQUEST_TYPE_PRESENT;
@@ -1602,19 +1640,23 @@ int ogs_nas_5gs_decode_ul_nas_transport(ogs_nas_5gs_message_t *message, ogs_pkbu
             decoded += size;
             break;
         case OGS_NAS_5GS_UL_NAS_TRANSPORT_MA_PDU_SESSION_INFORMATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_ma_pdu_session_information(&ul_nas_transport->ma_pdu_session_information, pkbuf);
             ogs_assert(size >= 0);
             ul_nas_transport->presencemask |= OGS_NAS_5GS_UL_NAS_TRANSPORT_MA_PDU_SESSION_INFORMATION_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_UL_NAS_TRANSPORT_RELEASE_ASSISTANCE_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_release_assistance_indication(&ul_nas_transport->release_assistance_indication, pkbuf);
             ogs_assert(size >= 0);
             ul_nas_transport->presencemask |= OGS_NAS_5GS_UL_NAS_TRANSPORT_RELEASE_ASSISTANCE_INDICATION_PRESENT;
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1672,7 +1714,7 @@ int ogs_nas_5gs_decode_dl_nas_transport(ogs_nas_5gs_message_t *message, ogs_pkbu
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1702,12 +1744,16 @@ int ogs_nas_5gs_decode_pdu_session_establishment_request(ogs_nas_5gs_message_t *
 
         switch(type) {
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_pdu_session_type(&pdu_session_establishment_request->pdu_session_type, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_PRESENT;
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SSC_MODE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_ssc_mode(&pdu_session_establishment_request->ssc_mode, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_SSC_MODE_PRESENT;
@@ -1726,6 +1772,8 @@ int ogs_nas_5gs_decode_pdu_session_establishment_request(ogs_nas_5gs_message_t *
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_establishment_request->always_on_pdu_session_requested, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
@@ -1768,7 +1816,7 @@ int ogs_nas_5gs_decode_pdu_session_establishment_request(ogs_nas_5gs_message_t *
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1830,6 +1878,8 @@ int ogs_nas_5gs_decode_pdu_session_establishment_accept(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_establishment_accept->always_on_pdu_session_indication, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
@@ -1884,6 +1934,8 @@ int ogs_nas_5gs_decode_pdu_session_establishment_accept(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_CONTROL_PLANE_ONLY_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_control_plane_only_indication(&pdu_session_establishment_accept->control_plane_only_indication, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_accept->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_ACCEPT_CONTROL_PLANE_ONLY_INDICATION_PRESENT;
@@ -1896,7 +1948,7 @@ int ogs_nas_5gs_decode_pdu_session_establishment_accept(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1932,6 +1984,8 @@ int ogs_nas_5gs_decode_pdu_session_establishment_reject(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_ALLOWED_SSC_MODE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_allowed_ssc_mode(&pdu_session_establishment_reject->allowed_ssc_mode, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_establishment_reject->presencemask |= OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REJECT_ALLOWED_SSC_MODE_PRESENT;
@@ -1962,7 +2016,7 @@ int ogs_nas_5gs_decode_pdu_session_establishment_reject(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -1998,7 +2052,7 @@ int ogs_nas_5gs_decode_pdu_session_authentication_command(ogs_nas_5gs_message_t 
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2034,7 +2088,7 @@ int ogs_nas_5gs_decode_pdu_session_authentication_complete(ogs_nas_5gs_message_t
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2072,7 +2126,7 @@ int ogs_nas_5gs_decode_pdu_session_authentication_result(ogs_nas_5gs_message_t *
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2116,6 +2170,8 @@ int ogs_nas_5gs_decode_pdu_session_modification_request(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_always_on_pdu_session_requested(&pdu_session_modification_request->always_on_pdu_session_requested, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_request->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_REQUEST_ALWAYS_ON_PDU_SESSION_REQUESTED_PRESENT;
@@ -2164,7 +2220,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_request(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2218,7 +2274,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_reject(ogs_nas_5gs_message_t *me
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2262,6 +2318,8 @@ int ogs_nas_5gs_decode_pdu_session_modification_command(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ALWAYS_ON_PDU_SESSION_INDICATION_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_always_on_pdu_session_indication(&pdu_session_modification_command->always_on_pdu_session_indication, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_modification_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_MODIFICATION_COMMAND_ALWAYS_ON_PDU_SESSION_INDICATION_PRESENT;
@@ -2316,7 +2374,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_command(ogs_nas_5gs_message_t *m
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2354,7 +2412,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_complete(ogs_nas_5gs_message_t *
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2390,7 +2448,7 @@ int ogs_nas_5gs_decode_pdu_session_modification_command_reject(ogs_nas_5gs_messa
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2428,7 +2486,7 @@ int ogs_nas_5gs_decode_pdu_session_release_request(ogs_nas_5gs_message_t *messag
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2464,7 +2522,7 @@ int ogs_nas_5gs_decode_pdu_session_release_reject(ogs_nas_5gs_message_t *message
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2518,13 +2576,15 @@ int ogs_nas_5gs_decode_pdu_session_release_command(ogs_nas_5gs_message_t *messag
             decoded += size;
             break;
         case OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_ACCESS_TYPE_TYPE:
+            decoded--;
+            ogs_assert(ogs_pkbuf_push(pkbuf, 1));
             size = ogs_nas_5gs_decode_access_type(&pdu_session_release_command->access_type, pkbuf);
             ogs_assert(size >= 0);
             pdu_session_release_command->presencemask |= OGS_NAS_5GS_PDU_SESSION_RELEASE_COMMAND_ACCESS_TYPE_PRESENT;
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }
@@ -2562,7 +2622,7 @@ int ogs_nas_5gs_decode_pdu_session_release_complete(ogs_nas_5gs_message_t *messa
             decoded += size;
             break;
         default:
-            ogs_warn("Unknown type(0x%x) or not implemented\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\n", type);
             break;
         }
     }

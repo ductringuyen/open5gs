@@ -681,6 +681,9 @@ for (k, v) in sorted_msg_list:
             optional_fields = True;
 
         f.write("        case OGS_NAS_5GS_%s_%s_TYPE:\n" % (v_upper(k), v_upper(ie["value"])))
+        if (ie["format"] == "TV" or ie["format"] == "T") and ie["length"] == "1":
+            f.write("            decoded--;\n")
+            f.write("            ogs_assert(ogs_pkbuf_push(pkbuf, 1));\n")
         f.write("            size = ogs_nas_5gs_decode_%s(&%s->%s, pkbuf);\n" % (v_lower(ie["type"]), get_value(k), get_value(ie["value"])))
         f.write("            ogs_assert(size >= 0);\n")
         f.write("            %s->presencemask |= OGS_NAS_5GS_%s_%s_PRESENT;\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
@@ -689,7 +692,7 @@ for (k, v) in sorted_msg_list:
 
     if [ies for ies in msg_list[k]["ies"] if ies["presence"] != "M"]:
         f.write("""        default:
-            ogs_warn("Unknown type(0x%x) or not implemented\\n", type);
+            ogs_error("Unknown type(0x%x) or not implemented\\n", type);
             break;
         }
     }
