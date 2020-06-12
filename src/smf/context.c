@@ -31,19 +31,6 @@ static OGS_POOL(smf_pf_pool, smf_pf_t);
 
 static int context_initialized = 0;
 
-int num_sessions = 0;
-void stats_add_session(void) {
-    num_sessions = num_sessions + 1;
-    ogs_info("Added a session. Number of active sessions is now %d",
-            num_sessions);
-}
-
-void stats_remove_session(void) {
-    num_sessions = num_sessions - 1;
-    ogs_info("Removed a session. Number of active sessions is now %d",
-            num_sessions);
-}
-
 void smf_context_init(void)
 {
     ogs_assert(context_initialized == 0);
@@ -662,8 +649,82 @@ smf_sess_t *smf_sess_add_by_imsi_apn(
     ogs_fsm_init(&sess->sm, &e);
 
     ogs_list_add(&self.sess_list, sess);
-    
-    stats_add_session();
+
+    return sess;
+}
+
+smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi)
+{
+    smf_event_t e;
+
+    smf_sess_t *sess = NULL;
+    smf_bearer_t *bearer = NULL;
+    ogs_pfcp_pdr_t *pdr = NULL;
+
+    ogs_assert(supi);
+    ogs_assert(psi != OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED);
+
+    ogs_pool_alloc(&smf_sess_pool, &sess);
+    if (!sess) {
+        ogs_error("Maximum number of session[%d] reached",
+        ogs_config()->pool.sess);
+        return NULL;
+    }
+    memset(sess, 0, sizeof *sess);
+
+    sess->index = ogs_pool_index(&smf_sess_pool, sess);
+    ogs_assert(sess->index > 0 && sess->index <= ogs_config()->pool.sess);
+
+    /* Set TEID & SEID */
+    sess->smf_n4_teid = sess->index;
+    sess->smf_n4_seid = sess->index;
+
+    /* Set SUPI & PSI */
+    sess->supi = ogs_strdup(supi);
+    ogs_assert(sess->supi);
+    sess->psi = psi;
+
+    sess->supi_psi_keybuf = supi_psi_keygen(supi, psi);
+    ogs_assert(sess->supi_psi_keybuf);
+    ogs_hash_set(self.supi_psi_hash,
+            sess->supi_psi_keybuf, strlen(sess->supi_psi_keybuf), sess);
+
+    /* Select UPF with round-robin manner */
+    if (ogs_pfcp_self()->node == NULL)
+        ogs_pfcp_self()->node = ogs_list_first(&ogs_pfcp_self()->n4_list);
+
+    for (; ogs_pfcp_self()->node;
+        ogs_pfcp_self()->node = ogs_list_next(ogs_pfcp_self()->node)) {
+        if (OGS_FSM_CHECK(
+                &ogs_pfcp_self()->node->sm, smf_pfcp_state_associated)) {
+            OGS_SETUP_PFCP_NODE(sess, ogs_pfcp_self()->node);
+            break;
+        }
+    }
+
+    /* Set Default Bearer */
+    ogs_list_init(&sess->bearer_list);
+
+    bearer = smf_bearer_add(sess);
+    ogs_assert(bearer);
+
+#if 0 /* TODO */
+    bearer->ebi = ebi;
+#endif
+
+    /* Default PDRs is set to lowest precedence(highest precedence value). */
+    ogs_list_for_each(&bearer->pfcp.pdr_list, pdr)
+        pdr->precedence = 0xffffffff;
+
+    /* Setup SBI */
+    sess->sbi.client_wait_timer = ogs_timer_add(
+            self.timer_mgr, smf_timer_sbi_client_wait_expire, sess);
+
+    e.sess = sess;
+    ogs_fsm_create(&sess->sm, smf_gsm_state_initial, smf_gsm_state_final);
+    ogs_fsm_init(&sess->sm, &e);
+
+    ogs_list_add(&self.sess_list, sess);
 
     return sess;
 }
@@ -703,11 +764,12 @@ int smf_sess_remove(smf_sess_t *sess)
         ogs_pfcp_ue_ip_free(sess->ipv6);
     }
 
+    if (sess->supi_psi_keybuf)
+        ogs_free(sess->supi_psi_keybuf);
+
     smf_bearer_remove_all(sess);
 
     ogs_pool_free(&smf_sess_pool, sess);
-
-    stats_remove_session();
 
     return OGS_OK;
 }

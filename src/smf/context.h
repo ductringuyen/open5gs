@@ -122,6 +122,8 @@ typedef struct smf_sess_s {
     char            *supi;
     uint8_t         psi;    /* PDU session identity */
 
+    char            *supi_psi_keybuf;
+
     /* APN Configuration */
     ogs_pdn_t       pdn;
     ogs_pfcp_ue_ip_t *ipv4;
@@ -225,10 +227,11 @@ smf_context_t *smf_self(void);
 int smf_context_parse_config(void);
 
 smf_sess_t *smf_sess_add_by_gtp_message(ogs_gtp_message_t *message);
-
 smf_sess_t *smf_sess_add_by_imsi_apn(
         uint8_t *imsi, int imsi_len, char *apn,
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *addr);
+
+smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi);
 
 int smf_sess_remove(smf_sess_t *sess);
 void smf_sess_remove_all(void);
