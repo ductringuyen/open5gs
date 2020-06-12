@@ -123,8 +123,9 @@ typedef struct smf_sess_s {
     uint8_t         psi;    /* PDU session identity */
 
     char            *supi_psi_keybuf;
+    char            *dnn;
 
-    /* APN Configuration */
+    /* PDN Configuration */
     ogs_pdn_t       pdn;
     ogs_pfcp_ue_ip_t *ipv4;
     ogs_pfcp_ue_ip_t *ipv6;

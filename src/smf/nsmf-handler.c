@@ -23,6 +23,29 @@
 bool smf_nsmf_handle_create_sm_context(
         smf_sess_t *sess, ogs_sbi_message_t *message)
 {
-    ogs_fatal("asdfasdf");
+    ogs_sbi_session_t *session = NULL;
+
+    OpenAPI_sm_context_create_data_t *SMContextCreateData = NULL;
+
+    ogs_assert(sess);
+    session = sess->session;
+    ogs_assert(session);
+
+    ogs_assert(message);
+
+    SMContextCreateData = message->SMContextCreateData;
+    if (!SMContextCreateData) {
+        ogs_error("[%s:%d] No SMContextCreateData", sess->supi, sess->psi);
+        smf_sbi_send_sm_context_create_error(session,
+                OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                "No SMContextCreateData", sess->supi_psi_keybuf);
+        return false;
+    }
+
+    if (SMContextCreateData->dnn) {
+        if (sess->dnn) ogs_free(sess->dnn);
+        sess->dnn = ogs_strdup(SMContextCreateData->dnn);
+    }
+
     return true;
 }

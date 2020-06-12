@@ -876,6 +876,8 @@ int smf_sess_remove(smf_sess_t *sess)
         ogs_free(sess->supi_psi_keybuf);
     if (sess->supi)
         ogs_free(sess->supi);
+    if (sess->dnn)
+        ogs_free(sess->dnn);
 
     smf_bearer_remove_all(sess);
 
