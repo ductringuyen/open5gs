@@ -1122,16 +1122,16 @@ static void build_multipart(
     http->part[0].pkbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
     ogs_pkbuf_put_data(http->part[0].pkbuf, json, strlen(json));
     ogs_free(json);
-    http->part[0].content_subtype = ogs_strdup(OGS_SBI_APPLICATION_JSON_TYPE);
+    http->part[0].content_type = ogs_strdup(OGS_SBI_CONTENT_JSON_TYPE);
 
     for (i = 0; i < message->num_of_part; i++) {
         ogs_assert(message->part[i].pkbuf);
         ogs_assert(message->part[i].content_id);
-        ogs_assert(message->part[i].content_subtype);
+        ogs_assert(message->part[i].content_type);
         http->part[i+1].pkbuf = ogs_pkbuf_copy(message->part[i].pkbuf);
         http->part[i+1].content_id = ogs_strdup(message->part[i].content_id);
-        http->part[i+1].content_subtype =
-            ogs_strdup(message->part[i].content_subtype);
+        http->part[i+1].content_type =
+            ogs_strdup(message->part[i].content_type);
     }
     http->num_of_part = message->num_of_part+1;
 
@@ -1155,9 +1155,8 @@ static void build_multipart(
         p = ogs_slprintf(p, last, "\r\n--%s\r\n", boundary);
         p = ogs_slprintf(p, last, "%s: %s\r\n",
                 OGS_SBI_CONTENT_ID, message->part[i].content_id);
-        p = ogs_slprintf(p, last, "%s: %s/%s\r\n\r\n",
-                OGS_SBI_CONTENT_TYPE, OGS_SBI_APPLICATION_TYPE,
-                message->part[i].content_subtype);
+        p = ogs_slprintf(p, last, "%s: %s\r\n\r\n",
+                OGS_SBI_CONTENT_TYPE, message->part[i].content_type);
         memcpy(p, message->part[i].pkbuf->data, message->part[i].pkbuf->len);
         p += message->part[i].pkbuf->len;
     }
@@ -1285,7 +1284,5 @@ static void http_message_free(ogs_sbi_http_message_t *http)
             ogs_free(http->part[i].content_id);
         if (http->part[i].content_type)
             ogs_free(http->part[i].content_type);
-        if (http->part[i].content_subtype)
-            ogs_free(http->part[i].content_subtype);
     }
 }

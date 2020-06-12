@@ -81,8 +81,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     sbi_message.SMContextCreateData = &SMContextCreateData;
 
     sbi_message.part[0].content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
-    sbi_message.part[0].content_subtype =
-        (char *)OGS_SBI_APPLICATION_5GNAS_TYPE;
+    sbi_message.part[0].content_type = (char *)OGS_SBI_CONTENT_5GNAS_TYPE;
     sbi_message.part[0].pkbuf =
         ogs_pkbuf_alloc(NULL, OGS_NAS_HEADROOM+payload_container->length);
     ogs_pkbuf_reserve(sbi_message.part[0].pkbuf, OGS_NAS_HEADROOM);
