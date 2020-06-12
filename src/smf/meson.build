@@ -66,6 +66,7 @@ libsmf_sources = files('''
     bearer-binding.c
     nnrf-build.c
     nnrf-handler.c
+    nsmf-handler.c
     sbi-path.c
     nf-sm.c
 '''.split())

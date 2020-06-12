@@ -19,6 +19,7 @@
 
 #include "sbi-path.h"
 #include "nnrf-handler.h"
+#include "nsmf-handler.h"
 
 void smf_gsm_state_initial(ogs_fsm_t *s, smf_event_t *e)
 {
@@ -65,7 +66,7 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
             CASE(OGS_SBI_HTTP_METHOD_POST)
                 SWITCH(message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
-                    ogs_fatal("asdfkljasdfasdf");
+                    smf_nsmf_handle_create_sm_context(sess, message);
                     break;
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
