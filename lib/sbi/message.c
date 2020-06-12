@@ -234,15 +234,6 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     build_content(&request->http, message);
-    if (request->http.content) {
-        if (request->http.content_type) {
-            ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_CONTENT_TYPE, request->http.content_type);
-        } else if (request->http.content) {
-            ogs_sbi_header_set(request->http.headers,
-                    OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
-        }
-    }
 
     if (message->http.accept) {
         ogs_sbi_header_set(request->http.headers, OGS_SBI_ACCEPT,
@@ -292,14 +283,6 @@ ogs_sbi_response_t *ogs_sbi_build_response(
 
     if (response->status != OGS_SBI_HTTP_STATUS_NO_CONTENT) {
         build_content(&response->http, message);
-        if (response->http.content) {
-            if (response->http.content_type)
-                ogs_sbi_header_set(response->http.headers,
-                        OGS_SBI_CONTENT_TYPE, response->http.content_type);
-            else
-                ogs_sbi_header_set(response->http.headers,
-                        OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
-        }
     }
 
     if (message->http.location) {
@@ -903,11 +886,17 @@ static void build_content(
         build_multipart(http, message);
     } else {
         http->content = build_json(message);
-        if (http->content)
+        if (http->content) {
             http->content_length = strlen(http->content);
-        if (message->http.content_type)
-            http->content_type = ogs_strdup(message->http.content_type);
+            if (message->http.content_type)
+                ogs_sbi_header_set(http->headers,
+                        OGS_SBI_CONTENT_TYPE, message->http.content_type);
+            else
+                ogs_sbi_header_set(http->headers,
+                        OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_JSON_TYPE);
+        }
     }
+
 }
 
 static int parse_content(
@@ -944,6 +933,7 @@ static void build_multipart(
     unsigned char digest[16];
     char *p = NULL, *last;
 
+    char *content_type = NULL;
     char *json = NULL;
 
     ogs_assert(message);
@@ -972,10 +962,6 @@ static void build_multipart(
     strcpy(boundary, "=-");
     ogs_base64_encode_binary(boundary + 2, digest, 16);
 
-    http->content_type = ogs_msprintf("%s; boundary=\"%s\"",
-            OGS_SBI_CONTENT_MULTIPART_TYPE, boundary);
-    ogs_assert(http->content_type);
-
     p = http->content = ogs_calloc(1, OGS_HUGE_LEN);
     ogs_assert(p);
     last = p + OGS_HUGE_LEN;
@@ -1003,6 +989,14 @@ static void build_multipart(
     p = ogs_slprintf(p, last, "\r\n--%s--\r\n", boundary);
 
     http->content_length = p - http->content;
+
+    content_type = ogs_msprintf("%s; boundary=\"%s\"",
+            OGS_SBI_CONTENT_MULTIPART_TYPE, boundary);
+    ogs_assert(content_type);
+
+    ogs_sbi_header_set(http->headers, OGS_SBI_CONTENT_TYPE, content_type);
+
+    ogs_free(content_type);
 }
 
 static int parse_multipart(
@@ -1228,8 +1222,6 @@ static void http_message_free(ogs_sbi_http_message_t *http)
     }
     if (http->content)
         ogs_free(http->content);
-    if (http->content_type)
-        ogs_free(http->content_type);
 
     for (i = 0; i < http->num_of_part; i++) {
         if (http->part[i].pkbuf)
