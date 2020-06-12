@@ -307,8 +307,10 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
-                    ogs_fatal("POST");
-#if 1
+                    sess = smf_sess_add_by_sbi_message(&sbi_message);
+                    ogs_assert(sess);
+
+#if 0
                     ogs_fatal("%d", sbi_message.num_of_part);
                     ogs_fatal("%s", sbi_message.part[0].content_id);
                     ogs_fatal("%s", sbi_message.part[0].content_type);
@@ -336,6 +338,26 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
                         "Unknown resource name",
                         sbi_message.h.resource.component[0]);
             END
+
+            if (!sess) {
+                ogs_error("Not found [%s]", sbi_message.h.method);
+                ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                    &sbi_message, "Not found", sbi_message.h.method);
+                break;
+            }
+
+            ogs_assert(OGS_FSM_STATE(&sess->sm));
+
+            OGS_SETUP_SBI_SESSION(sess, session);
+
+            e->sess = sess;
+            e->sbi.message = &sbi_message;
+            ogs_fsm_dispatch(&sess->sm, e);
+            if (OGS_FSM_CHECK(&sess->sm, smf_gsm_state_exception)) {
+                ogs_error("[%s] State machine exception", sess->supi);
+                smf_sess_remove(sess);
+            }
             break;
 
         DEFAULT
