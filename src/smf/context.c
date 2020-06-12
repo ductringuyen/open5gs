@@ -73,7 +73,7 @@ void smf_context_init(void)
 
     ogs_pool_init(&smf_pf_pool, ogs_config()->pool.pf);
 
-    self.sess_hash = ogs_hash_make();
+    self.imsi_apn_hash = ogs_hash_make();
     self.ipv4_hash = ogs_hash_make();
     self.ipv6_hash = ogs_hash_make();
 
@@ -86,8 +86,8 @@ void smf_context_final(void)
 
     smf_sess_remove_all();
 
-    ogs_assert(self.sess_hash);
-    ogs_hash_destroy(self.sess_hash);
+    ogs_assert(self.imsi_apn_hash);
+    ogs_hash_destroy(self.imsi_apn_hash);
     ogs_assert(self.ipv4_hash);
     ogs_hash_destroy(self.ipv4_hash);
     ogs_assert(self.ipv6_hash);
@@ -516,7 +516,7 @@ int smf_context_parse_config(void)
     return OGS_OK;
 }
 
-static void *sess_hash_keygen(uint8_t *out, int *out_len,
+static void *imsi_apn_keygen(uint8_t *out, int *out_len,
         uint8_t *imsi, int imsi_len, char *apn)
 {
     memcpy(out, imsi, imsi_len);
@@ -612,9 +612,10 @@ smf_sess_t *smf_sess_add_by_imsi_apn(
         sess->ipv6 ? INET6_NTOP(&sess->ipv6->addr, buf2) : "");
 
     /* Generate Hash Key : IMSI + APN */
-    sess_hash_keygen(sess->hash_keybuf, &sess->hash_keylen,
+    imsi_apn_keygen(sess->imsi_apn_keybuf, &sess->imsi_apn_keylen,
             imsi, imsi_len, apn);
-    ogs_hash_set(self.sess_hash, sess->hash_keybuf, sess->hash_keylen, sess);
+    ogs_hash_set(self.imsi_apn_hash,
+            sess->imsi_apn_keybuf, sess->imsi_apn_keylen, sess);
 
     /* Select UPF with round-robin manner */
     if (ogs_pfcp_self()->node == NULL)
@@ -679,7 +680,8 @@ int smf_sess_remove(smf_sess_t *sess)
         OGS_PCC_RULE_FREE(&sess->pcc_rule[i]);
     sess->num_of_pcc_rule = 0;
 
-    ogs_hash_set(self.sess_hash, sess->hash_keybuf, sess->hash_keylen, NULL);
+    ogs_hash_set(self.imsi_apn_hash,
+            sess->imsi_apn_keybuf, sess->imsi_apn_keylen, NULL);
 
     if (sess->ipv4) {
         ogs_hash_set(self.ipv4_hash, sess->ipv4->addr, OGS_IPV4_LEN, NULL);
@@ -729,10 +731,10 @@ smf_sess_t *smf_sess_find_by_imsi_apn(
     uint8_t keybuf[OGS_MAX_IMSI_LEN+OGS_MAX_APN_LEN+1];
     int keylen = 0;
 
-    ogs_assert(self.sess_hash);
+    ogs_assert(self.imsi_apn_hash);
 
-    sess_hash_keygen(keybuf, &keylen, imsi, imsi_len, apn);
-    return (smf_sess_t *)ogs_hash_get(self.sess_hash, keybuf, keylen);
+    imsi_apn_keygen(keybuf, &keylen, imsi, imsi_len, apn);
+    return (smf_sess_t *)ogs_hash_get(self.imsi_apn_hash, keybuf, keylen);
 }
 
 smf_sess_t *smf_sess_find_by_ipv4(uint32_t addr)

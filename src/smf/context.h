@@ -81,7 +81,7 @@ typedef struct smf_context_s {
     ogs_list_t      sgw_s5c_list;   /* SGW GTPC Node List */
     ogs_list_t      ip_pool_list;
 
-    ogs_hash_t      *sess_hash;     /* hash table (IMSI+APN) */
+    ogs_hash_t      *imsi_apn_hash; /* hash table (IMSI+APN) */
     ogs_hash_t      *ipv4_hash;     /* hash table (IPv4 Address) */
     ogs_hash_t      *ipv6_hash;     /* hash table (IPv6 Address) */
 
@@ -114,13 +114,17 @@ typedef struct smf_sess_s {
     int             imsi_len;
     char            imsi_bcd[OGS_MAX_IMSI_BCD_LEN+1];
 
+    uint8_t         imsi_apn_keybuf[OGS_MAX_IMSI_LEN+OGS_MAX_APN_LEN+1];
+    int             imsi_apn_keylen;
+
+    /* SUPI */
+    char            *supi;
+    uint8_t         psi;    /* PDU session identity */
+
     /* APN Configuration */
     ogs_pdn_t       pdn;
     ogs_pfcp_ue_ip_t *ipv4;
     ogs_pfcp_ue_ip_t *ipv6;
-
-    uint8_t         hash_keybuf[OGS_MAX_IMSI_LEN+OGS_MAX_APN_LEN+1];
-    int             hash_keylen;
 
     ogs_tlv_octet_t ue_pco; /* Saved from S5-C */
     ogs_tlv_octet_t user_location_information; /* Saved from S5-C */
