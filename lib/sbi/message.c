@@ -981,6 +981,8 @@ static int on_part_data(
     if (at && length) {
         SWITCH(data->part[data->num_of_part].content_type)
         CASE(OGS_SBI_CONTENT_JSON_TYPE)
+            if (data->part[data->num_of_part].content)
+                ogs_free(data->part[data->num_of_part].content);
             data->part[data->num_of_part].content = ogs_strndup(at, length);
             data->part[data->num_of_part].content_length = length;
             data->num_of_part++;
@@ -988,6 +990,8 @@ static int on_part_data(
 
         CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
         CASE(OGS_SBI_CONTENT_NGAP_TYPE)
+            if (data->part[data->num_of_part].content)
+                ogs_free(data->part[data->num_of_part].content);
             data->part[data->num_of_part].content = ogs_memdup(at, length);
             data->part[data->num_of_part].content_length = length;
             data->num_of_part++;
