@@ -10,9 +10,6 @@ extern "C"
 {
 #endif
 
-#include <stdlib.h>
-#include <ctype.h>
-
 typedef struct multipart_parser multipart_parser;
 typedef struct multipart_parser_settings multipart_parser_settings;
 typedef struct multipart_parser_state multipart_parser_state;

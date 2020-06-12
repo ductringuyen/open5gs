@@ -6,6 +6,8 @@
 #include "ogs-core.h"
 #include "multipart_parser.h"
 
+#include <ctype.h>
+
 static void multipart_log(const char * format, ...)
 {
 #ifdef DEBUG_MULTIPART

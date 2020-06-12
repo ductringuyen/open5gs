@@ -181,6 +181,7 @@ typedef struct ogs_sbi_header_s {
 
 typedef struct ogs_sbi_part_s {
     char *content_id;
+    char *content_type;
     char *content_subtype;
 
     ogs_pkbuf_t *pkbuf;
