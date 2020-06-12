@@ -427,6 +427,7 @@ struct amf_ue_s {
 typedef struct amf_sess_s {
     ogs_lnode_t     lnode;
 
+    uint8_t         psi;        /* PDU Session Identity */
     uint8_t         pti;        /* Procedure Trasaction Identity */
 
 #if 0
@@ -440,10 +441,12 @@ typedef struct amf_sess_s {
     /* Related Context */
     amf_ue_t        *amf_ue;
 
+#if 0
 #define AMF_UE_HAVE_APN(__aMF) \
     ((__aMF) && (amf_sess_first(__aMF)) && \
     ((amf_sess_first(__aMF))->pdn))
     ogs_pdn_t       *pdn;
+#endif
 
     /* Save Protocol Configuration Options from UE */
     struct {
@@ -635,15 +638,11 @@ void amf_ue_deassociate(amf_ue_t *amf_ue);
 void source_ue_associate_target_ue(ran_ue_t *source_ue, ran_ue_t *target_ue);
 void source_ue_deassociate_target_ue(ran_ue_t *ran_ue);
 
-amf_sess_t *amf_sess_add(amf_ue_t *amf_ue, uint8_t pti);
+amf_sess_t *amf_sess_add(amf_ue_t *amf_ue, uint8_t psi);
 void amf_sess_remove(amf_sess_t *sess);
 void amf_sess_remove_all(amf_ue_t *amf_ue);
-amf_sess_t *amf_sess_find_by_pti(amf_ue_t *amf_ue, uint8_t pti);
-amf_sess_t *amf_sess_find_by_ebi(amf_ue_t *amf_ue, uint8_t ebi);
+amf_sess_t *amf_sess_find_by_psi(amf_ue_t *amf_ue, uint8_t psi);
 amf_sess_t *amf_sess_find_by_dnn(amf_ue_t *amf_ue, char *dnn);
-amf_sess_t *amf_sess_first(amf_ue_t *amf_ue);
-amf_sess_t *amf_sess_next(amf_sess_t *sess);
-unsigned int amf_sess_count(amf_ue_t *amf_ue);
 
 amf_bearer_t *amf_bearer_add(amf_sess_t *sess);
 void amf_bearer_remove(amf_bearer_t *bearer);

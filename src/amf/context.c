@@ -1437,9 +1437,9 @@ int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue)
 {
     amf_sess_t *sess = NULL;
 
-    sess = amf_sess_first(amf_ue);
+    sess = ogs_list_first(&amf_ue->sess_list);
     while (sess) {
-        amf_bearer_t *bearer = amf_bearer_first(sess);
+        amf_bearer_t *bearer = ogs_list_first(&sess->bearer_list);
         while (bearer) {
             if (AMF_HAVE_GNB_DL_INDIRECT_TUNNEL(bearer) ||
                 AMF_HAVE_GNB_UL_INDIRECT_TUNNEL(bearer) ||
@@ -1448,9 +1448,9 @@ int amf_ue_have_indirect_tunnel(amf_ue_t *amf_ue)
                 return 1;
             }
 
-            bearer = amf_bearer_next(bearer);
+            bearer = ogs_list_next(bearer);
         }
-        sess = amf_sess_next(sess);
+        sess = ogs_list_next(sess);
     }
 
     return 0;
@@ -1462,15 +1462,15 @@ int amf_ue_clear_indirect_tunnel(amf_ue_t *amf_ue)
 
     ogs_assert(amf_ue);
 
-    sess = amf_sess_first(amf_ue);
+    sess = ogs_list_first(&amf_ue->sess_list);
     while (sess) {
-        amf_bearer_t *bearer = amf_bearer_first(sess);
+        amf_bearer_t *bearer = ogs_list_first(&sess->bearer_list);
         while (bearer) {
             CLEAR_INDIRECT_TUNNEL(bearer);
 
-            bearer = amf_bearer_next(bearer);
+            bearer = ogs_list_next(bearer);
         }
-        sess = amf_sess_next(sess);
+        sess = ogs_list_next(sess);
     }
 
     return OGS_OK;
@@ -1537,25 +1537,31 @@ void source_ue_deassociate_target_ue(ran_ue_t *ran_ue)
     }
 }
 
-amf_sess_t *amf_sess_add(amf_ue_t *amf_ue, uint8_t pti)
+amf_sess_t *amf_sess_add(amf_ue_t *amf_ue, uint8_t psi)
 {
     amf_sess_t *sess = NULL;
+#if 0
     amf_bearer_t *bearer = NULL;
+#endif
 
     ogs_assert(amf_ue);
-    ogs_assert(pti != OGS_NAS_PROCEDURE_TRANSACTION_IDENTITY_UNASSIGNED);
+    ogs_assert(psi != OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED);
 
     ogs_pool_alloc(&amf_sess_pool, &sess);
     ogs_assert(sess);
     memset(sess, 0, sizeof *sess);
 
+#if 0
     ogs_list_init(&sess->bearer_list);
+#endif
 
     sess->amf_ue = amf_ue;
-    sess->pti = pti;
+    sess->psi = psi;
 
+#if 0
     bearer = amf_bearer_add(sess);
     ogs_assert(bearer);
+#endif
 
     ogs_list_add(&amf_ue->sess_list, sess);
 
@@ -1569,7 +1575,9 @@ void amf_sess_remove(amf_sess_t *sess)
     
     ogs_list_remove(&sess->amf_ue->sess_list, sess);
 
+#if 0
     amf_bearer_remove_all(sess);
+#endif
 
     OGS_NAS_CLEAR_DATA(&sess->ue_pco);
     OGS_TLV_CLEAR_DATA(&sess->pgw_pco);
@@ -1580,32 +1588,24 @@ void amf_sess_remove(amf_sess_t *sess)
 void amf_sess_remove_all(amf_ue_t *amf_ue)
 {
     amf_sess_t *sess = NULL, *next_sess = NULL;
-    
-    sess = amf_sess_first(amf_ue);
-    while (sess) {
-        next_sess = amf_sess_next(sess);
 
+    ogs_assert(amf_ue);
+
+    ogs_list_for_each_safe(&amf_ue->sess_list, next_sess, sess)
         amf_sess_remove(sess);
-
-        sess = next_sess;
-    }
 }
 
-amf_sess_t *amf_sess_find_by_pti(amf_ue_t *amf_ue, uint8_t pti)
+amf_sess_t *amf_sess_find_by_psi(amf_ue_t *amf_ue, uint8_t psi)
 {
     amf_sess_t *sess = NULL;
 
-    sess = amf_sess_first(amf_ue);
-    while(sess) {
-        if (pti == sess->pti)
-            return sess;
-
-        sess = amf_sess_next(sess);
-    }
+    ogs_list_for_each(&amf_ue->sess_list, sess)
+        if (psi == sess->psi) return sess;
 
     return NULL;
 }
 
+#if 0
 amf_sess_t *amf_sess_find_by_ebi(amf_ue_t *amf_ue, uint8_t ebi)
 {
     amf_bearer_t *bearer = NULL;
@@ -1616,9 +1616,11 @@ amf_sess_t *amf_sess_find_by_ebi(amf_ue_t *amf_ue, uint8_t ebi)
 
     return NULL;
 }
+#endif
 
 amf_sess_t *amf_sess_find_by_dnn(amf_ue_t *amf_ue, char *dnn)
 {
+#if 0
     amf_sess_t *sess = NULL;
 
     sess = amf_sess_first(amf_ue);
@@ -1628,34 +1630,12 @@ amf_sess_t *amf_sess_find_by_dnn(amf_ue_t *amf_ue, char *dnn)
 
         sess = amf_sess_next(sess);
     }
+#endif
 
     return NULL;
 }
 
-amf_sess_t *amf_sess_first(amf_ue_t *amf_ue)
-{
-    return ogs_list_first(&amf_ue->sess_list);
-}
-
-amf_sess_t *amf_sess_next(amf_sess_t *sess)
-{
-    return ogs_list_next(sess);
-}
-
-unsigned int amf_sess_count(amf_ue_t *amf_ue)
-{
-    unsigned int count = 0;
-    amf_sess_t *sess = NULL;
-
-    sess = amf_sess_first(amf_ue);
-    while (sess) {
-        sess = amf_sess_next(sess);
-        count++;
-    }
-
-    return count;
-}
-
+#if 0
 amf_bearer_t *amf_bearer_add(amf_sess_t *sess)
 {
     amf_event_t e;
@@ -1968,6 +1948,7 @@ int amf_bearer_set_inactive(amf_ue_t *amf_ue)
 
     return OGS_OK;
 }
+#endif
 
 void amf_pdn_remove_all(amf_ue_t *amf_ue)
 {

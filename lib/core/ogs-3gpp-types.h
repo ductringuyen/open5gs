@@ -65,6 +65,7 @@ extern "C" {
     (((((x) % 10) << 4) & 0xf0) | (((x) / 10) & 0x0f))
 
 #define OGS_NAS_PROCEDURE_TRANSACTION_IDENTITY_UNASSIGNED 0
+#define OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED 0
 
 #define OGS_ACCESS_TYPE_3GPP 1
 #define OGS_ACCESS_TYPE_NON_3GPP 2
