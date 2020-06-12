@@ -350,7 +350,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
 #if 0
             smf_sbi_send_sm_context_create_error(session,
                     OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                    &sbi_message, "Not found", sbi_message.h.method);
+                    "Not found", sbi_message.h.method);
             break;
 #endif
 

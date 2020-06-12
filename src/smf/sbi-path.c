@@ -199,10 +199,8 @@ void smf_sbi_discover_and_send(
     return smf_sbi_send(sess, nf_instance);
 }
 
-void smf_sbi_send_sm_context_create_error(
-        ogs_sbi_session_t *session,
-        int status, ogs_sbi_message_t *recvmsg,
-        const char *title, const char *detail)
+void smf_sbi_send_sm_context_create_error(ogs_sbi_session_t *session,
+        int status, const char *title, const char *detail)
 {
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
@@ -213,17 +211,6 @@ void smf_sbi_send_sm_context_create_error(
     ogs_assert(session);
 
     memset(&problem, 0, sizeof(problem));
-    if (recvmsg) {
-        problem.type = ogs_msprintf("/%s/%s",
-                recvmsg->h.service.name, recvmsg->h.api.version);
-        if (recvmsg->h.resource.component[1])
-            problem.instance = ogs_msprintf("/%s/%s",
-                    recvmsg->h.resource.component[0],
-                    recvmsg->h.resource.component[1]);
-        else
-            problem.instance =
-                    ogs_msprintf("/%s", recvmsg->h.resource.component[0]);
-    }
     problem.status = status;
     problem.title = (char*)title;
     problem.detail = (char*)detail;
@@ -239,9 +226,4 @@ void smf_sbi_send_sm_context_create_error(
     ogs_assert(response);
 
     ogs_sbi_server_send_response(session, response);
-
-    if (problem.type)
-        ogs_free(problem.type);
-    if (problem.instance)
-        ogs_free(problem.instance);
 }
