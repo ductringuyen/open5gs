@@ -18,6 +18,7 @@
  */
 
 #include "ogs-sbi.h"
+#include "ogs-crypt.h"
 #include "yuarel.h"
 
 #include "gmime/gmime.h"
@@ -236,7 +237,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
 
     if (request->http.num_of_part) {
         ogs_sbi_header_set(request->http.headers,
-                OGS_SBI_CONTENT_TYPE, OGS_SBI_CONTENT_MULTIPART_TYPE);
+                OGS_SBI_CONTENT_TYPE, request->http.content_type);
     } else {
         if (request->http.content_type) {
             ogs_sbi_header_set(request->http.headers,
@@ -267,6 +268,12 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
             break;
         END
     }
+
+#if 0
+    if (message->num_of_part) {
+    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)request->http.content, request->http.content_length);
+    }
+#endif
 
     if (message->http.content_encoding)
         ogs_sbi_header_set(request->http.headers,
@@ -936,7 +943,7 @@ static void build_multipart(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     int i;
-#if 0
+#if 1
     size_t size;
 
     GMimeMultipart *multipart = NULL;
@@ -944,6 +951,10 @@ static void build_multipart(
     GMimeStream *stream = NULL;
     GMimeDataWrapper *content = NULL;
 #endif
+
+    char boundary[32];
+    unsigned char digest[16];
+    char *p = NULL, *last;
 
     char *json = NULL;
 
@@ -969,7 +980,44 @@ static void build_multipart(
     }
     http->num_of_part = message->num_of_part+1;
 
-#if 0
+#if 1
+    ogs_random(digest, 16);
+    strcpy(boundary, "=-");
+    ogs_base64_encode_binary(boundary + 2, digest, 16);
+
+    http->content_type = ogs_msprintf("%s; boundary=\"%s\"",
+            OGS_SBI_CONTENT_MULTIPART_TYPE, boundary);
+    ogs_assert(http->content_type);
+
+    p = http->content = ogs_calloc(1, OGS_HUGE_LEN);
+    ogs_assert(p);
+    last = p + OGS_HUGE_LEN;
+
+    /* First boundary */
+    p = ogs_slprintf(p, last, "--%s\r\n", boundary);
+
+    /* Encapsulated multipart part (application/json) */
+    p = ogs_slprintf(p, last, "%s\r\n\r\n%s",
+            OGS_SBI_CONTENT_TYPE ": " OGS_SBI_CONTENT_JSON_TYPE, json);
+
+    /* Add part */
+    for (i = 0; i < message->num_of_part; i++) {
+        p = ogs_slprintf(p, last, "\r\n--%s\r\n", boundary);
+        p = ogs_slprintf(p, last, "%s: %s\r\n",
+                OGS_SBI_CONTENT_ID, message->part[i].content_id);
+        p = ogs_slprintf(p, last, "%s: %s/%s\r\n\r\n",
+                OGS_SBI_CONTENT_TYPE, OGS_SBI_APPLICATION_TYPE,
+                message->part[i].content_subtype);
+        memcpy(p, message->part[i].pkbuf->data, message->part[i].pkbuf->len);
+        p += message->part[i].pkbuf->len;
+    }
+
+    /* Last boundary */
+    p = ogs_slprintf(p, last, "\r\n--%s--\r\n", boundary);
+
+    http->content_length = p - http->content;
+
+#else
     multipart = g_mime_multipart_new_with_subtype(
                     OGS_SBI_MULTIPART_RELATED_TYPE);
     ogs_assert(multipart);
@@ -1029,6 +1077,8 @@ static void build_multipart(
     http->content_type =
         ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data +
                 strlen(OGS_SBI_CONTENT_TYPE ": "));
+
+    ogs_fatal("%s", http->content_type);
     ogs_assert(http->content_type);
     http->content_type[strlen(http->content_type)-1] = 0; /* remove newline */
 
@@ -1040,6 +1090,9 @@ static void build_multipart(
     ogs_assert(http->content_length);
     http->content = ogs_memdup(
             GMIME_STREAM_MEM(stream)->buffer->data, http->content_length);
+
+    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)http->content, http->content_length);
+
 
     g_object_unref(stream);
     g_object_unref(multipart);

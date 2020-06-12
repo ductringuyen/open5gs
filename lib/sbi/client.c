@@ -279,6 +279,7 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     ogs_assert(conn->easy);
 
     /* HTTP Method */
+#if 0
     if (request->http.num_of_part) {
         curl_mimepart *part;
         struct curl_slist *slist = NULL;
@@ -325,7 +326,25 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
             if (request->http.content) {
                 curl_easy_setopt(conn->easy,
                         CURLOPT_POSTFIELDS, request->http.content);
+                curl_easy_setopt(conn->easy,
+                    CURLOPT_POSTFIELDSIZE, request->http.content_length);
             }
+        }
+    }
+#endif
+
+    if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
+        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PATCH) == 0 ||
+        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_DELETE) == 0 ||
+        strcmp(request->h.method, OGS_SBI_HTTP_METHOD_POST) == 0) {
+
+        curl_easy_setopt(conn->easy,
+                CURLOPT_CUSTOMREQUEST, request->h.method);
+        if (request->http.content) {
+            curl_easy_setopt(conn->easy,
+                    CURLOPT_POSTFIELDS, request->http.content);
+            curl_easy_setopt(conn->easy,
+                CURLOPT_POSTFIELDSIZE, request->http.content_length);
         }
     }
 
