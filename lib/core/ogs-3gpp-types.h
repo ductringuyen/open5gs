@@ -199,7 +199,8 @@ typedef struct ogs_s_nssai_s {
     ogs_uint24_t sd;
 } __attribute__ ((packed)) ogs_s_nssai_t;
 
-char *ogs_s_nssai_sd_string(ogs_s_nssai_t *s_nssai);
+char *ogs_s_nssai_sd_to_string(ogs_uint24_t sd);
+ogs_uint24_t ogs_s_nssai_sd_from_string(const char *hex);
 
 /**************************************************
  * Common Structure

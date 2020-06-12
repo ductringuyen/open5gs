@@ -124,6 +124,7 @@ typedef struct smf_sess_s {
 
     char            *supi_psi_keybuf;
     char            *dnn;
+    ogs_s_nssai_t   s_nssai;
 
     /* PDN Configuration */
     ogs_pdn_t       pdn;

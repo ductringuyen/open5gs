@@ -171,13 +171,27 @@ ogs_amf_id_t *ogs_amf_id_build(ogs_amf_id_t *amf_id,
     return amf_id;
 }
 
-char *ogs_s_nssai_sd_string(ogs_s_nssai_t *s_nssai)
+char *ogs_s_nssai_sd_to_string(ogs_uint24_t sd)
 {
-    ogs_assert(s_nssai);
-    if (s_nssai->sd.v != OGS_S_NSSAI_NO_SD_VALUE)
-        return ogs_msprintf("%x", s_nssai->sd.v);
+    if (sd.v != OGS_S_NSSAI_NO_SD_VALUE)
+        return ogs_msprintf("%06x", sd.v);
     else
         return NULL;
+}
+
+ogs_uint24_t ogs_s_nssai_sd_from_string(const char *hex)
+{
+    ogs_uint24_t sd;
+    char hexbuf[sizeof(ogs_uint24_t)];
+
+    sd.v = OGS_S_NSSAI_NO_SD_VALUE;
+    if (hex == NULL)
+        return sd;
+
+    OGS_HEX(hex, strlen(hex), hexbuf);
+    memcpy(&sd, hexbuf, 3);
+
+    return ogs_be24toh(sd);
 }
 
 char *ogs_supi_from_suci(char *suci)

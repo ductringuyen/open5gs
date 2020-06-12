@@ -47,5 +47,11 @@ bool smf_nsmf_handle_create_sm_context(
         sess->dnn = ogs_strdup(SMContextCreateData->dnn);
     }
 
+    if (SMContextCreateData->s_nssai) {
+        sess->s_nssai.sst = SMContextCreateData->s_nssai->sst;
+        sess->s_nssai.sd = ogs_s_nssai_sd_from_string(
+                SMContextCreateData->s_nssai->sd);
+    }
+
     return true;
 }
