@@ -234,11 +234,7 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     }
 
     build_content(&request->http, message);
-
-    if (request->http.num_of_part) {
-        ogs_sbi_header_set(request->http.headers,
-                OGS_SBI_CONTENT_TYPE, request->http.content_type);
-    } else {
+    if (request->http.content) {
         if (request->http.content_type) {
             ogs_sbi_header_set(request->http.headers,
                     OGS_SBI_CONTENT_TYPE, request->http.content_type);
@@ -943,14 +939,6 @@ static void build_multipart(
         ogs_sbi_http_message_t *http, ogs_sbi_message_t *message)
 {
     int i;
-#if 1
-    size_t size;
-
-    GMimeMultipart *multipart = NULL;
-    GMimePart *part = NULL;
-    GMimeStream *stream = NULL;
-    GMimeDataWrapper *content = NULL;
-#endif
 
     char boundary[32];
     unsigned char digest[16];
@@ -980,7 +968,6 @@ static void build_multipart(
     }
     http->num_of_part = message->num_of_part+1;
 
-#if 1
     ogs_random(digest, 16);
     strcpy(boundary, "=-");
     ogs_base64_encode_binary(boundary + 2, digest, 16);
@@ -1016,87 +1003,6 @@ static void build_multipart(
     p = ogs_slprintf(p, last, "\r\n--%s--\r\n", boundary);
 
     http->content_length = p - http->content;
-
-#else
-    multipart = g_mime_multipart_new_with_subtype(
-                    OGS_SBI_MULTIPART_RELATED_TYPE);
-    ogs_assert(multipart);
-
-    part = g_mime_part_new_with_type(
-            OGS_SBI_APPLICATION_TYPE, OGS_SBI_APPLICATION_JSON_TYPE);
-    ogs_assert(part);
-
-    stream = g_mime_stream_mem_new_with_buffer(
-            (const char *)http->part[0].pkbuf->data, http->part[0].pkbuf->len);
-    ogs_assert(stream);
-    content = g_mime_data_wrapper_new_with_stream(stream,
-            GMIME_CONTENT_ENCODING_DEFAULT);
-    ogs_assert(content);
-    g_object_unref(stream);
-
-    g_mime_part_set_content(part, content);
-    g_object_unref(content);
-
-    g_mime_multipart_add(multipart, (GMimeObject *)part);
-    g_object_unref(part);
-
-    for (i = 0; i < message->num_of_part; i++) {
-        ogs_assert(message->part[i].content_subtype);
-        part = g_mime_part_new_with_type(
-                OGS_SBI_APPLICATION_TYPE, message->part[i].content_subtype);
-        ogs_assert(part);
-
-        ogs_assert(message->part[i].content_id);
-        g_mime_part_set_content_id(part, message->part[i].content_id);
-
-        stream = g_mime_stream_mem_new_with_buffer(
-                (char *)message->part[i].pkbuf->data,
-                message->part[i].pkbuf->len);
-        ogs_assert(stream);
-        content = g_mime_data_wrapper_new_with_stream(stream,
-                GMIME_CONTENT_ENCODING_DEFAULT);
-        ogs_assert(content);
-        g_object_unref(stream);
-
-        g_mime_part_set_content(part, content);
-        g_object_unref(content);
-
-        g_mime_multipart_add(multipart, (GMimeObject *)part);
-        g_object_unref(part);
-    }
-
-    stream = g_mime_stream_mem_new();
-    ogs_assert(stream);
-
-    ogs_assert(GMIME_OBJECT(multipart)->headers);
-    size = g_mime_header_list_write_to_stream(
-            GMIME_OBJECT(multipart)->headers, NULL, stream);
-    ogs_assert(size > 0);
-
-    ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
-    http->content_type =
-        ogs_strdup((char *)GMIME_STREAM_MEM(stream)->buffer->data +
-                strlen(OGS_SBI_CONTENT_TYPE ": "));
-
-    ogs_fatal("%s", http->content_type);
-    ogs_assert(http->content_type);
-    http->content_type[strlen(http->content_type)-1] = 0; /* remove newline */
-
-    g_mime_header_list_clear(GMIME_OBJECT(multipart)->headers);
-    g_mime_stream_reset(stream);
-    g_mime_object_write_to_stream(GMIME_OBJECT(multipart), NULL, stream);
-
-    http->content_length = GMIME_STREAM_MEM(stream)->buffer->len;
-    ogs_assert(http->content_length);
-    http->content = ogs_memdup(
-            GMIME_STREAM_MEM(stream)->buffer->data, http->content_length);
-
-    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)http->content, http->content_length);
-
-
-    g_object_unref(stream);
-    g_object_unref(multipart);
-#endif
 }
 
 static int parse_multipart(

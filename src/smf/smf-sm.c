@@ -308,7 +308,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
                     ogs_fatal("POST");
-#if 0
+#if 1
                     ogs_fatal("%d", sbi_message.num_of_part);
                     ogs_fatal("%s", sbi_message.part[0].content_id);
                     ogs_fatal("%s", sbi_message.part[0].content_subtype);
