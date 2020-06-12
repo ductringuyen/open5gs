@@ -434,10 +434,10 @@ ED2(uint8_t type:4;,
 
 /* 9.11.3.31B Mapped NSSAI
  * O TLV 3-42 */
-#define OGS_NAX_MAX_NUM_OF_MAPPED_S_NSSAI 10
+#define OGS_NAS_MAX_MAPPED_NSSAI_LEN 40
 typedef struct ogs_nas_mapped_nssai_s {
     uint8_t length;
-    ogs_nas_s_nssai_t s_nssai[OGS_NAX_MAX_NUM_OF_MAPPED_S_NSSAI];
+    char buffer[OGS_NAS_MAX_MAPPED_NSSAI_LEN];
 } ogs_nas_mapped_nssai_t;
 
 /* 9.11.3.33 message container
@@ -458,9 +458,10 @@ ED4(uint8_t type:4;,
 
 /* 9.11.3.37 NSSAI
  * O TLV 4-72 */
+#define OGS_NAS_MAX_NSSAI_LEN 70
 typedef struct ogs_nas_nssai_s {
     uint8_t length;
-    ogs_nas_s_nssai_t s_nssai[OGS_MAX_NUM_OF_S_NSSAI];
+    char buffer[OGS_NAS_MAX_NSSAI_LEN];
 } __attribute__ ((packed)) ogs_nas_nssai_t;
 
 /* 9.11.3.37A NSSAI inclusion mode
@@ -524,13 +525,10 @@ typedef ogs_nas_allowed_pdu_session_status_t ogs_nas_pdu_session_status_t;
 
 /* 9.11.3.46 Rejected NSSAI
  * O TLV 4-42 */
+#define OGS_NAS_MAX_REJECTED_NSSAI_LEN 40
 typedef struct ogs_nas_rejected_nssai_s {
     uint8_t length;
-    struct {
-ED2(uint8_t len:4;,
-    uint8_t value:4;)
-        ogs_nas_s_nssai_t s_nssai;
-    } rejected[OGS_MAX_NUM_OF_S_NSSAI];
+    char buffer[OGS_NAS_MAX_REJECTED_NSSAI_LEN];
 } ogs_nas_rejected_nssai_t;
 
 /* 9.11.3.49 Service area list

@@ -2067,7 +2067,8 @@ ogs_s_nssai_t *amf_find_s_nssai(
             if (amf_self()->plmn_support[i].s_nssai[j].sst != s_nssai->sst)
                 continue;
 
-            if (s_nssai->sd.v != OGS_S_NSSAI_NO_SD_VALUE) {
+            if (s_nssai->length > 1 &&
+                    s_nssai->sd.v != OGS_S_NSSAI_NO_SD_VALUE) {
                 if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
                         s_nssai->sd.v)
                     continue;

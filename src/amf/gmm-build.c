@@ -35,7 +35,7 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
     ogs_nas_5gs_mobile_identity_guti_t mobile_identity_guti;
     int served_tai_index = 0;
     ogs_nas_nssai_t *allowed_nssai = &registration_accept->allowed_nssai;
-    int i, j, num_of_nssai;
+    int i, j;
     ogs_nas_gprs_timer_3_t *t3512_value = &registration_accept->t3512_value;
 
     ogs_assert(amf_ue);
@@ -96,8 +96,6 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
             &amf_self()->served_tai[served_tai_index].list2);
 
     /* Set Allowed NSSAI */
-    num_of_nssai = 0;
-    allowed_nssai->length = 0;
     for (i = 0; i < amf_self()->num_of_plmn_support; i++) {
         if (memcmp(&amf_ue->tai.plmn_id,
                 &amf_self()->plmn_support[i].plmn_id, OGS_PLMN_ID_LEN) != 0)
@@ -109,26 +107,30 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
             ogs_debug("[%s]         [sst:%d, sd:%06x]", amf_ue->supi,
                     amf_self()->plmn_support[i].s_nssai[j].sst,
                     amf_self()->plmn_support[i].s_nssai[j].sd.v);
-            if (num_of_nssai < OGS_MAX_NUM_OF_S_NSSAI) {
-                allowed_nssai->s_nssai[num_of_nssai].sst =
+            if (allowed_nssai->length < OGS_NAS_MAX_NSSAI_LEN) {
+                allowed_nssai->buffer[allowed_nssai->length] = 1;
+                allowed_nssai->length++;
+
+                allowed_nssai->buffer[allowed_nssai->length] =
                         amf_self()->plmn_support[i].s_nssai[j].sst;
-                allowed_nssai->s_nssai[num_of_nssai].length = 1;
+                allowed_nssai->length++;
+
                 if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
                         OGS_S_NSSAI_NO_SD_VALUE) {
-                    allowed_nssai->s_nssai[num_of_nssai].sd =
-                        ogs_htobe24(amf_self()->plmn_support[i].s_nssai[j].sd);
-                    allowed_nssai->s_nssai[num_of_nssai].length = 4;
-                }
-                allowed_nssai->length +=
-                    allowed_nssai->s_nssai[num_of_nssai].length;
-                num_of_nssai++;
+                    ogs_uint24_t v;
 
+                    v = ogs_htobe24(amf_self()->plmn_support[i].s_nssai[j].sd);
+                    memcpy(allowed_nssai->buffer+allowed_nssai->length, &v, 3);
+
+                    allowed_nssai->length += 3;
+                    allowed_nssai->buffer[allowed_nssai->length-5] += 3;
+                }
             }
         }
     }
+
     if (allowed_nssai->length) {
         registration_accept->presencemask |= OGS_NAS_5GS_REGISTRATION_ACCEPT_ALLOWED_NSSAI_PRESENT;
-        allowed_nssai->length += 2;
     }
 
     /* Set T3512 */
