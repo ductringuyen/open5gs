@@ -117,9 +117,6 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
     if (message->SMContextCreateData)
         OpenAPI_sm_context_create_data_free(message->SMContextCreateData);
 
-    if (message->gsm.buf)
-        ogs_pkbuf_free(message->gsm.buf);
-
     for (i = 0; i < message->num_of_part; i++) {
         if (message->part[i].pkbuf)
             ogs_pkbuf_free(message->part[i].pkbuf);

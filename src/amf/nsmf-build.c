@@ -25,7 +25,6 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport = data;
     ogs_nas_payload_container_t *payload_container = NULL;
     ogs_nas_pdu_session_identity_2_t *pdu_session_id = NULL;
-    ogs_pkbuf_t *gsmbuf = NULL;
 
     ogs_sbi_message_t sbi_message;
     ogs_sbi_request_t *request = NULL;
@@ -81,17 +80,14 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     sbi_message.SMContextCreateData = &SMContextCreateData;
 
-    gsmbuf = ogs_pkbuf_alloc(NULL, OGS_NAS_HEADROOM+payload_container->length);
-    ogs_pkbuf_reserve(gsmbuf, OGS_NAS_HEADROOM);
-    ogs_pkbuf_put_data(gsmbuf,
-            payload_container->buffer, payload_container->length);
-
-    sbi_message.gsm.buf = gsmbuf;
-
     sbi_message.part[0].content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
     sbi_message.part[0].content_subtype =
         (char *)OGS_SBI_APPLICATION_5GNAS_TYPE;
-    sbi_message.part[0].pkbuf = ogs_pkbuf_copy(gsmbuf);
+    sbi_message.part[0].pkbuf =
+        ogs_pkbuf_alloc(NULL, OGS_NAS_HEADROOM+payload_container->length);
+    ogs_pkbuf_reserve(sbi_message.part[0].pkbuf, OGS_NAS_HEADROOM);
+    ogs_pkbuf_put_data(sbi_message.part[0].pkbuf,
+            payload_container->buffer, payload_container->length);
     sbi_message.num_of_part = 1;
 
     request = ogs_sbi_build_request(&sbi_message);
@@ -101,7 +97,6 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_free(plmn_id_nid.mnc);
     ogs_free(SMContextCreateData.sm_context_status_uri);
     ogs_free(header.resource.component[2]);
-    ogs_pkbuf_free(gsmbuf);
     ogs_pkbuf_free(sbi_message.part[0].pkbuf);
 
     return request;

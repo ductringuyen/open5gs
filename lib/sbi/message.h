@@ -231,11 +231,6 @@ typedef struct ogs_sbi_message_s {
 
     ogs_sbi_links_t *links;
 
-    struct {
-        char *content_id;
-        ogs_pkbuf_t *buf;
-    } gsm;
-
 #define OGS_SBI_MAX_NUM_OF_PART 8
     int num_of_part;
     ogs_sbi_part_t part[OGS_SBI_MAX_NUM_OF_PART];
