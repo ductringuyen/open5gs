@@ -27,7 +27,7 @@ libudm_sources = files('''
 
     nudr-build.c
     nudr-handler.c
-    gmm-sm.c
+    ue-sm.c
 
     sbi-path.c
     udm-sm.c

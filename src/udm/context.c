@@ -141,7 +141,7 @@ udm_ue_t *udm_ue_add(char *suci)
             udm_timer_sbi_client_wait_expire, udm_ue);
 
     e.udm_ue = udm_ue;
-    ogs_fsm_create(&udm_ue->sm, udm_gmm_state_initial, udm_gmm_state_final);
+    ogs_fsm_create(&udm_ue->sm, udm_ue_state_initial, udm_ue_state_final);
     ogs_fsm_init(&udm_ue->sm, &e);
 
     ogs_list_add(&self.udm_ue_list, udm_ue);

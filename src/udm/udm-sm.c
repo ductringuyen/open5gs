@@ -175,7 +175,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
             e->udm_ue = udm_ue;
             e->sbi.message = &message;
             ogs_fsm_dispatch(&udm_ue->sm, e);
-            if (OGS_FSM_CHECK(&udm_ue->sm, udm_gmm_state_exception)) {
+            if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_exception)) {
                 ogs_error("[%s] State machine exception", udm_ue->suci);
                 udm_ue_remove(udm_ue);
             }
@@ -318,7 +318,7 @@ void udm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 e->udm_ue = udm_ue;
                 e->sbi.message = &message;
                 ogs_fsm_dispatch(&udm_ue->sm, e);
-                if (OGS_FSM_CHECK(&udm_ue->sm, udm_gmm_state_exception)) {
+                if (OGS_FSM_CHECK(&udm_ue->sm, udm_ue_state_exception)) {
                     ogs_error("[%s] State machine exception", udm_ue->suci);
                     udm_ue_remove(udm_ue);
                 }

@@ -781,7 +781,7 @@ smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi)
     bearer = smf_bearer_add(sess);
     ogs_assert(bearer);
 
-#if 0 /* TODO */
+#if 0 /* Is it needed? */
     bearer->ebi = ebi;
 #endif
 

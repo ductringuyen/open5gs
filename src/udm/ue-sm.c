@@ -22,18 +22,18 @@
 #include "nudm-handler.h"
 #include "nudr-handler.h"
 
-void udm_gmm_state_initial(ogs_fsm_t *s, udm_event_t *e)
+void udm_ue_state_initial(ogs_fsm_t *s, udm_event_t *e)
 {
     ogs_assert(s);
 
-    OGS_FSM_TRAN(s, &udm_gmm_state_operational);
+    OGS_FSM_TRAN(s, &udm_ue_state_operational);
 }
 
-void udm_gmm_state_final(ogs_fsm_t *s, udm_event_t *e)
+void udm_ue_state_final(ogs_fsm_t *s, udm_event_t *e)
 {
 }
 
-void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
+void udm_ue_state_operational(ogs_fsm_t *s, udm_event_t *e)
 {
     udm_ue_t *udm_ue = NULL;
 
@@ -240,7 +240,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
     }
 }
 
-void udm_gmm_state_exception(ogs_fsm_t *s, udm_event_t *e)
+void udm_ue_state_exception(ogs_fsm_t *s, udm_event_t *e)
 {
     udm_ue_t *udm_ue = NULL;
     ogs_assert(s);
