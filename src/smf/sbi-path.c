@@ -219,7 +219,6 @@ void smf_sbi_send_sm_context_create_error(ogs_sbi_session_t *session,
     SMContextCreateError.error = &problem;
 
     memset(&sendmsg, 0, sizeof(sendmsg));
-    sendmsg.http.content_type = (char*)"application/problem+json";
     sendmsg.SMContextCreateError = &SMContextCreateError;
 
     response = ogs_sbi_build_response(&sendmsg, problem.status);

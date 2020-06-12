@@ -323,9 +323,8 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
                 DEFAULT
                     ogs_error("Invalid HTTP method [%s]",
                             sbi_message.h.method);
-                    ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
-                            &sbi_message,
+                    smf_sbi_send_sm_context_create_error(session,
+                            OGS_SBI_HTTP_STATUS_FORBIDDEN,
                             "Invalid HTTP method", sbi_message.h.method);
                 END
                 break;
@@ -333,26 +332,19 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
                         sbi_message.h.resource.component[0]);
-                ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &sbi_message,
-                        "Unknown resource name",
+                smf_sbi_send_sm_context_create_error(session,
+                        OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                        "Invalid resource name",
                         sbi_message.h.resource.component[0]);
             END
 
             if (!sess) {
                 ogs_error("Not found [%s]", sbi_message.h.method);
-                ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                    &sbi_message, "Not found", sbi_message.h.method);
+                smf_sbi_send_sm_context_create_error(session,
+                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                        "Not found", sbi_message.h.method);
                 break;
             }
-
-#if 0
-            smf_sbi_send_sm_context_create_error(session,
-                    OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                    "Not found", sbi_message.h.method);
-            break;
-#endif
 
             ogs_assert(OGS_FSM_STATE(&sess->sm));
 

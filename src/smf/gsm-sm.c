@@ -68,27 +68,28 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
                     ogs_fatal("asdfkljasdfasdf");
                     break;
                 DEFAULT
-                    ogs_error("[%s] Invalid resource name [%s]",
-                            sess->imsi_bcd, message->h.resource.component[0]);
-                    ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                            "Invalid HTTP method", message->h.method);
+                    ogs_error("Invalid resource name [%s]",
+                            message->h.resource.component[0]);
+                    smf_sbi_send_sm_context_create_error(session,
+                            OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                            "Invalid resource name",
+                            message->h.resource.component[0]);
                 END
                 break;
 
             DEFAULT
-                ogs_error("[%s] Invalid HTTP method [%s]",
-                        sess->imsi_bcd, message->h.method);
-                ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                ogs_error("Invalid HTTP method [%s]",
+                        message->h.method);
+                smf_sbi_send_sm_context_create_error(session,
+                        OGS_SBI_HTTP_STATUS_FORBIDDEN,
                         "Invalid HTTP method", message->h.method);
             END
             break;
 
         DEFAULT
             ogs_error("Invalid API name [%s]", message->h.service.name);
-            ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+            smf_sbi_send_sm_context_create_error(session,
+                    OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                     "Invalid API name", message->h.service.name);
         END
         break;
