@@ -653,6 +653,79 @@ smf_sess_t *smf_sess_add_by_imsi_apn(
     return sess;
 }
 
+smf_sess_t *smf_sess_add_by_gtp_message(ogs_gtp_message_t *message)
+{
+    smf_sess_t *sess = NULL;
+    ogs_paa_t *paa = NULL;
+    char apn[OGS_MAX_APN_LEN];
+
+    ogs_gtp_create_session_request_t *req = &message->create_session_request;
+
+    if (req->imsi.presence == 0) {
+        ogs_error("No IMSI");
+        return NULL;
+    }
+    if (req->access_point_name.presence == 0) {
+        ogs_error("No APN");
+        return NULL;
+    }
+    if (req->bearer_contexts_to_be_created.presence == 0) {
+        ogs_error("No Bearer");
+        return NULL;
+    }
+    if (req->bearer_contexts_to_be_created.eps_bearer_id.presence == 0) {
+        ogs_error("No EPS Bearer ID");
+        return NULL;
+    }
+    if (req->pdn_type.presence == 0) {
+        ogs_error("No PDN Type");
+        return NULL;
+    }
+
+    if (req->pdn_address_allocation.presence == 0) {
+        ogs_error("No PAA Type");
+        return NULL;
+    }
+
+    ogs_fqdn_parse(apn,
+            req->access_point_name.data, req->access_point_name.len);
+
+    ogs_trace("smf_sess_add_by_message() [APN:%s, PDN:%d, EDI:%d]",
+            apn, req->pdn_type.u8,
+            req->bearer_contexts_to_be_created.eps_bearer_id.u8);
+
+    paa = (ogs_paa_t *)req->pdn_address_allocation.data;
+
+    /* 
+     * 7.2.1 in 3GPP TS 29.274 Release 15
+     *
+     * If the new Create Session Request received by the SMF collides with
+     * an existing PDN connection context (the existing PDN connection context
+     * is identified with the triplet [IMSI, EPS Bearer ID, Interface type],
+     * where applicable Interface type here is S2a TWAN GTP-C interface or
+     * S2b ePDG GTP-C interface or S5/S8 SGW GTP-C interface, and where IMSI
+     * shall be replaced by TAC and SNR part of ME Identity for emergency
+     * attached UE without UICC or authenticated IMSI), this Create Session
+     * Request shall be treated as a request for a new session. Before creating
+     * the new session, the SMF should delete:
+     *
+     * - the existing PDN connection context, if the Create Session Request
+     *   collides with the default bearer of an existing PDN connection context;
+     * - the existing dedicated bearer context, if the Create Session Request
+     *   collides with a dedicated bearer of an existing PDN connection context.
+     */
+    sess = smf_sess_find_by_imsi_apn(req->imsi.data, req->imsi.len, apn);
+    if (sess) {
+        ogs_warn("OLD Session Release [IMSI:%s,APN:%s]",
+                sess->imsi_bcd, sess->pdn.apn);
+        smf_sess_remove(sess);
+    }
+    sess = smf_sess_add_by_imsi_apn(req->imsi.data, req->imsi.len, apn,
+                    req->pdn_type.u8,
+                    req->bearer_contexts_to_be_created.eps_bearer_id.u8, paa);
+    return sess;
+}
+
 smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi)
 {
     smf_event_t e;
@@ -725,6 +798,41 @@ smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi)
     ogs_fsm_init(&sess->sm, &e);
 
     ogs_list_add(&self.sess_list, sess);
+
+    return sess;
+}
+
+smf_sess_t *smf_sess_add_by_sbi_message(ogs_sbi_message_t *message)
+{
+    smf_sess_t *sess = NULL;
+
+    OpenAPI_sm_context_create_data_t *SMContextCreateData = NULL;
+
+    ogs_assert(message);
+    SMContextCreateData = message->SMContextCreateData;
+    ogs_assert(SMContextCreateData);
+
+    if (!SMContextCreateData->supi) {
+        ogs_error("No SUPI");
+        return NULL;
+    }
+
+    if (SMContextCreateData->pdu_session_id ==
+            OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED) {
+        ogs_error("PDU session identitiy is unassigned");
+        return NULL;
+    }
+
+    sess = smf_sess_find_by_supi_psi(
+            SMContextCreateData->supi, SMContextCreateData->pdu_session_id);
+    if (sess) {
+        ogs_warn("OLD Session Release [SUPI:%s,PDU Session identity:%d]",
+                SMContextCreateData->supi, SMContextCreateData->pdu_session_id);
+        smf_sess_remove(sess);
+    }
+
+    sess = smf_sess_add_by_supi_psi(
+                SMContextCreateData->supi, SMContextCreateData->pdu_session_id);
 
     return sess;
 }
@@ -839,79 +947,6 @@ smf_sess_t *smf_sess_find_by_ipv6(uint32_t *addr6)
     ogs_assert(self.ipv6_hash);
     ogs_assert(addr6);
     return (smf_sess_t *)ogs_hash_get(self.ipv6_hash, addr6, OGS_IPV6_LEN);
-}
-
-smf_sess_t *smf_sess_add_by_gtp_message(ogs_gtp_message_t *message)
-{
-    smf_sess_t *sess = NULL;
-    ogs_paa_t *paa = NULL;
-    char apn[OGS_MAX_APN_LEN];
-
-    ogs_gtp_create_session_request_t *req = &message->create_session_request;
-
-    if (req->imsi.presence == 0) {
-        ogs_error("No IMSI");
-        return NULL;
-    }
-    if (req->access_point_name.presence == 0) {
-        ogs_error("No APN");
-        return NULL;
-    }
-    if (req->bearer_contexts_to_be_created.presence == 0) {
-        ogs_error("No Bearer");
-        return NULL;
-    }
-    if (req->bearer_contexts_to_be_created.eps_bearer_id.presence == 0) {
-        ogs_error("No EPS Bearer ID");
-        return NULL;
-    }
-    if (req->pdn_type.presence == 0) {
-        ogs_error("No PDN Type");
-        return NULL;
-    }
-
-    if (req->pdn_address_allocation.presence == 0) {
-        ogs_error("No PAA Type");
-        return NULL;
-    }
-
-    ogs_fqdn_parse(apn,
-            req->access_point_name.data, req->access_point_name.len);
-
-    ogs_trace("smf_sess_add_by_message() [APN:%s, PDN:%d, EDI:%d]",
-            apn, req->pdn_type.u8,
-            req->bearer_contexts_to_be_created.eps_bearer_id.u8);
-
-    paa = (ogs_paa_t *)req->pdn_address_allocation.data;
-
-    /* 
-     * 7.2.1 in 3GPP TS 29.274 Release 15
-     *
-     * If the new Create Session Request received by the SMF collides with
-     * an existing PDN connection context (the existing PDN connection context
-     * is identified with the triplet [IMSI, EPS Bearer ID, Interface type],
-     * where applicable Interface type here is S2a TWAN GTP-C interface or
-     * S2b ePDG GTP-C interface or S5/S8 SGW GTP-C interface, and where IMSI
-     * shall be replaced by TAC and SNR part of ME Identity for emergency
-     * attached UE without UICC or authenticated IMSI), this Create Session
-     * Request shall be treated as a request for a new session. Before creating
-     * the new session, the SMF should delete:
-     *
-     * - the existing PDN connection context, if the Create Session Request
-     *   collides with the default bearer of an existing PDN connection context;
-     * - the existing dedicated bearer context, if the Create Session Request
-     *   collides with a dedicated bearer of an existing PDN connection context.
-     */
-    sess = smf_sess_find_by_imsi_apn(req->imsi.data, req->imsi.len, apn);
-    if (sess) {
-        ogs_warn("OLD Session Release [IMSI:%s,APN:%s]",
-                sess->imsi_bcd, sess->pdn.apn);
-        smf_sess_remove(sess);
-    }
-    sess = smf_sess_add_by_imsi_apn(req->imsi.data, req->imsi.len, apn,
-                    req->pdn_type.u8,
-                    req->bearer_contexts_to_be_created.eps_bearer_id.u8, paa);
-    return sess;
 }
 
 smf_bearer_t *smf_bearer_add(smf_sess_t *sess)

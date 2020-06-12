@@ -231,6 +231,7 @@ smf_sess_t *smf_sess_add_by_imsi_apn(
         uint8_t *imsi, int imsi_len, char *apn,
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *addr);
 
+smf_sess_t *smf_sess_add_by_sbi_message(ogs_sbi_message_t *message);
 smf_sess_t *smf_sess_add_by_supi_psi(char *supi, uint8_t psi);
 
 int smf_sess_remove(smf_sess_t *sess);
