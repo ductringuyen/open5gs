@@ -1177,6 +1177,9 @@ void amf_ue_remove(amf_ue_t *amf_ue)
         ogs_free(amf_ue->supi);
     }
 
+    if (amf_ue->pei)
+        ogs_free(amf_ue->pei);
+
     if (amf_ue->sbi.request)
         ogs_sbi_request_free(amf_ue->sbi.request);
 

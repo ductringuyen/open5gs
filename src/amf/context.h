@@ -227,6 +227,7 @@ struct amf_ue_s {
     char            *supi; /* TS33.501 : SUPI */
     ogs_nas_5gs_mobile_identity_imsi_t nas_mobile_identity_imsi;
 
+    char            *pei;
     bool            imeisv_presence;
     uint8_t         imeisv[OGS_MAX_IMEISV_LEN];
     int             imeisv_len;

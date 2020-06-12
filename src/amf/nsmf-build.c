@@ -60,6 +60,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     plmn_id_nid.nid = NULL;
     SMContextCreateData.serving_network = &plmn_id_nid;
 
+    SMContextCreateData.supi = amf_ue->supi;
+    SMContextCreateData.pei = amf_ue->pei;
+    SMContextCreateData.pdu_session_id = *pdu_session_id;
     SMContextCreateData.an_type = amf_ue->nas.access_type; 
 
     memset(&header, 0, sizeof(header));
