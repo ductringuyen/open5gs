@@ -1048,13 +1048,13 @@ static int parse_multipart(
     for (i = 0; i < data.num_of_part; i++) {
         SWITCH(data.part[i].content_type)
         CASE(OGS_SBI_CONTENT_JSON_TYPE)
-            http->part[http->num_of_part].content_type =
-                data.part[i].content_type;
             parse_json(message,
                     data.part[i].content_type, data.part[i].content);
 
             if (data.part[i].content_id)
                 ogs_free(data.part[i].content_id);
+            if (data.part[i].content_type)
+                ogs_free(data.part[i].content_type);
             if (data.part[i].content)
                 ogs_free(data.part[i].content);
 
