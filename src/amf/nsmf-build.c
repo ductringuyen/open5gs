@@ -32,12 +32,14 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_header_t header;
 
+    char buf[OGS_AMFIDSTRLEN];
     amf_sess_t *sess = NULL;
 
     OpenAPI_sm_context_create_data_t SMContextCreateData;
     OpenAPI_plmn_id_nid_t plmn_id_nid;
     OpenAPI_snssai_t s_nssai;
     OpenAPI_ref_to_binary_data_t n1_sm_msg;
+    OpenAPI_guami_t guami;
 
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->nas.access_type);
@@ -77,6 +79,11 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
         s_nssai.sd = ogs_s_nssai_sd_string(sess->s_nssai);
         SMContextCreateData.s_nssai = &s_nssai;
     }
+
+    ogs_assert(amf_ue->guami);
+    guami.amf_id = ogs_amf_id_to_string(&amf_ue->guami->amf_id, buf);
+    guami.plmn_id = (OpenAPI_plmn_id_t *)&plmn_id_nid;
+    SMContextCreateData.guami = &guami;
 
     SMContextCreateData.an_type = amf_ue->nas.access_type; 
 
