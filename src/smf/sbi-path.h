@@ -35,6 +35,11 @@ void smf_sbi_discover_and_send(
         OpenAPI_nf_type_e nf_type, smf_sess_t *sess, void *data,
         ogs_sbi_request_t *(*build)(smf_sess_t *sess, void *data));
 
+void smf_sbi_send_sm_context_create_error(
+        ogs_sbi_session_t *session,
+        int status, ogs_sbi_message_t *message,
+        const char *title, const char *detail);
+
 #ifdef __cplusplus
 }
 #endif
