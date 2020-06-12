@@ -273,7 +273,6 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
             return;
 
         case OGS_NAS_5GS_UL_NAS_TRANSPORT:
-            ogs_fatal("ul transport");
             gmm_handle_ul_nas_transport(
                     amf_ue, &nas_message->gmm.ul_nas_transport);
             return;

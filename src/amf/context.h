@@ -228,7 +228,6 @@ struct amf_ue_s {
     ogs_nas_5gs_mobile_identity_imsi_t nas_mobile_identity_imsi;
 
     char            *pei;
-    bool            imeisv_presence;
     uint8_t         imeisv[OGS_MAX_IMEISV_LEN];
     int             imeisv_len;
     char            imeisv_bcd[OGS_MAX_IMEISV_BCD_LEN+1];
@@ -447,6 +446,8 @@ typedef struct amf_sess_s {
     ((amf_sess_first(__aMF))->pdn))
     ogs_pdn_t       *pdn;
 #endif
+    ogs_s_nssai_t   *s_nssai;
+    char            *dnn;
 
     /* Save Protocol Configuration Options from UE */
     struct {
@@ -664,6 +665,8 @@ ogs_pdn_t *amf_pdn_find_by_dnn(amf_ue_t *amf_ue, char *dnn);
 ogs_pdn_t *amf_default_pdn(amf_ue_t *amf_ue);
 
 int amf_find_served_tai(ogs_5gs_tai_t *tai);
+ogs_s_nssai_t *amf_find_s_nssai(
+        ogs_plmn_id_t *served_plmn_id, ogs_nas_s_nssai_t *s_nssai);
 
 int amf_m_tmsi_pool_generate(void);
 amf_m_tmsi_t *amf_m_tmsi_alloc(void);

@@ -612,11 +612,9 @@ int gmm_handle_security_mode_complete(amf_ue_t *amf_ue,
                     amf_ue->imeisv_bcd);
             ogs_bcd_to_buffer(amf_ue->imeisv_bcd,
                     amf_ue->imeisv, &amf_ue->imeisv_len);
-            ogs_fatal("imeisv = %s", amf_ue->imeisv_bcd);
             if (amf_ue->pei)
                 ogs_free(amf_ue->pei);
             amf_ue->pei = ogs_msprintf("imeisv-%s", amf_ue->imeisv_bcd);
-            amf_ue->imeisv_presence = true;
             break;
         default:
             ogs_warn("[%s] Invalid IMEISV Type [%d]",
@@ -633,11 +631,17 @@ int gmm_handle_ul_nas_transport(amf_ue_t *amf_ue,
         ogs_nas_5gs_ul_nas_transport_t *ul_nas_transport)
 {
     ogs_nas_payload_container_type_t *payload_container_type = NULL;
+    ogs_nas_pdu_session_identity_2_t *pdu_session_id = NULL;
+    ogs_nas_s_nssai_t *s_nssai = NULL;
+    ogs_nas_dnn_t *dnn = NULL;
+
+    amf_sess_t *sess = NULL;
 
     ogs_assert(amf_ue);
     ogs_assert(ul_nas_transport);
 
     payload_container_type = &ul_nas_transport->payload_container_type;
+    ogs_assert(payload_container_type);
 
     if (!payload_container_type->value) {
         ogs_error("[%s] No Payload container type", amf_ue->supi);
@@ -648,12 +652,46 @@ int gmm_handle_ul_nas_transport(amf_ue_t *amf_ue,
 
     switch (payload_container_type->value) {
     case OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION:
+        pdu_session_id = &ul_nas_transport->pdu_session_id;
+        ogs_assert(pdu_session_id);
+        s_nssai = &ul_nas_transport->s_nssai;
+        ogs_assert(s_nssai);
+        dnn = &ul_nas_transport->dnn;
+        ogs_assert(dnn);
+
         if ((ul_nas_transport->presencemask &
                 OGS_NAS_5GS_UL_NAS_TRANSPORT_PDU_SESSION_ID_PRESENT) == 0) {
             ogs_error("[%s] No PDU session ID", amf_ue->supi);
             nas_5gs_send_gmm_status(amf_ue,
                 OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
             break;
+        }
+
+        pdu_session_id = &ul_nas_transport->pdu_session_id;
+        if (*pdu_session_id == OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED) {
+            ogs_error("[%s] PDU session identity is unassigned", amf_ue->supi);
+            nas_5gs_send_gmm_status(amf_ue,
+                OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
+            break;
+        }
+
+        sess = amf_sess_find_by_psi(amf_ue, *pdu_session_id);
+        if (!sess) {
+            sess = amf_sess_add(amf_ue, *pdu_session_id);
+            ogs_assert(sess);
+        }
+
+        if (ul_nas_transport->presencemask &
+                OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT) {
+            sess->s_nssai = amf_find_s_nssai(&amf_ue->tai.plmn_id, s_nssai);
+            ogs_fatal("%p", sess->s_nssai);
+        }
+
+        if (ul_nas_transport->presencemask &
+                OGS_NAS_5GS_UL_NAS_TRANSPORT_DNN_PRESENT) {
+            if (sess->dnn)
+                ogs_free(dnn);
+            sess->dnn = ogs_strdup(dnn->value);
         }
 
         amf_sbi_discover_and_send(OpenAPI_nf_type_SMF, amf_ue, ul_nas_transport,

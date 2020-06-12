@@ -1579,6 +1579,9 @@ void amf_sess_remove(amf_sess_t *sess)
     amf_bearer_remove_all(sess);
 #endif
 
+    if (sess->dnn)
+        ogs_free(sess->dnn);
+
     OGS_NAS_CLEAR_DATA(&sess->ue_pco);
     OGS_TLV_CLEAR_DATA(&sess->pgw_pco);
 
@@ -2048,6 +2051,37 @@ int amf_find_served_tai(ogs_5gs_tai_t *tai)
     }
 
     return -1;
+}
+
+ogs_s_nssai_t *amf_find_s_nssai(
+        ogs_plmn_id_t *served_plmn_id, ogs_nas_s_nssai_t *s_nssai)
+{
+    int i, j;
+
+    ogs_assert(served_plmn_id);
+    ogs_assert(s_nssai);
+
+    for (i = 0; i < amf_self()->num_of_plmn_support; i++) {
+        if (memcmp(&amf_self()->plmn_support[i].plmn_id,
+                    served_plmn_id, OGS_PLMN_ID_LEN) != 0)
+            continue;
+
+        for (j = 0; j < amf_self()->plmn_support[i].num_of_s_nssai; j++) {
+            if (amf_self()->plmn_support[i].s_nssai[j].sst !=
+                    s_nssai->sst)
+                continue;
+
+            if (s_nssai->sd.v != OGS_S_NSSAI_NO_SD_VALUE) {
+                if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
+                        s_nssai->sd.v)
+                    continue;
+            }
+
+            return &amf_self()->plmn_support[i].s_nssai[j];
+        }
+    }
+
+    return NULL;
 }
 
 int amf_m_tmsi_pool_generate()
