@@ -22,6 +22,7 @@
 #include "yuarel.h"
 
 #include "gmime/gmime.h"
+#include "contrib/multipart_parser.h"
 
 static OGS_POOL(request_pool, ogs_sbi_request_t);
 static OGS_POOL(response_pool, ogs_sbi_response_t);
@@ -255,12 +256,6 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
             break;
         END
     }
-
-#if 0
-    if (message->num_of_part) {
-    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)request->http.content, request->http.content_length);
-    }
-#endif
 
     if (message->http.content_encoding)
         ogs_sbi_header_set(request->http.headers,
@@ -911,12 +906,14 @@ static int parse_content(
         int rv, i;
 
         rv = parse_multipart(message, http);
+#if 0
         message->num_of_part = http->num_of_part;
         for (i = 0; i < message->num_of_part; i++) {
             message->part[i].content_id = http->part[i].content_id;
             message->part[i].content_subtype = http->part[i].content_subtype;
             message->part[i].pkbuf = ogs_pkbuf_copy(http->part[i].pkbuf);
         }
+#endif
 
         return rv;
     } else {
@@ -999,9 +996,68 @@ static void build_multipart(
     ogs_free(content_type);
 }
 
-static int parse_multipart(
-        ogs_sbi_message_t *sbi_message, ogs_sbi_http_message_t *http)
+static int on_header_field(
+        multipart_parser *parser, const char *at, size_t length)
 {
+    char *header = ogs_strndup(at, length);
+    ogs_fatal("header = [%s]", header);
+    return 0;
+}
+
+static int on_header_value(
+        multipart_parser *parser, const char *at, size_t length)
+{
+    char *value = ogs_strndup(at, length);
+    ogs_fatal("value = [%s]", value);
+    return 0;
+}
+
+static int on_part_data(
+        multipart_parser *parser, const char *at, size_t length)
+{
+    ogs_fatal("[%ld]", length);
+    return 0;
+}
+
+static int parse_multipart(
+        ogs_sbi_message_t *message, ogs_sbi_http_message_t *http)
+{
+    char *boundary = NULL;
+    int i;
+
+    multipart_parser_settings settings;
+    multipart_parser *parser = NULL;
+
+    ogs_assert(message);
+    ogs_assert(http);
+
+    settings.on_header_field = &on_header_field;
+    settings.on_header_value = &on_header_value;
+    settings.on_part_data = &on_part_data;
+
+    for (i = 0; i < http->content_length; i++) {
+        if (http->content[i] == '\r' && http->content[i+1] == '\n')
+            break;
+    }
+
+    boundary = ogs_strndup(http->content, i);
+    ogs_assert(boundary);
+
+    parser = multipart_parser_init(boundary, &settings);
+    ogs_assert(parser);
+
+    multipart_parser_execute(parser, http->content, http->content_length);
+
+    multipart_parser_free(parser);
+
+#if 0
+    ogs_log_hexdump(OGS_LOG_FATAL, (unsigned char *)http->content, http->content_length);
+#endif
+
+    ogs_free(boundary);
+
+    return OGS_OK;
+#if 0
     GMimeMessage *mime_message = NULL;
     GMimeParser *parser = NULL;
     GMimeStream *stream = NULL;
@@ -1117,6 +1173,7 @@ static int parse_multipart(
 
     g_object_unref(mime_message);
     ogs_pkbuf_free(pkbuf);
+#endif
 
     return OGS_OK;
 }
