@@ -250,28 +250,6 @@ char *ogs_supi_get_id(char *supi)
     return ueid;
 }
 
-char *ogs_dnn_build(char *src)
-{
-    char *dst = ogs_calloc(1, OGS_MAX_DNN_LEN+1);
-    ogs_assert(dst);
-    ogs_assert(src);
-
-    ogs_fqdn_build(dst, src, strlen(src));
-
-    return dst;
-}
-
-char *ogs_dnn_parse(char *src)
-{
-    char *dst = ogs_calloc(1, OGS_MAX_DNN_LEN+1);
-    ogs_assert(dst);
-    ogs_assert(src);
-
-    ogs_fqdn_parse(dst, src, strlen(src));
-
-    return dst;
-}
-
 int ogs_fqdn_build(char *dst, char *src, int length)
 {
     int i = 0, j = 0;

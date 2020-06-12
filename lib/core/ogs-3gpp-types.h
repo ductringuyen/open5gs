@@ -417,9 +417,6 @@ typedef struct ogs_pdn_s {
 int ogs_fqdn_build(char *dst, char *src, int len);
 int ogs_fqdn_parse(char *dst, char *src, int len);
 
-char *ogs_dnn_build(char *src);
-char *ogs_dnn_parse(char *src);
-
 /**************************************************
  * Protocol Configuration Options Structure
  * 8.13 Protocol Configuration Options (PCO) 
