@@ -683,8 +683,8 @@ int gmm_handle_ul_nas_transport(amf_ue_t *amf_ue,
 
         if (ul_nas_transport->presencemask &
                 OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT) {
+            s_nssai->sd = ogs_be24toh(s_nssai->sd);
             sess->s_nssai = amf_find_s_nssai(&amf_ue->tai.plmn_id, s_nssai);
-            ogs_fatal("%p", sess->s_nssai);
         }
 
         if (ul_nas_transport->presencemask &

@@ -32,6 +32,8 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_sbi_server_t *server = NULL;
     ogs_sbi_header_t header;
 
+    amf_sess_t *sess = NULL;
+
     OpenAPI_sm_context_create_data_t SMContextCreateData;
     OpenAPI_plmn_id_nid_t plmn_id_nid;
     OpenAPI_ref_to_binary_data_t n1_sm_msg;
@@ -43,6 +45,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     ogs_assert(payload_container);
     pdu_session_id = &ul_nas_transport->pdu_session_id;
     ogs_assert(pdu_session_id);
+
+    sess = amf_sess_find_by_psi(amf_ue, *pdu_session_id);
+    ogs_assert(sess);
 
     memset(&sbi_message, 0, sizeof(sbi_message));
     sbi_message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
@@ -62,7 +67,9 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
 
     SMContextCreateData.supi = amf_ue->supi;
     SMContextCreateData.pei = amf_ue->pei;
-    SMContextCreateData.pdu_session_id = *pdu_session_id;
+    SMContextCreateData.pdu_session_id = sess->psi;
+    SMContextCreateData.dnn = sess->dnn;
+
     SMContextCreateData.an_type = amf_ue->nas.access_type; 
 
     memset(&header, 0, sizeof(header));
@@ -71,7 +78,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     header.resource.component[0] = amf_ue->supi;
     header.resource.component[1] =
         (char *)OGS_SBI_RESOURCE_NAME_SM_CONTEXT_STATUS;
-    header.resource.component[2] = ogs_msprintf("%d", *pdu_session_id);
+    header.resource.component[2] = ogs_msprintf("%d", sess->psi);
 
     server = ogs_list_first(&ogs_sbi_self()->server_list);
     ogs_assert(server);
