@@ -418,7 +418,7 @@ static void check_multi_info(ogs_sbi_client_t *client)
                 /* remove https://localhost:8000 */
                 response->h.uri = ogs_strdup(url);
 
-                response->http.content = ogs_strdup(conn->memory);
+                response->http.content = ogs_memdup(conn->memory, conn->size);
                 response->http.content_length = conn->size;
 
                 if (content_type)
