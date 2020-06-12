@@ -41,7 +41,6 @@ sbi_cc_flags = ['-DOGS_SBI_COMPILATION']
 libgnutls_dep = cc.find_library('gnutls', required : true)
 libmicrohttpd_dep = dependency('libmicrohttpd', version: '>=0.9.40')
 libcurl_dep = dependency('libcurl')
-libgmime_dep = dependency('gmime-3.0')
 
 libsbi = library('ogssbi',
     sources : libsbi_sources,
@@ -54,7 +53,6 @@ libsbi = library('ogssbi',
                     libsbi_openapi_dep,
                     libgnutls_dep,
                     libmicrohttpd_dep,
-                    libgmime_dep,
                     libcurl_dep],
     install : true)
 
@@ -67,5 +65,4 @@ libsbi_dep = declare_dependency(
                     libsbi_openapi_dep,
                     libgnutls_dep,
                     libmicrohttpd_dep,
-                    libgmime_dep,
                     libcurl_dep])

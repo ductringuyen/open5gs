@@ -21,7 +21,6 @@
 #include "ogs-crypt.h"
 #include "yuarel.h"
 
-#include "gmime/gmime.h"
 #include "contrib/multipart_parser.h"
 
 static OGS_POOL(request_pool, ogs_sbi_request_t);
@@ -1101,125 +1100,6 @@ static int parse_multipart(
 
     if (data.header_field)
         ogs_free(data.header_field);
-
-    return OGS_OK;
-#if 0
-    GMimeMessage *mime_message = NULL;
-    GMimeParser *parser = NULL;
-    GMimeStream *stream = NULL;
-    GMimePartIter *iter = NULL;
-
-    ogs_pkbuf_t *pkbuf = NULL;
-
-    ogs_assert(sbi_message);
-    ogs_assert(http);
-
-    if (!http->content)
-        return OGS_OK;
-
-    ogs_assert(sbi_message->http.content_type);
-    ogs_assert(http->content_length);
-
-    pkbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
-    ogs_pkbuf_put(pkbuf, OGS_MAX_SDU_LEN);
-    ogs_snprintf((char *)pkbuf->data, OGS_MAX_SDU_LEN, "%s: %s\r\n\r\n",
-            OGS_SBI_CONTENT_TYPE, sbi_message->http.content_type);
-    ogs_pkbuf_trim(pkbuf, strlen((char*)pkbuf->data));
-    ogs_pkbuf_put_data(pkbuf, http->content, http->content_length);
-
-    stream = g_mime_stream_mem_new_with_buffer(
-            (const char *)pkbuf->data, pkbuf->len);
-    if (!stream) {
-        ogs_error("g_mime_stream_mem_new_with_buffer() failed");
-        return OGS_ERROR;
-    }
-    parser = g_mime_parser_new_with_stream(stream);
-    if (!parser) {
-        ogs_error("g_mime_parser_new_with_stream() failed");
-        return OGS_ERROR;
-    }
-    g_object_unref(stream);
-
-    mime_message = g_mime_parser_construct_message(parser, NULL);
-    if (!mime_message) {
-        ogs_error("g_mime_parser_construct_message() failed");
-        return OGS_ERROR;
-    }
-    g_object_unref(parser);
-
-    iter = g_mime_part_iter_new(mime_message->mime_part);
-    if (g_mime_part_iter_is_valid(iter)) {
-        GMimeObject *parent = g_mime_part_iter_get_parent(iter);
-
-        do {
-            GMimeObject *current = g_mime_part_iter_get_current(iter);
-            GMimePart *part = (GMimePart *)current;
-
-            if (GMIME_IS_MULTIPART(parent) && GMIME_IS_PART(current)) {
-                const GMimeContentType *type = NULL;
-                GMimeDataWrapper *content = NULL;
-                int len;
-
-                type = g_mime_object_get_content_type(current);
-                if (!type) {
-                    ogs_error("No Content-Type");
-                    break;
-                }
-
-                content = g_mime_part_get_content(part);
-                if (!content) {
-                    ogs_error("No Content");
-                    break;
-                }
-
-                stream = g_mime_stream_mem_new();
-                ogs_assert(stream);
-                g_mime_data_wrapper_write_to_stream(content, stream);
-
-                ogs_assert(GMIME_STREAM_MEM(stream)->buffer);
-                SWITCH(type->subtype)
-                CASE(OGS_SBI_APPLICATION_JSON_TYPE)
-                    parse_json(sbi_message,
-                            (char *)OGS_SBI_CONTENT_JSON_TYPE,
-                            (char *)GMIME_STREAM_MEM(stream)->buffer->data);
-                    break;
-
-                CASE(OGS_SBI_APPLICATION_5GNAS_TYPE)
-                CASE(OGS_SBI_APPLICATION_NGAP_TYPE)
-                    if (http->num_of_part < OGS_SBI_MAX_NUM_OF_PART) {
-                        len = GMIME_STREAM_MEM(stream)->buffer->len;
-                        if (!len) {
-                            ogs_error("No content length");
-                            break;
-                        }
-
-                        http->part[http->num_of_part].content_id =
-                            ogs_strdup(g_mime_object_get_content_id(current));
-                        http->part[http->num_of_part].content_subtype =
-                            ogs_strdup(type->subtype);
-                        http->part[http->num_of_part].pkbuf =
-                            ogs_pkbuf_alloc(NULL, len);
-                        ogs_pkbuf_put_data(
-                            http->part[http->num_of_part].pkbuf,
-                            GMIME_STREAM_MEM(stream)->buffer->data, len);
-                        http->num_of_part++;
-                    }
-                    break;
-
-                DEFAULT
-                    ogs_error("Unknown subtype [%s]", type->subtype);
-                END
-
-                g_object_unref(stream);
-            }
-        } while (g_mime_part_iter_next(iter));
-    }
-
-    g_mime_part_iter_free(iter);
-
-    g_object_unref(mime_message);
-    ogs_pkbuf_free(pkbuf);
-#endif
 
     return OGS_OK;
 }
