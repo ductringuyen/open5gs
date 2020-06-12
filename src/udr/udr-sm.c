@@ -103,7 +103,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                     ogs_error("Invalid HTTP method [%s]",
                             message.h.method);
                     ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                            OGS_SBI_HTTP_STATUS_FORBIDDEN,
                             &message, "Invalid HTTP method", message.h.method);
                 END
                 break;
@@ -112,7 +112,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                 ogs_error("Invalid resource name [%s]",
                         message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                        OGS_SBI_HTTP_STATUS_BAD_REQUEST, &message,
                         "Unknown resource name",
                         message.h.resource.component[0]);
             END
@@ -143,7 +143,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                             ogs_error("Invalid HTTP method [%s]",
                                     message.h.method);
                             ogs_sbi_server_send_error(session,
-                                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                                    OGS_SBI_HTTP_STATUS_FORBIDDEN,
                                     &message, "Invalid HTTP method",
                                     message.h.method);
                         END
@@ -152,7 +152,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                         ogs_error("Invalid resource name [%s]",
                                 message.h.resource.component[2]);
                         ogs_sbi_server_send_error(session,
-                                OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                                OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                                 &message, "Unknown resource name",
                                 message.h.resource.component[2]);
                     END
@@ -162,7 +162,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
                 ogs_error("Invalid resource name [%s]",
                         message.h.resource.component[0]);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                        OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                         &message, "Unknown resource name",
                         message.h.resource.component[0]);
             END
@@ -171,7 +171,7 @@ void udr_state_operational(ogs_fsm_t *s, udr_event_t *e)
         DEFAULT
             ogs_error("Invalid API name [%s]", message.h.service.name);
             ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                    OGS_SBI_HTTP_STATUS_BAD_REQUEST, &message,
                     "Invalid API name", message.h.resource.component[0]);
         END
 

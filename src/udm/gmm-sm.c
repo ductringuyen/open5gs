@@ -77,8 +77,8 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     ogs_error("[%s] Invalid resource name [%s]",
                             udm_ue->suci, message->h.resource.component[1]);
                     ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                            "Invalid HTTP method", message->h.method);
+                            OGS_SBI_HTTP_STATUS_BAD_REQUEST, message,
+                            "Invalid resource name", message->h.method);
                 END
                 break;
 
@@ -86,7 +86,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 ogs_error("[%s] Invalid HTTP method [%s]",
                         udm_ue->suci, message->h.method);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                        OGS_SBI_HTTP_STATUS_FORBIDDEN, message,
                         "Invalid HTTP method", message->h.method);
             END
             break;
@@ -103,7 +103,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     ogs_error("[%s] Invalid resource name [%s]",
                             udm_ue->suci, message->h.resource.component[1]);
                     ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                            OGS_SBI_HTTP_STATUS_BAD_REQUEST, message,
                             "Invalid HTTP method", message->h.method);
                 END
                 break;
@@ -111,7 +111,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                 ogs_error("[%s] Invalid HTTP method [%s]",
                         udm_ue->suci, message->h.method);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                        OGS_SBI_HTTP_STATUS_FORBIDDEN, message,
                         "Invalid HTTP method", message->h.method);
             END
             break;
@@ -141,15 +141,15 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
                     ogs_error("[%s] Invalid resource name [%s]",
                             udm_ue->suci, message->h.resource.component[1]);
                     ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                            "Invalid HTTP method", message->h.method);
+                            OGS_SBI_HTTP_STATUS_BAD_REQUEST, message,
+                            "Invalid resource name", message->h.method);
                 END
                 break;
             DEFAULT
                 ogs_error("[%s] Invalid HTTP method [%s]",
                         udm_ue->supi, message->h.method);
                 ogs_sbi_server_send_error(session,
-                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                        OGS_SBI_HTTP_STATUS_NOT_FOUND, message,
                         "Invalid HTTP method", message->h.method);
             END
             break;
@@ -157,7 +157,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
         DEFAULT
             ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                    OGS_SBI_HTTP_STATUS_BAD_REQUEST, message,
                     "Invalid API name", message->h.service.name);
         END
         break;
@@ -229,7 +229,7 @@ void udm_gmm_state_operational(ogs_fsm_t *s, udm_event_t *e)
         DEFAULT
             ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                    OGS_SBI_HTTP_STATUS_BAD_REQUEST, message,
                     "Invalid API name", message->h.resource.component[0]);
         END
         break;

@@ -105,7 +105,7 @@ void ausf_ue_state_operational(ogs_fsm_t *s, ausf_event_t *e)
             ogs_error("[%s] Invalid HTTP method [%s]",
                     ausf_ue->suci, message->h.method);
             ogs_sbi_server_send_error(session,
-                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
+                    OGS_SBI_HTTP_STATUS_FORBIDDEN, message,
                     "Invalid HTTP method", message->h.method);
         END
 
