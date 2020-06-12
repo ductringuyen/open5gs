@@ -116,6 +116,10 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
         OpenAPI_ue_context_in_smf_data_free(message->UeContextInSmfData);
     if (message->SMContextCreateData)
         OpenAPI_sm_context_create_data_free(message->SMContextCreateData);
+    if (message->SMContextCreatedData)
+        OpenAPI_sm_context_created_data_free(message->SMContextCreatedData);
+    if (message->SMContextCreateError)
+        OpenAPI_sm_context_create_error_free(message->SMContextCreateError);
 
     for (i = 0; i < message->num_of_part; i++) {
         if (message->part[i].pkbuf)
@@ -472,6 +476,14 @@ static char *build_json(ogs_sbi_message_t *message)
         item = OpenAPI_sm_context_create_data_convertToJSON(
                 message->SMContextCreateData);
         ogs_assert(item);
+    } else if (message->SMContextCreatedData) {
+        item = OpenAPI_sm_context_created_data_convertToJSON(
+                message->SMContextCreatedData);
+        ogs_assert(item);
+    } else if (message->SMContextCreateError) {
+        item = OpenAPI_sm_context_create_error_convertToJSON(
+                message->SMContextCreateError);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -584,7 +596,14 @@ static int parse_json(ogs_sbi_message_t *message,
             CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
                 SWITCH(message->h.method)
                 CASE(OGS_SBI_HTTP_METHOD_POST)
-                    if (message->res_status ==
+                    if (message->res_status == 0) {
+                        message->AuthenticationInfo =
+                            OpenAPI_authentication_info_parseFromJSON(item);
+                        if (!message->AuthenticationInfo) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else if (message->res_status ==
                             OGS_SBI_HTTP_STATUS_CREATED) {
                         message->UeAuthenticationCtx =
                         OpenAPI_ue_authentication_ctx_parseFromJSON(item);
@@ -592,28 +611,21 @@ static int parse_json(ogs_sbi_message_t *message,
                             rv = OGS_ERROR;
                             ogs_error("JSON parse error");
                         }
-                    } else {
-                        message->AuthenticationInfo =
-                            OpenAPI_authentication_info_parseFromJSON(item);
-                        if (!message->AuthenticationInfo) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
-                        }
                     }
                     break;
                 CASE(OGS_SBI_HTTP_METHOD_PUT)
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                    if (message->res_status == 0) {
+                        message->ConfirmationData =
+                            OpenAPI_confirmation_data_parseFromJSON(item);
+                        if (!message->ConfirmationData) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
                         message->ConfirmationDataResponse =
                             OpenAPI_confirmation_data_response_parseFromJSON(
                                     item);
                         if (!message->ConfirmationDataResponse) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
-                        }
-                    } else {
-                        message->ConfirmationData =
-                            OpenAPI_confirmation_data_parseFromJSON(item);
-                        if (!message->ConfirmationData) {
                             rv = OGS_ERROR;
                             ogs_error("JSON parse error");
                         }
@@ -637,19 +649,19 @@ static int parse_json(ogs_sbi_message_t *message,
             CASE(OGS_SBI_RESOURCE_NAME_SECURITY_INFORMATION)
                 SWITCH(message->h.resource.component[2])
                 CASE(OGS_SBI_RESOURCE_NAME_GENERATE_AUTH_DATA)
-                    if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        message->AuthenticationInfoResult =
-                        OpenAPI_authentication_info_result_parseFromJSON(
-                                item);
-                        if (!message->AuthenticationInfoResult) {
-                            rv = OGS_ERROR;
-                            ogs_error("JSON parse error");
-                        }
-                    } else {
+                    if (message->res_status == 0) {
                         message->AuthenticationInfoRequest =
                         OpenAPI_authentication_info_request_parseFromJSON(
                                 item);
                         if (!message->AuthenticationInfoRequest) {
+                            rv = OGS_ERROR;
+                            ogs_error("JSON parse error");
+                        }
+                    } else if (message->res_status == OGS_SBI_HTTP_STATUS_OK) {
+                        message->AuthenticationInfoResult =
+                        OpenAPI_authentication_info_result_parseFromJSON(
+                                item);
+                        if (!message->AuthenticationInfoResult) {
                             rv = OGS_ERROR;
                             ogs_error("JSON parse error");
                         }
@@ -839,11 +851,38 @@ static int parse_json(ogs_sbi_message_t *message,
         CASE(OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION)
             SWITCH(message->h.resource.component[0])
             CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
-                message->SMContextCreateData =
-                    OpenAPI_sm_context_create_data_parseFromJSON(item);
-                if (!message->SMContextCreateData) {
-                    rv = OGS_ERROR;
-                    ogs_error("JSON parse error");
+                if (message->res_status == 0) {
+                    message->SMContextCreateData =
+                        OpenAPI_sm_context_create_data_parseFromJSON(item);
+                    if (!message->SMContextCreateData) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                } else if (message->res_status == OGS_SBI_HTTP_STATUS_CREATED) {
+                    message->SMContextCreatedData =
+                        OpenAPI_sm_context_created_data_parseFromJSON(item);
+                    if (!message->SMContextCreatedData) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                } else if (message->res_status ==
+                        OGS_SBI_HTTP_STATUS_BAD_REQUEST ||
+                            message->res_status ==
+                                OGS_SBI_HTTP_STATUS_FORBIDDEN ||
+                            message->res_status ==
+                                OGS_SBI_HTTP_STATUS_NOT_FOUND ||
+                            message->res_status ==
+                                OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR ||
+                            message->res_status ==
+                                OGS_SBI_HTTP_STATUS_SERVICE_UNAVAILABLE ||
+                            message->res_status ==
+                                OGS_SBI_HTTP_STATUS_GATEWAY_TIMEOUT) {
+                    message->SMContextCreateError =
+                        OpenAPI_sm_context_create_error_parseFromJSON(item);
+                    if (!message->SMContextCreateError) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
                 }
                 break;
 

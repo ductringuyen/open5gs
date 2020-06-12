@@ -227,6 +227,8 @@ typedef struct ogs_sbi_message_s {
     OpenAPI_smf_selection_subscription_data_t *SmfSelectionSubscriptionData;
     OpenAPI_ue_context_in_smf_data_t *UeContextInSmfData;
     OpenAPI_sm_context_create_data_t *SMContextCreateData;
+    OpenAPI_sm_context_created_data_t *SMContextCreatedData;
+    OpenAPI_sm_context_create_error_t *SMContextCreateError;
 
     ogs_sbi_links_t *links;
 

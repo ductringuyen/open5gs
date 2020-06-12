@@ -48,6 +48,8 @@
 #include "model/smf_selection_subscription_data.h"
 #include "model/ue_context_in_smf_data.h"
 #include "model/sm_context_create_data.h"
+#include "model/sm_context_created_data.h"
+#include "model/sm_context_create_error.h"
 
 #include "custom/links.h"
 
