@@ -74,7 +74,7 @@ ogs_sbi_request_t *amf_nsmf_pdu_session_build_create_sm_context(
     SMContextCreateData.dnn = sess->dnn;
 
     memset(&s_nssai, 0, sizeof(s_nssai));
-    if (sess->s_nssai) {
+    if (sess->s_nssai && sess->s_nssai->sst) {
         s_nssai.sst = sess->s_nssai->sst;
         s_nssai.sd = ogs_s_nssai_sd_string(sess->s_nssai);
         SMContextCreateData.s_nssai = &s_nssai;
