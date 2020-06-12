@@ -49,13 +49,6 @@ typedef struct connection_s {
     ogs_timer_t *timer;
     CURL *easy;
 
-    curl_mime *mime;
-    int num_of_part;
-    struct {
-        char *content_id;
-        char *content_type;
-    } part[OGS_SBI_MAX_NUM_OF_PART];
-
     char error[CURL_ERROR_SIZE];
 
     ogs_sbi_client_t *client;
@@ -279,60 +272,6 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     ogs_assert(conn->easy);
 
     /* HTTP Method */
-#if 0
-    if (request->http.num_of_part) {
-        curl_mimepart *part;
-        struct curl_slist *slist = NULL;
-
-        conn->mime = curl_mime_init(conn->easy);
-        ogs_assert(conn->mime);
-
-        conn->num_of_part = request->http.num_of_part;
-        for (i = 0; i < request->http.num_of_part; i++) {
-            part = curl_mime_addpart(conn->mime);
-            ogs_assert(part);
-
-            ogs_assert(request->http.part[i].pkbuf);
-            curl_mime_data(part,
-                (const void *)request->http.part[i].pkbuf->data,
-                request->http.part[i].pkbuf->len);
-
-            ogs_assert(request->http.part[i].content_subtype);
-            conn->part[i].content_type = ogs_msprintf("%s/%s",
-                    OGS_SBI_APPLICATION_TYPE,
-                    request->http.part[i].content_subtype);
-            ogs_assert(conn->part[i].content_type);
-
-            curl_mime_type(part, conn->part[i].content_type);
-            if (request->http.part[i].content_id) {
-                conn->part[i].content_id = ogs_msprintf("%s: %s",
-                        OGS_SBI_CONTENT_ID, request->http.part[i].content_id);
-                ogs_assert(conn->part[i].content_id);
-                slist = curl_slist_append(NULL, conn->part[i].content_id);
-                ogs_assert(slist);
-                curl_mime_headers(part, slist, 1);
-            }
-        }
-
-        curl_easy_setopt(conn->easy, CURLOPT_MIMEPOST, conn->mime);
-    } else {
-        if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
-            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PATCH) == 0 ||
-            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_DELETE) == 0 ||
-            strcmp(request->h.method, OGS_SBI_HTTP_METHOD_POST) == 0) {
-
-            curl_easy_setopt(conn->easy,
-                    CURLOPT_CUSTOMREQUEST, request->h.method);
-            if (request->http.content) {
-                curl_easy_setopt(conn->easy,
-                        CURLOPT_POSTFIELDS, request->http.content);
-                curl_easy_setopt(conn->easy,
-                    CURLOPT_POSTFIELDSIZE, request->http.content_length);
-            }
-        }
-    }
-#endif
-
     if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
         strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PATCH) == 0 ||
         strcmp(request->h.method, OGS_SBI_HTTP_METHOD_DELETE) == 0 ||
@@ -394,14 +333,6 @@ static void connection_remove(connection_t *conn)
     ogs_assert(client->multi);
     curl_multi_remove_handle(client->multi, conn->easy);
     curl_easy_cleanup(conn->easy);
-
-    if (conn->mime)
-        curl_mime_free(conn->mime);
-
-    for (i = 0; i < conn->num_of_part; i++) {
-        ogs_free(conn->part[i].content_id);
-        ogs_free(conn->part[i].content_type);
-    }
 
     ogs_assert(conn->method);
     ogs_free(conn->method);
