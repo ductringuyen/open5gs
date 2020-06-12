@@ -526,7 +526,7 @@ static void *sess_hash_keygen(uint8_t *out, int *out_len,
     return out;
 }
 
-smf_sess_t *smf_sess_add(
+smf_sess_t *smf_sess_add_by_imsi_apn(
         uint8_t *imsi, int imsi_len, char *apn, 
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *paa)
 {
@@ -748,7 +748,7 @@ smf_sess_t *smf_sess_find_by_ipv6(uint32_t *addr6)
     return (smf_sess_t *)ogs_hash_get(self.ipv6_hash, addr6, OGS_IPV6_LEN);
 }
 
-smf_sess_t *smf_sess_add_by_message(ogs_gtp_message_t *message)
+smf_sess_t *smf_sess_add_by_gtp_message(ogs_gtp_message_t *message)
 {
     smf_sess_t *sess = NULL;
     ogs_paa_t *paa = NULL;
@@ -815,7 +815,7 @@ smf_sess_t *smf_sess_add_by_message(ogs_gtp_message_t *message)
                 sess->imsi_bcd, sess->pdn.apn);
         smf_sess_remove(sess);
     }
-    sess = smf_sess_add(req->imsi.data, req->imsi.len, apn,
+    sess = smf_sess_add_by_imsi_apn(req->imsi.data, req->imsi.len, apn,
                     req->pdn_type.u8,
                     req->bearer_contexts_to_be_created.eps_bearer_id.u8, paa);
     return sess;

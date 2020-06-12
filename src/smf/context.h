@@ -219,9 +219,9 @@ smf_context_t *smf_self(void);
 
 int smf_context_parse_config(void);
 
-smf_sess_t *smf_sess_add_by_message(ogs_gtp_message_t *message);
+smf_sess_t *smf_sess_add_by_gtp_message(ogs_gtp_message_t *message);
 
-smf_sess_t *smf_sess_add(
+smf_sess_t *smf_sess_add_by_imsi_apn(
         uint8_t *imsi, int imsi_len, char *apn,
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *addr);
 
