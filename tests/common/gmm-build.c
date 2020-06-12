@@ -265,7 +265,7 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
 
     ul_nas_transport->presencemask |=
             OGS_NAS_5GS_UL_NAS_TRANSPORT_S_NSSAI_PRESENT;
-    s_nssai->length = test_self()->plmn_support[0].s_nssai[0].len;
+    s_nssai->length = 4;
     s_nssai->sst = test_self()->plmn_support[0].s_nssai[0].sst;
     s_nssai->sd = ogs_htobe24(test_self()->plmn_support[0].s_nssai[0].sd);
 

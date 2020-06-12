@@ -437,7 +437,7 @@ ED2(uint8_t type:4;,
 #define OGS_NAX_MAX_NUM_OF_MAPPED_S_NSSAI 10
 typedef struct ogs_nas_mapped_nssai_s {
     uint8_t length;
-    ogs_s_nssai_t s_nssai[OGS_NAX_MAX_NUM_OF_MAPPED_S_NSSAI];
+    ogs_nas_s_nssai_t s_nssai[OGS_NAX_MAX_NUM_OF_MAPPED_S_NSSAI];
 } ogs_nas_mapped_nssai_t;
 
 /* 9.11.3.33 message container
@@ -460,7 +460,7 @@ ED4(uint8_t type:4;,
  * O TLV 4-72 */
 typedef struct ogs_nas_nssai_s {
     uint8_t length;
-    ogs_s_nssai_t s_nssai[OGS_MAX_NUM_OF_S_NSSAI];
+    ogs_nas_s_nssai_t s_nssai[OGS_MAX_NUM_OF_S_NSSAI];
 } __attribute__ ((packed)) ogs_nas_nssai_t;
 
 /* 9.11.3.37A NSSAI inclusion mode
@@ -529,7 +529,7 @@ typedef struct ogs_nas_rejected_nssai_s {
     struct {
 ED2(uint8_t len:4;,
     uint8_t value:4;)
-        ogs_s_nssai_t s_nssai;
+        ogs_nas_s_nssai_t s_nssai;
     } rejected[OGS_MAX_NUM_OF_S_NSSAI];
 } ogs_nas_rejected_nssai_t;
 

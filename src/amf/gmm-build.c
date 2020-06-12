@@ -110,17 +110,17 @@ ogs_pkbuf_t *gmm_build_registration_accept(amf_ue_t *amf_ue)
                     amf_self()->plmn_support[i].s_nssai[j].sst,
                     amf_self()->plmn_support[i].s_nssai[j].sd.v);
             if (num_of_nssai < OGS_MAX_NUM_OF_S_NSSAI) {
-                allowed_nssai->s_nssai[num_of_nssai].len =
-                        amf_self()->plmn_support[i].s_nssai[j].len;
                 allowed_nssai->s_nssai[num_of_nssai].sst =
                         amf_self()->plmn_support[i].s_nssai[j].sst;
+                allowed_nssai->s_nssai[num_of_nssai].length = 1;
                 if (amf_self()->plmn_support[i].s_nssai[j].sd.v !=
                         OGS_S_NSSAI_NO_SD_VALUE) {
                     allowed_nssai->s_nssai[num_of_nssai].sd =
                         ogs_htobe24(amf_self()->plmn_support[i].s_nssai[j].sd);
+                    allowed_nssai->s_nssai[num_of_nssai].length = 4;
                 }
                 allowed_nssai->length +=
-                    allowed_nssai->s_nssai[num_of_nssai].len;
+                    allowed_nssai->s_nssai[num_of_nssai].length;
                 num_of_nssai++;
 
             }

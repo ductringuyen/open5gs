@@ -195,7 +195,6 @@ typedef struct ogs_nr_cgi_s {
 #define OGS_MAX_NUM_OF_S_NSSAI      16
 #define OGS_S_NSSAI_NO_SD_VALUE     0xffffff
 typedef struct ogs_s_nssai_s {
-    uint8_t len;
     uint8_t sst;
     ogs_uint24_t sd;
 } __attribute__ ((packed)) ogs_s_nssai_t;
