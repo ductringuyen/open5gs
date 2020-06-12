@@ -74,6 +74,7 @@ void smf_context_init(void)
     ogs_pool_init(&smf_pf_pool, ogs_config()->pool.pf);
 
     self.imsi_apn_hash = ogs_hash_make();
+    self.supi_psi_hash = ogs_hash_make();
     self.ipv4_hash = ogs_hash_make();
     self.ipv6_hash = ogs_hash_make();
 
@@ -88,6 +89,8 @@ void smf_context_final(void)
 
     ogs_assert(self.imsi_apn_hash);
     ogs_hash_destroy(self.imsi_apn_hash);
+    ogs_assert(self.supi_psi_hash);
+    ogs_hash_destroy(self.supi_psi_hash);
     ogs_assert(self.ipv4_hash);
     ogs_hash_destroy(self.ipv4_hash);
     ogs_assert(self.ipv6_hash);
@@ -526,6 +529,14 @@ static void *imsi_apn_keygen(uint8_t *out, int *out_len,
     return out;
 }
 
+static char *supi_psi_keygen(char *supi, uint8_t psi)
+{
+    ogs_assert(supi);
+    ogs_assert(psi != OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED);
+
+    return ogs_mstrcatf(supi, "%03d", psi);
+}
+
 smf_sess_t *smf_sess_add_by_imsi_apn(
         uint8_t *imsi, int imsi_len, char *apn, 
         uint8_t pdn_type, uint8_t ebi, ogs_paa_t *paa)
@@ -735,6 +746,24 @@ smf_sess_t *smf_sess_find_by_imsi_apn(
 
     imsi_apn_keygen(keybuf, &keylen, imsi, imsi_len, apn);
     return (smf_sess_t *)ogs_hash_get(self.imsi_apn_hash, keybuf, keylen);
+}
+
+smf_sess_t *smf_sess_find_by_supi_psi(char *supi, uint8_t psi)
+{
+    smf_sess_t *sess = NULL;
+    char *keybuf = NULL;
+
+    ogs_assert(supi);
+    ogs_assert(psi != OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED);
+
+    keybuf = supi_psi_keygen(supi, psi);
+    ogs_assert(keybuf);
+
+    sess = (smf_sess_t *)ogs_hash_get(self.supi_psi_hash,
+            keybuf, strlen(keybuf));
+    ogs_free(keybuf);
+
+    return sess;
 }
 
 smf_sess_t *smf_sess_find_by_ipv4(uint32_t addr)
