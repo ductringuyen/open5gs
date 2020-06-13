@@ -188,9 +188,25 @@ struct ran_ue_s {
     amf_ue_t        *amf_ue;
 }; 
 
+#define AMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
+    do { \
+        ogs_assert(_nFInstance); \
+        if ((_nFInstance)->reference_count == 1) { \
+            ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
+            amf_nf_fsm_fini((_nFInstance)); \
+        } else { \
+            /* There is an assocation with other context */ \
+            ogs_info("[%s:%d] (%s) NF suspended", \
+                    _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
+            OGS_FSM_TRAN(&_nFInstance->sm, amf_nf_state_de_registered); \
+            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
+        } \
+        ogs_sbi_nf_instance_remove(_nFInstance); \
+    } while(0)
+
 struct amf_ue_s {
-    ogs_lnode_t     lnode;
-    ogs_fsm_t       sm;     /* A state machine */
+    ogs_sbi_object_t sbi;
+    ogs_fsm_t sm;
 
     struct {
         uint8_t message_type; /* Type of last NAS message received */
@@ -213,11 +229,6 @@ struct amf_ue_s {
         };
 
     } __attribute__ ((packed)) nas;
-
-    struct {
-        OpenAPI_nf_type_e nf_type;
-        ogs_sbi_request_t *request;
-    } sbi;
 
     /* UE identity */
 #define AMF_UE_HAVE_SUCI(__aMF) \
@@ -375,28 +386,6 @@ struct amf_ue_s {
      *    session_context_will_deleted = 0
      */
     int             session_context_will_deleted;
-
-#if 0
-    amf_csmap_t     *csmap;
-#endif
-
-#define AMF_NF_INSTANCE_CLEAR(_cAUSE, _nFInstance) \
-    do { \
-        ogs_assert(_nFInstance); \
-        if ((_nFInstance)->reference_count == 1) { \
-            ogs_info("[%s] (%s) NF removed", (_nFInstance)->id, (_cAUSE)); \
-            amf_nf_fsm_fini((_nFInstance)); \
-        } else { \
-            /* There is an assocation with other context */ \
-            ogs_info("[%s:%d] (%s) NF suspended", \
-                    _nFInstance->id, _nFInstance->reference_count, (_cAUSE)); \
-            OGS_FSM_TRAN(&_nFInstance->sm, amf_nf_state_de_registered); \
-            ogs_fsm_dispatch(&_nFInstance->sm, NULL); \
-        } \
-        ogs_sbi_nf_instance_remove(_nFInstance); \
-    } while(0)
-
-    ogs_sbi_nf_types_t nf_types;
 };
 
 #define AMF_HAVE_SMF_S1U_PATH(__sESS) \

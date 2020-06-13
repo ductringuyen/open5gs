@@ -278,8 +278,8 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
             amf_sbi_setup_client_callback(nf_instance);
 
             if (!OGS_SBI_NF_INSTANCE_GET(
-                        amf_ue->nf_types, nf_instance->nf_type))
-                ogs_sbi_nf_types_associate(amf_ue->nf_types,
+                        amf_ue->sbi.nf_types, nf_instance->nf_type))
+                ogs_sbi_nf_types_associate(amf_ue->sbi.nf_types,
                         nf_instance->nf_type, amf_nf_state_registered);
 
             /* TIME : Update validity from NRF */
@@ -300,7 +300,7 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
 
     ogs_assert(amf_ue->sbi.nf_type);
     nf_instance = OGS_SBI_NF_INSTANCE_GET(
-            amf_ue->nf_types, amf_ue->sbi.nf_type);
+            amf_ue->sbi.nf_types, amf_ue->sbi.nf_type);
     if (!nf_instance) {
         ogs_error("[%s] (NF discover) No [%s]", amf_ue->suci,
                 OpenAPI_nf_type_ToString(amf_ue->sbi.nf_type));

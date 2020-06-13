@@ -1203,8 +1203,8 @@ void amf_ue_remove(amf_ue_t *amf_ue)
     amf_pdn_remove_all(amf_ue);
 
     for (i = 0; i < OGS_SBI_MAX_NF_TYPE; i++) {
-        if (amf_ue->nf_types[i].nf_instance)
-            ogs_sbi_nf_instance_remove(amf_ue->nf_types[i].nf_instance);
+        if (amf_ue->sbi.nf_types[i].nf_instance)
+            ogs_sbi_nf_instance_remove(amf_ue->sbi.nf_types[i].nf_instance);
     }
 
     ogs_pool_free(&amf_ue_pool, amf_ue);

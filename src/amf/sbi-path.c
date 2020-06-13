@@ -125,12 +125,12 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(amf_ue_t *amf_ue)
     ogs_assert(amf_ue);
     ogs_assert(amf_ue->sbi.nf_type);
 
-    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types, OpenAPI_nf_type_NRF))
-        nrf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->sbi.nf_types, OpenAPI_nf_type_NRF))
+        nrf = ogs_sbi_nf_types_associate(amf_ue->sbi.nf_types,
                 OpenAPI_nf_type_NRF, amf_nf_state_registered);
-    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->nf_types,
+    if (!OGS_SBI_NF_INSTANCE_GET(amf_ue->sbi.nf_types,
                 amf_ue->sbi.nf_type))
-        nf = ogs_sbi_nf_types_associate(amf_ue->nf_types,
+        nf = ogs_sbi_nf_types_associate(amf_ue->sbi.nf_types,
                 amf_ue->sbi.nf_type, amf_nf_state_registered);
 
     if (nrf == false && nf == false) {
@@ -148,13 +148,13 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(amf_ue_t *amf_ue)
                 amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
-            amf_ue->nf_types[OpenAPI_nf_type_NRF].nf_instance,
+            amf_ue->sbi.nf_types[OpenAPI_nf_type_NRF].nf_instance,
             amf_ue->sbi.nf_type, OpenAPI_nf_type_AMF, amf_ue);
 
         return NULL;
     }
 
-    return amf_ue->nf_types[amf_ue->sbi.nf_type].nf_instance;
+    return amf_ue->sbi.nf_types[amf_ue->sbi.nf_type].nf_instance;
 }
 
 void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)

@@ -104,6 +104,15 @@ typedef struct ogs_sbi_nf_types_s {
     ogs_sbi_nf_instance_t *nf_instance;
 } ogs_sbi_nf_types_t[OGS_SBI_MAX_NF_TYPE];
 
+typedef struct ogs_sbi_object_s {
+    ogs_lnode_t lnode;
+
+    OpenAPI_nf_type_e nf_type;
+    ogs_sbi_request_t *request;
+
+    ogs_sbi_nf_types_t nf_types;
+} ogs_sbi_object_t;
+
 typedef struct ogs_sbi_nf_service_s {
     ogs_lnode_t lnode;
 
