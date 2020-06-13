@@ -144,7 +144,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(amf_ue_t *amf_ue)
     if (nf == false) {
         ogs_warn("[%s] Try to discover [%s]", amf_ue->suci,
                 OpenAPI_nf_type_ToString(amf_ue->sbi.nf_type));
-        ogs_timer_start(amf_ue->sbi_client_wait.timer,
+        ogs_timer_start(amf_ue->sbi.client_wait_timer,
                 amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
         ogs_nnrf_disc_send_nf_discover(
@@ -167,7 +167,7 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 
     ogs_assert(nf_instance);
 
-    ogs_timer_start(amf_ue->sbi_client_wait.timer,
+    ogs_timer_start(amf_ue->sbi.client_wait_timer,
             amf_timer_cfg(AMF_TIMER_SBI_CLIENT_WAIT)->duration);
 
     ogs_sbi_client_send_request_to_nf_instance(

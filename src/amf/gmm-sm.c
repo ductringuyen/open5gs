@@ -292,7 +292,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
 
         SWITCH(sbi_message->h.resource.component[0])
         CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
-            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+            ogs_timer_stop(amf_ue->sbi.client_wait_timer);
 
 #if 0
             if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
@@ -710,7 +710,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
 
         SWITCH(sbi_message->h.resource.component[0])
         CASE(OGS_SBI_RESOURCE_NAME_UE_AUTHENTICATIONS)
-            ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+            ogs_timer_stop(amf_ue->sbi.client_wait_timer);
 
             if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
                 sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
@@ -960,7 +960,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
         sbi_message = e->sbi.message;
         ogs_assert(sbi_message);
 
-        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+        ogs_timer_stop(amf_ue->sbi.client_wait_timer);
 
         SWITCH(sbi_message->h.resource.component[1])
         CASE(OGS_SBI_RESOURCE_NAME_REGISTRATIONS)

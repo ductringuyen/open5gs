@@ -107,6 +107,8 @@ typedef struct ogs_sbi_nf_types_s {
 typedef struct ogs_sbi_object_s {
     ogs_lnode_t lnode;
 
+    ogs_timer_t *client_wait_timer;
+
     OpenAPI_nf_type_e nf_type;
     ogs_sbi_request_t *request;
 

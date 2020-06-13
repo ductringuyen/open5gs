@@ -285,7 +285,7 @@ void amf_state_operational(ogs_fsm_t *s, amf_event_t *e)
                 SWITCH(sbi_message.h.method)
                 CASE(OGS_SBI_HTTP_METHOD_GET)
                     if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
-                        ogs_timer_stop(amf_ue->sbi_client_wait.timer);
+                        ogs_timer_stop(amf_ue->sbi.client_wait_timer);
 
                         amf_nnrf_handle_nf_discover(amf_ue, &sbi_message);
                     } else {

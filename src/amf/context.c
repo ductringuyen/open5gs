@@ -1112,7 +1112,7 @@ amf_ue_t *amf_ue_add(ran_ue_t *ran_ue)
 #endif
 
     /* Add All Timers */
-    amf_ue->sbi_client_wait.timer = ogs_timer_add(
+    amf_ue->sbi.client_wait_timer = ogs_timer_add(
             self.timer_mgr, amf_timer_sbi_client_wait_expire, amf_ue);
 
     amf_ue->t3513.timer = ogs_timer_add(
@@ -1189,7 +1189,7 @@ void amf_ue_remove(amf_ue_t *amf_ue)
 
     /* Delete All Timers */
     CLEAR_AMF_UE_ALL_TIMERS(amf_ue);
-    ogs_timer_delete(amf_ue->sbi_client_wait.timer);
+    ogs_timer_delete(amf_ue->sbi.client_wait_timer);
     ogs_timer_delete(amf_ue->t3513.timer);
     ogs_timer_delete(amf_ue->t3522.timer);
     ogs_timer_delete(amf_ue->t3550.timer);
