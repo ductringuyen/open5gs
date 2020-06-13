@@ -126,6 +126,9 @@ typedef struct smf_sess_s {
     uint8_t         psi;    /* PDU session identity */
     char            *supi_psi_keybuf;
 
+    /* Procedure transaction identity */
+    uint8_t         pti;
+
     /* PLMN ID & NID */
     ogs_plmn_id_t   plmn_id;
     char            *nid;
