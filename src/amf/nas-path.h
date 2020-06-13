@@ -51,6 +51,8 @@ void nas_5gs_send_configuration_update_command(
 
 void nas_5gs_send_gmm_status(amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t cause);
 
+void nas_5gs_send_gsm_reject(amf_ue_t *amf_ue, ogs_pkbuf_t *gsmbuf);
+
 #if 0
 void nas_5gs_send_detach_accept(amf_ue_t *amf_ue);
 

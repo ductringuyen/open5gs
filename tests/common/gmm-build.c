@@ -250,7 +250,7 @@ ogs_pkbuf_t *testgmm_build_ul_nas_transport(test_sess_t *test_sess,
         OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_5GMM;
     message.gmm.h.message_type = OGS_NAS_5GS_UL_NAS_TRANSPORT;
 
-    payload_container_type->value = OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION;
+    payload_container_type->value = payload_type;
 
     payload_container->length = payload->len;
     payload_container->buffer = payload->data;

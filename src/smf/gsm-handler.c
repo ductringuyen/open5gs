@@ -51,5 +51,13 @@ int gsm_handle_pdu_session_establishment_request(smf_sess_t *sess,
         OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST_PDU_SESSION_TYPE_PRESENT)
         sess->pdu_session_type = pdu_session_type->value;
 
+    {
+        ogs_pkbuf_t *gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+            OGS_5GSM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
+        smf_sbi_send_sm_context_create_error(session,
+                OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                "Invalid resource name", "asdfasdf", gsmbuf);
+    }
+
     return OGS_OK;
 }

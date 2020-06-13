@@ -38,6 +38,9 @@ ogs_pkbuf_t *gmm_build_authentication_reject(void);
 ogs_pkbuf_t *gmm_build_configuration_update_command(
         amf_ue_t *amf_ue, int ack, int red);
 
+ogs_pkbuf_t *gmm_build_dl_nas_transport(amf_ue_t *amf_ue,
+        uint8_t payload_type, ogs_pkbuf_t *payload);
+
 ogs_pkbuf_t *gmm_build_detach_accept(amf_ue_t *amf_ue);
 
 ogs_pkbuf_t *gmm_build_tau_accept(amf_ue_t *amf_ue);

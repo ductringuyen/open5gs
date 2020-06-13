@@ -265,6 +265,23 @@ void nas_5gs_send_gmm_status(amf_ue_t *amf_ue, ogs_nas_5gmm_cause_t cause)
     ogs_expect(rv == OGS_OK);
 }
 
+void nas_5gs_send_gsm_reject(amf_ue_t *amf_ue, ogs_pkbuf_t *gsmbuf)
+{
+    int rv;
+    ogs_pkbuf_t *gmmbuf = NULL;
+
+    ogs_assert(amf_ue);
+    ogs_assert(gsmbuf);
+
+    ogs_warn("[%s] 5GSM reject", amf_ue->suci);
+
+    gmmbuf = gmm_build_dl_nas_transport(amf_ue,
+            OGS_NAS_PAYLOAD_CONTAINER_N1_SM_INFORMATION, gsmbuf);
+    ogs_expect_or_return(gmmbuf);
+    rv = nas_5gs_send_to_downlink_nas_transport(amf_ue, gmmbuf);
+    ogs_expect_or_return(rv == OGS_OK);
+}
+
 #if 0
 void nas_5gs_send_detach_accept(amf_ue_t *amf_ue)
 {

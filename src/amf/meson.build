@@ -26,6 +26,7 @@ libamf_sources = files('''
     nudm-build.c
 
     nsmf-build.c
+    nsmf-handler.c
 
     nnrf-handler.c
     sbi-path.c

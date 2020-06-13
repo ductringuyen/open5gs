@@ -32,6 +32,7 @@
 #include "amf-path.h"
 #endif
 #include "nausf-handler.h"
+#include "nsmf-handler.h"
 #include "sbi-path.h"
 #include "amf-sm.h"
 
@@ -293,6 +294,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
         CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
             ogs_timer_stop(amf_ue->sbi_client_wait.timer);
 
+#if 0
             if (sbi_message->res_status != OGS_SBI_HTTP_STATUS_CREATED &&
                 sbi_message->res_status != OGS_SBI_HTTP_STATUS_OK) {
                 ogs_error("[%s] HTTP response error [%d]",
@@ -300,6 +302,10 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 OGS_FSM_TRAN(&amf_ue->sm, &gmm_state_exception);
                 break;
             }
+#endif
+            amf_nsmf_pdu_session_handle_create_sm_context(amf_ue, sbi_message);
+
+            break;
 
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
