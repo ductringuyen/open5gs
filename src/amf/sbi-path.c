@@ -157,7 +157,7 @@ static ogs_sbi_nf_instance_t *find_or_discover_nf_instance(amf_ue_t *amf_ue)
     return amf_ue->sbi.nf_types[amf_ue->sbi.nf_type].nf_instance;
 }
 
-void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
+void ogs_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
 {
     ogs_sbi_request_t *request = NULL;
 
@@ -174,7 +174,7 @@ void amf_sbi_send(amf_ue_t *amf_ue, ogs_sbi_nf_instance_t *nf_instance)
             nf_instance, amf_ue->sbi.request, amf_ue);
 }
 
-void amf_sbi_discover_and_send(
+bool ogs_sbi_discover_and_send(
         OpenAPI_nf_type_e nf_type, amf_ue_t *amf_ue, void *data,
         ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue, void *data))
 {
@@ -192,7 +192,18 @@ void amf_sbi_discover_and_send(
     if (!nf_instance)
         nf_instance = find_or_discover_nf_instance(amf_ue);
 
-    if (!nf_instance) return;
+    if (!nf_instance) return false;
 
-    return amf_sbi_send(amf_ue, nf_instance);
+    ogs_sbi_send(amf_ue, nf_instance);
+
+    return true;
+}
+
+void amf_ue_sbi_discover_and_send(
+        OpenAPI_nf_type_e nf_type, amf_ue_t *amf_ue, void *data,
+        ogs_sbi_request_t *(*build)(amf_ue_t *amf_ue, void *data))
+{
+    if (ogs_sbi_discover_and_send(nf_type, amf_ue, data, build) == false) {
+        ogs_fatal("asdfasdfasdf");
+    }
 }

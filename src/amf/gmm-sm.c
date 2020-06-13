@@ -431,7 +431,7 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e)
                 amf_sbi_send_authenticate(amf_ue);
             }
 #else
-            amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
+            amf_ue_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
                     amf_nausf_auth_build_authenticate);
 #endif
             OGS_FSM_TRAN(s, &gmm_state_authentication);
@@ -652,7 +652,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
+            amf_ue_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
                     amf_nausf_auth_build_authenticate);
             break;
 
@@ -832,7 +832,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
             ogs_kdf_nh_gnb(amf_ue->kamf, amf_ue->kgnb, amf_ue->nh);
             amf_ue->nhcc = 1;
 
-            amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
+            amf_ue_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue, NULL,
                     amf_nudm_uecm_build_registration);
 
             if (amf_ue->nas.message_type == OGS_NAS_5GS_REGISTRATION_REQUEST) {
@@ -864,7 +864,7 @@ void gmm_state_security_mode(ogs_fsm_t *s, amf_event_t *e)
                 break;
             }
 
-            amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
+            amf_ue_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
                     amf_nausf_auth_build_authenticate);
 
             OGS_FSM_TRAN(s, &gmm_state_authentication);
@@ -976,7 +976,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
 
             SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_PUT)
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                amf_ue_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
                         (char *)OGS_SBI_RESOURCE_NAME_AM_DATA,
                         amf_nudm_sdm_build_get);
                 break;
@@ -1016,13 +1016,13 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
                     }
                 }
 
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                amf_ue_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
                         (char *)OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA,
                         amf_nudm_sdm_build_get);
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_SMF_SELECT_DATA)
-                amf_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
+                amf_ue_sbi_discover_and_send(OpenAPI_nf_type_UDM, amf_ue,
                         (char *)OGS_SBI_RESOURCE_NAME_UE_CONTEXT_IN_SMF_DATA,
                         amf_nudm_sdm_build_get);
                 break;

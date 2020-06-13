@@ -230,7 +230,7 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
     memcpy(amf_ue->xres_star, authentication_response_parameter->res,
             authentication_response_parameter->length);
 
-    amf_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
+    amf_ue_sbi_discover_and_send(OpenAPI_nf_type_AUSF, amf_ue, NULL,
             amf_nausf_auth_build_authenticate_confirmation);
 
     return OGS_OK;
@@ -694,8 +694,9 @@ int gmm_handle_ul_nas_transport(amf_ue_t *amf_ue,
             sess->dnn = ogs_strdup(dnn->value);
         }
 
-        amf_sbi_discover_and_send(OpenAPI_nf_type_SMF, amf_ue, ul_nas_transport,
-            amf_nsmf_pdu_session_build_create_sm_context);
+        amf_ue_sbi_discover_and_send(
+                OpenAPI_nf_type_SMF, amf_ue, ul_nas_transport,
+                amf_nsmf_pdu_session_build_create_sm_context);
 
         return OGS_OK;
     default:

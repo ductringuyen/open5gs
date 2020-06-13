@@ -308,6 +308,6 @@ void amf_nnrf_handle_nf_discover(amf_ue_t *amf_ue, ogs_sbi_message_t *message)
                 amf_ue, OGS_5GMM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
         amf_ue_remove(amf_ue);
     } else {
-        amf_sbi_send(amf_ue, nf_instance);
+        ogs_sbi_send(amf_ue, nf_instance);
     }
 }
