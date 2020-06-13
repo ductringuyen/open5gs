@@ -26,6 +26,7 @@ bool smf_nsmf_handle_create_sm_context(
     ogs_sbi_session_t *session = NULL;
 
     OpenAPI_sm_context_create_data_t *SMContextCreateData = NULL;
+    OpenAPI_plmn_id_nid_t *serving_network = NULL;
 
     ogs_assert(sess);
     session = sess->session;
@@ -41,6 +42,20 @@ bool smf_nsmf_handle_create_sm_context(
                 "No SMContextCreateData", sess->supi_psi_keybuf);
         return false;
     }
+
+    serving_network = SMContextCreateData->serving_network;
+    if (!serving_network || !serving_network->mnc || !serving_network->mcc) {
+        ogs_error("[%s:%d] No servingNetwork", sess->supi, sess->psi);
+        smf_sbi_send_sm_context_create_error(session,
+                OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                "No servingNetwork", sess->supi_psi_keybuf);
+        return false;
+    }
+
+    ogs_plmn_id_build(&sess->plmn_id,
+        atoi(serving_network->mcc), atoi(serving_network->mnc),
+        strlen(serving_network->mnc));
+    sess->nid = serving_network->nid;
 
     if (SMContextCreateData->dnn) {
         if (sess->dnn) ogs_free(sess->dnn);

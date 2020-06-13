@@ -121,8 +121,13 @@ typedef struct smf_sess_s {
     /* SUPI */
     char            *supi;
     uint8_t         psi;    /* PDU session identity */
-
     char            *supi_psi_keybuf;
+
+    /* PLMN ID & NID */
+    ogs_plmn_id_t   plmn_id;
+    char            *nid;
+
+    /* DNN & S_NSSAI */
     char            *dnn;
     ogs_s_nssai_t   s_nssai;
 
