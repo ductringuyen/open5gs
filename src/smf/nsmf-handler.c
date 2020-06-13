@@ -27,6 +27,9 @@ bool smf_nsmf_handle_create_sm_context(
 
     OpenAPI_sm_context_create_data_t *SMContextCreateData = NULL;
     OpenAPI_plmn_id_nid_t *serving_network = NULL;
+    OpenAPI_ref_to_binary_data_t *n1_sm_msg = NULL;
+
+    ogs_pkbuf_t *pkbuf = NULL;
 
     ogs_assert(sess);
     session = sess->session;
@@ -66,6 +69,14 @@ bool smf_nsmf_handle_create_sm_context(
         sess->s_nssai.sst = SMContextCreateData->s_nssai->sst;
         sess->s_nssai.sd = ogs_s_nssai_sd_from_string(
                 SMContextCreateData->s_nssai->sd);
+    }
+
+    n1_sm_msg = SMContextCreateData->n1_sm_msg;
+    if (n1_sm_msg) {
+        pkbuf = ogs_sbi_find_part_by_content_id(message, n1_sm_msg->content_id);
+        if (pkbuf) {
+            ogs_log_hexdump(OGS_LOG_FATAL, pkbuf->data, pkbuf->len);
+        }
     }
 
     return true;

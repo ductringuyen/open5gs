@@ -285,6 +285,9 @@ int ogs_sbi_parse_response(
 void ogs_sbi_header_set(ogs_hash_t *ht, const void *key, const void *val);
 void *ogs_sbi_header_get(ogs_hash_t *ht, const void *key);
 
+ogs_pkbuf_t *ogs_sbi_find_part_by_content_id(
+        ogs_sbi_message_t *message, char *content_id);
+
 #ifdef __cplusplus
 }
 #endif

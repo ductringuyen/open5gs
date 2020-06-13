@@ -387,6 +387,23 @@ void *ogs_sbi_header_get(ogs_hash_t *ht, const void *key)
     return ogs_hash_get(ht, key, strlen(key));
 }
 
+ogs_pkbuf_t *ogs_sbi_find_part_by_content_id(
+        ogs_sbi_message_t *message, char *content_id)
+{
+    int i;
+
+    ogs_assert(message);
+    ogs_assert(content_id);
+
+    for (i = 0; i < message->num_of_part; i++) {
+        if (message->part[i].content_id &&
+            strcmp(message->part[i].content_id, content_id) == 0)
+            return message->part[i].pkbuf;
+    }
+
+    return NULL;
+}
+
 static char *build_json(ogs_sbi_message_t *message)
 {
     char *content = NULL;
