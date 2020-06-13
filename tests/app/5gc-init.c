@@ -49,8 +49,6 @@ int app_initialize(const char *const argv[])
 
     if (ogs_config()->parameter.no_nrf == 0)
         nrf_thread = test_child_create("nrf", argv_out);
-    if (ogs_config()->parameter.no_amf == 0)
-        amf_thread = test_child_create("amf", argv_out);
     if (ogs_config()->parameter.no_ausf == 0)
         ausf_thread = test_child_create("ausf", argv_out);
     if (ogs_config()->parameter.no_udm == 0)
@@ -61,6 +59,8 @@ int app_initialize(const char *const argv[])
         upf_thread = test_child_create("upf", argv_out);
     if (ogs_config()->parameter.no_udr == 0)
         udr_thread = test_child_create("udr", argv_out);
+    if (ogs_config()->parameter.no_amf == 0)
+        amf_thread = test_child_create("amf", argv_out);
 
     return OGS_OK;;
 }
@@ -85,6 +85,8 @@ void test_5gc_init(void)
 
     ogs_sctp_init(ogs_config()->usrsctp.udp_port);
     ogs_assert(ogs_dbi_init(ogs_config()->db_uri) == OGS_OK);
+
+    ogs_msleep(1000);
 }
 
 void test_5gc_final(void)
