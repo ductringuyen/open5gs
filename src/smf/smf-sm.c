@@ -313,60 +313,48 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
                     sess = smf_sess_add_by_sbi_message(&sbi_message);
                     ogs_assert(sess);
 
-#if 0
-                    ogs_fatal("%d", sbi_message.num_of_part);
-                    ogs_fatal("%s", sbi_message.part[0].content_id);
-                    ogs_fatal("%s", sbi_message.part[0].content_type);
-                    ogs_log_hexdump(OGS_LOG_FATAL,
-                            sbi_message.part[0].pkbuf->data,
-                            sbi_message.part[0].pkbuf->len);
-#endif
                     break;
 
                 DEFAULT
-                    ogs_error("Invalid HTTP method [%s]",
-                            sbi_message.h.method);
-                    smf_sbi_send_sm_context_create_error(session,
-                            OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                            "Invalid HTTP method", sbi_message.h.method);
                 END
+
+                if (!sess) {
+                    ogs_error("Not found [%s]", sbi_message.h.method);
+                    smf_sbi_send_sm_context_create_error(session,
+                            OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                            "Not found", sbi_message.h.method, NULL);
+                    break;
+                }
+
+                ogs_assert(OGS_FSM_STATE(&sess->sm));
+
+                OGS_SETUP_SBI_SESSION(sess, session);
+
+                e->sess = sess;
+                e->sbi.message = &sbi_message;
+                ogs_fsm_dispatch(&sess->sm, e);
+                if (OGS_FSM_CHECK(&sess->sm, smf_gsm_state_exception)) {
+                    ogs_error("[%s] State machine exception", sess->supi);
+                    smf_sess_remove(sess);
+                }
+
                 break;
 
             DEFAULT
                 ogs_error("Invalid resource name [%s]",
                         sbi_message.h.resource.component[0]);
-                smf_sbi_send_sm_context_create_error(session,
-                        OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_BAD_REQUEST, &sbi_message,
                         "Invalid resource name",
                         sbi_message.h.resource.component[0]);
             END
-
-            if (!sess) {
-                ogs_error("Not found [%s]", sbi_message.h.method);
-                smf_sbi_send_sm_context_create_error(session,
-                        OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                        "Not found", sbi_message.h.method);
-                break;
-            }
-
-            ogs_assert(OGS_FSM_STATE(&sess->sm));
-
-            OGS_SETUP_SBI_SESSION(sess, session);
-
-            e->sess = sess;
-            e->sbi.message = &sbi_message;
-            ogs_fsm_dispatch(&sess->sm, e);
-            if (OGS_FSM_CHECK(&sess->sm, smf_gsm_state_exception)) {
-                ogs_error("[%s] State machine exception", sess->supi);
-                smf_sess_remove(sess);
-            }
             break;
 
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_BAD_REQUEST, &sbi_message,
-                    "Invalid API name", sbi_message.h.resource.component[0]);
+                    "Invalid API name", sbi_message.h.service.name);
         END
 
         /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */

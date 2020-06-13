@@ -199,14 +199,17 @@ void smf_sbi_discover_and_send(
     return smf_sbi_send(sess, nf_instance);
 }
 
-void smf_sbi_send_sm_context_create_error(ogs_sbi_session_t *session,
-        int status, const char *title, const char *detail)
+void smf_sbi_send_sm_context_create_error(
+        ogs_sbi_session_t *session,
+        int status, const char *title, const char *detail,
+        ogs_pkbuf_t *gsmbuf)
 {
     ogs_sbi_message_t sendmsg;
     ogs_sbi_response_t *response = NULL;
 
     OpenAPI_sm_context_create_error_t SMContextCreateError;
     OpenAPI_problem_details_t problem;
+    OpenAPI_ref_to_binary_data_t n1_sm_msg;
 
     ogs_assert(session);
 
@@ -215,14 +218,26 @@ void smf_sbi_send_sm_context_create_error(ogs_sbi_session_t *session,
     problem.title = (char*)title;
     problem.detail = (char*)detail;
 
+    memset(&sendmsg, 0, sizeof(sendmsg));
+    sendmsg.SMContextCreateError = &SMContextCreateError;
+
     memset(&SMContextCreateError, 0, sizeof(SMContextCreateError));
     SMContextCreateError.error = &problem;
 
-    memset(&sendmsg, 0, sizeof(sendmsg));
-    sendmsg.SMContextCreateError = &SMContextCreateError;
+    if (gsmbuf) {
+        SMContextCreateError.n1_sm_msg = &n1_sm_msg;
+        n1_sm_msg.content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
+        sendmsg.part[0].content_id = (char *)OGS_SBI_MULTIPART_5GSM_ID;
+        sendmsg.part[0].content_type = (char *)OGS_SBI_CONTENT_5GNAS_TYPE;
+        sendmsg.part[0].pkbuf = gsmbuf;
+        sendmsg.num_of_part = 1;
+    }
 
     response = ogs_sbi_build_response(&sendmsg, problem.status);
     ogs_assert(response);
 
     ogs_sbi_server_send_response(session, response);
+
+    if (gsmbuf)
+        ogs_pkbuf_free(gsmbuf);
 }

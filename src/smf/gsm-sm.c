@@ -36,6 +36,7 @@ void smf_gsm_state_final(ogs_fsm_t *s, smf_event_t *e)
 void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
 {
     int rv;
+    ogs_pkbuf_t *gsmbuf = NULL;
     smf_sess_t *sess = NULL;
 
     ogs_nas_5gs_message_t *nas_message = NULL;
@@ -75,27 +76,33 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
                             sbi_message->h.resource.component[0]);
+                    gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+                        OGS_5GSM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
                     smf_sbi_send_sm_context_create_error(session,
                             OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                             "Invalid resource name",
-                            sbi_message->h.resource.component[0]);
+                            sbi_message->h.resource.component[0], gsmbuf);
                 END
                 break;
 
             DEFAULT
                 ogs_error("Invalid HTTP method [%s]",
                         sbi_message->h.method);
+                gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+                    OGS_5GSM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
                 smf_sbi_send_sm_context_create_error(session,
                         OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                        "Invalid HTTP method", sbi_message->h.method);
+                        "Invalid HTTP method", sbi_message->h.method, gsmbuf);
             END
             break;
 
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message->h.service.name);
+            gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+                OGS_5GSM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE);
             smf_sbi_send_sm_context_create_error(session,
                     OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                    "Invalid API name", sbi_message->h.service.name);
+                    "Invalid API name", sbi_message->h.service.name, gsmbuf);
         END
         break;
 

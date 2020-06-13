@@ -30,7 +30,7 @@ bool smf_nsmf_handle_create_sm_context(
     OpenAPI_plmn_id_nid_t *serving_network = NULL;
     OpenAPI_ref_to_binary_data_t *n1_sm_msg = NULL;
 
-    ogs_pkbuf_t *pkbuf = NULL;
+    ogs_pkbuf_t *gsmbuf = NULL;
 
     ogs_assert(sess);
     session = sess->session;
@@ -41,18 +41,22 @@ bool smf_nsmf_handle_create_sm_context(
     SMContextCreateData = message->SMContextCreateData;
     if (!SMContextCreateData) {
         ogs_error("[%s:%d] No SMContextCreateData", sess->supi, sess->psi);
+        gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+            OGS_5GSM_CAUSE_INVALID_MANDATORY_INFORMATION);
         smf_sbi_send_sm_context_create_error(session,
                 OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                "No SMContextCreateData", sess->supi_psi_keybuf);
+                "No SMContextCreateData", sess->supi_psi_keybuf, gsmbuf);
         return false;
     }
 
     serving_network = SMContextCreateData->serving_network;
     if (!serving_network || !serving_network->mnc || !serving_network->mcc) {
         ogs_error("[%s:%d] No servingNetwork", sess->supi, sess->psi);
+        gsmbuf = gsm_build_pdu_session_establishment_reject(sess,
+            OGS_5GSM_CAUSE_INVALID_MANDATORY_INFORMATION);
         smf_sbi_send_sm_context_create_error(session,
                 OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                "No servingNetwork", sess->supi_psi_keybuf);
+                "No servingNetwork", sess->supi_psi_keybuf, gsmbuf);
         return false;
     }
 
@@ -74,9 +78,9 @@ bool smf_nsmf_handle_create_sm_context(
 
     n1_sm_msg = SMContextCreateData->n1_sm_msg;
     if (n1_sm_msg) {
-        pkbuf = ogs_sbi_find_part_by_content_id(message, n1_sm_msg->content_id);
-        if (pkbuf)
-            nas_5gs_send_sbi_to_gsm(sess, pkbuf);
+        gsmbuf = ogs_sbi_find_part_by_content_id(
+                message, n1_sm_msg->content_id);
+        if (gsmbuf) nas_5gs_send_sbi_to_gsm(sess, gsmbuf);
     }
 
     return true;
