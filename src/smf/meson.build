@@ -47,6 +47,8 @@ libsmf_sources = files('''
     nnrf-build.h
     nnrf-handler.h
     sbi-path.h
+    gsm-handler.h
+    nas-path.h
 
     init.c
     event.c
@@ -69,6 +71,7 @@ libsmf_sources = files('''
     nnrf-handler.c
     nsmf-handler.c
     sbi-path.c
+    gsm-handler.c
     nas-path.c
 '''.split())
 

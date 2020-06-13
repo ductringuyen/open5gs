@@ -528,6 +528,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(sess);
         pkbuf = e->pkbuf;
         ogs_assert(pkbuf);
+
         if (ogs_nas_5gsm_decode(&nas_message, pkbuf) != OGS_OK) {
             ogs_error("ogs_nas_5gsm_decode() failed");
             ogs_pkbuf_free(pkbuf);
@@ -537,11 +538,10 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(sess);
         ogs_assert(OGS_FSM_STATE(&sess->sm));
 
-        e->sess = sess;
         e->nas.message = &nas_message;
-
         ogs_fsm_dispatch(&sess->sm, e);
         if (OGS_FSM_CHECK(&sess->sm, smf_gsm_state_exception)) {
+            ogs_error("State machine exception");
             smf_sess_remove(sess);
         }
 

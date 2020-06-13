@@ -37,7 +37,6 @@ extern "C" {
 
 extern int __amf_log_domain;
 extern int __gmm_log_domain;
-extern int __gsm_log_domain;
 
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __amf_log_domain

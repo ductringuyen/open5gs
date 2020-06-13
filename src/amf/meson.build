@@ -45,7 +45,6 @@ libamf_sources = files('''
     nas-path.c
     gmm-sm.c
 
-    gsm-sm.c
     amf-sm.c
 
     init.c

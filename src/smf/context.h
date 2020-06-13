@@ -43,6 +43,7 @@ extern "C" {
 #endif
 
 extern int __smf_log_domain;
+extern int __gsm_log_domain;
 
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __smf_log_domain
@@ -133,8 +134,16 @@ typedef struct smf_sess_s {
     char            *dnn;
     ogs_s_nssai_t   s_nssai;
 
+    /* Integrity protection maximum data rate */
+    struct {
+        uint8_t mbr_dl;
+        uint8_t mbr_ul;
+    } integrity_protection;
+
     /* PDN Configuration */
     ogs_pdn_t       pdn;
+    uint8_t         pdu_session_type;
+
     ogs_pfcp_ue_ip_t *ipv4;
     ogs_pfcp_ue_ip_t *ipv6;
 

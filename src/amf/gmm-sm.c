@@ -641,7 +641,7 @@ void gmm_state_authentication(ogs_fsm_t *s, amf_event_t *e)
             rv = gmm_handle_registration_request(
                     amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
-                ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
+                ogs_error("[%s] Cannot handle NAS message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 break;
             }
@@ -1056,7 +1056,7 @@ void gmm_state_initial_context_setup(ogs_fsm_t *s, amf_event_t *e)
             rv = gmm_handle_registration_request(
                     amf_ue, &nas_message->gmm.registration_request);
             if (rv != OGS_OK) {
-                ogs_error("[%s] Cannot handle NGAP message", amf_ue->suci);
+                ogs_error("[%s] Cannot handle NAS message", amf_ue->suci);
                 OGS_FSM_TRAN(s, gmm_state_exception);
                 break;
             }

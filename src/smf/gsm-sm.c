@@ -20,6 +20,7 @@
 #include "sbi-path.h"
 #include "nnrf-handler.h"
 #include "nsmf-handler.h"
+#include "gsm-handler.h"
 
 void smf_gsm_state_initial(ogs_fsm_t *s, smf_event_t *e)
 {
@@ -34,6 +35,7 @@ void smf_gsm_state_final(ogs_fsm_t *s, smf_event_t *e)
 
 void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
 {
+    int rv;
     smf_sess_t *sess = NULL;
 
     ogs_nas_5gs_message_t *nas_message = NULL;
@@ -114,14 +116,27 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(nas_message);
         sess = e->sess;
         ogs_assert(sess);
-        session = sess->session;
-        ogs_assert(session);
 
-        ogs_fatal("asdfasdf");
+        switch (nas_message->gsm.h.message_type) {
+        case OGS_NAS_5GS_PDU_SESSION_ESTABLISHMENT_REQUEST:
+            rv = gsm_handle_pdu_session_establishment_request(
+                    sess, &nas_message->gsm.pdu_session_establishment_request);
+            if (rv != OGS_OK) {
+                ogs_error("[%s:%d] Cannot handle NAS message",
+                        sess->supi, sess->psi);
+                OGS_FSM_TRAN(s, smf_gsm_state_exception);
+                break;
+            }
+            break;
+        default:
+            ogs_warn("Unknown message[%d]", nas_message->gsm.h.message_type);
+            break;
+        }
 
         break;
     default:
-        ogs_error("[%s] Unknown event %s", sess->imsi_bcd, smf_event_get_name(e));
+        ogs_error("[%s:%d] Unknown event %s",
+                sess->supi, sess->psi, smf_event_get_name(e));
         break;
     }
 }

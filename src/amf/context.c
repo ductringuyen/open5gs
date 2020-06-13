@@ -23,7 +23,6 @@ static amf_context_t self;
 
 int __amf_log_domain;
 int __gmm_log_domain;
-int __gsm_log_domain;
 
 static OGS_POOL(amf_gnb_pool, amf_gnb_t);
 static OGS_POOL(amf_ue_pool, amf_ue_t);
@@ -45,7 +44,6 @@ void amf_context_init(void)
     ogs_log_install_domain(&__ogs_nas_domain, "nas", ogs_core()->log.level);
     ogs_log_install_domain(&__amf_log_domain, "amf", ogs_core()->log.level);
     ogs_log_install_domain(&__gmm_log_domain, "gmm", ogs_core()->log.level);
-    ogs_log_install_domain(&__gsm_log_domain, "gsm", ogs_core()->log.level);
 
     ogs_list_init(&self.ngap_list);
     ogs_list_init(&self.ngap_list6);

@@ -23,6 +23,7 @@ static smf_context_t self;
 static ogs_diam_config_t g_diam_conf;
 
 int __smf_log_domain;
+int __gsm_log_domain;
 
 static OGS_POOL(smf_sess_pool, smf_sess_t);
 static OGS_POOL(smf_bearer_pool, smf_bearer_t);
@@ -47,6 +48,7 @@ void smf_context_init(void)
     ogs_log_install_domain(&__ogs_gtp_domain, "gtp", ogs_core()->log.level);
     ogs_log_install_domain(&__ogs_diam_domain, "diam", ogs_core()->log.level);
     ogs_log_install_domain(&__smf_log_domain, "smf", ogs_core()->log.level);
+    ogs_log_install_domain(&__gsm_log_domain, "gsm", ogs_core()->log.level);
 
     ogs_gtp_node_init(512);
 
