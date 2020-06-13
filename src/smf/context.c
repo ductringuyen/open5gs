@@ -42,6 +42,8 @@ void smf_context_init(void)
     memset(&self, 0, sizeof(smf_context_t));
     self.diam_config = &g_diam_conf;
 
+    ogs_log_install_domain(&__ogs_ngap_domain, "ngap", ogs_core()->log.level);
+    ogs_log_install_domain(&__ogs_nas_domain, "nas", ogs_core()->log.level);
     ogs_log_install_domain(&__ogs_gtp_domain, "gtp", ogs_core()->log.level);
     ogs_log_install_domain(&__ogs_diam_domain, "diam", ogs_core()->log.level);
     ogs_log_install_domain(&__smf_log_domain, "smf", ogs_core()->log.level);

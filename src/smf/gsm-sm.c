@@ -36,8 +36,10 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
 {
     smf_sess_t *sess = NULL;
 
+    ogs_nas_5gs_message_t *nas_message = NULL;
+
     ogs_sbi_session_t *session = NULL;
-    ogs_sbi_message_t *message = NULL;
+    ogs_sbi_message_t *sbi_message = NULL;
 
     ogs_assert(s);
     ogs_assert(e);
@@ -55,49 +57,49 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
         break;
 
     case SMF_EVT_SBI_SERVER:
-        message = e->sbi.message;
-        ogs_assert(message);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
         session = e->sbi.session;
         ogs_assert(session);
 
-        SWITCH(message->h.service.name)
+        SWITCH(sbi_message->h.service.name)
         CASE(OGS_SBI_SERVICE_NAME_NSMF_PDUSESSION)
-            SWITCH(message->h.method)
+            SWITCH(sbi_message->h.method)
             CASE(OGS_SBI_HTTP_METHOD_POST)
-                SWITCH(message->h.resource.component[0])
+                SWITCH(sbi_message->h.resource.component[0])
                 CASE(OGS_SBI_RESOURCE_NAME_SM_CONTEXTS)
-                    smf_nsmf_handle_create_sm_context(sess, message);
+                    smf_nsmf_handle_create_sm_context(sess, sbi_message);
                     break;
                 DEFAULT
                     ogs_error("Invalid resource name [%s]",
-                            message->h.resource.component[0]);
+                            sbi_message->h.resource.component[0]);
                     smf_sbi_send_sm_context_create_error(session,
                             OGS_SBI_HTTP_STATUS_BAD_REQUEST,
                             "Invalid resource name",
-                            message->h.resource.component[0]);
+                            sbi_message->h.resource.component[0]);
                 END
                 break;
 
             DEFAULT
                 ogs_error("Invalid HTTP method [%s]",
-                        message->h.method);
+                        sbi_message->h.method);
                 smf_sbi_send_sm_context_create_error(session,
                         OGS_SBI_HTTP_STATUS_FORBIDDEN,
-                        "Invalid HTTP method", message->h.method);
+                        "Invalid HTTP method", sbi_message->h.method);
             END
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.service.name);
+            ogs_error("Invalid API name [%s]", sbi_message->h.service.name);
             smf_sbi_send_sm_context_create_error(session,
                     OGS_SBI_HTTP_STATUS_BAD_REQUEST,
-                    "Invalid API name", message->h.service.name);
+                    "Invalid API name", sbi_message->h.service.name);
         END
         break;
 
     case SMF_EVT_SBI_CLIENT:
-        message = e->sbi.message;
-        ogs_assert(message);
+        sbi_message = e->sbi.message;
+        ogs_assert(sbi_message);
         sess = e->sbi.data;
         ogs_assert(sess);
         session = sess->session;
@@ -105,7 +107,17 @@ void smf_gsm_state_operational(ogs_fsm_t *s, smf_event_t *e)
 
         ogs_timer_stop(sess->sbi.client_wait_timer);
         ogs_fatal("TODO");
+        break;
 
+    case SMF_EVT_5GSM_MESSAGE:
+        nas_message = e->nas.message;
+        ogs_assert(nas_message);
+        sess = e->sess;
+        ogs_assert(sess);
+        session = sess->session;
+        ogs_assert(session);
+
+        ogs_fatal("asdfasdf");
 
         break;
     default:

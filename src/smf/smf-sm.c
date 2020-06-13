@@ -66,6 +66,9 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
     ogs_sbi_response_t *sbi_response = NULL;
     ogs_sbi_message_t sbi_message;
 
+    ogs_nas_5gs_message_t nas_message;
+    ogs_pkbuf_t *pkbuf = NULL;
+
     smf_sm_debug(e);
 
     ogs_assert(s);
@@ -518,6 +521,31 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             ogs_error("Unknown timer[%s:%d]",
                     smf_timer_get_name(e->timer_id), e->timer_id);
         }
+        break;
+
+    case SMF_EVT_5GSM_MESSAGE:
+        sess = e->sess;
+        ogs_assert(sess);
+        pkbuf = e->pkbuf;
+        ogs_assert(pkbuf);
+        if (ogs_nas_5gsm_decode(&nas_message, pkbuf) != OGS_OK) {
+            ogs_error("ogs_nas_5gsm_decode() failed");
+            ogs_pkbuf_free(pkbuf);
+            return;
+        }
+
+        ogs_assert(sess);
+        ogs_assert(OGS_FSM_STATE(&sess->sm));
+
+        e->sess = sess;
+        e->nas.message = &nas_message;
+
+        ogs_fsm_dispatch(&sess->sm, e);
+        if (OGS_FSM_CHECK(&sess->sm, smf_gsm_state_exception)) {
+            smf_sess_remove(sess);
+        }
+
+        ogs_pkbuf_free(pkbuf);
         break;
 
     default:

@@ -18,6 +18,7 @@
  */
 
 #include "sbi-path.h"
+#include "nas-path.h"
 #include "nsmf-handler.h"
 
 bool smf_nsmf_handle_create_sm_context(
@@ -74,9 +75,8 @@ bool smf_nsmf_handle_create_sm_context(
     n1_sm_msg = SMContextCreateData->n1_sm_msg;
     if (n1_sm_msg) {
         pkbuf = ogs_sbi_find_part_by_content_id(message, n1_sm_msg->content_id);
-        if (pkbuf) {
-            ogs_log_hexdump(OGS_LOG_FATAL, pkbuf->data, pkbuf->len);
-        }
+        if (pkbuf)
+            nas_5gs_send_sbi_to_gsm(sess, pkbuf);
     }
 
     return true;

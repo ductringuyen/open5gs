@@ -20,9 +20,6 @@
 #include "ngap-path.h"
 #include "ngap-build.h"
 #include "gmm-build.h"
-#if 0
-#include "gsm-build.h"
-#endif
 #include "nas-path.h"
 
 int nas_5gs_send_to_gnb(amf_ue_t *amf_ue, ogs_pkbuf_t *pkbuf)

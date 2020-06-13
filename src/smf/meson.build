@@ -53,6 +53,7 @@ libsmf_sources = files('''
     timer.c
     context.c
     smf-sm.c
+    nf-sm.c
     gsm-sm.c
     pfcp-sm.c
     gtp-path.c
@@ -68,7 +69,7 @@ libsmf_sources = files('''
     nnrf-handler.c
     nsmf-handler.c
     sbi-path.c
-    nf-sm.c
+    nas-path.c
 '''.split())
 
 libsmf = static_library('smf',
@@ -76,6 +77,8 @@ libsmf = static_library('smf',
     link_with : libipfw,
     dependencies : [libapp_dep,
                     libsbi_dep,
+                    libngap_dep,
+                    libnas_5gs_dep,
                     libdiameter_gx_dep,
                     libgtp_dep,
                     libpfcp_dep,
@@ -86,6 +89,8 @@ libsmf_dep = declare_dependency(
     link_with : libsmf,
     dependencies : [libapp_dep,
                     libsbi_dep,
+                    libngap_dep,
+                    libnas_5gs_dep,
                     libdiameter_gx_dep,
                     libgtp_dep,
                     libpfcp_dep,

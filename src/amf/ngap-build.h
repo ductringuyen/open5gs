@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef NGAP_BUILD_H
-#define NGAP_BUILD_H
+#ifndef AMF_NGAP_BUILD_H
+#define AMF_NGAP_BUILD_H
 
 #include "context.h"
 
@@ -101,4 +101,4 @@ ogs_pkbuf_t *ngap_build_s1_reset_ack(
 }
 #endif
 
-#endif /* NGAP_BUILD_H */
+#endif /* AMF_NGAP_BUILD_H */

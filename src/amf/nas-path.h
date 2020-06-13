@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef NAS_5GS_PATH_H
-#define NAS_5GS_PATH_H
+#ifndef AMF_NAS_5GS_PATH_H
+#define AMF_NAS_5GS_PATH_H
 
 #include "context.h"
 
@@ -85,4 +85,4 @@ void nas_5gs_send_downlink_nas_transport(
 }
 #endif
 
-#endif /* NAS_5GS_PATH_H */
+#endif /* AMF_NAS_5GS_PATH_H */

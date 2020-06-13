@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef NGAP_HANDLER_H
-#define NGAP_HANDLER_H
+#ifndef AMF_NGAP_HANDLER_H
+#define AMF_NGAP_HANDLER_H
 
 #include "context.h"
 
@@ -78,4 +78,4 @@ void ngap_handle_s1_reset(
 }
 #endif
 
-#endif /* NGAP_HANDLER_H */
+#endif /* AMF_NGAP_HANDLER_H */

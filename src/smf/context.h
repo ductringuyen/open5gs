@@ -31,6 +31,8 @@
 #include "ogs-pfcp.h"
 #include "ogs-sbi.h"
 #include "ogs-app.h"
+#include "ogs-ngap.h"
+#include "ogs-nas-5gs.h"
 #include "ipfw/ogs-ipfw.h"
 
 #include "timer.h"
